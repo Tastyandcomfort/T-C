@@ -3,236 +3,243 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tasty & Comfort</title>
+  <title>Fries & Vibes</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
-  <div class="top-bar">
-    <div class="brand">
-      <div class="menu-icon"><i class="fa-solid fa-bars"></i></div>
-      <div class="logo-circle">
-        <i class="fa-solid fa-mug-hot"></i>
-      </div>
-      <div>
-        <div class="brand-title">Tasty & Comfort</div>
-        <div class="brand-tagline">From New Modern Mission</div>
-      </div>
-    </div>
-    <div class="weather">
-      <i class="fa-solid fa-cloud-sun"></i>
-      <span>29°C<br><small>Partly Cloudy</small></span>
-    </div>
-  </div>
-
-  <div class="app-content">
+  <div class="dashboard-container">
     
-    <section id="home-view" class="app-section active-view">
-      <div class="hero-card">
-        <div class="hero-text">
-          <span class="welcome-tag">Welcome to</span>
-          <h1>New Modern Mission T&C</h1>
-          <p class="subtext">More Than Tea</p>
-          <div class="status-badge">
-            <i class="fa-solid fa-location-dot"></i>
-            <span>We are open<br><small>6:00 AM - 10:00 PM</small></span>
-          </div>
-        </div>
-        <div class="hero-image">
-          <div class="glass-circle-frame">
-            <i class="fa-solid fa-mug-hot main-cup-icon"></i>
-          </div>
+    <aside class="sidebar">
+      <div class="brand-header">
+        <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
+        <div>
+          <div class="brand-name">FRIES & VIBES</div>
+          <div class="brand-sub">Crispy Bites, Happy Vibes!</div>
         </div>
       </div>
+      
+      <nav class="sidebar-nav">
+        <div class="side-item active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i> Home</div>
+        <div class="side-item" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i> Menu</div>
+        <div class="side-item" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i> Our Services</div>
+        <div class="side-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i> ChatGPT</div>
+        <div class="side-item" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i> You Are Here</div>
+        <div class="side-item" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i> Certifications</div>
+        <div class="side-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i> Owner Bio</div>
+      </nav>
 
-      <div class="glass-card text-center-card">
-         <h3>Welcome to Comfort</h3>
-         <p class="bio-text">Tap the navigation options along the bottom bar to view our comprehensive interactive menu items, hospitality safety services, custom local maps, and official business certifications.</p>
+      <div class="sidebar-weather">
+        <i class="fa-solid fa-cloud-sun weather-sun"></i>
+        <div>
+          <div class="temp-text">29°C</div>
+          <div class="condition-text">Partly Cloudy</div>
+        </div>
       </div>
-    </section>
+    </aside>
 
-    <section id="menu-view" class="app-section">
-      <div class="section-header">
-        <h3><i class="fa-solid fa-mug-hot icon-gold"></i> OUR MENU</h3>
-      </div>
-
-      <div class="menu-grid">
-        <div class="glass-card menu-item-card">
-          <h4>Tea</h4>
-          <p class="item-desc">Hot & Premium brewed tea leaves mixed with pure organic milk.</p>
-          <div class="price-tag">₹10</div>
-          <div class="tea-visual">
-            <i class="fa-solid fa-glass-water glass-tea-icon"></i>
+    <main class="main-content">
+      
+      <header class="mobile-top-bar">
+        <div class="mobile-brand">
+          <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
+          <div>
+            <div class="brand-name">FRIES & VIBES</div>
+            <div class="brand-sub">From New Modern Mission</div>
           </div>
         </div>
-        <div class="glass-card menu-item-card fries-card">
-          <h4>French Fries</h4>
-          <p class="item-desc" style="font-size:0.65rem;">Crispy deep-fried premium potato slices.</p>
-          <div class="fries-portions">
+        <div class="mobile-weather">
+          <i class="fa-solid fa-cloud-sun"></i>
+          <span>29°C<br><small>Partly Cloudy</small></span>
+        </div>
+      </header>
+
+      <section id="home-view" class="app-section active-view">
+        <div class="hero-showcase">
+          <div class="hero-left">
+            <span class="gold-italic">Welcome to</span>
+            <h2>New Modern Mission T&C</h2>
+            <p class="tagline-muted">More Than Tea</p>
+            <div class="live-badge">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>We are open<br><small>6:00 AM - 10:00 PM</small></span>
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="glass-circle-art">
+              <i class="fa-solid fa-mug-hot massive-icon"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card instruction-card">
+          <h3>Welcome to Comfort</h3>
+          <p>Tap the dynamic layout navigation bar shortcuts to immediately explore our hot item menus, hospital safety features, location navigation avenues, and compliance certifications.</p>
+        </div>
+      </section>
+
+      <section id="menu-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-utensils gold-text"></i> OUR MENU</h3>
+        <div class="menu-responsive-grid">
+          <div class="glass-card menu-box">
+            <div class="menu-title-row">
+              <h4>Tea</h4>
+              <span class="price-gold">₹10</span>
+            </div>
+            <p class="menu-item-sub">Hot & Refreshing premium milk blends.</p>
+          </div>
+
+          <div class="glass-card menu-box fries-box">
+            <h4>French Fries</h4>
+            <div class="portions-flex">
+              <div class="portion-column">
+                <span class="p-title">Small Portion <small>(200gm)</small></span>
+                <div class="p-price"><span>Salted:</span> <strong>₹50</strong></div>
+                <div class="p-price"><span>Masala:</span> <strong>₹60</strong></div>
+              </div>
+              <div class="portion-column">
+                <span class="p-title">Big Portion</span>
+                <div class="p-price"><span>Salted:</span> <strong>₹60</strong></div>
+                <div class="p-price"><span>Masala:</span> <strong>₹70</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="services-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-heart-pulse gold-text"></i> OUR SERVICES</h3>
+        
+        <div id="live-service-monitor" class="glass-card dynamic-display-panel">
+          <div id="monitor-placeholder">
+            <i class="fa-solid fa-hand-pointer tap-animate"></i>
+            <p>Tap any service badge below to inspect real-time system utilities here.</p>
+          </div>
+          <div id="monitor-data" class="hidden">
+            <h4 id="monitor-title" class="gold-text"></h4>
+            <p id="monitor-desc"></p>
+          </div>
+        </div>
+
+        <div class="services-icon-grid">
+          <div class="service-item-card s-blue" onclick="showService('Wheelchair Assistance', 'Equipped with wide spatial accessibility aisles and smooth transition ramp support structures throughout.')">
+            <i class="fa-solid fa-wheelchair"></i><span>Wheelchair</span>
+          </div>
+          <div class="service-item-card s-red" onclick="showService('First Aid Kit', 'Fully prepared healthcare resources stocked with instant pain relief formulations, clinical updates, and bandages.')">
+            <i class="fa-solid fa-kit-medical"></i><span>First Aid Kit</span>
+          </div>
+          <div class="service-item-card s-orange" onclick="showService('Fire Extinguisher', 'High-grade commercial fire suppression setups engineered to undergo systematic compliance maintenance reviews.')">
+            <i class="fa-solid fa-fire-extinguisher"></i><span>Fire Safety</span>
+          </div>
+          <div class="service-item-card s-yellow" onclick="showService('Use & Throw Raincoat', 'Sudden weather alterations? Ask our customer front counter operators for a complimentary high-density emergency rain cover.')">
+            <i class="fa-solid fa-cloud-showers-heavy"></i><span>Raincoat</span>
+          </div>
+          <div class="service-item-card s-green" onclick="showService('Umbrella Service', 'On-demand structural shield umbrella provisions available to support your transition towards vehicle terminals.')">
+            <i class="fa-solid fa-umbrella"></i><span>Umbrella</span>
+          </div>
+          <div class="service-item-card s-purple" onclick="showService('Tabs with ChatGPT', 'Dedicated hardware interfaces deployed at table zones providing interactive local maps and conversational models.')">
+            <i class="fa-solid fa-tablet-screen-button"></i><span>AI Tablets</span>
+          </div>
+          <div class="service-item-card s-gold" onclick="showService('You Are Here Map', 'Interactive geographic floorplan detailing immediate emergency evacuation infrastructure and walkways.')">
+            <i class="fa-solid fa-map-location-dot"></i><span>Zone Map</span>
+          </div>
+          <div class="service-item-card s-teal" onclick="showService('Chat GPT Assistant', 'Advanced custom LLM integration routing pre-orders, allergy validations, and customized serving feedback.')">
+            <i class="fa-solid fa-robot"></i><span>AI Chat</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="chat-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> CHATGPT ASSISTANT</h3>
+        <div class="glass-card ai-console">
+          <div class="ai-status"><span class="pulse-dot"></span> System Live</div>
+          <p>Hello! I am your automated AI hub terminal. Ask me anything while you enjoy your warm beverage selections.</p>
+          <div class="suggested-prompts">
+            <button class="prompt-chip">Nearby hospitals?</button>
+            <button class="prompt-chip">Health tips</button>
+            <button class="prompt-chip">Weather updates</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="map-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
+        <div class="glass-card map-panel">
+          <div class="visual-map">
+            <span class="map-tag tag-hosp">+ Hospital Block</span>
+            <span class="map-tag tag-wash">Washroom</span>
+            <div class="live-pin">
+              <i class="fa-solid fa-location-pin pin-bounce"></i>
+              <div class="pin-lbl">T&C Store</div>
+            </div>
+          </div>
+          <p class="map-desc-text"><strong>Location Guide:</strong> Situated right opposite the main clinical emergency lane layout framework, providing zero-delay paths to public safety blocks.</p>
+        </div>
+      </section>
+
+      <section id="cert-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
+        <div class="glass-card cert-container">
+          <div class="cert-grid">
+            <div class="cert-badge">
+              <div class="badge-icon gold-badge">fssai</div>
+              <h6>FSSAI Certificate</h6>
+              <span class="v-status">VERIFIED</span>
+            </div>
+            <div class="cert-badge">
+              <div class="badge-icon blue-badge"><i class="fa-solid fa-droplet"></i></div>
+              <h6>Water Test Report</h6>
+              <span class="v-status">VERIFIED</span>
+            </div>
+            <div class="cert-badge">
+              <div class="badge-icon green-badge"><i class="fa-solid fa-leaf"></i></div>
+              <h6>Hygienic Practices</h6>
+              <span class="v-status">VERIFIED</span>
+            </div>
+            <div class="cert-badge">
+              <div class="badge-icon red-badge"><i class="fa-solid fa-fire-extinguisher"></i></div>
+              <h6>Fire Safety</h6>
+              <span class="v-status">VERIFIED</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="owner-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-user-tie gold-text"></i> OWNER BIO</h3>
+        <div class="glass-card owner-box">
+          <div class="owner-header">
+            <div class="owner-avatar"><i class="fa-solid fa-user-tie"></i></div>
             <div>
-              <span class="portion-title">Small Portion <small>(200gm)</small></span>
-              <div class="portion-row"><span>Salted</span> <strong>₹50</strong></div>
-              <div class="portion-row"><span>Masala</span> <strong>₹60</strong></div>
-            </div>
-            <div class="separator"></div>
-            <div>
-              <span class="portion-title">Big Portion</span>
-              <div class="portion-row"><span>Salted</span> <strong>₹60</strong></div>
-              <div class="portion-row"><span>Masala</span> <strong>₹70</strong></div>
+              <h4>A. Senthil Kumar</h4>
+              <p class="owner-title-label">Founder & Owner</p>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="services-view" class="app-section">
-      <div class="section-header">
-        <h3><i class="fa-solid fa-heart icon-gold"></i> OUR AMENITIES & SERVICES</h3>
-      </div>
-
-      <div id="service-detail-box" class="glass-card service-display-panel">
-        <div class="panel-placeholder">
-          <i class="fa-solid fa-hand-pointer text-gold animate-bounce"></i>
-          <p>Tap any service box below to view live details and information right here!</p>
-        </div>
-        <div class="panel-content hidden">
-          <h4 id="panel-title">Service Title</h4>
-          <p id="panel-desc">Service Description goes here...</p>
-        </div>
-      </div>
-
-      <div class="services-grid">
-        <div class="service-box" onclick="selectService('Wheelchair Assistance', 'Our store features custom wide floor spaces and access ramps designed for effortless wheelchair navigation. Our staff is fully trained to assist you whenever needed.')">
-          <i class="fa-solid fa-wheelchair"></i><span>Wheelchair</span>
-        </div>
-        <div class="service-box" onclick="selectService('First Aid Kit', 'Your safety is our priority. We keep a fully certified medical emergency kit on hand stocked with fresh bandages, antiseptic lotions, pain relief sprays, and emergency burn creams.')">
-          <i class="fa-solid fa-kit-medical"></i><span>First Aid Kit</span>
-        </div>
-        <div class="service-box" onclick="selectService('Fire Safety', 'The store is equipped with modern commercial fire extinguishers that undergo regular quarterly maintenance checks to ensure maximum safety protocols.')">
-          <i class="fa-solid fa-fire-extinguisher"></i><span>Fire Safety</span>
-        </div>
-        <div class="service-box" onclick="selectService('Use & Throw Raincoat', 'Caught in sudden rain? Do not worry. Ask our counter operator for a complimentary, high-density disposable raincoat so you can travel home completely dry.')">
-          <i class="fa-solid fa-cloud-showers-heavy"></i><span>Raincoat</span>
-        </div>
-        <div class="service-box" onclick="selectService('Umbrella Service', 'We offer temporary large-dome umbrellas to assist you safely to your car or bike parking zone during heavy unexpected rainfall.')">
-          <i class="fa-solid fa-umbrella"></i><span>Umbrella</span>
-        </div>
-        <div class="service-box" onclick="selectService('AI Tablets', 'Every booth features access to responsive tablet hardware configured directly with custom AI systems to assist with browsing or local queries.')">
-          <i class="fa-solid fa-tablet-screen-button"></i><span>AI Tablets</span>
-        </div>
-        <div class="service-box" onclick="selectService('Zone Map Layout', 'An easy-to-read navigational structural grid showing nearby hospital wards, complex walking avenues, emergency exit doors, and washrooms.')">
-          <i class="fa-solid fa-map-location-dot"></i><span>Zone Map</span>
-        </div>
-        <div class="service-box" onclick="selectService('ChatGPT Support', 'Our dedicated integrated chatbot is programmed to manage custom catering requests, item customization questions, and direct counter order routing.')">
-          <i class="fa-solid fa-robot"></i><span>AI Chat</span>
-        </div>
-      </div>
-    </section>
-
-    <section id="chat-view" class="app-section">
-      <div class="section-header">
-        <h3><i class="fa-solid fa-robot icon-gold"></i> CHAT GPT ASSISTANT</h3>
-      </div>
-      <div class="glass-card">
-        <div style="text-align: center; padding: 10px 0;">
-          <i class="fa-solid fa-robot" style="font-size: 2.5rem; color: #1abc9c; margin-bottom: 10px;"></i>
-          <h4>Automated Store Support</h4>
-          <p class="bio-text" style="text-align:left; font-size:0.85rem; line-height:1.4; padding:5px;">
-            <strong>System Status:</strong> Operational.<br><br>
-            Hello! I am your automated AI console dashboard. You can use me to check operational hours, query recipe allergy notes, verify parking spots, or place catering group requests.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section id="map-view" class="app-section">
-      <div class="section-header">
-        <h3><i class="fa-solid fa-map-location-dot icon-gold"></i> LOCATION ROUTE</h3>
-      </div>
-      <div class="glass-card layout-box">
-        <div class="box-head"><h5>COMPLEX MAP NAVIGATION</h5></div>
-        <div class="map-mock" style="height: 150px;">
-          <div class="map-bg">
-            <span class="map-label label-hospital">+ Hospital Block</span>
-            <span class="map-label label-washroom">Washroom</span>
-            <div class="pin-container" style="left: 35%; bottom: 30px;">
-              <i class="fa-solid fa-location-pin pin-icon" style="font-size: 1.5rem;"></i>
-              <p style="font-size: 0.6rem; font-weight: bold;">T&C Store<br><small>(Active Hub)</small></p>
-            </div>
+          <p class="owner-bio-p">Built with the clear vision of providing a clean, smart, and deeply helpful premium tea experience layout for everyone.</p>
+          <div class="owner-buttons">
+            <a href="tel:+919553904524" class="btn"><i class="fa-solid fa-phone"></i> Contact</a>
+            <button class="btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
+          </div>
+          <div id="upi-display" class="glass-card hidden upi-reveal-card">
+            <code>senthil.kumar@upi</code>
+            <p>Scan standard merchant QR code at service counters.</p>
           </div>
         </div>
-        <p class="bio-text" style="font-size:0.85rem; margin-top:10px; line-height:1.4;">
-          <strong>Location Guide:</strong> Situated opposite the main medical wing, providing fast walkway transitions to safety zones, exit ramps, and public dynamic washrooms.
-        </p>
-      </div>
-    </section>
+      </section>
 
-    <section id="cert-view" class="app-section">
-      <div class="section-header">
-        <h3><i class="fa-solid fa-certificate icon-gold"></i> TRUST & CERTIFICATIONS</h3>
-      </div>
-      <div class="glass-card layout-box">
-        <div class="box-head"><h5>VERIFIED REGULATORY LIQUID STANDARDS</h5></div>
-        <div class="certifications-row" style="grid-template-columns: 1fr 1fr; gap: 15px; padding: 5px 0;">
-          <div class="cert-item">
-            <div class="badge-icon gold" style="height: 45px;">FSSAI</div>
-            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Food Safety Authority</strong>
-            <span style="font-size:0.65rem;">License active & fully monitored</span>
-          </div>
-          <div class="cert-item">
-            <div class="badge-icon blue" style="height: 45px;"><i class="fa-solid fa-droplet"></i></div>
-            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Water Purity Test</strong>
-            <span style="font-size:0.65rem;">100% distilled clean processing</span>
-          </div>
-          <div class="cert-item">
-            <div class="badge-icon green" style="height: 45px;"><i class="fa-solid fa-leaf"></i></div>
-            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Hygienic Practices</strong>
-            <span style="font-size:0.65rem;">Sterilized premium utensil layout</span>
-          </div>
-          <div class="cert-item">
-            <div class="badge-icon red" style="height: 45px;"><i class="fa-solid fa-fire"></i></div>
-            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Fire Compliance</strong>
-            <span style="font-size:0.65rem;">Systems checked quarterly</span>
-          </div>
-        </div>
-      </div>
-    </section>
+    </main>
 
-    <section id="owner-view" class="app-section">
-      <div class="section-header">
-        <h3><i class="fa-solid fa-user-tie icon-gold"></i> MANAGEMENT PROFILE</h3>
-      </div>
-      <div class="glass-card owner-card">
-        <div class="owner-profile">
-          <div class="avatar">
-            <i class="fa-solid fa-user-tie"></i>
-          </div>
-          <div class="owner-info">
-            <h4>A. Senthil Kumar</h4>
-            <p class="role">Founder & Executive Owner</p>
-            <p class="bio-text" style="line-height:1.4;">Dedicated to crafting digital ecosystem tools, smart interactive hospitality hubs, and superior quality food beverage structures for every single visitor.</p>
-          </div>
-        </div>
-        <div class="owner-actions">
-          <button class="action-btn" id="btn-contact"><i class="fa-solid fa-phone"></i> Contact Hotline</button>
-          <button class="action-btn" id="btn-upi"><i class="fa-solid fa-qrcode"></i> UPI / QR Code</button>
-        </div>
-        <div id="owner-action-display" class="glass-card hidden" style="margin-top:15px; text-align:center; background:rgba(0,0,0,0.4); font-size:0.85rem;">
-          </div>
-      </div>
-    </section>
+    <footer class="bottom-mobile-nav">
+      <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
+      <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
+      <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i><span>Services</span></div>
+      <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>ChatGPT</span></div>
+      <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
+      <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Cert</span></div>
+      <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>Owner</span></div>
+    </footer>
 
-  </div>
-
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
-    <div class="nav-item" onclick="switchView('menu-view', this)"><i class="fa-solid fa-mug-hot"></i><span>Menu</span></div>
-    <div class="nav-item" onclick="switchView('services-view', this)"><i class="fa-solid fa-hand-holding-heart"></i><span>Services</span></div>
-    <div class="nav-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>ChatGPT</span></div>
-    <div class="nav-item" onclick="switchView('map-view', this)"><i class="fa-solid fa-map"></i><span>Map</span></div>
-    <div class="nav-item" onclick="switchView('cert-view', this)"><i class="fa-solid fa-certificate"></i><span>Cert</span></div>
-    <div class="nav-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user"></i><span>Owner</span></div>
   </div>
 
   <script src="script.js"></script>
