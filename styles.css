@@ -229,11 +229,127 @@ body {
 
 .gold-text { color: var(--gold-glow); }
 
-/* Responsive Sub-Grids */
+/* ===================================================
+   NEW: TODAY'S OFFER COMPONENT SHIFT STYLE
+=================================================== */
+.offer-banner-card {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.08), rgba(0,0,0,0)), var(--glass-card-bg);
+  border-color: rgba(243, 156, 18, 0.2);
+}
+
+.offer-image-slot {
+  width: 130px;
+  height: 130px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  background: #151821;
+  flex-shrink: 0;
+  border: 1px solid var(--glass-border);
+}
+
+.offer-image-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+}
+
+.image-fallback-icon, .item-fallback-icon {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #383d4e;
+  font-size: 2.2rem;
+  z-index: 1;
+}
+
+.offer-details-slot h3 {
+  font-size: 1.3rem;
+  margin: 5px 0;
+}
+
+.offer-details-slot p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.offer-tag-badge {
+  background: var(--gold-gradient);
+  color: #000;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.offer-pricing-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.new-glow-price {
+  color: var(--gold-glow);
+  font-weight: 800;
+  font-size: 1.2rem;
+  text-shadow: 0 0 10px rgba(255,183,77,0.2);
+}
+
+/* ===================================================
+   NEW: MENU VISUAL GRIDS WITH IMAGE PLACEMENTS
+=================================================== */
 .menu-responsive-grid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
+}
+
+.menu-box.item-has-image {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item-image-frame {
+  width: 100%;
+  height: 160px;
+  background: #141720;
+  position: relative;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.menu-item-image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+}
+
+.menu-item-image-frame .item-fallback-icon {
+  font-size: 3rem;
+}
+
+.menu-item-info-frame {
+  padding: 20px;
+  flex-grow: 1;
 }
 
 .menu-title-row {
@@ -252,11 +368,12 @@ body {
 .menu-item-sub {
   color: var(--text-muted);
   font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .portions-flex {
   display: flex;
-  gap: 30px;
+  gap: 20px;
   margin-top: 15px;
 }
 
@@ -275,7 +392,7 @@ body {
 .p-price {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-bottom: 4px;
 }
 
@@ -330,7 +447,6 @@ body {
 .service-item-card i { font-size: 1.6rem; }
 .service-item-card span { font-size: 0.75rem; color: #ddd; }
 
-/* Custom Colors for Services Icons */
 .s-blue i { color: #3498db; }
 .s-red i { color: #e74c3c; }
 .s-orange i { color: #e67e22; }
@@ -340,9 +456,7 @@ body {
 .s-gold i { color: #f39c12; }
 .s-teal i { color: #1abc9c; }
 
-/* ===================================================
-   REAL-TIME CHAT INTERFACE CUSTOM DESIGN LAYOUT
-=================================================== */
+/* Chat Box Panel styling */
 .ai-terminal-box {
   display: flex;
   flex-direction: column;
@@ -378,7 +492,6 @@ body {
   gap: 12px;
 }
 
-/* Chat bubble styling */
 .msg-bubble {
   max-width: 80%;
   padding: 12px 16px;
@@ -423,11 +536,6 @@ body {
   transition: background 0.2s;
 }
 
-.prompt-chip:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-
 .chat-input-bar {
   display: flex;
   gap: 10px;
@@ -444,10 +552,6 @@ body {
   outline: none;
 }
 
-.chat-input-bar input:focus {
-  border-color: rgba(255,183,77,0.4);
-}
-
 .chat-send-btn {
   background: var(--gold-gradient);
   color: #000;
@@ -458,9 +562,7 @@ body {
   font-size: 1.1rem;
 }
 
-/* ===================================================
-   REAL-TIME MAP BOX COMPONENT INTERACTION 
-=================================================== */
+/* Map Display frame */
 .visual-map-container {
   width: 100%;
   height: 350px;
@@ -474,7 +576,7 @@ body {
   width: 100%;
   height: 100%;
   border: 0;
-  filter: grayscale(0.3) invert(0.9) hue-rotate(180deg); /* Sleek Premium Dark-Theme Map overlay filter */
+  filter: grayscale(0.3) invert(0.9) hue-rotate(180deg);
 }
 
 .map-desc-text {
@@ -519,7 +621,7 @@ body {
 .cert-badge h6 { font-size: 0.8rem; margin-bottom: 4px; }
 .v-status { font-size: 0.65rem; color: var(--neon-green); font-weight: bold; }
 
-/* Owner Component Framework */
+/* Owner Framework */
 .owner-header {
   display: flex;
   align-items: center;
@@ -557,10 +659,9 @@ body {
   gap: 8px;
 }
 
-.btn:active { background: rgba(255,255,255,0.1); }
 .upi-reveal-card { margin-top: 15px; text-align: center; background: rgba(0,0,0,0.3); }
 
-/* Visibility & Page Transition Animation Control */
+/* Animation configurations */
 .app-section {
   display: none;
   animation: smoothFadeIn 0.3s ease forwards;
@@ -579,9 +680,7 @@ body {
   50% { transform: translateY(-4px); }
 }
 
-/* ---------------------------------------------------
-   MEDIA QUERIES FOR ULTRA-RESPONSIVE DEVICE SCALING 
---------------------------------------------------- */
+/* MEDIA QUERIES FOR ULTRA-RESPONSIVE DEVICE SCALING */
 @media (max-width: 992px) {
   .sidebar { width: 220px; padding: 20px 12px; }
   .main-content { margin-left: 220px; padding: 30px; }
@@ -609,19 +708,20 @@ body {
   .glass-circle-art { width: 90px; height: 90px; }
   .massive-icon { font-size: 2.5rem; }
   
+  /* Mobile stacked elements adjustments */
+  .offer-banner-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .offer-image-slot { width: 100%; height: 140px; }
+  
   .menu-responsive-grid { grid-template-columns: 1fr; gap: 15px; }
   .portions-flex { flex-direction: column; gap: 12px; }
   
   .visual-map-container { height: 260px; }
   .ai-terminal-box { height: 380px; }
 
-  /* App Bottom Dock Framework */
   .bottom-mobile-nav {
     display: flex;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: rgba(13, 14, 18, 0.94);
     border-top: 1px solid var(--glass-border);
     padding: 12px 0;
