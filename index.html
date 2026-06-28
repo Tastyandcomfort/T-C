@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Modern Mission T&C</title>
+  <title>Tasty & Comfort</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
@@ -48,7 +48,7 @@
 
       <div class="glass-card text-center-card">
          <h3>Welcome to Comfort</h3>
-         <p class="bio-text" style="font-size: 0.85rem; text-align: center;">Tap the options below to explore our premium hot tea selections, dynamic safety services, layout navigation map, and certifications.</p>
+         <p class="bio-text">Tap the navigation options along the bottom bar to view our comprehensive interactive menu items, hospitality safety services, custom local maps, and official business certifications.</p>
       </div>
     </section>
 
@@ -60,7 +60,7 @@
       <div class="menu-grid">
         <div class="glass-card menu-item-card">
           <h4>Tea</h4>
-          <p class="item-desc">Hot & Refreshing</p>
+          <p class="item-desc">Hot & Premium brewed tea leaves mixed with pure organic milk.</p>
           <div class="price-tag">₹10</div>
           <div class="tea-visual">
             <i class="fa-solid fa-glass-water glass-tea-icon"></i>
@@ -68,6 +68,7 @@
         </div>
         <div class="glass-card menu-item-card fries-card">
           <h4>French Fries</h4>
+          <p class="item-desc" style="font-size:0.65rem;">Crispy deep-fried premium potato slices.</p>
           <div class="fries-portions">
             <div>
               <span class="portion-title">Small Portion <small>(200gm)</small></span>
@@ -87,22 +88,45 @@
 
     <section id="services-view" class="app-section">
       <div class="section-header">
-        <h3><i class="fa-solid fa-heart icon-gold"></i> OUR SERVICES</h3>
+        <h3><i class="fa-solid fa-heart icon-gold"></i> OUR AMENITIES & SERVICES</h3>
+      </div>
+
+      <div id="service-detail-box" class="glass-card service-display-panel">
+        <div class="panel-placeholder">
+          <i class="fa-solid fa-hand-pointer text-gold animate-bounce"></i>
+          <p>Tap any service box below to view live details and information right here!</p>
+        </div>
+        <div class="panel-content hidden">
+          <h4 id="panel-title">Service Title</h4>
+          <p id="panel-desc">Service Description goes here...</p>
+        </div>
       </div>
 
       <div class="services-grid">
-        <div class="service-box"><i class="fa-solid fa-wheelchair"></i><span>Wheelchair</span></div>
-        <div class="service-box"><i class="fa-solid fa-kit-medical"></i><span>First Aid Kit</span></div>
-        <div class="service-box"><i class="fa-solid fa-fire-extinguisher"></i><span>Fire Extinguisher</span></div>
-        <div class="service-box"><i class="fa-solid fa-cloud-showers-heavy"></i><span>Raincoat</span></div>
-        <div class="service-box"><i class="fa-solid fa-umbrella"></i><span>Umbrella</span></div>
-        <div class="service-box"><i class="fa-solid fa-tablet-screen-button"></i><span>Tabs with AI</span></div>
-        <div class="service-box"><i class="fa-solid fa-map-location-dot"></i><span>You Are Here Map</span></div>
-        <div class="service-box"><i class="fa-solid fa-robot"></i><span>AI Assistant</span></div>
-      </div>
-
-      <div class="safety-banner">
-        <i class="fa-solid fa-shield-halved"></i> We care for your comfort & safety
+        <div class="service-box" onclick="selectService('Wheelchair Assistance', 'Our store features custom wide floor spaces and access ramps designed for effortless wheelchair navigation. Our staff is fully trained to assist you whenever needed.')">
+          <i class="fa-solid fa-wheelchair"></i><span>Wheelchair</span>
+        </div>
+        <div class="service-box" onclick="selectService('First Aid Kit', 'Your safety is our priority. We keep a fully certified medical emergency kit on hand stocked with fresh bandages, antiseptic lotions, pain relief sprays, and emergency burn creams.')">
+          <i class="fa-solid fa-kit-medical"></i><span>First Aid Kit</span>
+        </div>
+        <div class="service-box" onclick="selectService('Fire Safety', 'The store is equipped with modern commercial fire extinguishers that undergo regular quarterly maintenance checks to ensure maximum safety protocols.')">
+          <i class="fa-solid fa-fire-extinguisher"></i><span>Fire Safety</span>
+        </div>
+        <div class="service-box" onclick="selectService('Use & Throw Raincoat', 'Caught in sudden rain? Do not worry. Ask our counter operator for a complimentary, high-density disposable raincoat so you can travel home completely dry.')">
+          <i class="fa-solid fa-cloud-showers-heavy"></i><span>Raincoat</span>
+        </div>
+        <div class="service-box" onclick="selectService('Umbrella Service', 'We offer temporary large-dome umbrellas to assist you safely to your car or bike parking zone during heavy unexpected rainfall.')">
+          <i class="fa-solid fa-umbrella"></i><span>Umbrella</span>
+        </div>
+        <div class="service-box" onclick="selectService('AI Tablets', 'Every booth features access to responsive tablet hardware configured directly with custom AI systems to assist with browsing or local queries.')">
+          <i class="fa-solid fa-tablet-screen-button"></i><span>AI Tablets</span>
+        </div>
+        <div class="service-box" onclick="selectService('Zone Map Layout', 'An easy-to-read navigational structural grid showing nearby hospital wards, complex walking avenues, emergency exit doors, and washrooms.')">
+          <i class="fa-solid fa-map-location-dot"></i><span>Zone Map</span>
+        </div>
+        <div class="service-box" onclick="selectService('ChatGPT Support', 'Our dedicated integrated chatbot is programmed to manage custom catering requests, item customization questions, and direct counter order routing.')">
+          <i class="fa-solid fa-robot"></i><span>AI Chat</span>
+        </div>
       </div>
     </section>
 
@@ -111,10 +135,13 @@
         <h3><i class="fa-solid fa-robot icon-gold"></i> CHAT GPT ASSISTANT</h3>
       </div>
       <div class="glass-card">
-        <div style="text-align: center; padding: 20px 0;">
-          <i class="fa-solid fa-robot" style="font-size: 3rem; color: #1abc9c; margin-bottom: 10px;"></i>
-          <h4>AI Assistant Loading...</h4>
-          <p class="bio-text" style="font-size: 0.8rem; margin-top: 5px;">Ask me anything about our hygiene practices, seating capacities, or custom bulk event orders!</p>
+        <div style="text-align: center; padding: 10px 0;">
+          <i class="fa-solid fa-robot" style="font-size: 2.5rem; color: #1abc9c; margin-bottom: 10px;"></i>
+          <h4>Automated Store Support</h4>
+          <p class="bio-text" style="text-align:left; font-size:0.85rem; line-height:1.4; padding:5px;">
+            <strong>System Status:</strong> Operational.<br><br>
+            Hello! I am your automated AI console dashboard. You can use me to check operational hours, query recipe allergy notes, verify parking spots, or place catering group requests.
+          </p>
         </div>
       </div>
     </section>
@@ -124,16 +151,20 @@
         <h3><i class="fa-solid fa-map-location-dot icon-gold"></i> LOCATION ROUTE</h3>
       </div>
       <div class="glass-card layout-box">
-        <div class="box-head"><h5>YOU ARE HERE</h5></div>
-        <div class="map-mock" style="height: 180px;"> <div class="map-bg">
+        <div class="box-head"><h5>COMPLEX MAP NAVIGATION</h5></div>
+        <div class="map-mock" style="height: 150px;">
+          <div class="map-bg">
             <span class="map-label label-hospital">+ Hospital Block</span>
             <span class="map-label label-washroom">Washroom</span>
-            <div class="pin-container" style="left: 35%; bottom: 40px;">
-              <i class="fa-solid fa-location-pin pin-icon" style="font-size: 1.8rem;"></i>
-              <p style="font-size: 0.7rem; font-weight: bold;">New Modern Mission T&C<br><small>(You Are Here)</small></p>
+            <div class="pin-container" style="left: 35%; bottom: 30px;">
+              <i class="fa-solid fa-location-pin pin-icon" style="font-size: 1.5rem;"></i>
+              <p style="font-size: 0.6rem; font-weight: bold;">T&C Store<br><small>(Active Hub)</small></p>
             </div>
           </div>
         </div>
+        <p class="bio-text" style="font-size:0.85rem; margin-top:10px; line-height:1.4;">
+          <strong>Location Guide:</strong> Situated opposite the main medical wing, providing fast walkway transitions to safety zones, exit ramps, and public dynamic washrooms.
+        </p>
       </div>
     </section>
 
@@ -142,23 +173,27 @@
         <h3><i class="fa-solid fa-certificate icon-gold"></i> TRUST & CERTIFICATIONS</h3>
       </div>
       <div class="glass-card layout-box">
-        <div class="box-head"><h5>VERIFIED STANDARDS</h5></div>
-        <div class="certifications-row" style="grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px 0;">
+        <div class="box-head"><h5>VERIFIED REGULATORY LIQUID STANDARDS</h5></div>
+        <div class="certifications-row" style="grid-template-columns: 1fr 1fr; gap: 15px; padding: 5px 0;">
           <div class="cert-item">
-            <div class="badge-icon gold" style="height: 50px; font-size: 0.9rem;">FSSAI</div>
-            <span>Food Safety Verified</span>
+            <div class="badge-icon gold" style="height: 45px;">FSSAI</div>
+            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Food Safety Authority</strong>
+            <span style="font-size:0.65rem;">License active & fully monitored</span>
           </div>
           <div class="cert-item">
-            <div class="badge-icon blue" style="height: 50px; font-size: 1.3rem;"><i class="fa-solid fa-droplet"></i></div>
-            <span>Water Test Pure</span>
+            <div class="badge-icon blue" style="height: 45px;"><i class="fa-solid fa-droplet"></i></div>
+            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Water Purity Test</strong>
+            <span style="font-size:0.65rem;">100% distilled clean processing</span>
           </div>
           <div class="cert-item">
-            <div class="badge-icon green" style="height: 50px; font-size: 1.3rem;"><i class="fa-solid fa-leaf"></i></div>
-            <span>Hygienic Practices</span>
+            <div class="badge-icon green" style="height: 45px;"><i class="fa-solid fa-leaf"></i></div>
+            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Hygienic Practices</strong>
+            <span style="font-size:0.65rem;">Sterilized premium utensil layout</span>
           </div>
           <div class="cert-item">
-            <div class="badge-icon red" style="height: 50px; font-size: 1.3rem;"><i class="fa-solid fa-fire"></i></div>
-            <span>Fire Compliance</span>
+            <div class="badge-icon red" style="height: 45px;"><i class="fa-solid fa-fire"></i></div>
+            <strong style="font-size:0.75rem; color:#fff; display:block; margin-top:5px;">Fire Compliance</strong>
+            <span style="font-size:0.65rem;">Systems checked quarterly</span>
           </div>
         </div>
       </div>
@@ -166,7 +201,7 @@
 
     <section id="owner-view" class="app-section">
       <div class="section-header">
-        <h3><i class="fa-solid fa-user-tie icon-gold"></i> MANAGEMENT</h3>
+        <h3><i class="fa-solid fa-user-tie icon-gold"></i> MANAGEMENT PROFILE</h3>
       </div>
       <div class="glass-card owner-card">
         <div class="owner-profile">
@@ -174,15 +209,17 @@
             <i class="fa-solid fa-user-tie"></i>
           </div>
           <div class="owner-info">
-            <h4>N. Murali Manohar</h4>
-            <p class="role">Founder & Owner</p>
-            <p class="bio-text">Built with the vision of creating a clean, smart and helpful tea experience for everyone.</p>
+            <h4>A. Senthil Kumar</h4>
+            <p class="role">Founder & Executive Owner</p>
+            <p class="bio-text" style="line-height:1.4;">Dedicated to crafting digital ecosystem tools, smart interactive hospitality hubs, and superior quality food beverage structures for every single visitor.</p>
           </div>
         </div>
         <div class="owner-actions">
-          <button class="action-btn"><i class="fa-solid fa-phone"></i> Contact</button>
-          <button class="action-btn"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
+          <button class="action-btn" id="btn-contact"><i class="fa-solid fa-phone"></i> Contact Hotline</button>
+          <button class="action-btn" id="btn-upi"><i class="fa-solid fa-qrcode"></i> UPI / QR Code</button>
         </div>
+        <div id="owner-action-display" class="glass-card hidden" style="margin-top:15px; text-align:center; background:rgba(0,0,0,0.4); font-size:0.85rem;">
+          </div>
       </div>
     </section>
 
