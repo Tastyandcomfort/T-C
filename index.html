@@ -152,13 +152,25 @@
 
       <section id="chat-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> CHATGPT ASSISTANT</h3>
-        <div class="glass-card ai-console">
-          <div class="ai-status"><span class="pulse-dot"></span> System Live</div>
-          <p>Hello! I am your automated AI hub terminal. Ask me anything while you enjoy your warm beverage selections.</p>
+        <div class="glass-card ai-terminal-box">
+          <div class="ai-status"><span class="pulse-dot"></span> System Live & Operational</div>
+          
+          <div class="chatbot-history" id="chat-log-box">
+            <div class="msg-bubble bot-msg">
+              Hello! I am your live AI console assistant. Ask me anything about our menu items, business operating times, or emergency procedures!
+            </div>
+          </div>
+
           <div class="suggested-prompts">
-            <button class="prompt-chip">Nearby hospitals?</button>
-            <button class="prompt-chip">Health tips</button>
-            <button class="prompt-chip">Weather updates</button>
+            <button class="prompt-chip" onclick="sendChipPrompt('What are your shop operating hours?')">Store Timings</button>
+            <button class="prompt-chip" onclick="sendChipPrompt('Where are you located exactly?')">Store Location</button>
+            <button class="prompt-chip" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
+            <button class="prompt-chip" onclick="sendChipPrompt('Do you have emergency services?')">Safety Options</button>
+          </div>
+
+          <div class="chat-input-bar">
+            <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
+            <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
           </div>
         </div>
       </section>
@@ -166,15 +178,16 @@
       <section id="map-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
         <div class="glass-card map-panel">
-          <div class="visual-map">
-            <span class="map-tag tag-hosp">+ Hospital Block</span>
-            <span class="map-tag tag-wash">Washroom</span>
-            <div class="live-pin">
-              <i class="fa-solid fa-location-pin pin-bounce"></i>
-              <div class="pin-lbl">T&C Store</div>
-            </div>
+          <div class="visual-map-container">
+            <iframe 
+              class="live-iframe-map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.2415174092576!2d78.4722247!3d17.400115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99da125cbfa9%3A0x6a2c20630fc239b5!2sNew%20Modern%20Mission%20High%20School!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
           </div>
-          <p class="map-desc-text"><strong>Location Guide:</strong> Situated right opposite the main clinical emergency lane layout framework, providing zero-delay paths to public safety blocks.</p>
+          <p class="map-desc-text"><strong>Location Guide:</strong> Situated securely right alongside the New Modern Mission structure coordinates, establishing rapid cross-walk visibility to regional medical support systems.</p>
         </div>
       </section>
 
