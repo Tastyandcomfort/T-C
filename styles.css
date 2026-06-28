@@ -744,3 +744,41 @@ body {
   .nav-btn span { font-size: 0.6rem; font-weight: 500; }
   .nav-btn.active { color: var(--gold-glow); }
 }
+/* ===================================================
+   CERTIFICATION VIEW PDF BUTTON STYLING
+=================================================== */
+.cert-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Keeps card content aligned cleanly */
+  height: auto;
+  padding: 10px;
+}
+
+.view-pdf-btn {
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--gold-glow);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.view-pdf-btn:hover {
+  background: rgba(255, 183, 77, 0.1);
+  border-color: rgba(255, 183, 77, 0.3);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.view-pdf-btn:active {
+  transform: translateY(1px);
+}
