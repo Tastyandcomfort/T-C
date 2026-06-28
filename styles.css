@@ -515,3 +515,22 @@ body {
 .nav-item.active {
   color: var(--gold);
 }
+/* Section Management Toggles */
+.app-section {
+  display: none; /* Hides all sub-pages initially */
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.app-section.active-view {
+  display: block; /* Only displays the actively clicked option layout */
+}
+
+.text-center-card {
+  text-align: center;
+  padding: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
