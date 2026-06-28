@@ -73,6 +73,22 @@
           </div>
         </div>
 
+        <div class="glass-card offer-banner-card">
+          <div class="offer-image-slot">
+            <img src="images/offer.jpg" alt="Today's Deal Offer" onerror="this.style.display='none';">
+            <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
+          </div>
+          <div class="offer-details-slot">
+            <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
+            <h3>Combo Mega Combo Deal</h3>
+            <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea at an irresistible bundle rate value.</p>
+            <div class="offer-pricing-row">
+              <span class="old-price">₹80</span>
+              <span class="new-glow-price">₹65 Only</span>
+            </div>
+          </div>
+        </div>
+
         <div class="glass-card instruction-card">
           <h3>Welcome to Comfort</h3>
           <p>Tap the dynamic layout navigation bar shortcuts to immediately explore our hot item menus, hospital safety features, location navigation avenues, and compliance certifications.</p>
@@ -82,29 +98,45 @@
       <section id="menu-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-utensils gold-text"></i> OUR MENU</h3>
         <div class="menu-responsive-grid">
-          <div class="glass-card menu-box">
-            <div class="menu-title-row">
-              <h4>Tea</h4>
-              <span class="price-gold">₹10</span>
+          
+          <div class="glass-card menu-box item-has-image">
+            <div class="menu-item-image-frame">
+              <img src="images/tea.jpg" alt="Premium Tea" onerror="this.style.display='none';">
+              <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
             </div>
-            <p class="menu-item-sub">Hot & Refreshing premium milk blends.</p>
+            <div class="menu-item-info-frame">
+              <div class="menu-title-row">
+                <h4>Premium Tea</h4>
+                <span class="price-gold">₹10</span>
+              </div>
+              <p class="menu-item-sub">Hot & Refreshing premium milk blends brewed freshly on order.</p>
+            </div>
           </div>
 
-          <div class="glass-card menu-box fries-box">
-            <h4>French Fries</h4>
-            <div class="portions-flex">
-              <div class="portion-column">
-                <span class="p-title">Small Portion <small>(200gm)</small></span>
-                <div class="p-price"><span>Salted:</span> <strong>₹50</strong></div>
-                <div class="p-price"><span>Masala:</span> <strong>₹60</strong></div>
-              </div>
-              <div class="portion-column">
-                <span class="p-title">Big Portion</span>
-                <div class="p-price"><span>Salted:</span> <strong>₹60</strong></div>
-                <div class="p-price"><span>Masala:</span> <strong>₹70</strong></div>
+          <div class="glass-card menu-box fries-box item-has-image">
+            <div class="menu-item-image-frame">
+              <img src="images/fries.jpg" alt="French Fries" onerror="this.style.display='none';">
+              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+            </div>
+            <div class="menu-item-info-frame">
+              <h4>Crispy French Fries</h4>
+              <p class="menu-item-sub" style="margin-bottom: 10px;">Golden, crisp premium cut potato slices tossed in gourmet spices.</p>
+              
+              <div class="portions-flex">
+                <div class="portion-column">
+                  <span class="p-title">Small Portion <small>(200gm)</small></span>
+                  <div class="p-price"><span>Salted:</span> <strong>₹50</strong></div>
+                  <div class="p-price"><span>Masala:</span> <strong>₹60</strong></div>
+                </div>
+                <div class="portion-column">
+                  <span class="p-title">Big Portion</span>
+                  <div class="p-price"><span>Salted:</span> <strong>₹60</strong></div>
+                  <div class="p-price"><span>Masala:</span> <strong>₹70</strong></div>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -154,20 +186,17 @@
         <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> CHATGPT ASSISTANT</h3>
         <div class="glass-card ai-terminal-box">
           <div class="ai-status"><span class="pulse-dot"></span> System Live & Operational</div>
-          
           <div class="chatbot-history" id="chat-log-box">
             <div class="msg-bubble bot-msg">
               Hello! I am your live AI console assistant. Ask me anything about our menu items, business operating times, or emergency procedures!
             </div>
           </div>
-
           <div class="suggested-prompts">
             <button class="prompt-chip" onclick="sendChipPrompt('What are your shop operating hours?')">Store Timings</button>
             <button class="prompt-chip" onclick="sendChipPrompt('Where are you located exactly?')">Store Location</button>
             <button class="prompt-chip" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
             <button class="prompt-chip" onclick="sendChipPrompt('Do you have emergency services?')">Safety Options</button>
           </div>
-
           <div class="chat-input-bar">
             <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
             <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -181,7 +210,7 @@
           <div class="visual-map-container">
             <iframe 
               class="live-iframe-map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.2415174092576!2d78.4722247!3d17.400115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99da125cbfa9%3A0x6a2c20630fc239b5!2sNew%20Modern%20Mission%20High%20School!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin" 
+              src="https://maps.google.com/maps?q=New%20Modern%20Mission&t=&z=15&ie=UTF8&iwloc=&output=embed" 
               allowfullscreen="" 
               loading="lazy" 
               referrerpolicy="no-referrer-when-downgrade">
