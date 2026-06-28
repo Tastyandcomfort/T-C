@@ -19,7 +19,6 @@ function switchView(sectionId, clickedElement) {
   });
   
   // 4. Highlight current selection across the app interface layout matches
-  // Identifies button pairings automatically by matching item string titles
   const targetLabel = clickedElement.innerText || clickedElement.querySelector('span').innerText;
   allNavButtons.forEach(btn => {
     const btnLabel = btn.innerText || btn.querySelector('span').innerText;
@@ -50,4 +49,70 @@ function showService(title, descriptiveText) {
 function toggleUpi() {
   const upiPanel = document.getElementById('upi-display');
   upiPanel.classList.toggle('hidden');
+}
+
+
+// ===================================================
+// REAL-TIME CHAT ENGINE AUTOMATION RULES
+// ===================================================
+
+// Handles submitting the quick prompt chips
+function sendChipPrompt(promptText) {
+  processChatResponse(promptText);
+}
+
+// Handles checking keyboard Enter clicks inside input field
+function handleChatKey(event) {
+  if (event.key === 'Enter') {
+    submitUserMessage();
+  }
+}
+
+// Main processing sequence for string collection
+function submitUserMessage() {
+  const inputEl = document.getElementById('user-chat-input');
+  const text = inputEl.value.trim();
+  if (!text) return;
+  
+  inputEl.value = ''; // clear input
+  processChatResponse(text);
+}
+
+// Renders the messages log step by step
+function processChatResponse(userQuery) {
+  const logBox = document.getElementById('chat-log-box');
+
+  // 1. Append User Bubble
+  const userBubble = document.createElement('div');
+  userBubble.className = 'msg-bubble user-msg';
+  userBubble.innerText = userQuery;
+  logBox.appendChild(userBubble);
+  
+  // Auto scroll terminal to current point
+  logBox.scrollTop = logBox.scrollHeight;
+
+  // 2. Generate Intelligent Bot Response matching keyword targets
+  let replyText = "I see your message! I'm here to assist with store operations. Can you clarify your question about Fries & Vibes?";
+  const queryLower = userQuery.toLowerCase();
+
+  if (queryLower.includes('hour') || queryLower.includes('time') || queryLower.includes('open')) {
+    replyText = "Fries & Vibes is open daily from 6:00 AM to 10:00 PM! Stop by anytime for hot tea and crispy fries.";
+  } else if (queryLower.includes('menu') || queryLower.includes('price') || queryLower.includes('cost')) {
+    replyText = "Our current specialty items are:\n• Premium Brewed Tea — ₹10\n• French Fries (Small Portion) — ₹50 (Salted) / ₹60 (Masala)\n• French Fries (Big Portion) — ₹60 (Salted) / ₹70 (Masala).";
+  } else if (queryLower.includes('location') || queryLower.includes('where') || queryLower.includes('map')) {
+    replyText = "We are located opposite the main medical wing coordinates next to the New Modern Mission layout framework. Check our 'You Are Here' map view tab for the live display viewport navigation.";
+  } else if (queryLower.includes('service') || queryLower.includes('safe') || queryLower.includes('emergency') || queryLower.includes('rain')) {
+    replyText = "We care about your safety! We provide emergency features including wheelchair access ramps, a certified first aid kit, fire safety measures, and free disposable raincoats during unexpected downpours.";
+  } else if (queryLower.includes('health') || queryLower.includes('hospital')) {
+    replyText = "Our outlet is strategically situated right across from the primary clinical lanes, establishing rapid emergency access lanes if medical attention is required.";
+  }
+
+  // 3. Append Simulated Typing delay layer
+  setTimeout(() => {
+    const botBubble = document.createElement('div');
+    botBubble.className = 'msg-bubble bot-msg';
+    botBubble.innerText = replyText;
+    logBox.appendChild(botBubble);
+    logBox.scrollTop = logBox.scrollHeight;
+  }, 450);
 }
