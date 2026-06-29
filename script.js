@@ -116,3 +116,18 @@ function processChatResponse(userQuery) {
     logBox.scrollTop = logBox.scrollHeight;
   }, 450);
 }
+// Function to update the free map embed based on chosen amenity filters
+function updateFreeMap(amenityType) {
+  const mapIframe = document.getElementById('live-interactive-map');
+  const baseLocation = "New Modern Mission"; // Your stall's main anchoring coordinate
+  
+  // Update iframe source dynamically with a high zoom level (z=16 is roughly 1km view)
+  mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+
+  // Visual feedback: Update active class style across the buttons
+  const chips = document.querySelectorAll('.filter-chip');
+  chips.forEach(chip => chip.classList.remove('active'));
+  
+  // Find the clicked button and light it up
+  event.currentTarget.classList.add('active');
+}
