@@ -225,3 +225,46 @@ body {
   .nav-btn span { font-size: 0.58rem; font-weight: 500; }
   .nav-btn.active { color: var(--gold-glow); }
 }
+/* ===================================================
+   MAP FILTER BUTTONS STYLING
+=================================================== */
+.map-filter-grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto; /* Lets users swipe left/right easily on mobile screens */
+  padding-bottom: 12px;
+  margin-bottom: 10px;
+  scrollbar-width: none; /* Hides bulky scrollbars on Firefox */
+}
+
+.map-filter-grid::-webkit-scrollbar {
+  display: none; /* Hides bulky scrollbars on Chrome/Safari */
+}
+
+.filter-chip {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: #ccc;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap; /* Prevents text from breaking onto two lines */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.filter-chip i {
+  font-size: 0.85rem;
+}
+
+.filter-chip:hover, .filter-chip.active {
+  background: var(--gold-gradient);
+  color: #000;
+  border-color: transparent;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.25);
+}
