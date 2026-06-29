@@ -1,46 +1,55 @@
-// SECTION VIEW MANAGER ENGINE
-function switchView(viewId, element) {
-  // Hide all sections smoothly
-  const sections = document.querySelectorAll('.app-section');
-  sections.forEach(sec => sec.classList.remove('active-view'));
+// VIEW ROUTER NAVIGATION MECHANICS & SECURITY POPUPS
+function switchView(viewId) {
+  // Hide all sections
+  document.querySelectorAll('.app-section').forEach(section => {
+    section.classList.remove('active-view');
+  });
   
   // Show target section
-  const targetView = document.getElementById(viewId);
-  if (targetView) {
-    targetView.classList.add('active-view');
+  const targetSection = document.getElementById(`${viewId}-view`);
+  if (targetSection) {
+    targetSection.classList.add('active-view');
   }
 
-  // Update active states on sidebar
-  const sideItems = document.querySelectorAll('.side-item');
-  sideItems.forEach(item => item.classList.remove('active'));
-  
-  // Update active states on mobile tab-bar
-  const navBtns = document.querySelectorAll('.nav-btn');
-  navBtns.forEach(btn => btn.classList.remove('active'));
+  // Update navbar styling states
+  document.querySelectorAll('.side-item, .nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
 
-  // Highlight active element trigger frame
-  if (element) {
-    element.classList.add('active');
+  // Handle active class tracking logic across sidebar and mobile nav
+  // (Assuming identical naming conventions match text contents or positions)
+  
+  // TRIGGER PRIVACY ANNOUNCEMENTS
+  if (viewId === 'ai-chat') {
+    showApplePopup(
+      "Privacy Verification", 
+      "We don't ask for your personal information, and we highly recommend you not to share any personal details or secure credentials with the AI system.", 
+      "fa-solid fa-user-shield"
+    );
+  } else if (viewId === 'compliance') {
+    showApplePopup(
+      "Sensitive Information", 
+      "This section contains confidential corporate credentials, system certifications, and legal compliance documentation.", 
+      "fa-solid fa-triangle-exclamation"
+    );
   }
 }
 
-// SERVICE MONITOR OVERLAY HANDLERS
-function showService(title, description) {
-  document.getElementById('monitor-placeholder').classList.add('hidden');
-  const dataBlock = document.getElementById('monitor-data');
-  dataBlock.classList.remove('hidden');
+// APPLE ANNOUNCEMENT POPUP CONTROLLERS
+function showApplePopup(title, message, iconClass) {
+  const overlay = document.getElementById('apple-popup-overlay');
+  document.getElementById('apple-popup-title').innerText = title;
+  document.getElementById('apple-popup-message').innerText = message;
+  document.getElementById('apple-popup-icon').className = iconClass;
   
-  document.getElementById('monitor-title').innerText = title;
-  document.getElementById('monitor-desc').innerText = description;
+  overlay.classList.remove('hidden');
 }
 
-// BIO COMPONENT ACTIONS
-function toggleUpi() {
-  const upiFrame = document.getElementById('upi-display');
-  upiFrame.classList.toggle('hidden');
+function closeApplePopup() {
+  document.getElementById('apple-popup-overlay').classList.add('hidden');
 }
 
-// IN-APP MAP RENDERING ENGINE CONTROLLERS (FIXED GO BUTTON BUG)
+// IN-APP MAP RENDERING ENGINE CONTROLLERS
 function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.trim();
   const mapIframe = document.getElementById('live-interactive-map');
@@ -53,12 +62,9 @@ function launchInAppSearch() {
   const originAddress = encodeURIComponent("New Modern Mission");
   const destinationAddress = encodeURIComponent(destInput);
   
-  // FIXED: Standardized string interpolation format parameters correctly
   mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
   
-  // Clear category chip selections since a unique search is running
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
 }
 
 function handleMapSearchKey(event) {
@@ -73,49 +79,56 @@ function updateFreeMap(amenityType) {
   
   mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
-  // Update button highlights
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+  if(event && event.currentTarget) {
+    event.currentTarget.classList.add('active');
+  }
 }
 
-
-// SIMPLE INTEGRATED CHAT INTERFACES
-function handleChatKey(event) {
-  if (event.key === 'Enter') { submitUserMessage(); }
+// DIAGNOSTIC SERVICE CONSOLE LOGS
+function triggerUtilityLog(serviceName) {
+  const placeholder = document.getElementById('monitor-placeholder');
+  placeholder.innerHTML = `
+    <div style="width:100%">
+      <h5 style="color:#fff; margin-bottom:4px;">Monitoring: ${serviceName}</h5>
+      <p style="color:var(--neon-green); font-family:monospace; font-size:0.75rem;">
+        [OK] Telemetry stream active... No anomalies detected on localized nodes.
+      </p>
+    </div>
+  `;
 }
 
-function sendChipPrompt(text) {
-  document.getElementById('user-chat-input').value = text;
-  submitUserMessage();
-}
+// AI ENGINE CHAT CONSOLE FLOWS
+function executeChat() {
+  const inputEl = document.getElementById('chat-user-input');
+  const history = document.getElementById('chat-history');
+  const text = inputEl.value.trim();
+  if(!text) return;
 
-function submitUserMessage() {
-  const txtBox = document.getElementById('user-chat-input');
-  const rawMsg = txtBox.value.trim();
-  if (!rawMsg) return;
+  // Append User message
+  const uBubble = document.createElement('div');
+  uBubble.className = "msg-bubble user-msg";
+  uBubble.innerText = text;
+  history.appendChild(uBubble);
+  inputEl.value = "";
 
-  const logBox = document.getElementById('chat-log-box');
-  
-  // Append User message row
-  logBox.innerHTML += `<div class="msg-bubble user-msg">${rawMsg}</div>`;
-  txtBox.value = "";
-  
-  // Auto Scroll logs
-  logBox.scrollTop = logBox.scrollHeight;
-
-  // Simple automated responses
+  // Mock reply response pipeline
   setTimeout(() => {
-    let response = "I'm processing that request! For immediate queries about our fresh menu or exact directions, please tap the Menu or Map tabs.";
-    if (rawMsg.toLowerCase().includes('hour') || rawMsg.toLowerCase().includes('time')) {
-      response = "Our stall is open from 6:00 AM to 10:00 PM every day! Drop by anytime for hot tea and crispy fries.";
-    } else if (rawMsg.toLowerCase().includes('price') || rawMsg.toLowerCase().includes('cost')) {
-      response = "Our Premium Tea is ₹10. Crispy French Fries start at just ₹50 for a small portion and ₹60 for a big portion!";
-    } else if (rawMsg.toLowerCase().includes('location') || rawMsg.toLowerCase().includes('where')) {
-      response = "We are located at New Modern Mission. Check out the 'You Are Here' tab to get direct navigation views on our live interactive map!";
-    }
-    
-    logBox.innerHTML += `<div class="msg-bubble bot-msg">${response}</div>`;
-    logBox.scrollTop = logBox.scrollHeight;
-  }, 600);
+    const bBubble = document.createElement('div');
+    bBubble.className = "msg-bubble bot-msg";
+    bBubble.innerText = "Query processed under corporate privacy guidelines. Systems operational.";
+    history.appendChild(bBubble);
+    history.scrollTop = history.scrollHeight;
+  }, 750);
+}
+
+function handleChatKey(e) { if(e.key === 'Enter') executeChat(); }
+function sendPresetPrompt(promptText) {
+  document.getElementById('chat-user-input').value = promptText;
+  executeChat();
+}
+
+// PROFILE UTILS
+function toggleUpi() {
+  document.getElementById('upi-card').classList.toggle('hidden');
 }
