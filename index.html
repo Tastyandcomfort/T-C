@@ -5,18 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fries & Vibes</title>
   <link rel="stylesheet" href="styles.css" />
+  <!-- FontAwesome for Premium Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
+  <!-- App Wrapper for Ultra-Responsive Layout Grid -->
   <div class="dashboard-container">
     
+    <!-- LEFT SIDEBAR -->
     <aside class="sidebar">
       <div class="brand-header">
         <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
         <div>
-          <div class="brand-name">Tasty & Comfort</div>
-          <div class="brand-sub">From New Modern Mission</div>
+          <div class="brand-name">FRIES & VIBES</div>
+          <div class="brand-sub">Crispy Bites, Happy Vibes!</div>
         </div>
       </div>
       
@@ -39,13 +42,15 @@
       </div>
     </aside>
 
+    <!-- MAIN INTERACTIVE DISPLAY PANEL -->
     <main class="main-content">
       
+      <!-- Top Mobile Header Status Bar -->
       <header class="mobile-top-bar">
         <div class="mobile-brand">
           <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
           <div>
-            <div class="brand-name">Tasty & Comfort</div>
+            <div class="brand-name">FRIES & VIBES</div>
             <div class="brand-sub">From New Modern Mission</div>
           </div>
         </div>
@@ -55,24 +60,26 @@
         </div>
       </header>
 
+      <!-- VIEW SECTION 1: HOME -->
       <section id="home-view" class="app-section active-view">
-        <div class="hero-showcase">
+        <div class="hero-showcase horizontal-hero">
           <div class="hero-left">
             <span class="gold-italic">Welcome to</span>
-            <h2>New Modern Mission</h2>
+            <h2>New Modern Mission T&C</h2>
             <p class="tagline-muted">More Than Tea</p>
             <div class="live-badge">
               <i class="fa-solid fa-circle-check"></i>
               <span>We are open<br><small>6:00 AM - 10:00 PM</small></span>
             </div>
           </div>
-          <div class="hero-right">
-            <div class="glass-circle-art">
-              <i class="fa-solid fa-mug-hot massive-icon"></i>
-            </div>
+          <!-- ADDED: Home Main Welcome Image Showcase Frame -->
+          <div class="hero-right-image">
+            <img src="images/home-hero.jpg" alt="Fries & Vibes Showcase" onerror="this.style.display='none';">
+            <div class="hero-image-fallback"><i class="fa-solid fa-store"></i></div>
           </div>
         </div>
 
+        <!-- TODAY'S EXCLUSIVE OFFER BANNER BOX -->
         <div class="glass-card offer-banner-card">
           <div class="offer-image-slot">
             <img src="images/offer.jpg" alt="Today's Deal Offer" onerror="this.style.display='none';">
@@ -81,7 +88,7 @@
           <div class="offer-details-slot">
             <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
             <h3>Combo Mega Combo Deal</h3>
-            <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea at an irresistible bundle rate value.</p>
+            <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
             <div class="offer-pricing-row">
               <span class="old-price">₹80</span>
               <span class="new-glow-price">₹65 Only</span>
@@ -95,36 +102,41 @@
         </div>
       </section>
 
+      <!-- VIEW SECTION 2: MENU (COMPACTED ITEMS & PRICES) -->
       <section id="menu-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-utensils gold-text"></i> OUR MENU</h3>
-        <div class="menu-responsive-grid">
+        <div class="menu-responsive-grid compact-grid">
           
-          <div class="glass-card menu-box item-has-image">
-            <div class="menu-item-image-frame">
+          <!-- MENU BOX 1: TEA -->
+          <div class="glass-card menu-box item-has-image compact-box">
+            <div class="menu-item-image-frame compact-frame">
               <img src="images/tea.jpg" alt="Premium Tea" onerror="this.style.display='none';">
               <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
             </div>
-            <div class="menu-item-info-frame">
+            <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Premium Tea</h4>
-                <span class="price-gold">₹10</span>
+                <span class="price-gold text-small-price">₹10</span>
               </div>
-              <p class="menu-item-sub">Hot & Refreshing premium milk blends brewed freshly on order.</p>
+              <p class="menu-item-sub text-small-desc">Hot & Refreshing premium milk blends brewed freshly on order.</p>
             </div>
           </div>
 
-          <div class="glass-card menu-box fries-box item-has-image">
-            <div class="menu-item-image-frame">
+          <!-- MENU BOX 2: FRIES -->
+          <div class="glass-card menu-box item-has-image compact-box">
+            <div class="menu-item-image-frame compact-frame">
               <img src="images/fries.jpg" alt="French Fries" onerror="this.style.display='none';">
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
-            <div class="menu-item-info-frame">
-              <h4>Crispy French Fries</h4>
-              <p class="menu-item-sub" style="margin-bottom: 10px;">Golden, crisp premium cut potato slices tossed in gourmet spices.</p>
+            <div class="menu-item-info-frame compact-info">
+              <div class="menu-title-row">
+                <h4>Crispy French Fries</h4>
+              </div>
+              <p class="menu-item-sub text-small-desc">Golden, crisp premium cut potato slices tossed in gourmet spices.</p>
               
-              <div class="portions-flex">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
-                  <span class="p-title">Small Portion <small>(200gm)</small></span>
+                  <span class="p-title">Small <small>(200g)</small></span>
                   <div class="p-price"><span>Salted:</span> <strong>₹50</strong></div>
                   <div class="p-price"><span>Masala:</span> <strong>₹60</strong></div>
                 </div>
@@ -140,9 +152,9 @@
         </div>
       </section>
 
+      <!-- VIEW SECTION 3: SERVICES -->
       <section id="services-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-heart-pulse gold-text"></i> OUR SERVICES</h3>
-        
         <div id="live-service-monitor" class="glass-card dynamic-display-panel">
           <div id="monitor-placeholder">
             <i class="fa-solid fa-hand-pointer tap-animate"></i>
@@ -153,7 +165,6 @@
             <p id="monitor-desc"></p>
           </div>
         </div>
-
         <div class="services-icon-grid">
           <div class="service-item-card s-blue" onclick="showService('Wheelchair Assistance', 'Equipped with wide spatial accessibility aisles and smooth transition ramp support structures throughout.')">
             <i class="fa-solid fa-wheelchair"></i><span>Wheelchair</span>
@@ -182,20 +193,18 @@
         </div>
       </section>
 
+      <!-- VIEW SECTION 4: CHATGPT -->
       <section id="chat-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> CHATGPT ASSISTANT</h3>
         <div class="glass-card ai-terminal-box">
           <div class="ai-status"><span class="pulse-dot"></span> System Live & Operational</div>
           <div class="chatbot-history" id="chat-log-box">
-            <div class="msg-bubble bot-msg">
-              Hello! I am your live AI console assistant. Ask me anything about our menu items, business operating times, or emergency procedures!
-            </div>
+            <div class="msg-bubble bot-msg">Hello! Ask me anything about our menu items, operating times, or safety options!</div>
           </div>
           <div class="suggested-prompts">
             <button class="prompt-chip" onclick="sendChipPrompt('What are your shop operating hours?')">Store Timings</button>
             <button class="prompt-chip" onclick="sendChipPrompt('Where are you located exactly?')">Store Location</button>
             <button class="prompt-chip" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
-            <button class="prompt-chip" onclick="sendChipPrompt('Do you have emergency services?')">Safety Options</button>
           </div>
           <div class="chat-input-bar">
             <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
@@ -204,81 +213,57 @@
         </div>
       </section>
 
+      <!-- VIEW SECTION 5: MAP -->
       <section id="map-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
         <div class="glass-card map-panel">
           <div class="visual-map-container">
-            <iframe 
-              class="live-iframe-map"
-              src="https://maps.google.com/maps?q=New%20Modern%20Mission&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-              allowfullscreen="" 
-              loading="lazy" 
-              referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
+            <iframe class="live-iframe-map" src="https://maps.google.com/maps?q=New%20Modern%20Mission&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
           </div>
-          <p class="map-desc-text"><strong>Location Guide:</strong> Situated securely right alongside the New Modern Mission structure coordinates, establishing rapid cross-walk visibility to regional medical support systems.</p>
         </div>
       </section>
 
-            <!-- VIEW SECTION 6: CERTIFICATIONS -->
+      <!-- VIEW SECTION 6: CERTIFICATIONS -->
       <section id="cert-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
         <div class="glass-card cert-container">
           <div class="cert-grid">
-            
-            <!-- BADGE 1: FSSAI -->
             <div class="cert-badge">
               <div class="badge-icon gold-badge">fssai</div>
               <h6>FSSAI Certificate</h6>
               <span class="v-status">VERIFIED</span>
-              <!-- PDF View Button (Icons preserved) -->
-              <a href="pdfs/fssai.pdf" target="_blank" class="view-pdf-btn">
-                <i class="fa-regular fa-file-pdf"></i> View PDF
-              </a>
+              <a href="pdfs/fssai.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
-
-            <!-- BADGE 2: WATER TEST -->
             <div class="cert-badge">
               <div class="badge-icon blue-badge"><i class="fa-solid fa-droplet"></i></div>
               <h6>Water Test Report</h6>
               <span class="v-status">VERIFIED</span>
-              <a href="pdfs/water-test.pdf" target="_blank" class="view-pdf-btn">
-                <i class="fa-regular fa-file-pdf"></i> View PDF
-              </a>
+              <a href="pdfs/water-test.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
-
-            <!-- BADGE 3: HYGIENE -->
             <div class="cert-badge">
               <div class="badge-icon green-badge"><i class="fa-solid fa-leaf"></i></div>
               <h6>Hygienic Practices</h6>
               <span class="v-status">VERIFIED</span>
-              <a href="pdfs/hygiene.pdf" target="_blank" class="view-pdf-btn">
-                <i class="fa-regular fa-file-pdf"></i> View PDF
-              </a>
+              <a href="pdfs/hygiene.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
-
-            <!-- BADGE 4: FIRE SAFETY -->
             <div class="cert-badge">
               <div class="badge-icon red-badge"><i class="fa-solid fa-fire-extinguisher"></i></div>
               <h6>Fire Safety</h6>
               <span class="v-status">VERIFIED</span>
-              <a href="pdfs/fire-safety.pdf" target="_blank" class="view-pdf-btn">
-                <i class="fa-regular fa-file-pdf"></i> View PDF
-              </a>
+              <a href="pdfs/fire-safety.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
-
           </div>
         </div>
       </section>
 
-
+      <!-- VIEW SECTION 7: OWNER BIO -->
       <section id="owner-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-user-tie gold-text"></i> OWNER BIO</h3>
         <div class="glass-card owner-box">
           <div class="owner-header">
             <div class="owner-avatar"><i class="fa-solid fa-user-tie"></i></div>
             <div>
-              <h4>N. Murali Manohar</h4>
+              <h4>A. Senthil Kumar</h4>
               <p class="owner-title-label">Founder & Owner</p>
             </div>
           </div>
@@ -288,14 +273,14 @@
             <button class="btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
           </div>
           <div id="upi-display" class="glass-card hidden upi-reveal-card">
-            <code>t&c@upi</code>
-            <p>Scan standard merchant QR code at service counters.</p>
+            <code>senthil.kumar@upi</code>
           </div>
         </div>
       </section>
 
     </main>
 
+    <!-- FIXED BOTTOM NAVIGATION BAR -->
     <footer class="bottom-mobile-nav">
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
