@@ -18,7 +18,7 @@
       <div class="brand-header">
         <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
         <div>
-          <div class="brand-name">FRIES & VIBES</div>
+          <div class="brand-name">Tasty & Comfort</div>
           <div class="brand-sub">Crispy Bites, Happy Vibes!</div>
         </div>
       </div>
@@ -50,7 +50,7 @@
         <div class="mobile-brand">
           <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
           <div>
-            <div class="brand-name">FRIES & VIBES</div>
+            <div class="brand-name">Tasty & Comfort</div>
             <div class="brand-sub">From New Modern Mission</div>
           </div>
         </div>
@@ -213,15 +213,38 @@
         </div>
       </section>
 
-      <!-- VIEW SECTION 5: MAP -->
+            <!-- VIEW SECTION 5: MAP (WITH FREE API-LESS INTERACTIVE FILTER BUTTONS) -->
       <section id="map-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
+        
+        <!-- Filter Button Grid for 1km Radius Searches -->
+        <div class="map-filter-grid">
+          <button class="filter-chip active" onclick="updateFreeMap('amenities')"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
+          <button class="filter-chip" onclick="updateFreeMap('hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
+          <button class="filter-chip" onclick="updateFreeMap('police+station')"><i class="fa-solid fa-shield"></i> Police</button>
+          <button class="filter-chip" onclick="updateFreeMap('fire+station')"><i class="fa-solid fa-fire-extinguisher"></i> Fire Station</button>
+          <button class="filter-chip" onclick="updateFreeMap('bus+stop')"><i class="fa-solid fa-bus"></i> Bus Stop</button>
+          <button class="filter-chip" onclick="updateFreeMap('courier+service')"><i class="fa-solid fa-box"></i> Courier</button>
+          <button class="filter-chip" onclick="updateFreeMap('temple')"><i class="fa-solid fa-gopuram"></i> Temple</button>
+          <button class="filter-chip" onclick="updateFreeMap('shopping+mall')"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
+          <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand')"><i class="fa-solid fa-taxi"></i> Cab Points</button>
+        </div>
+
         <div class="glass-card map-panel">
           <div class="visual-map-container">
-            <iframe class="live-iframe-map" src="https://maps.google.com/maps?q=New%20Modern%20Mission&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+            <!-- Free Interactive Iframe Embed -->
+            <iframe 
+              id="live-interactive-map"
+              class="live-iframe-map"
+              src="https://maps.google.com/maps?q=New%20Modern%20Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+              allowfullscreen="" 
+              loading="lazy">
+            </iframe>
           </div>
+          <p class="map-desc-text"><strong>Radius Map Guide:</strong> Tap any amenity chip above to dynamically render verified services located within a 1km immediate walking perimeter centered around our stall.</p>
         </div>
       </section>
+
 
       <!-- VIEW SECTION 6: CERTIFICATIONS -->
       <section id="cert-view" class="app-section">
@@ -263,7 +286,7 @@
           <div class="owner-header">
             <div class="owner-avatar"><i class="fa-solid fa-user-tie"></i></div>
             <div>
-              <h4>A. Senthil Kumar</h4>
+              <h4> N. Murali Manohar</h4></h4>
               <p class="owner-title-label">Founder & Owner</p>
             </div>
           </div>
@@ -273,7 +296,7 @@
             <button class="btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
           </div>
           <div id="upi-display" class="glass-card hidden upi-reveal-card">
-            <code>senthil.kumar@upi</code>
+            <code>T&C@upi</code>
           </div>
         </div>
       </section>
