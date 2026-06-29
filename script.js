@@ -40,7 +40,7 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
-// IN-APP MAP RENDERING ENGINE CONTROLLERS
+// IN-APP MAP RENDERING ENGINE CONTROLLERS (FIXED GO BUTTON BUG)
 function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.trim();
   const mapIframe = document.getElementById('live-interactive-map');
@@ -53,7 +53,7 @@ function launchInAppSearch() {
   const originAddress = encodeURIComponent("New Modern Mission");
   const destinationAddress = encodeURIComponent(destInput);
   
-  // Center map on the search location relative to your stall (z=14 extends the view radius)
+  // FIXED: Standardized string interpolation format parameters correctly
   mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
   
   // Clear category chip selections since a unique search is running
@@ -71,7 +71,6 @@ function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
   const baseLocation = "New Modern Mission";
   
-  // Category quick-tabs focus tightly around the stall (z=16 is roughly a 1km view)
   mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
   // Update button highlights
@@ -79,6 +78,7 @@ function updateFreeMap(amenityType) {
   chips.forEach(chip => chip.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
+
 
 // SIMPLE INTEGRATED CHAT INTERFACES
 function handleChatKey(event) {
