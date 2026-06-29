@@ -1,241 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modern Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- FontAwesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fries & Vibes</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
   <div class="dashboard-container">
-    <!-- SIDEBAR LAYOUT (DESKTOP) -->
+    
     <aside class="sidebar">
       <div class="brand-header">
-        <div class="logo-frame"><i class="fa-solid fa-cube"></i></div>
+        <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
         <div>
-          <div class="brand-name">MISSION CONTROL</div>
-          <div class="brand-sub">New Modern Mission</div>
+          <div class="brand-name">FRIES & VIBES</div>
+          <div class="brand-sub">Crispy Bites, Happy Vibes!</div>
         </div>
       </div>
+      
       <nav class="sidebar-nav">
-        <div class="side-item active" onclick="switchView('home')"><i class="fa-solid fa-house"></i> Home</div>
-        <div class="side-item" onclick="switchView('menu')"><i class="fa-solid fa-utensils"></i> Menu Options</div>
-        <div class="side-item" onclick="switchView('utilities')"><i class="fa-solid fa-sliders"></i> Utilities</div>
-        <div class="side-item" onclick="switchView('ai-chat')"><i class="fa-solid fa-robot"></i> AI Assistant</div>
-        <div class="side-item" onclick="switchView('maps')"><i class="fa-solid fa-map-location-dot"></i> Interactive Map</div>
-        <div class="side-item" onclick="switchView('compliance')"><i class="fa-solid fa-award"></i> Certificates</div>
-        <div class="side-item" onclick="switchView('profile')"><i class="fa-solid fa-user-tie"></i> Profile</div>
+        <div class="side-item active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i> Home</div>
+        <div class="side-item" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i> Menu</div>
+        <div class="side-item" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i> Our Services</div>
+        <div class="side-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i> ChatGPT</div>
+        <div class="side-item" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i> You Are Here</div>
+        <div class="side-item" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i> Certifications</div>
+        <div class="side-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i> Owner Bio</div>
       </nav>
+
       <div class="sidebar-weather">
-        <div class="weather-sun"><i class="fa-solid fa-sun"></i></div>
+        <i class="fa-solid fa-cloud-sun weather-sun"></i>
         <div>
-          <div class="temp-text">28°C</div>
-          <div class="condition-text">Clear Skies</div>
+          <div class="temp-text">29°C</div>
+          <div class="condition-text">Partly Cloudy</div>
         </div>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT WRAPPER -->
     <main class="main-content">
-      <!-- Mobile Top Bar -->
-      <div class="mobile-top-bar">
+      
+      <header class="mobile-top-bar">
         <div class="mobile-brand">
-          <div class="brand-name">MISSION CONTROL</div>
+          <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
+          <div>
+            <div class="brand-name">FRIES & VIBES</div>
+            <div class="brand-sub">From New Modern Mission</div>
+          </div>
         </div>
         <div class="mobile-weather">
-          <i class="fa-solid fa-sun" style="color: #f1c40f;"></i> 28°C
+          <i class="fa-solid fa-cloud-sun"></i>
+          <span>29°C<br><small>Partly Cloudy</small></span>
         </div>
-      </div>
+      </header>
 
-      <!-- VIEW SYSTEM 1: HOME PANEL -->
       <section id="home-view" class="app-section active-view">
-        <div class="hero-showcase">
+        <div class="hero-showcase horizontal-hero">
           <div class="hero-left">
-            <span class="gold-italic">Welcome back</span>
-            <h2>New Modern Mission HQ</h2>
-            <p class="tagline-muted">Operational command and localized ecosystem controls.</p>
-            <div class="live-badge"><div class="pulse-dot"></div> Live Connection Secure</div>
+            <span class="gold-italic">Welcome to</span>
+            <h2>New Modern Mission T&C</h2>
+            <p class="tagline-muted">More Than Tea</p>
+            <div class="live-badge">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>We are open<br><small>6:00 AM - 10:00 PM</small></span>
+            </div>
           </div>
           <div class="hero-right-image">
-            <div class="hero-image-fallback"><i class="fa-solid fa-building-shield"></i></div>
+            <img src="images/home-hero.jpg" alt="Fries & Vibes Showcase" onerror="this.style.display='none';">
+            <div class="hero-image-fallback"><i class="fa-solid fa-store"></i></div>
           </div>
         </div>
 
-        <div class="glass-card offer-banner-card">
+        <div class="glass-card offer-banner-card" style="cursor: pointer;" onclick="openMenuPopup('Combo Mega Combo Deal', 'Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.', '₹65 Only', 'images/offer.jpg', '<i class=\'fa-solid fa-tags\'></i>')">
           <div class="offer-image-slot">
+            <img src="images/offer.jpg" alt="Today's Deal Offer" onerror="this.style.display='none';">
             <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
           </div>
           <div class="offer-details-slot">
-            <span class="offer-tag-badge">TODAY'S EXCLUSIVE DEAL</span>
-            <h3>Premium Core Lounge Access</h3>
-            <p>Unlock deep architectural configurations, personalized telemetry data pipelines, and priority server allocations.</p>
+            <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
+            <h3>Combo Mega Combo Deal</h3>
+            <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
             <div class="offer-pricing-row">
-              <span class="old-price">$49</span>
-              <span class="new-glow-price">$19/mo</span>
+              <span class="old-price">₹80</span>
+              <span class="new-glow-price">₹65 Only</span>
             </div>
           </div>
         </div>
+
+        <div class="glass-card instruction-card">
+          <h3>Welcome to Comfort</h3>
+          <p>Tap the dynamic layout navigation bar shortcuts to immediately explore our hot item menus, hospital safety features, location navigation avenues, and compliance certifications.</p>
+        </div>
       </section>
 
-      <!-- VIEW SYSTEM 2: COMPACT CLEAN MENU STYLING -->
       <section id="menu-view" class="app-section">
-        <div class="glass-card">
-          <h3 style="margin-bottom: 15px;">Ecosystem Options</h3>
-          <div class="menu-responsive-grid compact-grid">
-            <div class="menu-box compact-box glass-card">
-              <div class="menu-item-image-frame compact-frame">
-                <div class="item-fallback-icon"><i class="fa-solid fa-microchip"></i></div>
-              </div>
-              <div class="menu-item-info-frame compact-info">
-                <div>
-                  <h4>Standard Module</h4>
-                  <p class="text-small-desc">Baseline node resource allocation.</p>
-                </div>
-                <div class="text-small-price">$0.00</div>
-              </div>
+        <h3 class="section-title"><i class="fa-solid fa-utensils gold-text"></i> OUR MENU</h3>
+        <div class="menu-responsive-grid compact-grid">
+          
+          <div class="glass-card menu-box item-has-image compact-box" style="cursor: pointer;" onclick="openMenuPopup('Premium Tea', 'Hot & Refreshing premium milk blends brewed freshly on order.', '₹10', 'images/tea.jpg', '<i class=\'fa-solid fa-mug-hot\'></i>')">
+            <div class="menu-item-image-frame compact-frame">
+              <img src="images/tea.jpg" alt="Premium Tea" onerror="this.style.display='none';">
+              <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
             </div>
-            <div class="menu-box compact-box glass-card">
-              <div class="menu-item-image-frame compact-frame">
-                <div class="item-fallback-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="menu-item-info-frame compact-info">
+              <div class="menu-title-row">
+                <h4>Premium Tea</h4>
+                <span class="price-gold text-small-price">₹10</span>
               </div>
-              <div class="menu-item-info-frame compact-info">
-                <div>
-                  <h4>Quantum Core Module</h4>
-                  <p class="text-small-desc">High-speed compute priority pipeline configuration.</p>
+              <p class="menu-item-sub text-small-desc">Hot & Refreshing premium milk blends brewed freshly on order.</p>
+            </div>
+          </div>
+
+          <div class="glass-card menu-box item-has-image compact-box" style="cursor: pointer;" onclick="openFriesPopup('images/fries.jpg')">
+            <div class="menu-item-image-frame compact-frame">
+              <img src="images/fries.jpg" alt="French Fries" onerror="this.style.display='none';">
+              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+            </div>
+            <div class="menu-item-info-frame compact-info">
+              <div class="menu-title-row">
+                <h4>Crispy French Fries</h4>
+              </div>
+              <p class="menu-item-sub text-small-desc">Golden, crisp premium cut potato slices tossed in gourmet spices.</p>
+              
+              <div class="portions-flex compact-portions">
+                <div class="portion-column">
+                  <span class="p-title">Small <small>(200g)</small></span>
+                  <div class="p-price"><span>Salted:</span> <strong>₹50</strong></div>
+                  <div class="p-price"><span>Masala:</span> <strong>₹60</strong></div>
                 </div>
-                <div class="portions-flex compact-portions">
-                  <div class="portion-column">
-                    <div class="p-title">Rates</div>
-                    <div class="p-price">Hourly: <strong>$1.50</strong></div>
-                    <div class="p-price">Daily: <strong>$22.00</strong></div>
-                  </div>
+                <div class="portion-column">
+                  <span class="p-title">Big Portion</span>
+                  <div class="p-price"><span>Salted:</span> <strong>₹60</strong></div>
+                  <div class="p-price"><span>Masala:</span> <strong>₹70</strong></div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
-      <!-- VIEW SYSTEM 3: UTILITIES & APP SERVICES -->
-      <section id="utilities-view" class="app-section">
-        <div class="glass-card dynamic-display-panel">
+      <section id="services-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-heart-pulse gold-text"></i> OUR SERVICES</h3>
+        <div id="live-service-monitor" class="glass-card dynamic-display-panel">
           <div id="monitor-placeholder">
             <i class="fa-solid fa-hand-pointer tap-animate"></i>
-            <span>Select an operational service switch below to monitor localized diagnostic signals.</span>
+            <p>Tap any service badge below to inspect real-time system utilities here.</p>
+          </div>
+          <div id="monitor-data" class="hidden">
+            <h4 id="monitor-title" class="gold-text"></h4>
+            <p id="monitor-desc"></p>
           </div>
         </div>
         <div class="services-icon-grid">
-          <div class="service-item-card s-blue" onclick="triggerUtilityLog('Power Grid')"><i class="fa-solid fa-plug"></i><span>Power Grid</span></div>
-          <div class="service-item-card s-red" onclick="triggerUtilityLog('HVAC Engine')"><i class="fa-solid fa-temperature-arrow-up"></i><span>HVAC Engine</span></div>
-          <div class="service-item-card s-orange" onclick="triggerUtilityLog('Firewall Array')"><i class="fa-solid fa-shield-halved"></i><span>Firewall Array</span></div>
-          <div class="service-item-card s-yellow" onclick="triggerUtilityLog('Lighting Matrix')"><i class="fa-solid fa-lightbulb"></i><span>Lighting Matrix</span></div>
+          <div class="service-item-card s-blue" onclick="showService('Wheelchair Assistance', 'Equipped with wide spatial accessibility aisles and smooth transition ramp support structures throughout.')">
+            <i class="fa-solid fa-wheelchair"></i><span>Wheelchair</span>
+          </div>
+          <div class="service-item-card s-red" onclick="showService('First Aid Kit', 'Fully prepared healthcare resources stocked with instant pain relief formulations, clinical updates, and bandages.')">
+            <i class="fa-solid fa-kit-medical"></i><span>First Aid Kit</span>
+          </div>
+          <div class="service-item-card s-orange" onclick="showService('Fire Extinguisher', 'High-grade commercial fire suppression setups engineered to undergo systematic compliance maintenance reviews.')">
+            <i class="fa-solid fa-fire-extinguisher"></i><span>Fire Safety</span>
+          </div>
+          <div class="service-item-card s-yellow" onclick="showService('Use & Throw Raincoat', 'Sudden weather alterations? Ask our customer front counter operators for a complimentary high-density emergency rain cover.')">
+            <i class="fa-solid fa-cloud-showers-heavy"></i><span>Raincoat</span>
+          </div>
+          <div class="service-item-card s-green" onclick="showService('Umbrella Service', 'On-demand structural shield umbrella provisions available to support your transition towards vehicle terminals.')">
+            <i class="fa-solid fa-umbrella"></i><span>Umbrella</span>
+          </div>
+          <div class="service-item-card s-purple" onclick="showService('Tabs with ChatGPT', 'Dedicated hardware interfaces deployed at table zones providing interactive local maps and conversational models.')">
+            <i class="fa-solid fa-tablet-screen-button"></i><span>AI Tablets</span>
+          </div>
+          <div class="service-item-card s-gold" onclick="showService('You Are Here Map', 'Interactive geographic floorplan detailing immediate emergency evacuation infrastructure and walkways.')">
+            <i class="fa-solid fa-map-location-dot"></i><span>Zone Map</span>
+          </div>
+          <div class="service-item-card s-teal" onclick="showService('Chat GPT Assistant', 'Advanced custom LLM integration routing pre-orders, allergy validations, and customized serving feedback.')">
+            <i class="fa-solid fa-robot"></i><span>AI Chat</span>
+          </div>
         </div>
       </section>
 
-      <!-- VIEW SYSTEM 4: AI CHAT CONSOLE MODULE -->
-      <section id="ai-chat-view" class="app-section">
+      <section id="chat-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> CHATGPT ASSISTANT</h3>
         <div class="glass-card ai-terminal-box">
-          <div class="ai-status"><div class="pulse-dot"></div> AI Core Operational</div>
-          <div class="chatbot-history" id="chat-history">
-            <div class="msg-bubble bot-msg">Greetings. How can I support your operation today?</div>
+          <div class="ai-status"><span class="pulse-dot"></span> System Live & Operational</div>
+          <div class="chatbot-history" id="chat-log-box">
+            <div class="msg-bubble bot-msg">Hello! Ask me anything about our menu items, operating times, or safety options!</div>
           </div>
           <div class="suggested-prompts">
-            <div class="prompt-chip" onclick="sendPresetPrompt('Check node diagnostics')">Node Diagnostics</div>
-            <div class="prompt-chip" onclick="sendPresetPrompt('Review access security logs')">Security Logs</div>
+            <button class="prompt-chip" onclick="sendChipPrompt('What are your shop operating hours?')">Store Timings</button>
+            <button class="prompt-chip" onclick="sendChipPrompt('Where are you located exactly?')">Store Location</button>
+            <button class="prompt-chip" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
           </div>
           <div class="chat-input-bar">
-            <input type="text" id="chat-user-input" placeholder="Ask anything..." onkeypress="handleChatKey(event)">
-            <button class="chat-send-btn" onclick="executeChat()"><i class="fa-solid fa-paper-plane"></i></button>
+            <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
+            <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
           </div>
         </div>
       </section>
 
-      <!-- VIEW SYSTEM 5: ENLARGED MAP VIEWPORT -->
-      <section id="maps-view" class="app-section">
-        <div class="map-search-block">
+      <section id="map-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
+        
+        <div class="glass-card map-panel enlarged-map-panel">
+          <div class="visual-map-container luxury-map-height">
+            <iframe 
+              id="live-interactive-map"
+              class="live-iframe-map"
+              src="https://maps.google.com/maps?q=New+Modern+Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+              allowfullscreen="" 
+              loading="lazy">
+            </iframe>
+          </div>
+          <p class="map-desc-text"><strong>Live Navigation Console:</strong> Type any destination below or click a category chip to search directly inside this screen view framework.</p>
+        </div>
+
+        <div class="glass-card map-search-block">
+          <div class="search-routing-title"><i class="fa-solid fa-magnifying-glass-location gold-text"></i> Live Destination Search</div>
           <div class="search-flex-group">
+            <div class="fixed-start-point">
+              <i class="fa-solid fa-circle-dot start-dot-icon"></i>
+              <span class="location-tag">Stall Center (New Modern Mission)</span>
+            </div>
+            <div class="routing-arrow"><i class="fa-solid fa-arrow-down-long"></i></div>
             <div class="destination-input-wrapper">
-              <i class="fa-solid fa-location-crosshairs destination-icon"></i>
-              <input type="text" id="map-custom-destination" placeholder="Search target location addresses near New Modern Mission..." onkeypress="handleMapSearchKey(event)">
-              <button class="map-search-trigger-btn" onclick="launchInAppSearch()">
-                <i class="fa-solid fa-location-arrow"></i>
-              </button>
+              <i class="fa-solid fa-location-pin destination-icon"></i>
+              <input type="text" id="map-custom-destination" placeholder="Search any location (e.g., Charminar, Gachibowli, Airport)..." onkeypress="handleMapSearchKey(event)">
+              <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i> Go</button>
             </div>
           </div>
         </div>
+
         <div class="map-filter-grid">
-          <div class="filter-chip" onclick="updateFreeMap('Restaurants')"><i class="fa-solid fa-utensils"></i> Dining</div>
-          <div class="filter-chip" onclick="updateFreeMap('Hospitals')"><i class="fa-solid fa-hospital"></i> Medical</div>
-          <div class="filter-chip" onclick="updateFreeMap('Transit')"><i class="fa-solid fa-bus"></i> Transit</div>
-        </div>
-        <div class="visual-map-container luxury-map-height">
-          <iframe id="live-interactive-map" class="live-iframe-map" src="https://maps.google.com/maps?q=New%20Modern%20Mission&t=&z=14&ie=UTF8&iwloc=&output=embed"></iframe>
+          <button class="filter-chip active" onclick="updateFreeMap('amenities')"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
+          <button class="filter-chip" onclick="updateFreeMap('hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
+          <button class="filter-chip" onclick="updateFreeMap('police+station')"><i class="fa-solid fa-shield"></i> Police</button>
+          <button class="filter-chip" onclick="updateFreeMap('fire+station')"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
+          <button class="filter-chip" onclick="updateFreeMap('bus+stop')"><i class="fa-solid fa-bus"></i> Bus Stop</button>
+          <button class="filter-chip" onclick="updateFreeMap('courier+service')"><i class="fa-solid fa-box"></i> Courier</button>
+          <button class="filter-chip" onclick="updateFreeMap('temple')"><i class="fa-solid fa-gopuram"></i> Temple</button>
+          <button class="filter-chip" onclick="updateFreeMap('shopping+mall')"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
+          <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand')"><i class="fa-solid fa-taxi"></i> Cab Points</button>
         </div>
       </section>
 
-      <!-- VIEW SYSTEM 6: COMPLIANCE CERTIFICATIONS -->
-      <section id="compliance-view" class="app-section">
-        <div class="glass-card">
-          <h3 style="margin-bottom: 20px;">System Validations & Credentials</h3>
+      <section id="cert-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
+        <div class="glass-card cert-container">
           <div class="cert-grid">
             <div class="cert-badge">
-              <div class="badge-icon gold-badge">ISO</div>
-              <h6>9001:2015</h6>
-              <span class="v-status">VALIDATED</span>
-              <a href="#" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View</a>
+              <div class="badge-icon gold-badge">fssai</div>
+              <h6>FSSAI Certificate</h6>
+              <span class="v-status">VERIFIED</span>
+              <a href="pdfs/fssai.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge">
-              <div class="badge-icon blue-badge">SOC2</div>
-              <h6>Type II</h6>
-              <span class="v-status">COMPLIANT</span>
-              <a href="#" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View</a>
+              <div class="badge-icon blue-badge"><i class="fa-solid fa-droplet"></i></div>
+              <h6>Water Test Report</h6>
+              <span class="v-status">VERIFIED</span>
+              <a href="pdfs/water-test.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
+            </div>
+            <div class="cert-badge">
+              <div class="badge-icon green-badge"><i class="fa-solid fa-leaf"></i></div>
+              <h6>Hygienic Practices</h6>
+              <span class="v-status">VERIFIED</span>
+              <a href="pdfs/hygiene.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
+            </div>
+            <div class="cert-badge">
+              <div class="badge-icon red-badge"><i class="fa-solid fa-fire-extinguisher"></i></div>
+              <h6>Fire Safety</h6>
+              <span class="v-status">VERIFIED</span>
+              <a href="pdfs/fire-safety.pdf" target="_blank" class="view-pdf-btn"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- VIEW SYSTEM 7: BRAND OWNER PROFILE -->
-      <section id="profile-view" class="app-section">
-        <div class="glass-card">
+      <section id="owner-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-user-tie gold-text"></i> OWNER BIO</h3>
+        <div class="glass-card owner-box">
           <div class="owner-header">
-            <div class="owner-avatar"><i class="fa-solid fa-user-shield"></i></div>
+            <div class="owner-avatar"><i class="fa-solid fa-user-tie"></i></div>
             <div>
-              <h3>System Administrator</h3>
-              <span class="owner-title-label">Principal Controller</span>
+              <h4>N. Murali Manohar</h4>
+              <p class="owner-title-label">Founder & Owner</p>
             </div>
           </div>
-          <p class="owner-bio-p">Responsible for systemic updates, firewall integrity parameters, and general application structural operations.</p>
-          <button class="btn" onclick="toggleUpi()"><i class="fa-solid fa-wallet"></i> View Gateway ID</button>
-          <div id="upi-card" class="upi-reveal-card hidden">
-            <p style="font-size: 0.9rem; color: var(--gold-glow);">merchant-gateway-id@oksecure</p>
+          <p class="owner-bio-p">Built with the clear vision of providing a clean, smart, and deeply helpful premium tea experience layout for everyone.</p>
+          <div class="owner-buttons">
+            <a href="tel:+919553904524" class="btn"><i class="fa-solid fa-phone"></i> Contact</a>
+            <button class="btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
+          </div>
+          <div id="upi-display" class="glass-card hidden upi-reveal-card">
+            <code>T&C@upi</code>
           </div>
         </div>
       </section>
+
     </main>
 
-    <!-- BOTTOM MOBILE NAVIGATION LAYOUT -->
-    <nav class="bottom-mobile-nav">
-      <div class="nav-btn active" onclick="switchView('home')"><i class="fa-solid fa-house"></i><span>Home</span></div>
-      <div class="nav-btn" onclick="switchView('menu')"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
-      <div class="nav-btn" onclick="switchView('utilities')"><i class="fa-solid fa-sliders"></i><span>Utils</span></div>
-      <div class="nav-btn" onclick="switchView('ai-chat')"><i class="fa-solid fa-robot"></i><span>AI Chat</span></div>
-      <div class="nav-btn" onclick="switchView('maps')"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
-    </nav>
+    <footer class="bottom-mobile-nav">
+      <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
+      <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
+      <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i><span>Services</span></div>
+      <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>ChatGPT</span></div>
+      <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
+      <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Cert</span></div>
+      <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>Owner</span></div>
+    </footer>
+
   </div>
 
-  <!-- APPLE STYLE ANNOUNCEMENT POPUP SYSTEM -->
-  <div id="apple-popup-overlay" class="apple-popup-overlay hidden">
-    <div class="apple-popup-card">
-      <div class="apple-popup-icon-wrapper">
-        <i id="apple-popup-icon" class="fa-solid fa-shield-halved"></i>
+  <div id="standard-menu-modal" class="popup-overlay hidden" onclick="closePopup('standard-menu-modal')">
+    <div class="popup-window glass-card" onclick="event.stopPropagation()">
+      <button class="popup-close-btn" onclick="closePopup('standard-menu-modal')"><i class="fa-solid fa-xmark"></i></button>
+      <div class="popup-hero-frame">
+        <img id="modal-item-img" src="" alt="Menu Item Preview" onerror="this.style.display='none';">
+        <div id="modal-item-fallback" class="item-fallback-icon"></div>
       </div>
-      <h3 id="apple-popup-title">Privacy Notice</h3>
-      <p id="apple-popup-message">Announcement message payload text context matches.</p>
-      <div class="apple-popup-action-row">
-        <button class="apple-popup-btn" onclick="closeApplePopup()">Dismiss</button>
+      <div class="popup-content-frame">
+        <h3 id="modal-item-title" class="gold-text"></h3>
+        <p id="modal-item-desc" class="tagline-muted" style="font-size: 0.9rem; margin: 10px 0;"></p>
+        <div class="popup-pricing-tier">
+          <span class="price-label">Price:</span>
+          <span id="modal-item-price" class="new-glow-price"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="fries-menu-modal" class="popup-overlay hidden" onclick="closePopup('fries-menu-modal')">
+    <div class="popup-window glass-card" onclick="event.stopPropagation()">
+      <button class="popup-close-btn" onclick="closePopup('fries-menu-modal')"><i class="fa-solid fa-xmark"></i></button>
+      <div class="popup-hero-frame">
+        <img id="modal-fries-img" src="" alt="French Fries Preview" onerror="this.style.display='none';">
+        <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+      </div>
+      <div class="popup-content-frame">
+        <h3 class="gold-text">Crispy French Fries</h3>
+        <p class="tagline-muted" style="font-size: 0.9rem; margin: 10px 0;">Golden, crisp premium cut potato slices tossed in gourmet spices.</p>
+        
+        <div class="modal-portions-container">
+          <div class="modal-portion-card">
+            <h5>Small <small>(200g)</small></h5>
+            <div class="portion-row"><span>Salted:</span> <strong>₹50</strong></div>
+            <div class="portion-row"><span>Masala:</span> <strong>₹60</strong></div>
+          </div>
+          <div class="modal-portion-card">
+            <h5>Big Portion</h5>
+            <div class="portion-row"><span>Salted:</span> <strong>₹60</strong></div>
+            <div class="portion-row"><span>Masala:</span> <strong>₹70</strong></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
