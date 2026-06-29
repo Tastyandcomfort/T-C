@@ -18,7 +18,7 @@
       <div class="brand-header">
         <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
         <div>
-          <div class="brand-name">Tasty & Comfort</div>
+          <div class="brand-name">FRIES & VIBES</div>
           <div class="brand-sub">Crispy Bites, Happy Vibes!</div>
         </div>
       </div>
@@ -50,7 +50,7 @@
         <div class="mobile-brand">
           <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
           <div>
-            <div class="brand-name">Tasty & Comfort</div>
+            <div class="brand-name">FRIES & VIBES</div>
             <div class="brand-sub">From New Modern Mission</div>
           </div>
         </div>
@@ -72,7 +72,6 @@
               <span>We are open<br><small>6:00 AM - 10:00 PM</small></span>
             </div>
           </div>
-          <!-- ADDED: Home Main Welcome Image Showcase Frame -->
           <div class="hero-right-image">
             <img src="images/home-hero.jpg" alt="Fries & Vibes Showcase" onerror="this.style.display='none';">
             <div class="hero-image-fallback"><i class="fa-solid fa-store"></i></div>
@@ -213,38 +212,54 @@
         </div>
       </section>
 
-            <!-- VIEW SECTION 5: MAP (WITH FREE API-LESS INTERACTIVE FILTER BUTTONS) -->
+      <!-- VIEW SECTION 5: MAP (ENLARGED, FULLY IN-APP SEARCH WITH RADIUS REVOKED) -->
       <section id="map-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
         
-        <!-- Filter Button Grid for 1km Radius Searches -->
+        <!-- Enlarged In-App Map Display Frame Container -->
+        <div class="glass-card map-panel enlarged-map-panel">
+          <div class="visual-map-container luxury-map-height">
+            <iframe 
+              id="live-interactive-map"
+              class="live-iframe-map"
+              src="https://maps.google.com/maps?q=New+Modern+Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+              allowfullscreen="" 
+              loading="lazy">
+            </iframe>
+          </div>
+          <p class="map-desc-text"><strong>Live Navigation Console:</strong> Type any destination below or click a category chip to search directly inside this screen view framework.</p>
+        </div>
+
+        <!-- DIRECTION ROUTE SEARCH BAR BLOCK -->
+        <div class="glass-card map-search-block">
+          <div class="search-routing-title"><i class="fa-solid fa-magnifying-glass-location gold-text"></i> Live Destination Search</div>
+          <div class="search-flex-group">
+            <div class="fixed-start-point">
+              <i class="fa-solid fa-circle-dot start-dot-icon"></i>
+              <span class="location-tag">Stall Center (New Modern Mission)</span>
+            </div>
+            <div class="routing-arrow"><i class="fa-solid fa-arrow-down-long"></i></div>
+            <div class="destination-input-wrapper">
+              <i class="fa-solid fa-location-pin destination-icon"></i>
+              <input type="text" id="map-custom-destination" placeholder="Search any location (e.g., Charminar, Gachibowli, Airport)..." onkeypress="handleMapSearchKey(event)">
+              <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i> Go</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AMENITY FILTERS PLACED DIRECTLY BELOW MAP CONTENT -->
         <div class="map-filter-grid">
           <button class="filter-chip active" onclick="updateFreeMap('amenities')"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
           <button class="filter-chip" onclick="updateFreeMap('hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
           <button class="filter-chip" onclick="updateFreeMap('police+station')"><i class="fa-solid fa-shield"></i> Police</button>
-          <button class="filter-chip" onclick="updateFreeMap('fire+station')"><i class="fa-solid fa-fire-extinguisher"></i> Fire Station</button>
+          <button class="filter-chip" onclick="updateFreeMap('fire+station')"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
           <button class="filter-chip" onclick="updateFreeMap('bus+stop')"><i class="fa-solid fa-bus"></i> Bus Stop</button>
           <button class="filter-chip" onclick="updateFreeMap('courier+service')"><i class="fa-solid fa-box"></i> Courier</button>
           <button class="filter-chip" onclick="updateFreeMap('temple')"><i class="fa-solid fa-gopuram"></i> Temple</button>
           <button class="filter-chip" onclick="updateFreeMap('shopping+mall')"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
           <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand')"><i class="fa-solid fa-taxi"></i> Cab Points</button>
         </div>
-
-        <div class="glass-card map-panel">
-          <div class="visual-map-container">
-            <!-- Free Interactive Iframe Embed -->
-            <iframe 
-              id="live-interactive-map"
-              class="live-iframe-map"
-              src="https://maps.google.com/maps?q=New%20Modern%20Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
-              allowfullscreen="" 
-              loading="lazy">
-            </iframe>
-          </div>
-          <p class="map-desc-text"><strong>Radius Map Guide:</strong> Tap any amenity chip above to dynamically render verified services located within a 1km immediate walking perimeter centered around our stall.</p>
-        </div>
       </section>
-
 
       <!-- VIEW SECTION 6: CERTIFICATIONS -->
       <section id="cert-view" class="app-section">
@@ -286,7 +301,7 @@
           <div class="owner-header">
             <div class="owner-avatar"><i class="fa-solid fa-user-tie"></i></div>
             <div>
-              <h4> N. Murali Manohar</h4></h4>
+              <h4>N. Murali Manohar</h4>
               <p class="owner-title-label">Founder & Owner</p>
             </div>
           </div>
@@ -303,7 +318,7 @@
 
     </main>
 
-    <!-- FIXED BOTTOM NAVIGATION BAR -->
+    <!-- FIXED BOTTOM MOBILE NAVIGATION BAR -->
     <footer class="bottom-mobile-nav">
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
