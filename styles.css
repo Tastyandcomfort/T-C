@@ -608,7 +608,7 @@ body {
 }
 
 .visual-map-container {
-  width: 100%;
+  width: 50%;
   height: 400px !important;
   border-radius: 12px;
   overflow: hidden;
@@ -616,7 +616,7 @@ body {
 }
 
 .live-iframe-map {
-  width: 100%;
+  width: 50%;
   height: 400%;
   border: 0;
   filter: grayscale(0.2) invert(0.9) hue-rotate(180deg);
@@ -634,7 +634,7 @@ body {
 
 /* Capsule Search Bar Styling Layout */
 .map-search-block {
-  width: 100%;
+  width: 50%;
   background: rgba(18, 22, 33, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
@@ -644,7 +644,7 @@ body {
 .search-flex-group {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 50%;
 }
 
 .search-routing-title, .fixed-start-point, .routing-arrow {
@@ -655,7 +655,7 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 50%;
 }
 
 .destination-icon {
@@ -666,7 +666,7 @@ body {
 }
 
 .destination-input-wrapper input {
-  width: 100%;
+  width: 50%;
   background: transparent;
   border: none;
   padding: 10px 35px 10px 24px;
