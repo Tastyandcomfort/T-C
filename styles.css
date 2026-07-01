@@ -576,43 +576,21 @@ body {
 /* ===================================================
    VIEW SYSTEM 5: ENLARGED MAP MODULE
 =================================================== */
-#map-section.active-view {
+#map-view {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-#map-section h3 {
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  color: #fff;
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: uppercase;
-}
-
-/* Master card eliminating internal blank vertical flow spaces */
-.map-dashboard-card {
-  background: var(--glass-card-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 16px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.luxury-map-height {
+  height: 450px !important;
 }
 
 .visual-map-container {
   width: 100%;
-  height: 230px !important;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
 .live-iframe-map {
@@ -622,28 +600,24 @@ body {
   filter: grayscale(0.2) invert(0.9) hue-rotate(180deg);
 }
 
-.map-console-text {
-  font-size: 0.82rem;
-  line-height: 1.35;
-  color: #ffffff;
-}
-
-.map-console-text strong {
-  font-weight: 700;
-}
-
-/* Pill Search Box */
+/* Premium Minimal Capsule Search Block */
 .map-search-block {
+  padding: 14px 20px;
+  background: rgba(18, 22, 33, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 30px; 
+  margin: 15px auto 20px auto;
   width: 100%;
-  background: rgba(18, 22, 33, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 2px 14px;
+  max-width: 650px; 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .search-flex-group {
   display: flex;
   align-items: center;
+  gap: 12px;
   width: 100%;
 }
 
@@ -660,18 +634,18 @@ body {
 
 .destination-icon {
   position: absolute;
-  left: 2px;
+  left: 4px;
   color: var(--gold-glow);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .destination-input-wrapper input {
   width: 100%;
   background: transparent;
   border: none;
-  padding: 10px 35px 10px 24px;
+  padding: 10px 45px 10px 28px;
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   outline: none;
 }
 
@@ -681,26 +655,36 @@ body {
 
 .map-search-trigger-btn {
   position: absolute;
-  right: -4px;
+  right: -6px;
   background: var(--gold-gradient);
   border: none;
   color: #000;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%; 
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
 }
 
-/* Horizontal Track Setup */
+.map-search-trigger-btn:active {
+  transform: scale(0.9) rotate(15deg);
+}
+
+/* Luxury Map Chips Horizontal Track Alignment */
 .map-filter-grid {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 4px 0 12px 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 650px;
+  justify-content: flex-start;
   scrollbar-width: none;
 }
 
@@ -709,48 +693,48 @@ body {
 }
 
 .filter-chip {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(17, 20, 29, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #8a90a0;
-  padding: 8px 14px;
+  color: #a0a5b5;
+  padding: 10px 16px;
   border-radius: 10px;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.filter-chip i {
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.filter-chip:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 183, 77, 0.3);
+  transform: translateY(-2px);
+}
+
+.filter-chip:hover i {
+  transform: scale(1.1);
 }
 
 .filter-chip.active {
-  background: rgba(255, 183, 77, 0.06);
+  background: #1a1d26;
   color: var(--gold-glow);
-  border-color: var(--gold-glow);
+  border: 1px solid var(--gold-glow);
   font-weight: 600;
+  box-shadow: 0 0 15px rgba(255, 183, 77, 0.15), inset 0 0 8px rgba(255, 183, 77, 0.05);
 }
 
-/* Secondary Row Grids */
-.red-grid-row {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
-
-.red-grid-item {
-  flex: 1;
-  background: var(--glass-card-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  height: 48px;
-}
-
-.green-banner-row {
-  width: 100%;
-  background: var(--glass-card-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  height: 55px;
+.filter-chip.active i {
+  text-shadow: 0 0 8px currentColor;
 }
 
 /* ===================================================
@@ -922,7 +906,7 @@ body {
   .main-content { 
     margin-left: 0; 
     padding: 12px; 
-    padding-bottom: 85px; /* Pushes layout content safely above the bottom navigation bar */
+    padding-bottom: 75px; 
   }
   
   .mobile-top-bar { 
@@ -988,18 +972,47 @@ body {
     height: 110px; 
   }
   
-  /* FIXED HARD LAYER OVERLAY FOR MOBILE NAVIGATION INTERFACES */
+  /* FIXED VIEWPORT COMPACT DEVICE DRIVERS */
+  .luxury-map-height { 
+    height: calc(100vh - 260px) !important; /* Dynamically sizes map framework relative to layout view height */
+    min-height: 240px !important;
+    max-height: 380px !important;
+  }
+  
+  .map-search-block {
+    width: 100%;
+    padding: 8px 14px;
+    margin: 10px auto;
+  }
+  
+  .destination-input-wrapper input {
+    font-size: 0.82rem;
+    padding-right: 40px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  
+  .map-search-trigger-btn {
+    width: 30px;
+    height: 30px;
+    right: -4px;
+  }
+  
+  .map-filter-grid {
+    padding-bottom: 5px;
+  }
+  
+  /* OVERLAID STICKY MOBILE NAVIGATION ENGINE */
   .bottom-mobile-nav {
     display: flex !important; 
     position: fixed !important; 
     bottom: 0 !important; 
     left: 0 !important; 
     right: 0 !important;
-    height: 65px !important;
-    background: #0d0e12 !important; /* solid black background base avoids transparent visibility bugs */
+    background: #0d0e12 !important; 
     border-top: 1px solid var(--glass-border) !important;
-    padding: 10px 0 !important; 
-    z-index: 99999 !important; /* Forces maximum depth priority overlay order */
+    padding: 8px 0 !important; 
+    z-index: 99999 !important; 
   }
   
   .nav-btn { 
