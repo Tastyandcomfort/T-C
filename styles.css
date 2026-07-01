@@ -577,7 +577,7 @@ body {
    VIEW SYSTEM 5: ENLARGED MAP & CAPSULE SEARCH BAR
 =================================================== */
 .luxury-map-height {
-  height: 450px;
+  height: 450px !important;
 }
 
 .visual-map-container {
@@ -891,16 +891,12 @@ body {
 }
 
 @media (max-width: 768px) {
-  /* Dynamic constraints to make map section fit without overflow */
-  #map-view {
-    display: none;
-    flex-direction: column;
-    height: calc(100vh - 160px); 
-    overflow: hidden;
-  }
-  
+  /* Dynamic Flexbox behavior on the map parent section wrapper */
   #map-view.active-view {
-    display: flex;
+    display: flex !important;
+    flex-direction: column;
+    height: calc(100vh - 150px); /* Locks view exactly within visible bounds */
+    overflow: hidden;
   }
 
   .sidebar { 
@@ -976,23 +972,27 @@ body {
     height: 110px; 
   }
   
-  /* RESPONSIVE SCALING FIXES FOR THE IN-APP MAP */
+  /* FIXED VIEWPORT ADAPTABILITY SIZE DRIVERS */
   .enlarged-map-panel {
     flex-grow: 1;
-    margin-bottom: 10px;
-    padding: 10px;
     display: flex;
     flex-direction: column;
+    margin-bottom: 5px;
+    padding: 10px;
   }
 
   .luxury-map-height { 
-    height: 100% !important;
-    min-height: 180px;
+    height: 100% !important; /* Dynamically resizes maps to utilize left-over viewport space */
+    flex-grow: 1;
+  }
+
+  .visual-map-container {
+    height: 100%;
     flex-grow: 1;
   }
   
   .map-desc-text {
-    display: none; /* Strip description to save layout real-estate on mobile */
+    display: none; /* Hide helper subtitle strings to conserve container rows */
   }
 
   .map-search-block {
@@ -1003,17 +1003,17 @@ body {
   
   .destination-input-wrapper input {
     font-size: 0.82rem;
-    padding: 6px 40px 6px 24px;
+    padding-right: 40px;
   }
   
   .map-search-trigger-btn {
-    width: 30px;
-    height: 30px;
-    right: -2px;
+    width: 32px;
+    height: 32px;
+    right: -4px;
   }
 
   .map-filter-grid {
-    padding: 4px 0;
+    padding: 5px 0;
     margin: 0;
   }
   
