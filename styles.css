@@ -574,7 +574,7 @@ body {
 }
 
 /* ===================================================
-   VIEW SYSTEM 5: ENLARGED MAP MODULE (YELLOW HIGHLIGHT AS PER 1000128657.JPG)
+   VIEW SYSTEM 5: ENLARGED MAP MODULE
 =================================================== */
 #map-section.active-view {
   display: flex;
@@ -594,7 +594,7 @@ body {
   text-transform: uppercase;
 }
 
-/* Unified Card containing all Map Console elements */
+/* Master card eliminating internal blank vertical flow spaces */
 .map-dashboard-card {
   background: var(--glass-card-bg);
   border: 1px solid var(--glass-border);
@@ -608,16 +608,16 @@ body {
 }
 
 .visual-map-container {
-  width: 90%;
-  height: 80% !important;
+  width: 100%;
+  height: 230px !important;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .live-iframe-map {
-  width: 90%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   border: 0;
   filter: grayscale(0.2) invert(0.9) hue-rotate(180deg);
 }
@@ -632,9 +632,9 @@ body {
   font-weight: 700;
 }
 
-/* Capsule Search Bar Styling Layout */
+/* Pill Search Box */
 .map-search-block {
-  width: 90%;
+  width: 100%;
   background: rgba(18, 22, 33, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
@@ -644,7 +644,7 @@ body {
 .search-flex-group {
   display: flex;
   align-items: center;
-  width: 90%;
+  width: 100%;
 }
 
 .search-routing-title, .fixed-start-point, .routing-arrow {
@@ -655,7 +655,7 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  width: 80%;
+  width: 100%;
 }
 
 .destination-icon {
@@ -666,7 +666,7 @@ body {
 }
 
 .destination-input-wrapper input {
-  width: 80%;
+  width: 100%;
   background: transparent;
   border: none;
   padding: 10px 35px 10px 24px;
@@ -695,7 +695,7 @@ body {
   justify-content: center;
 }
 
-/* Category Filter Horizontal Chips */
+/* Horizontal Track Setup */
 .map-filter-grid {
   display: flex;
   gap: 8px;
@@ -730,9 +730,7 @@ body {
   font-weight: 600;
 }
 
-/* ===================================================
-   SECONDARY DASHBOARD ROWS (RED & GREEN AS PER 1000128657.JPG)
-=================================================== */
+/* Secondary Row Grids */
 .red-grid-row {
   display: flex;
   gap: 8px;
@@ -990,7 +988,7 @@ body {
     height: 110px; 
   }
   
-  /* FIXED HARD LAYER OVERLAY FOR THE BLUE MOBILE NAVIGATION INTERFACE */
+  /* FIXED HARD LAYER OVERLAY FOR MOBILE NAVIGATION INTERFACES */
   .bottom-mobile-nav {
     display: flex !important; 
     position: fixed !important; 
@@ -998,7 +996,7 @@ body {
     left: 0 !important; 
     right: 0 !important;
     height: 65px !important;
-    background: #0d0e12 !important; /* solid black floor background base avoids transparent visibility bugs */
+    background: #0d0e12 !important; /* solid black background base avoids transparent visibility bugs */
     border-top: 1px solid var(--glass-border) !important;
     padding: 10px 0 !important; 
     z-index: 99999 !important; /* Forces maximum depth priority overlay order */
