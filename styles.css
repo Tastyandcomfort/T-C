@@ -1,26 +1,11 @@
-/* ===================================================
-   RESPONSIVE LAYOUT ENGINE (MEDIA QUERIES)
-=================================================== */
-@media (max-width: 992px) {
-  .sidebar { 
-    width: 220px; 
-  }
-  .main-content { 
-    margin-left: 220px; 
-    padding: 25px; 
-  }
-  .services-icon-grid, .cert-grid { 
-    grid-template-columns: repeat(2, 1fr); 
-  }
-}
-
 @media (max-width: 768px) {
-  /* Dynamic Flexbox setup to lock the container layout tightly to the screen size */
+  /* Enforces a strict maximum layout boundaries on the overall application view */
   #map-view.active-view {
     display: flex !important;
     flex-direction: column;
-    height: calc(100vh - 140px); /* Strict height restriction to prevent page overflow */
-    overflow: hidden;
+    height: calc(100vh - 145px) !important; /* Forces layout space preservation for your navigation footer */
+    overflow: hidden !important; 
+    position: relative;
   }
 
   .sidebar { 
@@ -30,7 +15,8 @@
   .main-content { 
     margin-left: 0; 
     padding: 12px; 
-    padding-bottom: 75px; 
+    padding-bottom: 80px; 
+    height: auto;
   }
   
   .mobile-top-bar { 
@@ -96,89 +82,89 @@
     height: 110px; 
   }
   
-  /* TARGETED RESPONSIVE SCALING FOR MAP COMPONENT SUB-ITEMS */
+  /* ENFORCED RESPONSIVE DYNAMIC RESIZING RULES FOR MAP VIEW COMPONENT SUB-ITEMS */
   .enlarged-map-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0;
-    padding: 8px;
-    min-height: 0; /* Important context parameter for inner-flex overflow scaling */
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 0 !important;
+    padding: 6px !important;
+    min-height: 0 !important; /* Critical to allow the elements inside the map view to compress */
   }
 
   .luxury-map-height { 
-    height: 100% !important; /* Forces the map to fill only what space is remaining */
-    flex: 1;
-    min-height: 0;
+    height: 100% !important; 
+    flex: 1 !important;
+    min-height: 150px !important; /* Keeps map visible while respecting your screen limits */
   }
 
   .visual-map-container {
-    height: 100%;
-    flex: 1;
-    min-height: 0;
+    height: 100% !important;
+    flex: 1 !important;
+    min-height: 0 !important;
   }
   
   .map-desc-text {
-    display: none; /* Stripping description string elements to save display vertical space */
+    display: none !important; /* Hides extra description lines to prevent push-down layout scroll behaviors */
   }
 
   .map-search-block {
-    width: 100%;
-    padding: 6px 12px;
-    margin: 6px 0;
+    width: 100% !important;
+    padding: 6px 12px !important;
+    margin: 4px 0 !important;
   }
   
   .destination-input-wrapper input {
-    font-size: 0.8rem;
-    padding: 6px 35px 6px 22px;
+    font-size: 0.8rem !important;
+    padding: 6px 35px 6px 22px !important;
   }
   
   .map-search-trigger-btn {
-    width: 28px;
-    height: 28px;
-    right: -2px;
+    width: 28px !important;
+    height: 28px !important;
+    right: -2px !important;
   }
 
   .map-filter-grid {
-    padding: 4px 0 0 0;
-    margin: 0;
+    padding: 2px 0 0 0 !important;
+    margin: 0 !important;
   }
   
-  /* FIXED MOBILE NAVIGATION MENU BAR FIX */
+  /* FIXED LAYER RE-ORDERING AND PERSISTED AT THE BOTTOM LAYER POSITIONING */
   .bottom-mobile-nav {
-    display: flex; 
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    right: 0;
-    background: rgba(13, 14, 18, 0.98); 
-    border-top: 1px solid var(--glass-border);
-    padding: 12px 0; 
-    backdrop-filter: blur(20px); 
-    -webkit-backdrop-filter: blur(20px); 
-    z-index: 9999; /* Higher priority layer ordering prevents overlapping content rendering over top */
+    display: flex !important; 
+    position: fixed !important; 
+    bottom: 0 !important; 
+    left: 0 !important; 
+    right: 0 !important;
+    background: rgba(13, 14, 18, 0.98) !important; 
+    border-top: 1px solid var(--glass-border) !important;
+    padding: 12px 0 !important; 
+    backdrop-filter: blur(20px) !important; 
+    -webkit-backdrop-filter: blur(20px) !important; 
+    z-index: 99999 !important; /* Absolute layer visibility prioritization rule override */
   }
   
   .nav-btn { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    gap: 3px; 
-    color: var(--text-muted); 
-    flex: 1; 
-    cursor: pointer; 
+    display: flex !important; 
+    flex-direction: column !important; 
+    align-items: center !important; 
+    gap: 3px !important; 
+    color: var(--text-muted) !important; 
+    flex: 1 !important; 
+    cursor: pointer !important; 
   }
   
   .nav-btn i { 
-    font-size: 1rem; 
+    font-size: 1rem !important; 
   }
   
   .nav-btn span { 
-    font-size: 0.58rem; 
-    font-weight: 500; 
+    font-size: 0.58rem !important; 
+    font-weight: 500 !important; 
   }
   
   .nav-btn.active { 
-    color: var(--gold-glow); 
+    color: var(--gold-glow) !important; 
   }
 }
