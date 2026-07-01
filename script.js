@@ -1,5 +1,17 @@
 // SECTION VIEW MANAGER ENGINE
 function switchView(viewId, element) {
+  // Check if user is navigating specifically to the menu section
+  if (viewId === 'menu-view') {
+    const hasShownPopup = sessionStorage.getItem('menuPopupShown');
+    if (!hasShownPopup) {
+      const popupOverlay = document.getElementById('apple-alert-overlay');
+      if (popupOverlay) {
+        popupOverlay.classList.remove('hidden');
+        sessionStorage.setItem('menuPopupShown', 'true');
+      }
+    }
+  }
+
   // Hide all sections smoothly
   const sections = document.querySelectorAll('.app-section');
   sections.forEach(sec => sec.classList.remove('active-view'));
@@ -23,6 +35,18 @@ function switchView(viewId, element) {
     element.classList.add('active');
   }
 }
+
+// INITIALIZE SYSTEM EVENTS
+document.addEventListener("DOMContentLoaded", () => {
+  const closeButton = document.getElementById('apple-alert-close-btn');
+  const popupOverlay = document.getElementById('apple-alert-overlay');
+  
+  if (closeButton && popupOverlay) {
+    closeButton.addEventListener('click', () => {
+      popupOverlay.classList.add('hidden');
+    });
+  }
+});
 
 // SERVICE MONITOR OVERLAY HANDLERS
 function showService(title, description) {
@@ -53,10 +77,8 @@ function launchInAppSearch() {
   const originAddress = encodeURIComponent("New Modern Mission");
   const destinationAddress = encodeURIComponent(destInput);
   
-  // FIXED: Standardized string interpolation format parameters correctly
   mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
   
-  // Clear category chip selections since a unique search is running
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
 }
@@ -73,18 +95,17 @@ function updateFreeMap(amenityType) {
   
   mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
-  // Update button highlights
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
-
 
 // SIMPLE INTEGRATED CHAT INTERFACES
 function handleChatKey(event) {
   if (event.key === 'Enter') { submitUserMessage(); }
 }
 
+// ROUTE INTENT CHIPS
 function sendChipPrompt(text) {
   document.getElementById('user-chat-input').value = text;
   submitUserMessage();
@@ -97,20 +118,17 @@ function submitUserMessage() {
 
   const logBox = document.getElementById('chat-log-box');
   
-  // Append User message row
   logBox.innerHTML += `<div class="msg-bubble user-msg">${rawMsg}</div>`;
   txtBox.value = "";
   
-  // Auto Scroll logs
   logBox.scrollTop = logBox.scrollHeight;
 
-  // Simple automated responses
   setTimeout(() => {
     let response = "I'm processing that request! For immediate queries about our fresh menu or exact directions, please tap the Menu or Map tabs.";
     if (rawMsg.toLowerCase().includes('hour') || rawMsg.toLowerCase().includes('time')) {
       response = "Our stall is open from 6:00 AM to 10:00 PM every day! Drop by anytime for hot tea and crispy fries.";
     } else if (rawMsg.toLowerCase().includes('price') || rawMsg.toLowerCase().includes('cost')) {
-      response = "Our Premium Tea is ₹10. Crispy French Fries start at just ₹50 for a small portion and ₹60 for a big portion!";
+      response = "Our Premium Tea is ₹10. Samosas start at ₹30, and Crispy French Fries start at just ₹50!";
     } else if (rawMsg.toLowerCase().includes('location') || rawMsg.toLowerCase().includes('where')) {
       response = "We are located at New Modern Mission. Check out the 'You Are Here' tab to get direct navigation views on our live interactive map!";
     }
