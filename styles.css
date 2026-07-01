@@ -574,10 +574,15 @@ body {
 }
 
 /* ===================================================
-   VIEW SYSTEM 5: ENLARGED MAP MODULE
+   VIEW SYSTEM 5: ENLARGED MAP MODULE (FIXED SPECIFICITY)
 =================================================== */
+/* Changed selector to prevent map displaying on other views */
 #map-view {
-  display: flex;
+  display: none;
+}
+
+#map-view.active-view {
+  display: flex !important;
   flex-direction: column;
 }
 
@@ -600,7 +605,6 @@ body {
   filter: grayscale(0.2) invert(0.9) hue-rotate(180deg);
 }
 
-/* Premium Minimal Capsule Search Block */
 .map-search-block {
   padding: 14px 20px;
   background: rgba(18, 22, 33, 0.7);
@@ -616,13 +620,32 @@ body {
 
 .search-flex-group {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
 }
 
-.search-routing-title, .fixed-start-point, .routing-arrow {
-  display: none !important; 
+.search-routing-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.fixed-start-point {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+.start-dot-icon {
+  color: var(--neon-green);
+}
+
+.routing-arrow {
+  padding-left: 4px;
+  color: var(--text-muted);
 }
 
 .destination-input-wrapper {
@@ -634,16 +657,17 @@ body {
 
 .destination-icon {
   position: absolute;
-  left: 4px;
+  left: 12px;
   color: var(--gold-glow);
   font-size: 1rem;
 }
 
 .destination-input-wrapper input {
   width: 100%;
-  background: transparent;
-  border: none;
-  padding: 10px 45px 10px 28px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 10px 60px 10px 35px;
   color: #fff;
   font-size: 0.9rem;
   outline: none;
@@ -655,27 +679,17 @@ body {
 
 .map-search-trigger-btn {
   position: absolute;
-  right: -6px;
+  right: 5px;
   background: var(--gold-gradient);
   border: none;
   color: #000;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%; 
-  font-size: 0.9rem;
+  padding: 6px 14px;
+  border-radius: 15px; 
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
 }
 
-.map-search-trigger-btn:active {
-  transform: scale(0.9) rotate(15deg);
-}
-
-/* Luxury Map Chips Horizontal Track Alignment */
 .map-filter-grid {
   display: flex;
   gap: 8px;
@@ -705,24 +719,6 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.filter-chip i {
-  font-size: 0.9rem;
-  transition: transform 0.2s ease;
-}
-
-.filter-chip:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 183, 77, 0.3);
-  transform: translateY(-2px);
-}
-
-.filter-chip:hover i {
-  transform: scale(1.1);
 }
 
 .filter-chip.active {
@@ -730,11 +726,6 @@ body {
   color: var(--gold-glow);
   border: 1px solid var(--gold-glow);
   font-weight: 600;
-  box-shadow: 0 0 15px rgba(255, 183, 77, 0.15), inset 0 0 8px rgba(255, 183, 77, 0.05);
-}
-
-.filter-chip.active i {
-  text-shadow: 0 0 8px currentColor;
 }
 
 /* ===================================================
@@ -796,12 +787,6 @@ body {
   display: inline-flex; 
   align-items: center; 
   gap: 4px; 
-  transition: all 0.2s; 
-}
-
-.view-pdf-btn:hover { 
-  background: rgba(255, 183, 77, 0.1); 
-  color: #fff; 
 }
 
 /* ===================================================
@@ -974,28 +959,20 @@ body {
   
   /* FIXED VIEWPORT COMPACT DEVICE DRIVERS */
   .luxury-map-height { 
-    height: calc(100vh - 260px) !important; /* Dynamically sizes map framework relative to layout view height */
+    height: calc(100vh - 360px) !important; 
     min-height: 240px !important;
     max-height: 380px !important;
   }
   
   .map-search-block {
     width: 100%;
-    padding: 8px 14px;
+    padding: 12px;
     margin: 10px auto;
   }
   
   .destination-input-wrapper input {
     font-size: 0.82rem;
-    padding-right: 40px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-  
-  .map-search-trigger-btn {
-    width: 30px;
-    height: 30px;
-    right: -4px;
+    padding-right: 50px;
   }
   
   .map-filter-grid {
