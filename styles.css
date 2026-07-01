@@ -574,18 +574,45 @@ body {
 }
 
 /* ===================================================
-   VIEW SYSTEM 5: ENLARGED MAP & CAPSULE SEARCH BAR
+   VIEW SYSTEM 5: ENLARGED MAP MODULE (YELLOW HIGHLIGHT AS PER 1000128657.JPG)
 =================================================== */
-.luxury-map-height {
-  height: 450px !important;
+#map-section.active-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#map-section h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #fff;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+
+/* Unified Card containing all Map Console elements */
+.map-dashboard-card {
+  background: var(--glass-card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .visual-map-container {
   width: 100%;
-  border-radius: 16px;
+  height: 230px !important;
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .live-iframe-map {
@@ -595,23 +622,28 @@ body {
   filter: grayscale(0.2) invert(0.9) hue-rotate(180deg);
 }
 
-/* Premium Minimal Capsule Search Block */
+.map-console-text {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: #ffffff;
+}
+
+.map-console-text strong {
+  font-weight: 700;
+}
+
+/* Capsule Search Bar Styling Layout */
 .map-search-block {
-  padding: 14px 20px;
-  background: rgba(18, 22, 33, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 30px; 
-  margin: 15px auto 20px auto;
-  max-width: 650px; 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  background: rgba(18, 22, 33, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 2px 14px;
 }
 
 .search-flex-group {
   display: flex;
   align-items: center;
-  gap: 12px;
   width: 100%;
 }
 
@@ -628,18 +660,18 @@ body {
 
 .destination-icon {
   position: absolute;
-  left: 4px;
+  left: 2px;
   color: var(--gold-glow);
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .destination-input-wrapper input {
   width: 100%;
   background: transparent;
   border: none;
-  padding: 10px 45px 10px 28px;
+  padding: 10px 35px 10px 24px;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   outline: none;
 }
 
@@ -649,35 +681,26 @@ body {
 
 .map-search-trigger-btn {
   position: absolute;
-  right: -6px;
+  right: -4px;
   background: var(--gold-gradient);
   border: none;
   color: #000;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%; 
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
 }
 
-.map-search-trigger-btn:active {
-  transform: scale(0.9) rotate(15deg);
-}
-
-/* Luxury Map Chips Horizontal Track Alignment */
+/* Category Filter Horizontal Chips */
 .map-filter-grid {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 4px 0 12px 0;
-  margin: 0 auto;
-  max-width: 650px;
-  justify-content: flex-start;
+  padding-bottom: 4px;
   scrollbar-width: none;
 }
 
@@ -686,48 +709,50 @@ body {
 }
 
 .filter-chip {
-  background: rgba(17, 20, 29, 0.75);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #a0a5b5;
-  padding: 10px 16px;
+  color: #8a90a0;
+  padding: 8px 14px;
   border-radius: 10px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.filter-chip i {
-  font-size: 0.9rem;
-  transition: transform 0.2s ease;
-}
-
-.filter-chip:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 183, 77, 0.3);
-  transform: translateY(-2px);
-}
-
-.filter-chip:hover i {
-  transform: scale(1.1);
+  gap: 6px;
 }
 
 .filter-chip.active {
-  background: #1a1d26;
+  background: rgba(255, 183, 77, 0.06);
   color: var(--gold-glow);
-  border: 1px solid var(--gold-glow);
+  border-color: var(--gold-glow);
   font-weight: 600;
-  box-shadow: 0 0 15px rgba(255, 183, 77, 0.15), inset 0 0 8px rgba(255, 183, 77, 0.05);
 }
 
-.filter-chip.active i {
-  text-shadow: 0 0 8px currentColor;
+/* ===================================================
+   SECONDARY DASHBOARD ROWS (RED & GREEN AS PER 1000128657.JPG)
+=================================================== */
+.red-grid-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.red-grid-item {
+  flex: 1;
+  background: var(--glass-card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  height: 48px;
+}
+
+.green-banner-row {
+  width: 100%;
+  background: var(--glass-card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  height: 55px;
 }
 
 /* ===================================================
@@ -899,7 +924,7 @@ body {
   .main-content { 
     margin-left: 0; 
     padding: 12px; 
-    padding-bottom: 90px; /* Generous padding ensures elements cannot overlap content */
+    padding-bottom: 85px; /* Pushes layout content safely above the bottom navigation bar */
   }
   
   .mobile-top-bar { 
@@ -965,39 +990,18 @@ body {
     height: 110px; 
   }
   
-  /* MOBILE VIEWS CONSTRAINT SPECIFICS */
-  .luxury-map-height { 
-    height: 250px !important; /* Prevents overflow driving menu off-canvas */
-  }
-  
-  .map-search-block {
-    width: 100%;
-    padding: 10px 16px;
-    margin-bottom: 15px;
-  }
-  
-  .destination-input-wrapper input {
-    font-size: 0.82rem;
-    padding-right: 40px;
-  }
-  
-  .map-search-trigger-btn {
-    width: 32px;
-    height: 32px;
-    right: -4px;
-  }
-  
-  /* UNBREAKABLE FIXED OVERLAY FOR BOTTOM NAVIGATION INTERFACES */
+  /* FIXED HARD LAYER OVERLAY FOR THE BLUE MOBILE NAVIGATION INTERFACE */
   .bottom-mobile-nav {
     display: flex !important; 
     position: fixed !important; 
     bottom: 0 !important; 
     left: 0 !important; 
     right: 0 !important;
-    background: #0d0e12 !important; /* solid fallback base eliminates transparent backdrop overlay bugs */
+    height: 65px !important;
+    background: #0d0e12 !important; /* solid black floor background base avoids transparent visibility bugs */
     border-top: 1px solid var(--glass-border) !important;
-    padding: 12px 0 !important; 
-    z-index: 99999 !important; /* Maximum priority stack order override */
+    padding: 10px 0 !important; 
+    z-index: 99999 !important; /* Forces maximum depth priority overlay order */
   }
   
   .nav-btn { 
