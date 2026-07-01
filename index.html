@@ -5,15 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title> Tasty & Comfort </title>
   <link rel="stylesheet" href="styles.css" />
-  <!-- FontAwesome for Premium Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
-  <!-- App Wrapper for Ultra-Responsive Layout Grid -->
   <div class="dashboard-container">
     
-    <!-- LEFT SIDEBAR -->
     <aside class="sidebar">
       <div class="brand-header">
         <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
@@ -42,10 +39,8 @@
       </div>
     </aside>
 
-    <!-- MAIN INTERACTIVE DISPLAY PANEL -->
     <main class="main-content">
       
-      <!-- Top Mobile Header Status Bar -->
       <header class="mobile-top-bar">
         <div class="mobile-brand">
           <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
@@ -60,7 +55,6 @@
         </div>
       </header>
 
-      <!-- VIEW SECTION 1: HOME -->
       <section id="home-view" class="app-section active-view">
         <div class="hero-showcase horizontal-hero">
           <div class="hero-left">
@@ -78,7 +72,6 @@
           </div>
         </div>
 
-        <!-- TODAY'S EXCLUSIVE OFFER BANNER BOX -->
         <div class="glass-card offer-banner-card">
           <div class="offer-image-slot">
             <img src="images/offer.jpg" alt="Today's Deal Offer" onerror="this.style.display='none';">
@@ -101,12 +94,10 @@
         </div>
       </section>
 
-      <!-- VIEW SECTION 2: MENU (COMPACTED ITEMS & PRICES) -->
       <section id="menu-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-utensils gold-text"></i> OUR MENU</h3>
         <div class="menu-responsive-grid compact-grid">
           
-          <!-- MENU BOX 1: TEA -->
           <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame">
               <img src="images/tea.jpg" alt="Premium Tea" onerror="this.style.display='none';">
@@ -121,7 +112,6 @@
             </div>
           </div>
 
-          <!-- MENU BOX 2: FRIES -->
           <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame">
               <img src="images/fries.jpg" alt="French Fries" onerror="this.style.display='none';">
@@ -151,7 +141,6 @@
         </div>
       </section>
 
-      <!-- VIEW SECTION 3: SERVICES -->
       <section id="services-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-heart-pulse gold-text"></i> OUR SERVICES</h3>
         <div id="live-service-monitor" class="glass-card dynamic-display-panel">
@@ -192,7 +181,6 @@
         </div>
       </section>
 
-      <!-- VIEW SECTION 4: CHATGPT -->
       <section id="chat-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> AI ASSISTANT</h3>
         <div class="glass-card ai-terminal-box">
@@ -212,42 +200,29 @@
         </div>
       </section>
 
-      <!-- VIEW SECTION 5: MAP (ENLARGED, FULLY IN-APP SEARCH WITH RADIUS REVOKED) -->
       <section id="map-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
         
-        <!-- Enlarged In-App Map Display Frame Container -->
-        <div class="glass-card map-panel enlarged-map-panel">
-          <div class="visual-map-container luxury-map-height">
-            <iframe 
-              id="live-interactive-map"
-              class="live-iframe-map"
-              src="https://maps.google.com/maps?q=New+Modern+Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
-              allowfullscreen="" 
-              loading="lazy">
-            </iframe>
-          </div>
-          <p class="map-desc-text"><strong>Live Navigation Console:</strong> Type any destination below or click a category chip to search directly.</p>
+        <div class="visual-map-container luxury-map-height">
+          <iframe 
+            id="live-interactive-map"
+            class="live-iframe-map"
+            src="https://maps.google.com/maps?q=New+Modern+Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+            allowfullscreen="" 
+            loading="lazy">
+          </iframe>
         </div>
 
-        <!-- DIRECTION ROUTE SEARCH BAR BLOCK -->
-        <div class="glass-card map-search-block">
-          <div class="search-routing-title"><i class="fa-solid fa-magnifying-glass-location gold-text"></i> Live Destination Search</div>
+        <div class="map-search-block">
           <div class="search-flex-group">
-            <div class="fixed-start-point">
-              <i class="fa-solid fa-circle-dot start-dot-icon"></i>
-              <span class="location-tag">Stall Center (New Modern Mission)</span>
-            </div>
-            <div class="routing-arrow"><i class="fa-solid fa-arrow-down-long"></i></div>
             <div class="destination-input-wrapper">
               <i class="fa-solid fa-location-pin destination-icon"></i>
-              <input type="text" id="map-custom-destination" placeholder="Search any location (e.g., Charminar, Gachibowli, Airport)..." onkeypress="handleMapSearchKey(event)">
-              <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i> Go</button>
+              <input type="text" id="map-custom-destination" placeholder="Search destination (e.g., Charminar, Gachibowli)..." onkeypress="handleMapSearchKey(event)">
+              <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i></button>
             </div>
           </div>
         </div>
 
-        <!-- AMENITY FILTERS PLACED DIRECTLY BELOW MAP CONTENT -->
         <div class="map-filter-grid">
           <button class="filter-chip active" onclick="updateFreeMap('amenities')"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
           <button class="filter-chip" onclick="updateFreeMap('hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
@@ -261,7 +236,6 @@
         </div>
       </section>
 
-      <!-- VIEW SECTION 6: CERTIFICATIONS -->
       <section id="cert-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
         <div class="glass-card cert-container">
@@ -294,7 +268,6 @@
         </div>
       </section>
 
-      <!-- VIEW SECTION 7: OWNER BIO -->
       <section id="owner-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-user-tie gold-text"></i> OWNER BIO</h3>
         <div class="glass-card owner-box">
@@ -318,7 +291,6 @@
 
     </main>
 
-    <!-- FIXED BOTTOM MOBILE NAVIGATION BAR -->
     <footer class="bottom-mobile-nav">
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
