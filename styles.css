@@ -577,7 +577,7 @@ body {
    VIEW SYSTEM 5: ENLARGED MAP & CAPSULE SEARCH BAR
 =================================================== */
 .luxury-map-height {
-  height: 450px !important;
+  height: 450px;
 }
 
 .visual-map-container {
@@ -600,15 +600,14 @@ body {
   padding: 14px 20px;
   background: rgba(18, 22, 33, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 30px; /* Fully curved glass capsule style */
+  border-radius: 30px; 
   margin: 15px auto 20px auto;
-  max-width: 650px; /* Keeps it centered perfectly on desktop screens */
+  max-width: 650px; 
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Inline single row layout alignment adjustments */
 .search-flex-group {
   display: flex;
   align-items: center;
@@ -616,7 +615,6 @@ body {
   width: 100%;
 }
 
-/* Stripping redundant blocky sections for a much cleaner design layout */
 .search-routing-title, .fixed-start-point, .routing-arrow {
   display: none !important; 
 }
@@ -657,7 +655,7 @@ body {
   color: #000;
   width: 36px;
   height: 36px;
-  border-radius: 50%; /* Rounded dynamic activation button */
+  border-radius: 50%; 
   font-size: 0.9rem;
   cursor: pointer;
   display: flex;
@@ -671,7 +669,6 @@ body {
   transform: scale(0.9) rotate(15deg);
 }
 
-/* Luxury Map Chips Horizontal Track Alignment */
 .map-filter-grid {
   display: flex;
   gap: 8px;
@@ -894,6 +891,18 @@ body {
 }
 
 @media (max-width: 768px) {
+  /* Dynamic constraints to make map section fit without overflow */
+  #map-view {
+    display: none;
+    flex-direction: column;
+    height: calc(100vh - 160px); 
+    overflow: hidden;
+  }
+  
+  #map-view.active-view {
+    display: flex;
+  }
+
   .sidebar { 
     display: none; 
   }
@@ -967,26 +976,45 @@ body {
     height: 110px; 
   }
   
-  /* FIXED VIEWPORT ADAPTABILITY SIZE DRIVERS */
+  /* RESPONSIVE SCALING FIXES FOR THE IN-APP MAP */
+  .enlarged-map-panel {
+    flex-grow: 1;
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
   .luxury-map-height { 
-    height: 320px !important; /* Limits horizontal and vertical map sizing for mobile devices */
+    height: 100% !important;
+    min-height: 180px;
+    flex-grow: 1;
   }
   
+  .map-desc-text {
+    display: none; /* Strip description to save layout real-estate on mobile */
+  }
+
   .map-search-block {
-    width: 96%;
-    padding: 10px 16px;
-    margin-bottom: 15px;
+    width: 100%;
+    padding: 8px 14px;
+    margin: 5px 0;
   }
   
   .destination-input-wrapper input {
     font-size: 0.82rem;
-    padding-right: 40px;
+    padding: 6px 40px 6px 24px;
   }
   
   .map-search-trigger-btn {
-    width: 32px;
-    height: 32px;
-    right: -4px;
+    width: 30px;
+    height: 30px;
+    right: -2px;
+  }
+
+  .map-filter-grid {
+    padding: 4px 0;
+    margin: 0;
   }
   
   /* FIXED MOBILE NAVIGATION DRIVERS */
