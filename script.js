@@ -110,7 +110,7 @@ function updateFreeMap(amenityType) {
 }
 
 // ===================================================
-// LIVE KEYLESS AI INTEGRATED CHAT ENGINE
+// SERVERLESS INTERNET-CONNECTED AI CHAT COUPLING
 // ===================================================
 function handleChatKey(event) {
   if (event.key === 'Enter') { 
@@ -138,7 +138,7 @@ async function submitUserMessage() {
   // Auto Scroll logs
   logBox.scrollTop = logBox.scrollHeight;
 
-  // 1. Add a temporary "Typing..." placeholder indicator for the AI response
+  // 1. Inject a temporary thinking/loading element placeholder
   const typingId = "ai-typing-indicator-" + Date.now();
   logBox.innerHTML += `<div class="msg-bubble bot-msg" id="${typingId}"><i>Thinking...</i></div>`;
   logBox.scrollTop = logBox.scrollHeight;
@@ -146,40 +146,26 @@ async function submitUserMessage() {
   const typingBubble = document.getElementById(typingId);
 
   try {
-    // 2. Query keyless backend via DuckDuckGo interface proxy wrapper
-    const proxyUrl = 'https://api.allorigins.win/get?url=';
-    const targetUrl = 'https://duckduckgo.com/duckchat/v1/chat';
+    // 2. Direct network context hand-off using Puter's optimized edge framework
+    // System context prompt engineered specifically for Tasty & Comfort
+    const contextualPrompt = `You are the friendly, high-tech AI Assistant for "Tasty & Comfort" (T&C), a premium stall located at New Modern Mission. 
+    Stall Details to reference:
+    - Hours: 6:00 AM to 10:00 PM daily.
+    - Menu Items: Premium Tea (₹10), Crispy French Fries (Small Portion Salted: ₹50, Masala: ₹60; Big Portion Salted: ₹60, Masala: ₹70), Soft Sandwiches, and Crispy Punjabi Samosas (1 Piece Classic: ₹30, 2 Piece Box with Chutney: ₹55).
+    - Features: Free Wheelchair assistance, First Aid, Fire Safety tracking, and an interactive "You Are Here" zone structural grid.
+    Keep answers helpful, direct, and conversational.
     
-    // Get authorization context tokens
-    const tokenInit = await fetch(`${proxyUrl}${encodeURIComponent('https://duckduckgo.com/duckchat/v1/status')}`, {
-      headers: { 'x-vqd-accept': '1' }
-    });
-    const tokenData = await tokenInit.json();
-    const vqdToken = tokenInit.headers.get('x-vqd-token') || '1-123456789';
+    User Query: ${rawMsg}`;
 
-    // Dispatch prompt payload packet
-    const response = await fetch(`${proxyUrl}${encodeURIComponent(targetUrl)}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-vqd-token': vqdToken
-      },
-      body: JSON.stringify({
-        model: 'meta-llama/Meta-Llama-3-70B-Instruct-Turbo',
-        messages: [{ role: 'user', content: rawMsg }]
-      })
-    });
-
-    const data = await response.json();
-    const aiReply = JSON.parse(data.contents).choices[0].message.content;
+    const aiReply = await puter.ai.chat(contextualPrompt);
     
-    // Replace typing text with live generative reply frame
+    // Swap thinking state text with true live cloud response payload
     typingBubble.innerText = aiReply;
 
   } catch (error) {
-    console.warn("AI routing timed out or failed. Running custom local dashboard parameters match logic instead:", error);
+    console.warn("Puter Cloud communication interrupted. Executing local structural state fallback arrays:", error);
     
-    // 3. SECURE LOCAL RUNTIME FALLBACK
+    // 3. SECURE PRE-PROGRAMMED BACKEND FALLBACK
     let fallbackResponse = "I'm processing that request! For immediate queries about our fresh menu or exact directions, please tap the Menu or Map tabs.";
     const lowerMsg = rawMsg.toLowerCase();
 
@@ -194,6 +180,6 @@ async function submitUserMessage() {
     typingBubble.innerText = fallbackResponse;
   }
   
-  // Re-verify viewport bounds alignment anchor point
+  // Re-anchor chatbox viewport baseline
   logBox.scrollTop = logBox.scrollHeight;
 }
