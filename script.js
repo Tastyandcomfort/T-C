@@ -110,7 +110,7 @@ function updateFreeMap(amenityType) {
 }
 
 // ===================================================
-// SERVERLESS INTERNET-CONNECTED AI CHAT COUPLING
+// GEMINI NATIVE CHAT INTEGRATION (NO POPUPS)
 // ===================================================
 function handleChatKey(event) {
   if (event.key === 'Enter') { 
@@ -118,7 +118,6 @@ function handleChatKey(event) {
   }
 }
 
-// ROUTE INTENT CHIPS
 function sendChipPrompt(text) {
   document.getElementById('user-chat-input').value = text;
   submitUserMessage();
@@ -138,7 +137,7 @@ async function submitUserMessage() {
   // Auto Scroll logs
   logBox.scrollTop = logBox.scrollHeight;
 
-  // 1. Inject a temporary thinking/loading element placeholder
+  // Inject temporary thinking placeholder
   const typingId = "ai-typing-indicator-" + Date.now();
   logBox.innerHTML += `<div class="msg-bubble bot-msg" id="${typingId}"><i>Thinking...</i></div>`;
   logBox.scrollTop = logBox.scrollHeight;
@@ -146,26 +145,37 @@ async function submitUserMessage() {
   const typingBubble = document.getElementById(typingId);
 
   try {
-    // 2. Direct network context hand-off using Puter's optimized edge framework
-    // System context prompt engineered specifically for Tasty & Comfort
-    const contextualPrompt = `You are the friendly, high-tech AI Assistant for "Tasty & Comfort" (T&C), a premium stall located at New Modern Mission. 
+    // Integrated Key from Google AI Studio
+    const API_KEY = "AQ.Ab8RN6JC78m_b_nOm4OSdPukzBD8vAM67245OzzGVeV4yHUkAg"; 
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+    const systemContext = `You are the friendly, high-tech AI Assistant for "Tasty & Comfort" (T&C), a premium stall located at New Modern Mission. 
     Stall Details to reference:
     - Hours: 6:00 AM to 10:00 PM daily.
     - Menu Items: Premium Tea (₹10), Crispy French Fries (Small Portion Salted: ₹50, Masala: ₹60; Big Portion Salted: ₹60, Masala: ₹70), Soft Sandwiches, and Crispy Punjabi Samosas (1 Piece Classic: ₹30, 2 Piece Box with Chutney: ₹55).
     - Features: Free Wheelchair assistance, First Aid, Fire Safety tracking, and an interactive "You Are Here" zone structural grid.
-    Keep answers helpful, direct, and conversational.
-    
-    User Query: ${rawMsg}`;
+    Keep answers helpful, direct, short, and conversational.`;
 
-    const aiReply = await puter.ai.chat(contextualPrompt);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ 
+          parts: [{ text: `${systemContext}\n\nUser Query: ${rawMsg}` }] 
+        }]
+      })
+    });
+
+    const data = await response.json();
     
-    // Swap thinking state text with true live cloud response payload
+    // Extract text from response payload
+    const aiReply = data.candidates[0].content.parts[0].text;
     typingBubble.innerText = aiReply;
 
   } catch (error) {
-    console.warn("Puter Cloud communication interrupted. Executing local structural state fallback arrays:", error);
+    console.warn("Direct AI connection failed. Executing fallback:", error);
     
-    // 3. SECURE PRE-PROGRAMMED BACKEND FALLBACK
+    // SECURE PRE-PROGRAMMED BACKEND FALLBACK (If key fails or connection drops)
     let fallbackResponse = "I'm processing that request! For immediate queries about our fresh menu or exact directions, please tap the Menu or Map tabs.";
     const lowerMsg = rawMsg.toLowerCase();
 
@@ -180,6 +190,5 @@ async function submitUserMessage() {
     typingBubble.innerText = fallbackResponse;
   }
   
-  // Re-anchor chatbox viewport baseline
   logBox.scrollTop = logBox.scrollHeight;
 }
