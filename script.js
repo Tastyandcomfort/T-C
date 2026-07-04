@@ -209,33 +209,33 @@ function triggerSearch() {
     const destination = document.getElementById("map-custom-destination").value;
     const statusDiv = document.getElementById("map-status");
     
-    if (!destination) return;
+    if (!destination) {
+        alert("Please enter a destination!");
+        return;
+    }
 
-    // Show the spinner
-    statusDiv.innerHTML = '<div class="spinner"></div>';
+    // Show loading state
+    statusDiv.innerHTML = 'Searching route...';
 
+    // Request directions using the DirectionsService
     directionsService.route({
-        origin: MY_COORDS,
+        origin: new google.maps.LatLng(17.3826, 78.3314), // Your stall coordinates
         destination: destination,
         travelMode: google.maps.TravelMode.DRIVING
     }, (response, status) => {
-        // Clear the spinner
-        statusDiv.innerHTML = ""; 
-
         if (status === "OK") {
             directionsRenderer.setDirections(response);
             
-            // EXTRACT AND DISPLAY DISTANCE
+            // Extract and show distance
             const leg = response.routes[0].legs[0];
-            const distance = leg.distance.text;
-            const duration = leg.duration.text;
-            
-            statusDiv.innerHTML = `<strong>Distance:</strong> ${distance} | <strong>Est. Time:</strong> ${duration}`;
+            statusDiv.innerHTML = `<strong>Distance:</strong> ${leg.distance.text} | <strong>Time:</strong> ${leg.duration.text}`;
         } else {
-            statusDiv.innerHTML = "Error: Could not find route.";
+            statusDiv.innerHTML = "Error: Could not find route. Try a clearer address.";
+            console.error("Directions request failed due to " + status);
         }
     });
 }
+
 
 
 // NEARBY: Find markers for metro/police/hospital (Free)
