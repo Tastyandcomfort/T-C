@@ -77,12 +77,16 @@ const ORIGIN = encodeURIComponent("New Modern Mission");
 function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.trim();
   const mapIframe = document.getElementById('live-interactive-map');
+  
   if (!destInput) return;
   
+  const origin = encodeURIComponent("New Modern Mission"); // Ensure this matches your actual location
   const destination = encodeURIComponent(destInput);
-  // Directions mode with real-time routing
-  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${ORIGIN}&destination=${destination}&mode=driving`;
+  
+  // Update the src here:
+  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${origin}&destination=${destination}&mode=driving`;
 }
+
 
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
