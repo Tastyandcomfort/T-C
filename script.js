@@ -194,47 +194,44 @@ async function submitUserMessage() {
 }
 
 
-// Initialize Leaflet Map
-const MY_COORDS = [17.3826, 78.3314];
+// 1. Initialize Map
+const MY_COORDS = [17.3826, 78.3314]; 
 const map = L.map('map-canvas').setView(MY_COORDS, 15);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
 }).addTo(map);
 
-L.marker(MY_COORDS).addTo(map).bindPopup("<b>Tasty & Comfort</b>").openPopup();
+// 2. Add your stall marker
+L.marker(MY_COORDS).addTo(map).bindPopup("Tasty & Comfort").openPopup();
 
-// SEARCH: Find location using Nominatim (Free)
-function triggerSearch() {
+// 3. Search and Distance Logic
+async function triggerSearch() {
     const destination = document.getElementById("map-custom-destination").value;
     const statusDiv = document.getElementById("map-status");
-    
-    if (!destination) {
-        alert("Please enter a destination!");
-        return;
+    if (!destination) return;
+
+    statusDiv.innerText = "Calculating...";
+
+    // Fetch coordinates for the searched destination
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}`);
+    const data = await res.json();
+
+    if (data.length > 0) {
+        const destCoords = [data[0].lat, data[0].lon];
+        
+        // Calculate Distance (Haversine formula)
+        const distance = map.distance(MY_COORDS, destCoords) / 1000; // in km
+        
+        L.marker(destCoords).addTo(map).bindPopup(data[0].display_name).openPopup();
+        map.setView(destCoords, 14);
+        
+        statusDiv.innerHTML = `<strong>Distance:</strong> ${distance.toFixed(2)} km`;
+    } else {
+        statusDiv.innerText = "Location not found.";
     }
-
-    // Show loading state
-    statusDiv.innerHTML = 'Searching route...';
-
-    // Request directions using the DirectionsService
-    directionsService.route({
-        origin: new google.maps.LatLng(17.3826, 78.3314), // Your stall coordinates
-        destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING
-    }, (response, status) => {
-        if (status === "OK") {
-            directionsRenderer.setDirections(response);
-            
-            // Extract and show distance
-            const leg = response.routes[0].legs[0];
-            statusDiv.innerHTML = `<strong>Distance:</strong> ${leg.distance.text} | <strong>Time:</strong> ${leg.duration.text}`;
-        } else {
-            statusDiv.innerHTML = "Error: Could not find route. Try a clearer address.";
-            console.error("Directions request failed due to " + status);
-        }
-    });
 }
+
 
 
 
