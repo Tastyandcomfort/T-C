@@ -599,6 +599,12 @@ body {
   line-height: 1.4; 
 }
 
+/* Styled inline Markdown components within responses */
+.msg-bubble strong {
+  color: var(--gold-glow);
+  font-weight: 700;
+}
+
 .bot-msg { 
   background: #202430; 
   color: #eee; 
@@ -667,14 +673,9 @@ body {
   flex-direction: column;
 }
 
-/* Update your map container class */
-.luxury-map-height { 
-  /* 60vh means it will take up 60% of the visible screen height */
-  height: 60vh !important; 
-  width: 100% !important;
-  flex-shrink: 0;
+.luxury-map-height {
+  height: 340px !important;
 }
-
 
 .visual-map-container {
   width: 100%;
