@@ -98,19 +98,22 @@ function handleMapSearchKey(event) {
   }
 }
 
-function updateFreeMap(amenityType) {
+function updateFreeMap(amenityType, element) {
   const mapIframe = document.getElementById('live-interactive-map');
   const baseLocation = "New Modern Mission";
   
-  mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  mapIframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(amenityType)}+near+${encodeURIComponent(baseLocation)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  
+  if (element) {
+    element.classList.add('active');
+  }
 }
 
 // ===================================================
-// GEMINI NATIVE CHAT INTEGRATION (NO POPUPS)
+// GEMINI NATIVE CHAT INTEGRATION WITH SECURITY FIXES
 // ===================================================
 function handleChatKey(event) {
   if (event.key === 'Enter') { 
@@ -123,6 +126,20 @@ function sendChipPrompt(text) {
   submitUserMessage();
 }
 
+// Lightweight secure Markdown-to-HTML formatter for Gemini responses
+function parseAIResponseMarkdown(text) {
+  // Sanitize layout blocks to prevent layout breakout injection
+  let safeText = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  
+  // Transform formatting tags reliably
+  safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  safeText = safeText.replace(/\n/g, '<br>');
+  return safeText;
+}
+
 async function submitUserMessage() {
   const txtBox = document.getElementById('user-chat-input');
   const rawMsg = txtBox.value.trim();
@@ -130,22 +147,25 @@ async function submitUserMessage() {
 
   const logBox = document.getElementById('chat-log-box');
   
-  // Append User message row
-  logBox.innerHTML += `<div class="msg-bubble user-msg">${rawMsg}</div>`;
-  txtBox.value = "";
+  // XSS FIX: Created dynamic element node using textContent safe-assignment
+  const userBubble = document.createElement('div');
+  userBubble.className = 'msg-bubble user-msg';
+  userBubble.textContent = rawMsg;
+  logBox.appendChild(userBubble);
   
-  // Auto Scroll logs
+  txtBox.value = "";
   logBox.scrollTop = logBox.scrollHeight;
 
-  // Inject temporary thinking placeholder
-  const typingId = "ai-typing-indicator-" + Date.now();
-  logBox.innerHTML += `<div class="msg-bubble bot-msg" id="${typingId}"><i>Thinking...</i></div>`;
+  // Inject temporary thinking placeholder node safely
+  const typingBubble = document.createElement('div');
+  typingBubble.className = 'msg-bubble bot-msg';
+  typingBubble.innerHTML = '<i>Thinking...</i>';
+  logBox.appendChild(typingBubble);
   logBox.scrollTop = logBox.scrollHeight;
-
-  const typingBubble = document.getElementById(typingId);
 
   try {
-    // Integrated verified Key from Google AI Studio
+    // Note: Exposing API keys directly on pure client setups carries exposure risks. 
+    // In production frameworks, proxying endpoints through server infrastructure is recommended.
     const API_KEY = "AQ.Ab8RN6LTSdN1RwE8gkbiByzOSL-Nqs5DwSN0oVmx6YuCe9WKBQ"; 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
@@ -168,9 +188,13 @@ async function submitUserMessage() {
 
     const data = await response.json();
     
-    // Extract text from response payload
-    const aiReply = data.candidates[0].content.parts[0].text;
-    typingBubble.innerText = aiReply;
+    if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text) {
+      const aiReply = data.candidates[0].content.parts[0].text;
+      // Render text beautifully utilizing secure structural parser
+      typingBubble.innerHTML = parseAIResponseMarkdown(aiReply);
+    } else {
+      throw new Error("Invalid response format payload received");
+    }
 
   } catch (error) {
     console.warn("Direct AI connection failed. Executing fallback:", error);
@@ -187,7 +211,7 @@ async function submitUserMessage() {
       fallbackResponse = "We are located at New Modern Mission. Check out the 'You Are Here' tab to get direct navigation views on our live interactive map!";
     }
     
-    typingBubble.innerText = fallbackResponse;
+    typingBubble.textContent = fallbackResponse;
   }
   
   logBox.scrollTop = logBox.scrollHeight;
