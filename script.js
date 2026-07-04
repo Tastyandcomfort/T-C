@@ -49,3 +49,39 @@ function updateFreeMap(amenityType) {
 function handleMapSearchKey(event) {
   if (event.key === 'Enter') launchInAppSearch();
 }
+// Add these to the bottom of your script.js
+function showService(title, desc) {
+  document.getElementById('monitor-placeholder').classList.add('hidden');
+  const monitor = document.getElementById('monitor-data');
+  monitor.classList.remove('hidden');
+  document.getElementById('monitor-title').innerText = title;
+  document.getElementById('monitor-desc').innerText = desc;
+}
+
+function toggleUpi() {
+  document.getElementById('upi-display').classList.toggle('hidden');
+}
+
+function sendChipPrompt(text) {
+  document.getElementById('user-chat-input').value = text;
+  submitUserMessage();
+}
+
+function submitUserMessage() {
+  const input = document.getElementById('user-chat-input');
+  if (input.value.trim() !== "") {
+    const log = document.getElementById('chat-log-box');
+    log.innerHTML += `<div class="msg-bubble user-msg">${input.value}</div>`;
+    input.value = "";
+    log.scrollTop = log.scrollHeight;
+  }
+}
+
+function handleChatKey(event) {
+  if (event.key === 'Enter') submitUserMessage();
+}
+
+// Logic to close the Apple-style alert
+document.getElementById('apple-alert-close-btn').addEventListener('click', function() {
+  document.getElementById('apple-alert-overlay').classList.add('hidden');
+});
