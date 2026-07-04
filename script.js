@@ -71,48 +71,46 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
-const API_KEY = 'AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU'; // Replace with your key
+const API_KEY = 'AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU'; 
 const MY_ORIGIN_COORDS = "17.368135,78.536981";
 
+// 1. Directions/Navigation Function
 function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.trim();
   const mapIframe = document.getElementById('live-interactive-map');
   
-  if (!destInput) return;
+  if (!destInput) {
+    alert("Please enter a destination!");
+    return;
+  }
   
-  const MY_ORIGIN_COORDS = "17.368135,78.536981"; // Ensure this matches your actual location
   const destination = encodeURIComponent(destInput);
   
-  // Update the src here:
-  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${}&origin=${}&destination=${destination}&mode=driving`;
+  // FIXED: Using backticks (`) and ${} to insert your variables correctly
+  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${MY_ORIGIN_COORDS}&destination=${destination}&mode=driving`;
 }
 
-
+// 2. Nearby Search Function (Updated and fixed)
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
-  // Search mode for nearby points of interest
-  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=${API_KEY}&q=${encodeURIComponent(amenityType)}+near+${ORIGIN}`;
   
+  // FIXED: Using the Embed API search format with your variables
+  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=${API_KEY}&q=${encodeURIComponent(amenityType)}+near+${MY_ORIGIN_COORDS}`;
+
+  // UI update logic
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  
+  // Ensure 'event' is defined if called from an onclick
+  if (event) {
+    event.currentTarget.classList.add('active');
+  }
 }
 
 function handleMapSearchKey(event) {
   if (event.key === 'Enter') launchInAppSearch();
 }
 
-
-function updateFreeMap(amenityType) {
-  const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "New Modern Mission";
-  
-  mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
-
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-}
 
 // ===================================================
 // GEMINI NATIVE CHAT INTEGRATION (NO POPUPS)
