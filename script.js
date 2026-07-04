@@ -1,30 +1,42 @@
 // ===================================================
-// SECTION VIEW MANAGER ENGINE
+// ===================================================
+// UPDATED MAP ENGINE & VIEW MANAGER
 // ===================================================
 function switchView(viewId, element) {
-  // Hide all sections smoothly
   const sections = document.querySelectorAll('.app-section');
   sections.forEach(sec => sec.classList.remove('active-view'));
   
-  // Show target section
   const targetView = document.getElementById(viewId);
-  if (targetView) {
-    targetView.classList.add('active-view');
+  if (targetView) targetView.classList.add('active-view');
+
+  // Clear map if leaving the "You Are Here" section
+  if (viewId !== 'map-view') {
+    const mapIframe = document.getElementById('live-interactive-map');
+    if (mapIframe) mapIframe.src = "about:blank"; 
   }
 
-  // Update active states on desktop sidebar
-  const sideItems = document.querySelectorAll('.side-item');
+  const sideItems = document.querySelectorAll('.side-item, .nav-btn');
   sideItems.forEach(item => item.classList.remove('active'));
   
-  // Update active states on mobile bottom navigation tab-bar
-  const navBtns = document.querySelectorAll('.nav-btn');
-  navBtns.forEach(btn => btn.classList.remove('active'));
-
-  // Highlight active element trigger frame
-  if (element) {
-    element.classList.add('active');
-  }
+  if (element) element.classList.add('active');
 }
+
+function launchInAppSearch() {
+  const destInput = document.getElementById('map-custom-destination').value.trim();
+  const mapIframe = document.getElementById('live-interactive-map');
+  
+  if (!destInput) {
+    alert("Please enter a destination!");
+    return;
+  }
+  
+  // Hard-coded origin: 98QH+PJ Gandipet, Telangana[span_2](start_span)[span_2](end_span)
+  const origin = encodeURIComponent("98QH+PJ Gandipet, Telangana");
+  const destination = encodeURIComponent(destInput);
+  
+  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=YOUR_API_KEY&origin=${origin}&destination=${destination}`;
+}
+
 
 // ===================================================
 // INITIALIZE SYSTEM EVENTS & IMMEDIATE APPLE-STYLE POPUP
