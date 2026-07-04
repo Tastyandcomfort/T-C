@@ -192,65 +192,52 @@ async function submitUserMessage() {
   
   logBox.scrollTop = logBox.scrollHeight;
 }
-// ===================================================
-// NEW INTERACTIVE MAP ENGINE
-// ===================================================
-let map, directionsService, directionsRenderer, placesService;
-const MY_COORDS = { lat: 17.3826, lng: 78.3314 }; 
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById("map-canvas"), {
-        center: MY_COORDS,
-        zoom: 15,
-    });
 
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
-    placesService = new google.maps.places.PlacesService(map);
+// Initialize Leaflet Map
+const MY_COORDS = [17.3826, 78.3314];
+const map = L.map('map-canvas').setView(MY_COORDS, 15);
 
-    new google.maps.Marker({ position: MY_COORDS, map: map, title: "Tasty & Comfort" });
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
-    const input = document.getElementById("map-custom-destination");
-    new google.maps.places.Autocomplete(input);
-}
+L.marker(MY_COORDS).addTo(map).bindPopup("<b>Tasty & Comfort</b>").openPopup();
 
-function triggerSearch() {
-    const destination = document.getElementById("map-custom-destination").value;
+// SEARCH: Find location using Nominatim (Free)
+async function triggerSearch() {
+    const query = document.getElementById("map-custom-destination").value;
     const statusDiv = document.getElementById("map-status");
-    
-    if (!destination) return;
+    if (!query) return;
 
-    // Show the spinner
-    statusDiv.innerHTML = '<div class="spinner"></div>';
-
-    directionsService.route({
-        origin: MY_COORDS,
-        destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING
-    }, (response, status) => {
-        // Clear the spinner and status regardless of result
-        statusDiv.innerHTML = ""; 
-
-        if (status === "OK") {
-            directionsRenderer.setDirections(response);
+    statusDiv.innerText = "Searching...";
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        if (data.length > 0) {
+            const { lat, lon } = data[0];
+            map.setView([lat, lon], 15);
+            L.marker([lat, lon]).addTo(map).bindPopup(query).openPopup();
+            statusDiv.innerText = "";
         } else {
-            statusDiv.innerHTML = "Error: Could not find route.";
+            statusDiv.innerText = "Location not found.";
         }
+    } catch (err) {
+        statusDiv.innerText = "Error connecting to service.";
+    }
+}
+
+// NEARBY: Find markers for metro/police/hospital (Free)
+async function findNearby(type) {
+    const url = `https://overpass-api.de/api/interpreter?data=[out:json];node["amenity"="${type}"](around:2000,17.3826,78.3314);out;`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    data.elements.forEach(place => {
+        L.marker([place.lat, place.lon]).addTo(map).bindPopup(place.tags.name || type);
     });
 }
 
 
-function findNearby(type) {
-    placesService.nearbySearch({
-        location: MY_COORDS,
-        radius: 2000,
-        type: [type]
-    }, (results, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            results.forEach(place => {
-                new google.maps.Marker({ position: place.geometry.location, map: map });
-            });
-        }
-    });
-}
+
