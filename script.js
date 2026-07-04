@@ -192,3 +192,60 @@ async function submitUserMessage() {
   
   logBox.scrollTop = logBox.scrollHeight;
 }
+// ===================================================
+// NEW INTERACTIVE MAP ENGINE
+// ===================================================
+let map, directionsService, directionsRenderer, placesService;
+const MY_COORDS = { lat: 17.3826, lng: 78.3314 }; 
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById("map-canvas"), {
+        center: MY_COORDS,
+        zoom: 15,
+    });
+
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+    placesService = new google.maps.places.PlacesService(map);
+
+    new google.maps.Marker({ position: MY_COORDS, map: map, title: "Tasty & Comfort" });
+
+    const input = document.getElementById("map-custom-destination");
+    new google.maps.places.Autocomplete(input);
+}
+
+function triggerSearch() {
+    const destination = document.getElementById("map-custom-destination").value;
+    const statusDiv = document.getElementById("map-status");
+    
+    if (!destination) return;
+    statusDiv.innerHTML = "Searching...";
+
+    directionsService.route({
+        origin: MY_COORDS,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING
+    }, (response, status) => {
+        if (status === "OK") {
+            directionsRenderer.setDirections(response);
+            statusDiv.innerHTML = "";
+        } else {
+            statusDiv.innerHTML = "Error: Could not find route.";
+        }
+    });
+}
+
+function findNearby(type) {
+    placesService.nearbySearch({
+        location: MY_COORDS,
+        radius: 2000,
+        type: [type]
+    }, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+            results.forEach(place => {
+                new google.maps.Marker({ position: place.geometry.location, map: map });
+            });
+        }
+    });
+}
