@@ -667,9 +667,14 @@ body {
   flex-direction: column;
 }
 
-.luxury-map-height {
-  height: 400px !important;
+/* Update your map container class */
+.luxury-map-height { 
+  /* 60vh means it will take up 60% of the visible screen height */
+  height: 60vh !important; 
+  width: 100% !important;
+  flex-shrink: 0;
 }
+
 
 .visual-map-container {
   width: 100%;
