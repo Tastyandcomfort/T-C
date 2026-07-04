@@ -258,40 +258,19 @@
       </section>
 
       <section id="map-view" class="app-section">
-        <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
-        
-        <div class="visual-map-container luxury-map-height">
-          <iframe 
-            id="live-interactive-map"
-            class="live-iframe-map"
-            src="" 
-            allowfullscreen="" 
-            loading="lazy">
-          </iframe>
-        </div>
+  <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
+  
+  <div id="map" class="visual-map-container"></div>
 
-        <div class="map-search-block">
-          <div class="search-flex-group">
-            <div class="destination-input-wrapper">
-              <i class="fa-solid fa-location-pin destination-icon"></i>
-              <input type="text" id="map-custom-destination" placeholder="Search destination (e.g., Charminar, Gachibowli)..." onkeypress="handleMapSearchKey(event)">
-              <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i></button>
-            </div>
-          </div>
-        </div>
+  <div class="map-search-block">
+    <div class="destination-input-wrapper">
+      <i class="fa-solid fa-location-pin destination-icon"></i>
+      <input type="text" id="map-custom-destination" placeholder="Enter destination for route...">
+      <button class="map-search-trigger-btn" onclick="calculateRoute()">Go</button>
+    </div>
+  </div>
+</section>
 
-        <div class="map-filter-grid">
-          <button class="filter-chip active" onclick="updateFreeMap('amenities', this)"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
-          <button class="filter-chip" onclick="updateFreeMap('hospitals', this)"><i class="fa-solid fa-hospital"></i> Hospitals</button>
-          <button class="filter-chip" onclick="updateFreeMap('police+station', this)"><i class="fa-solid fa-shield"></i> Police</button>
-          <button class="filter-chip" onclick="updateFreeMap('fire+station', this)"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
-          <button class="filter-chip" onclick="updateFreeMap('bus+stop', this)"><i class="fa-solid fa-bus"></i> Bus Stop</button>
-          <button class="filter-chip" onclick="updateFreeMap('courier+service', this)"><i class="fa-solid fa-box"></i> Courier</button>
-          <button class="filter-chip" onclick="updateFreeMap('temple', this)"><i class="fa-solid fa-gopuram"></i> Temple</button>
-          <button class="filter-chip" onclick="updateFreeMap('shopping+mall', this)"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
-          <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand', this)"><i class="fa-solid fa-taxi"></i> Cab Points</button>
-        </div>
-      </section>
 
       <section id="cert-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
