@@ -262,36 +262,25 @@ T&C does not collect or store your personal data.This website is for information
   <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
   
   <div class="glass-card map-panel enlarged-map-panel">
-    <div class="visual-map-container luxury-map-height">
+    <div class="visual-map-container luxury-map-height" style="position: relative;">
+      
+      <div id="map-loading-spinner" style="display:none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; color: white;">
+         <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+      </div>
+
       <iframe 
-  id="live-interactive-map"
-  class="live-iframe-map"
-  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU&q=17.368135,78.536981" 
-  allowfullscreen="" 
-  loading="lazy">
-</iframe>
-
+        id="live-interactive-map"
+        class="live-iframe-map"
+        src="https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY_HERE&center=YOUR_LATITUDE,YOUR_LONGITUDE&zoom=158" 
+        allowfullscreen="" 
+        loading="lazy">
+      </iframe>
+      
     </div>
   </div>
 
-  <div class="glass-card map-search-block">
-    <div class="destination-input-wrapper">
-      <i class="fa-solid fa-location-pin destination-icon"></i>
-      <input type="text" id="map-custom-destination" placeholder="Search destination (e.g., Gachibowli)..." onkeypress="handleMapSearchKey(event)">
-      <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i></button>
-    </div>
-  </div>
+  </section>
 
-  <div class="map-filter-grid">
-    <button class="filter-chip" onclick="updateFreeMap('hospital')">Hospitals</button>
-    <button class="filter-chip" onclick="updateFreeMap('police')">Police</button>
-    <button class="filter-chip" onclick="updateFreeMap('fire_station')">Fire</button>
-    <button class="filter-chip" onclick="updateFreeMap('bus_station')">Bus Stop</button>
-    <button class="filter-chip" onclick="updateFreeMap('courier')">Courier</button>
-    <button class="filter-chip" onclick="updateFreeMap('temple')">Temple</button>
-    <button class="filter-chip" onclick="updateFreeMap('taxi_stand')">Cab Stand</button>
-  </div>
-</section>
 
 
       <section id="cert-view" class="app-section">
