@@ -683,8 +683,14 @@ body {
   width: 100%;
   height: 100%;
   border: 0;
+  /* Optional: keeps the map colors consistent with your dark theme */
   filter: grayscale(0.2) invert(0.9) hue-rotate(180deg);
 }
+
+.luxury-map-height {
+  height: 450px;
+}
+
 
 .map-search-block {
   padding: 14px 20px;
