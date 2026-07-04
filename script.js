@@ -84,7 +84,7 @@ function launchInAppSearch() {
   const destination = encodeURIComponent(destInput);
   
   // Update the src here:
-  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU}&origin=${17.368135,78.536981}&destination=${destination}&mode=driving`;
+  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${}&origin=${}&destination=${destination}&mode=driving`;
 }
 
 
