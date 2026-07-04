@@ -72,7 +72,7 @@ function toggleUpi() {
 }
 
 const API_KEY = 'AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU'; // Replace with your key
-const ORIGIN = encodeURIComponent("New Modern Mission");
+const MY_ORIGIN_COORDS = "17.368135,78.536981";
 
 function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.trim();
@@ -80,11 +80,11 @@ function launchInAppSearch() {
   
   if (!destInput) return;
   
-  const origin = encodeURIComponent("New Modern Mission"); // Ensure this matches your actual location
+  const MY_ORIGIN_COORDS = "17.368135,78.536981"; // Ensure this matches your actual location
   const destination = encodeURIComponent(destInput);
   
   // Update the src here:
-  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${origin}&destination=${destination}&mode=driving`;
+  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU}&origin=${17.368135,78.536981}&destination=${destination}&mode=driving`;
 }
 
 
