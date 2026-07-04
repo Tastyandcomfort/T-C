@@ -205,28 +205,38 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.marker(MY_COORDS).addTo(map).bindPopup("<b>Tasty & Comfort</b>").openPopup();
 
 // SEARCH: Find location using Nominatim (Free)
-async function triggerSearch() {
-    const query = document.getElementById("map-custom-destination").value;
+function triggerSearch() {
+    const destination = document.getElementById("map-custom-destination").value;
     const statusDiv = document.getElementById("map-status");
-    if (!query) return;
+    
+    if (!destination) return;
 
-    statusDiv.innerText = "Searching...";
-    try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        
-        if (data.length > 0) {
-            const { lat, lon } = data[0];
-            map.setView([lat, lon], 15);
-            L.marker([lat, lon]).addTo(map).bindPopup(query).openPopup();
-            statusDiv.innerText = "";
+    // Show the spinner
+    statusDiv.innerHTML = '<div class="spinner"></div>';
+
+    directionsService.route({
+        origin: MY_COORDS,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING
+    }, (response, status) => {
+        // Clear the spinner
+        statusDiv.innerHTML = ""; 
+
+        if (status === "OK") {
+            directionsRenderer.setDirections(response);
+            
+            // EXTRACT AND DISPLAY DISTANCE
+            const leg = response.routes[0].legs[0];
+            const distance = leg.distance.text;
+            const duration = leg.duration.text;
+            
+            statusDiv.innerHTML = `<strong>Distance:</strong> ${distance} | <strong>Est. Time:</strong> ${duration}`;
         } else {
-            statusDiv.innerText = "Location not found.";
+            statusDiv.innerHTML = "Error: Could not find route.";
         }
-    } catch (err) {
-        statusDiv.innerText = "Error connecting to service.";
-    }
+    });
 }
+
 
 // NEARBY: Find markers for metro/police/hospital (Free)
 async function findNearby(type) {
