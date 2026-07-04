@@ -14,8 +14,7 @@
     <div class="apple-alert-box">
       <div class="apple-alert-content">
         <h3 class="apple-alert-title">Welcome to T&C</h3>
-        <p class="apple-alert-message">We respect your privacy.
-T&C does not collect or store your personal data.This website is for information only—no online ordering or booking. Explore our premium selection of handcrafted items, custom-made freshly on order.</p>
+        <p class="apple-alert-message">We respect your privacy. T&C does not collect or store your personal data. This website is for information only—no online ordering or booking. Explore our premium selection of handcrafted items, custom-made freshly on order.</p>
       </div>
       <div class="apple-alert-actions">
         <button id="apple-alert-close-btn" class="apple-alert-btn">OK</button>
@@ -38,7 +37,7 @@ T&C does not collect or store your personal data.This website is for information
         <div class="side-item active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i> Home</div>
         <div class="side-item" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i> Menu</div>
         <div class="side-item" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i> Our Services</div>
-        <div class="side-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i>AI Chat</div>
+        <div class="side-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i> AI Chat</div>
         <div class="side-item" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i> You Are Here</div>
         <div class="side-item" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i> Certifications</div>
         <div class="side-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i> Owner Bio</div>
@@ -258,26 +257,18 @@ T&C does not collect or store your personal data.This website is for information
         </div>
       </section>
 
-      <section id="map-view">
-  <div class="map-container luxury-map-height">
-    <iframe 
-      id="live-interactive-map"
-      class="live-iframe-map"
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.2736!2d78.4867!3d17.3850!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTfCsDIzJzA2LjAiTiA3OMKwMjknMTIuMSJF!5e0!3m2!1sen!2sin!4v1720080000000!5m2!1sen!2sin" 
-      width="100%" 
-      height="100%" 
-      style="border:0;" 
-      allowfullscreen="" 
-      loading="lazy">
-    </iframe>
-  </div>
-  
-  <!-- Buttons that won't break the map -->
-  <div class="map-controls">
-    <button class="btn" onclick="location.reload()">Reset Map</button>
-  </div>
-</section>
-
+      <section id="map-view" class="app-section">
+        <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
+        
+        <div class="visual-map-container luxury-map-height">
+          <iframe 
+            id="live-interactive-map"
+            class="live-iframe-map"
+            src="https://maps.google.com/maps?q=New+Modern+Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+            allowfullscreen="" 
+            loading="lazy">
+          </iframe>
+        </div>
 
         <div class="map-search-block">
           <div class="search-flex-group">
@@ -290,15 +281,15 @@ T&C does not collect or store your personal data.This website is for information
         </div>
 
         <div class="map-filter-grid">
-          <button class="filter-chip active" onclick="updateFreeMap('amenities')"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
-          <button class="filter-chip" onclick="updateFreeMap('hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
-          <button class="filter-chip" onclick="updateFreeMap('police+station')"><i class="fa-solid fa-shield"></i> Police</button>
-          <button class="filter-chip" onclick="updateFreeMap('fire+station')"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
-          <button class="filter-chip" onclick="updateFreeMap('bus+stop')"><i class="fa-solid fa-bus"></i> Bus Stop</button>
-          <button class="filter-chip" onclick="updateFreeMap('courier+service')"><i class="fa-solid fa-box"></i> Courier</button>
-          <button class="filter-chip" onclick="updateFreeMap('temple')"><i class="fa-solid fa-gopuram"></i> Temple</button>
-          <button class="filter-chip" onclick="updateFreeMap('shopping+mall')"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
-          <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand')"><i class="fa-solid fa-taxi"></i> Cab Points</button>
+          <button class="filter-chip active" onclick="updateFreeMap('amenities', this)"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
+          <button class="filter-chip" onclick="updateFreeMap('hospitals', this)"><i class="fa-solid fa-hospital"></i> Hospitals</button>
+          <button class="filter-chip" onclick="updateFreeMap('police+station', this)"><i class="fa-solid fa-shield"></i> Police</button>
+          <button class="filter-chip" onclick="updateFreeMap('fire+station', this)"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
+          <button class="filter-chip" onclick="updateFreeMap('bus+stop', this)"><i class="fa-solid fa-bus"></i> Bus Stop</button>
+          <button class="filter-chip" onclick="updateFreeMap('courier+service', this)"><i class="fa-solid fa-box"></i> Courier</button>
+          <button class="filter-chip" onclick="updateFreeMap('temple', this)"><i class="fa-solid fa-gopuram"></i> Temple</button>
+          <button class="filter-chip" onclick="updateFreeMap('shopping+mall', this)"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
+          <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand', this)"><i class="fa-solid fa-taxi"></i> Cab Points</button>
         </div>
       </section>
 
@@ -344,7 +335,7 @@ T&C does not collect or store your personal data.This website is for information
               <p class="owner-title-label">Founder & Owner</p>
             </div>
           </div>
-          <p class="owner-bio-p">Built with the clear vision of providing a clean, smart, and deeply helpful premium services for everyone.</p>
+          <p class="owner-bio-p">Built with the clear vision of providing clean, smart, and deeply helpful premium services for everyone.</p>
           <div class="owner-buttons">
             <a href="tel:+919553904524" class="btn"><i class="fa-solid fa-phone"></i> Contact</a>
             <button class="btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
