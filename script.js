@@ -71,32 +71,33 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
-// ===================================================
-// IN-APP MAP RENDERING ENGINE CONTROLLERS
-// ===================================================
+const API_KEY = 'AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU'; // Replace with your key
+const ORIGIN = encodeURIComponent("New Modern Mission");
+
 function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.trim();
   const mapIframe = document.getElementById('live-interactive-map');
+  if (!destInput) return;
   
-  if (!destInput) {
-    alert("Please enter a destination to search location parameters!");
-    return;
-  }
-  
-  const originAddress = encodeURIComponent("New Modern Mission");
-  const destinationAddress = encodeURIComponent(destInput);
-  
-  mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  const destination = encodeURIComponent(destInput);
+  // Directions mode with real-time routing
+  mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${ORIGIN}&destination=${destination}&mode=driving`;
+}
+
+function updateFreeMap(amenityType) {
+  const mapIframe = document.getElementById('live-interactive-map');
+  // Search mode for nearby points of interest
+  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=${API_KEY}&q=${encodeURIComponent(amenityType)}+near+${ORIGIN}`;
   
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
+  event.currentTarget.classList.add('active');
 }
 
 function handleMapSearchKey(event) {
-  if (event.key === 'Enter') {
-    launchInAppSearch();
-  }
+  if (event.key === 'Enter') launchInAppSearch();
 }
+
 
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
