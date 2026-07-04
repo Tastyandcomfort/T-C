@@ -220,21 +220,26 @@ function triggerSearch() {
     const statusDiv = document.getElementById("map-status");
     
     if (!destination) return;
-    statusDiv.innerHTML = "Searching...";
+
+    // Show the spinner
+    statusDiv.innerHTML = '<div class="spinner"></div>';
 
     directionsService.route({
         origin: MY_COORDS,
         destination: destination,
         travelMode: google.maps.TravelMode.DRIVING
     }, (response, status) => {
+        // Clear the spinner and status regardless of result
+        statusDiv.innerHTML = ""; 
+
         if (status === "OK") {
             directionsRenderer.setDirections(response);
-            statusDiv.innerHTML = "";
         } else {
             statusDiv.innerHTML = "Error: Could not find route.";
         }
     });
 }
+
 
 function findNearby(type) {
     placesService.nearbySearch({
