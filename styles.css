@@ -808,6 +808,15 @@ body {
   font-weight: 600;
 }
 
+#map { border-radius: 20px; overflow: hidden; background: #1a1d26; }
+.spinner {
+  width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.1);
+  border-top: 3px solid var(--gold-glow); border-radius: 50%;
+  animation: spin 1s linear infinite; position: absolute; right: 50px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.error-msg { color: #ff4d4d; font-size: 0.8rem; margin-top: 10px; text-align: center; }
+
 /* ===================================================
    VIEW SYSTEM 6: COMPLIANCE CERTIFICATIONS
 =================================================== */
