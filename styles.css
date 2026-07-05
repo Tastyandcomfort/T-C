@@ -1110,63 +1110,50 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-/* Rounded containers for map */
+
+/* 1. Make the map container look premium */
 #map-canvas {
-    border-radius: 20px;
-    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Apple-style search input */
-#map-custom-destination {
-    background: #f2f2f7;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 15px;
+/* 2. Hide the clunky "Leaflet Routing Machine" default box */
+/* This box usually appears by default and ruins the design */
+.leaflet-routing-container {
+    display: none !important; 
+}
+
+/* 3. Style the Status/Distance label to match Apple's text */
+#map-status {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 16px;
+    color: #8e8e93;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    text-align: center;
 }
 
-/* Modern Filter Chips */
-.filter-chip {
-    background: #ffffff;
-    border: 1px solid #e5e5ea;
-    border-radius: 20px;
-    padding: 8px 16px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.filter-chip:active {
-    background: #007aff;
-    color: white;
-}
-.apple-map-box {
-    width: 100%;
-    height: 400px;
-    border-radius: 20px;
-    background: #e0e0e0; /* Prevents white flash */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
+/* 4. Ensure the Search bar looks like iOS */
 .map-search-bar {
-    background: #f5f5f7;
-    margin: 20px 0;
-    padding: 12px 15px;
-    border-radius: 12px;
     display: flex;
+    background: #1c1c1e; /* Dark mode Apple feel */
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 15px;
     align-items: center;
-    gap: 10px;
 }
 
 .map-search-bar input {
+    color: white;
     background: transparent;
     border: none;
     width: 100%;
     outline: none;
     font-size: 16px;
+    margin-left: 10px;
 }
 
-.status-label {
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #666;
-}
