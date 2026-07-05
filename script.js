@@ -249,16 +249,5 @@ async function findNearby(type) {
 
 
 
-// NEARBY: Find markers for metro/police/hospital (Free)
-async function findNearby(type) {
-    const url = `https://overpass-api.de/api/interpreter?data=[out:json];node["amenity"="${type}"](around:2000,17.3826,78.3314);out;`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    data.elements.forEach(place => {
-        L.marker([place.lat, place.lon]).addTo(map).bindPopup(place.tags.name || type);
-    });
-}
-
 
 
