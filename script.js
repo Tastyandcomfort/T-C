@@ -233,6 +233,7 @@ async function triggerSearch() {
 
 
 
+
 // Filter Function
 async function findNearby(type) {
     markers.clearLayers(); // Clear previous search/filter results
