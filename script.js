@@ -71,6 +71,9 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
+
+
+
 // Initialize Leaflet
 const map = L.map('map').setView([17.3850, 78.4867], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -120,6 +123,8 @@ async function performSearch() {
         spinner.classList.add('hidden');
     }
 }
+
+
 
 
 // ===================================================
