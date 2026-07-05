@@ -197,33 +197,59 @@ async function submitUserMessage() {
 // STALL COORDINATES (Ensure these match your actual location!)
 const STALL_COORDS = [17.3826, 78.3314]; 
 
-// Initialize the Leaflet Map
-const map = L.map('map-canvas').setView([17.3826, 78.3314], 15);
+// 1. Initialize Map
+const STALL_COORDS = [17.3826, 78.3314];
+const map = L.map('map-canvas').setView(STALL_COORDS, 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Add your shop marker
-L.marker([17.3826, 78.3314]).addTo(map).bindPopup("Tasty & Comfort").openPopup();
+// Add Stall Marker
+L.marker(STALL_COORDS).addTo(map).bindPopup("Tasty & Comfort").openPopup();
 
+// 2. Initialize Routing Control (empty waypoints initially)
+let routeControl = L.Routing.control({
+    waypoints: [L.latLng(STALL_COORDS)],
+    routeWhileDragging: true,
+    addWaypoints: false // Keeps it simple for the user
+}).addTo(map);
+
+// Listen for route updates to display distance/time
+routeControl.on('routesfound', function(e) {
+    const summary = e.routes[0].summary;
+    document.getElementById("map-status").innerText = 
+        `Distance: ${(summary.totalDistance / 1000).toFixed(2)} km | Time: ${Math.round(summary.totalTime / 60)} min`;
+});
+
+// 3. Updated Search Function to update the Route
 async function triggerSearch() {
     const query = document.getElementById("map-custom-destination").value;
     if (!query) return;
 
     document.getElementById("map-status").innerText = "Searching...";
+    
     const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
     const data = await res.json();
 
     if (data.length > 0) {
         const dest = [data[0].lat, data[0].lon];
+        
+        // Update the route dynamically instead of adding a new marker
+        routeControl.setWaypoints([
+            L.latLng(STALL_COORDS),
+            L.latLng(dest[0], dest[1])
+        ]);
+        
         map.setView(dest, 14);
-        L.marker(dest).addTo(map).bindPopup(query).openPopup();
-        document.getElementById("map-status").innerText = "";
     } else {
         document.getElementById("map-status").innerText = "Not found.";
     }
 }
+
+
+
+
 
 
 // Filter Function
