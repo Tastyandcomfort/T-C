@@ -1157,3 +1157,14 @@ body {
     margin-left: 10px;
 }
 
+/* Ensure the routing box doesn't block your clicks */
+.leaflet-routing-container {
+    pointer-events: none !important;
+}
+
+/* Ensure your buttons are clickable above the map */
+.filter-chip, .map-search-bar, button {
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto !important;
+}
