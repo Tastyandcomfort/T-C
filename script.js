@@ -74,55 +74,56 @@ function toggleUpi() {
 
 
 
-// Initialize Leaflet
+// Initialize Map
 const map = L.map('map').setView([17.3850, 78.4867], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+const marker = L.marker([17.3850, 78.4867]).addTo(map).bindPopup("Tasty & Comfort").openPopup();
 
-let routingControl = L.Routing.control({
-    waypoints: [L.latLng(17.3850, 78.4867)],
-    routeWhileDragging: true
-}).addTo(map);
+async function handleMapSearch() {
+  const input = document.getElementById('map-custom-destination');
+  const spinner = document.getElementById('search-spinner');
+  const resultCard = document.getElementById('map-result-card');
+  const errorMsg = document.getElementById('map-error-msg');
+  const resultText = document.getElementById('result-content');
+  
+  const query = input.value.trim();
+  if (!query) return;
 
-const searchInput = document.getElementById('map-custom-destination');
-const resultCard = document.getElementById('map-result-card');
-const spinner = document.getElementById('search-spinner');
-const errorMsg = document.getElementById('map-error-msg');
+  // Reset UI
+  spinner.classList.remove('hidden');
+  resultCard.classList.add('hidden');
+  errorMsg.classList.add('hidden');
 
-// Logic for search behavior
-searchInput.addEventListener('input', () => {
-    if (searchInput.value === "") {
-        resultCard.classList.add('hidden');
-        errorMsg.classList.add('hidden');
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      const { lat, lon, display_name } = data[0];
+      const newPos = [parseFloat(lat), parseFloat(lon)];
+      
+      map.setView(newPos, 14);
+      marker.setLatLng(newPos);
+      
+      resultText.innerText = `Direction to: ${display_name}`;
+      resultCard.classList.remove('hidden');
+    } else {
+      errorMsg.classList.remove('hidden');
     }
-});
-
-async function performSearch() {
-    const query = searchInput.value.trim();
-    if (!query) return;
-
-    spinner.classList.remove('hidden');
-    errorMsg.classList.add('hidden');
-
-    try {
-        // Geocoding request via OpenStreetMap Nominatim
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-
-        if (data && data.length > 0) {
-            const { lat, lon, display_name } = data[0];
-            routingControl.setWaypoints([L.latLng(17.3850, 78.4867), L.latLng(lat, lon)]);
-            
-            document.getElementById('result-content').innerText = `Destination: ${display_name}`;
-            resultCard.classList.remove('hidden');
-        } else {
-            errorMsg.classList.remove('hidden');
-        }
-    } catch (err) {
-        errorMsg.classList.remove('hidden');
-    } finally {
-        spinner.classList.add('hidden');
-    }
+  } catch (err) {
+    errorMsg.classList.remove('hidden');
+  } finally {
+    spinner.classList.add('hidden');
+  }
 }
+
+// Listen for Enter key
+document.getElementById('map-custom-destination').addEventListener('input', (e) => {
+  if (e.target.value === "") {
+    document.getElementById('map-result-card').classList.add('hidden');
+    document.getElementById('map-error-msg').classList.add('hidden');
+  }
+});
 
 
 
