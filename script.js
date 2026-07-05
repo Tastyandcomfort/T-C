@@ -194,37 +194,42 @@ async function submitUserMessage() {
 }
 
 
-// Configuration
-const STALL_COORDS = [17.3826, 78.3314]; // Your stall coordinates
-let map = L.map('map-canvas').setView(STALL_COORDS, 15);
-let markers = L.layerGroup().addTo(map); // Layer group to easily clear markers
+// STALL COORDINATES (Ensure these match your actual location!)
+const STALL_COORDS = [17.3826, 78.3314]; 
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.marker(STALL_COORDS).addTo(map).bindPopup("Tasty & Comfort");
+// Initialize Map immediately
+const map = L.map('map-canvas').setView(STALL_COORDS, 15);
 
-// Search Function
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// Add Stall Marker immediately so the map isn't blank
+const stallMarker = L.marker(STALL_COORDS).addTo(map).bindPopup("<b>Tasty & Comfort</b>").openPopup();
+
+let resultMarkers = L.layerGroup().addTo(map);
+
 async function triggerSearch() {
-    const input = document.getElementById("map-custom-destination");
+    const query = document.getElementById("map-custom-destination").value;
     const statusDiv = document.getElementById("map-status");
-    
-    if (!input.value.trim()) {
-        markers.clearLayers(); // Clear markers if input is empty
-        statusDiv.innerText = "";
-        return;
-    }
+    if (!query) return;
 
     statusDiv.innerText = "Searching...";
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input.value)}`);
+    
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
     const data = await res.json();
 
     if (data.length > 0) {
-        markers.clearLayers(); // Clear old results
-        const dest = [data[0].lat, data[0].lon];
-        const dist = map.distance(STALL_COORDS, dest) / 1000;
+        resultMarkers.clearLayers();
+        const destCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
         
-        L.marker(dest).addTo(markers).bindPopup(data[0].display_name).openPopup();
-        map.setView(dest, 14);
-        statusDiv.innerHTML = `Distance: <b>${dist.toFixed(2)} km</b>`;
+        // Accurate distance calculation from Stall to Destination
+        const distance = map.distance(STALL_COORDS, destCoords) / 1000;
+        
+        L.marker(destCoords).addTo(resultMarkers).bindPopup(data[0].display_name).openPopup();
+        map.setView(destCoords, 14);
+        
+        statusDiv.innerHTML = `Distance from Stall: <b>${distance.toFixed(2)} km</b>`;
     } else {
         statusDiv.innerText = "Location not found.";
     }
