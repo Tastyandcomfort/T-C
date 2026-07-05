@@ -197,35 +197,45 @@ async function submitUserMessage() {
 // STALL COORDINATES (Ensure these match your actual location!)
 const STALL_COORDS = [17.3826, 78.3314]; 
 
-// Initialize map
+// Map Initialization
 const STALL_COORDS = [17.3826, 78.3314];
 const map = L.map('map-canvas').setView(STALL_COORDS, 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 L.marker(STALL_COORDS).addTo(map).bindPopup("Tasty & Comfort");
 
-// Initialize Routing, but keep it hidden/inactive initially
-let routeControl = L.Routing.control({
+// Routing engine initialized correctly
+const routeControl = L.Routing.control({
     waypoints: [L.latLng(STALL_COORDS)],
-    routeWhileDragging: false, 
-    addWaypoints: false
+    routeWhileDragging: false,
+    addWaypoints: false,
+    draggableWaypoints: false,
+    fitSelectedRoutes: true,
+    show: false // THIS HIDES THE UGLY BOX
 }).addTo(map);
 
-// FIX: Ensure the routing container doesn't block the map
-document.querySelector('.leaflet-routing-container').style.display = 'none';
-
 async function triggerSearch() {
-    const query = document.getElementById("map-custom-destination").value;
-    if (!query) return;
+    try {
+        const query = document.getElementById("map-custom-destination").value;
+        const statusDiv = document.getElementById("map-status");
+        if (!query) return;
 
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-    const data = await res.json();
+        statusDiv.innerText = "Searching...";
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
 
-    if (data.length > 0) {
-        const dest = [data[0].lat, data[0].lon];
-        routeControl.setWaypoints([L.latLng(STALL_COORDS), L.latLng(dest[0], dest[1])]);
+        if (data.length > 0) {
+            const dest = L.latLng(data[0].lat, data[0].lon);
+            routeControl.setWaypoints([L.latLng(STALL_COORDS), dest]);
+            statusDiv.innerText = "Route calculated.";
+        } else {
+            statusDiv.innerText = "Location not found.";
+        }
+    } catch (err) {
+        console.error("Map Error:", err);
     }
 }
+
 
 
 
