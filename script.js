@@ -194,43 +194,57 @@ async function submitUserMessage() {
 }
 
 
-// 1. Initialize Map
-const MY_COORDS = [17.3826, 78.3314]; 
-const map = L.map('map-canvas').setView(MY_COORDS, 15);
+// Configuration
+const STALL_COORDS = [17.3826, 78.3314]; // Your stall coordinates
+let map = L.map('map-canvas').setView(STALL_COORDS, 15);
+let markers = L.layerGroup().addTo(map); // Layer group to easily clear markers
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.marker(STALL_COORDS).addTo(map).bindPopup("Tasty & Comfort");
 
-// 2. Add your stall marker
-L.marker(MY_COORDS).addTo(map).bindPopup("Tasty & Comfort").openPopup();
-
-// 3. Search and Distance Logic
+// Search Function
 async function triggerSearch() {
-    const destination = document.getElementById("map-custom-destination").value;
+    const input = document.getElementById("map-custom-destination");
     const statusDiv = document.getElementById("map-status");
-    if (!destination) return;
+    
+    if (!input.value.trim()) {
+        markers.clearLayers(); // Clear markers if input is empty
+        statusDiv.innerText = "";
+        return;
+    }
 
-    statusDiv.innerText = "Calculating...";
-
-    // Fetch coordinates for the searched destination
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}`);
+    statusDiv.innerText = "Searching...";
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input.value)}`);
     const data = await res.json();
 
     if (data.length > 0) {
-        const destCoords = [data[0].lat, data[0].lon];
+        markers.clearLayers(); // Clear old results
+        const dest = [data[0].lat, data[0].lon];
+        const dist = map.distance(STALL_COORDS, dest) / 1000;
         
-        // Calculate Distance (Haversine formula)
-        const distance = map.distance(MY_COORDS, destCoords) / 1000; // in km
-        
-        L.marker(destCoords).addTo(map).bindPopup(data[0].display_name).openPopup();
-        map.setView(destCoords, 14);
-        
-        statusDiv.innerHTML = `<strong>Distance:</strong> ${distance.toFixed(2)} km`;
+        L.marker(dest).addTo(markers).bindPopup(data[0].display_name).openPopup();
+        map.setView(dest, 14);
+        statusDiv.innerHTML = `Distance: <b>${dist.toFixed(2)} km</b>`;
     } else {
         statusDiv.innerText = "Location not found.";
     }
 }
+
+// Filter Function
+async function findNearby(type) {
+    markers.clearLayers(); // Clear previous search/filter results
+    const url = `https://overpass-api.de/api/interpreter?data=[out:json];node["amenity"="${type}"](around:5000,${STALL_COORDS[0]},${STALL_COORDS[1]});out;`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    data.elements.forEach(place => {
+        const dist = map.distance(STALL_COORDS, [place.lat, place.lon]) / 1000;
+        L.marker([place.lat, place.lon]).addTo(markers)
+         .bindPopup(`${place.tags.name || type}<br>Dist: ${dist.toFixed(2)} km`);
+    });
+    statusDiv.innerHTML = `Showing nearby ${type}s`;
+}
+
 
 
 
