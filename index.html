@@ -266,16 +266,18 @@ T&C does not collect or store your personal data.This website is for information
 
   <div class="map-search-block">
     <div class="destination-input-wrapper">
-      <input type="text" id="map-custom-destination" placeholder="Search destination...">
+      <i class="fa-solid fa-location-pin destination-icon"></i>
+      <input type="text" id="map-custom-destination" placeholder="Enter destination...">
       <div id="search-spinner" class="spinner hidden"></div>
-      <button class="map-search-trigger-btn" onclick="performSearch()"><i class="fa-solid fa-location-arrow"></i></button>
+      <button class="map-search-trigger-btn" onclick="handleMapSearch()"><i class="fa-solid fa-location-arrow"></i></button>
     </div>
     <div id="map-result-card" class="glass-card hidden">
       <div id="result-content"></div>
     </div>
-    <div id="map-error-msg" class="error-msg hidden">Location not found.</div>
+    <div id="map-error-msg" class="error-msg hidden">Location not found. Please try again.</div>
   </div>
 </section>
+
 
 
       <section id="cert-view" class="app-section">
