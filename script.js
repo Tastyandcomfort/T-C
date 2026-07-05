@@ -71,43 +71,56 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
-// ===================================================
-// IN-APP MAP RENDERING ENGINE CONTROLLERS
-// ===================================================
-function launchInAppSearch() {
-  const destInput = document.getElementById('map-custom-destination').value.trim();
-  const mapIframe = document.getElementById('live-interactive-map');
-  
-  if (!destInput) {
-    alert("Please enter a destination to search location parameters!");
-    return;
-  }
-  
-  const originAddress = encodeURIComponent("New Modern Mission");
-  const destinationAddress = encodeURIComponent(destInput);
-  
-  mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
-  
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
+// Initialize Leaflet
+const map = L.map('map').setView([17.3850, 78.4867], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+let routingControl = L.Routing.control({
+    waypoints: [L.latLng(17.3850, 78.4867)],
+    routeWhileDragging: true
+}).addTo(map);
+
+const searchInput = document.getElementById('map-custom-destination');
+const resultCard = document.getElementById('map-result-card');
+const spinner = document.getElementById('search-spinner');
+const errorMsg = document.getElementById('map-error-msg');
+
+// Logic for search behavior
+searchInput.addEventListener('input', () => {
+    if (searchInput.value === "") {
+        resultCard.classList.add('hidden');
+        errorMsg.classList.add('hidden');
+    }
+});
+
+async function performSearch() {
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    spinner.classList.remove('hidden');
+    errorMsg.classList.add('hidden');
+
+    try {
+        // Geocoding request via OpenStreetMap Nominatim
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            const { lat, lon, display_name } = data[0];
+            routingControl.setWaypoints([L.latLng(17.3850, 78.4867), L.latLng(lat, lon)]);
+            
+            document.getElementById('result-content').innerText = `Destination: ${display_name}`;
+            resultCard.classList.remove('hidden');
+        } else {
+            errorMsg.classList.remove('hidden');
+        }
+    } catch (err) {
+        errorMsg.classList.remove('hidden');
+    } finally {
+        spinner.classList.add('hidden');
+    }
 }
 
-function handleMapSearchKey(event) {
-  if (event.key === 'Enter') {
-    launchInAppSearch();
-  }
-}
-
-function updateFreeMap(amenityType) {
-  const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "New Modern Mission";
-  
-  mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
-
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-}
 
 // ===================================================
 // GEMINI NATIVE CHAT INTEGRATION (NO POPUPS)
