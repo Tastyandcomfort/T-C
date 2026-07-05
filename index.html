@@ -259,40 +259,23 @@ T&C does not collect or store your personal data.This website is for information
       </section>
 
       <section id="map-view" class="app-section">
-        <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
-        
-        <div class="visual-map-container luxury-map-height">
-          <iframe 
-            id="live-interactive-map"
-            class="live-iframe-map"
-            src="https://maps.google.com/maps?q=New+Modern+Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
-            allowfullscreen="" 
-            loading="lazy">
-          </iframe>
-        </div>
+  <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
+  
+  <div id="map" class="luxury-map-height"></div>
 
-        <div class="map-search-block">
-          <div class="search-flex-group">
-            <div class="destination-input-wrapper">
-              <i class="fa-solid fa-location-pin destination-icon"></i>
-              <input type="text" id="map-custom-destination" placeholder="Search destination (e.g., Charminar, Gachibowli)..." onkeypress="handleMapSearchKey(event)">
-              <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i></button>
-            </div>
-          </div>
-        </div>
+  <div class="map-search-block">
+    <div class="destination-input-wrapper">
+      <input type="text" id="map-custom-destination" placeholder="Search destination...">
+      <div id="search-spinner" class="spinner hidden"></div>
+      <button class="map-search-trigger-btn" onclick="performSearch()"><i class="fa-solid fa-location-arrow"></i></button>
+    </div>
+    <div id="map-result-card" class="glass-card hidden">
+      <div id="result-content"></div>
+    </div>
+    <div id="map-error-msg" class="error-msg hidden">Location not found.</div>
+  </div>
+</section>
 
-        <div class="map-filter-grid">
-          <button class="filter-chip active" onclick="updateFreeMap('amenities')"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
-          <button class="filter-chip" onclick="updateFreeMap('hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
-          <button class="filter-chip" onclick="updateFreeMap('police+station')"><i class="fa-solid fa-shield"></i> Police</button>
-          <button class="filter-chip" onclick="updateFreeMap('fire+station')"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
-          <button class="filter-chip" onclick="updateFreeMap('bus+stop')"><i class="fa-solid fa-bus"></i> Bus Stop</button>
-          <button class="filter-chip" onclick="updateFreeMap('courier+service')"><i class="fa-solid fa-box"></i> Courier</button>
-          <button class="filter-chip" onclick="updateFreeMap('temple')"><i class="fa-solid fa-gopuram"></i> Temple</button>
-          <button class="filter-chip" onclick="updateFreeMap('shopping+mall')"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
-          <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand')"><i class="fa-solid fa-taxi"></i> Cab Points</button>
-        </div>
-      </section>
 
       <section id="cert-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
