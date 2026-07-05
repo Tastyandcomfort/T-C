@@ -197,43 +197,34 @@ async function submitUserMessage() {
 // STALL COORDINATES (Ensure these match your actual location!)
 const STALL_COORDS = [17.3826, 78.3314]; 
 
-// Initialize Map immediately
-const map = L.map('map-canvas').setView(STALL_COORDS, 15);
+// Initialize the Leaflet Map
+const map = L.map('map-canvas').setView([17.3826, 78.3314], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Add Stall Marker immediately so the map isn't blank
-const stallMarker = L.marker(STALL_COORDS).addTo(map).bindPopup("<b>Tasty & Comfort</b>").openPopup();
-
-let resultMarkers = L.layerGroup().addTo(map);
+// Add your shop marker
+L.marker([17.3826, 78.3314]).addTo(map).bindPopup("Tasty & Comfort").openPopup();
 
 async function triggerSearch() {
     const query = document.getElementById("map-custom-destination").value;
-    const statusDiv = document.getElementById("map-status");
     if (!query) return;
 
-    statusDiv.innerText = "Searching...";
-    
+    document.getElementById("map-status").innerText = "Searching...";
     const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
     const data = await res.json();
 
     if (data.length > 0) {
-        resultMarkers.clearLayers();
-        const destCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-        
-        // Accurate distance calculation from Stall to Destination
-        const distance = map.distance(STALL_COORDS, destCoords) / 1000;
-        
-        L.marker(destCoords).addTo(resultMarkers).bindPopup(data[0].display_name).openPopup();
-        map.setView(destCoords, 14);
-        
-        statusDiv.innerHTML = `Distance from Stall: <b>${distance.toFixed(2)} km</b>`;
+        const dest = [data[0].lat, data[0].lon];
+        map.setView(dest, 14);
+        L.marker(dest).addTo(map).bindPopup(query).openPopup();
+        document.getElementById("map-status").innerText = "";
     } else {
-        statusDiv.innerText = "Location not found.";
+        document.getElementById("map-status").innerText = "Not found.";
     }
 }
+
 
 // Filter Function
 async function findNearby(type) {
