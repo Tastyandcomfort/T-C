@@ -264,38 +264,24 @@ T&C does not collect or store your personal data.This website is for information
       <section id="map-view" class="app-section">
   <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE</h3>
   
-  <div class="visual-map-container luxury-map-height">
-    <iframe 
-      id="live-interactive-map"
-      class="live-iframe-map"
-      src="" 
-      allowfullscreen="" 
-      loading="lazy">
-    </iframe>
-  </div>
+  <!-- Map container replaces the iframe -->
+  <div id="map" class="visual-map-container luxury-map-height"></div>
 
   <div class="map-search-block">
-    <div class="search-flex-group">
-      <div class="destination-input-wrapper">
-        <i class="fa-solid fa-location-pin destination-icon"></i>
-        <input type="text" id="map-custom-destination" placeholder="Search (e.g., Charminar)..." onkeypress="handleMapSearchKey(event)">
-        <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i></button>
-      </div>
+    <div class="destination-input-wrapper">
+      <input type="text" id="map-custom-destination" placeholder="Search...">
+      <button class="map-search-trigger-btn" onclick="searchDestination()"><i class="fa-solid fa-location-arrow"></i></button>
     </div>
   </div>
 
   <div class="map-filter-grid">
-    <button class="filter-chip active" onclick="updateFreeMap('amenities', event)"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
-    <button class="filter-chip" onclick="updateFreeMap('hospitals', event)"><i class="fa-solid fa-hospital"></i> Hospitals</button>
-    <button class="filter-chip" onclick="updateFreeMap('police+station', event)"><i class="fa-solid fa-shield"></i> Police</button>
-    <button class="filter-chip" onclick="updateFreeMap('fire+station', event)"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
-    <button class="filter-chip" onclick="updateFreeMap('bus+stop', event)"><i class="fa-solid fa-bus"></i> Bus Stop</button>
-    <button class="filter-chip" onclick="updateFreeMap('courier+service', event)"><i class="fa-solid fa-box"></i> Courier</button>
-    <button class="filter-chip" onclick="updateFreeMap('temple', event)"><i class="fa-solid fa-gopuram"></i> Temple</button>
-    <button class="filter-chip" onclick="updateFreeMap('shopping+mall', event)"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
-    <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand', event)"><i class="fa-solid fa-taxi"></i> Cab Points</button>
+    <!-- Note: pass 'amenityType' matches your Excel 'Type' column -->
+    <button class="filter-chip" onclick="filterMarkers('hospital', this)">Hospital</button>
+    <button class="filter-chip" onclick="filterMarkers('police', this)">Police</button>
+    <button class="filter-chip" onclick="filterMarkers('temple', this)">Temple</button>
   </div>
 </section>
+
 
 
       <section id="cert-view" class="app-section">
