@@ -100,7 +100,7 @@ function handleMapSearchKey(event) {
 
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "17.3686°N, 78.5257°E";
+  const baseLocation = "16°48'29.1"N 79°24'18.7"E";
   
   mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
