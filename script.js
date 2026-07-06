@@ -100,7 +100,7 @@ function handleMapSearchKey(event) {
 
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "16°48'29.1"N 79°24'18.7"E";
+  const baseLocation = "RC54+63P Thummadam, Telangana";
   
   mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
