@@ -1107,3 +1107,11 @@ body {
     color: var(--gold-glow); 
   }
 }
+/* Add this to the bottom of your styles (10).css */
+#map { 
+  height: 400px; 
+  width: 100%; 
+  border-radius: 20px; 
+  background: #1a1d26; /* Matches your dashboard background */
+  overflow: hidden;    /* Ensures map tiles don't bleed out of rounded corners */
+}
