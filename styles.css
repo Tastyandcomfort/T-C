@@ -1115,3 +1115,8 @@ body {
   background: #1a1d26; /* Matches your dashboard background */
   overflow: hidden;    /* Ensures map tiles don't bleed out of rounded corners */
 }
+@media (max-width: 480px) {
+  #map {
+    height: 300px; /* More compact for mobile phones */
+  }
+}
