@@ -100,14 +100,19 @@ function handleMapSearchKey(event) {
 
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "New Modern Mission";
   
-  mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  // Replace these with your actual Latitude and Longitude
+  const lat = "16.8080889"; 
+  const lng = "79.4052030";
+  
+  // Construct the URL using the coordinates for more precision
+  mapIframe.src = `https://www.google.com/maps/search/${amenityType}/@${lat},${lng},16z?output=embed`;
 
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
+
 
 // ===================================================
 // GEMINI NATIVE CHAT INTEGRATION (NO POPUPS)
