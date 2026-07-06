@@ -71,10 +71,12 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
-// 1. Updated Search Logic: Filters your JSON locally
+// 1. Unified Search & Sort Engine
 async function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.toLowerCase().trim();
-  
+  const userLat = 16.8080889; // Your T&C Stall Lat
+  const userLng = 79.4052030; // Your T&C Stall Lng
+
   if (!destInput) {
     alert("Please enter a destination!");
     return;
@@ -83,25 +85,28 @@ async function launchInAppSearch() {
   const response = await fetch('locations.json');
   const data = await response.json();
   
-  // Filter by name or type
+  // Filter by name or type AND calculate distance for sorting
   const results = data.filter(loc => 
     loc.name.toLowerCase().includes(destInput) || 
     loc.type.toLowerCase().includes(destInput)
-  );
+  ).map(loc => ({
+    ...loc,
+    dist: getDistance(userLat, userLng, loc.lat, loc.lng)
+  })).sort((a, b) => a.dist - b.dist); // Ascending order
 
   if (results.length === 0) {
-    alert("Location not found in our directory.");
+    alert("Location not found.");
   } else {
-    // Zoom to the first result
-    const first = results[0];
-    map.setView([first.lat, first.lng], 16);
-    L.marker([first.lat, first.lng]).addTo(map).bindPopup(first.name).openPopup();
+    // Render the result cards
+    renderResults(results, userLat, userLng);
+    // Center map on the closest result
+    map.setView([results[0].lat, results[0].lng], 14);
   }
 }
 
-// 2. Updated Filter Logic: Clean and efficient
+// 2. Updated Filter Logic (Maintains current behavior)
 async function updateFreeMap(amenityType, element) {
-  markersGroup.clearLayers(); // Clear old pins
+  markersGroup.clearLayers();
   
   const response = await fetch('locations.json');
   const data = await response.json();
@@ -110,10 +115,10 @@ async function updateFreeMap(amenityType, element) {
     L.marker([loc.lat, loc.lng]).addTo(markersGroup).bindPopup(loc.name);
   });
 
-  // UI state
   document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
-  element.classList.add('active');
+  if (element) element.classList.add('active');
 }
+
 
 
 // ===================================================
