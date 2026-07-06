@@ -75,37 +75,35 @@ function toggleUpi() {
 // IN-APP MAP RENDERING ENGINE CONTROLLERS
 // ===================================================
 // Updated Map Engine
-function updateFreeMap(amenityType, event) {
-  const mapIframe = document.getElementById('live-interactive-map');
-  const lat = "16.8080889"; 
-  const lng = "79.4052030";
-  
-  // Using the official Google Maps Embed Search format
-  // Note: This replaces the broken URL structure
-  const query = `${amenityType} near ${lat},${lng}`;
-  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(query)}&zoom=16`;
+// 1. Initialize Map
+const map = L.map('map').setView([16.8080889, 79.4052030], 16);
 
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// 2. Add Stall Marker
+const stallMarker = L.marker([16.8080889, 79.4052030]).addTo(map)
+  .bindPopup("<b>Tasty & Comfort</b>").openPopup();
+
+let markersGroup = L.layerGroup().addTo(map);
+
+// 3. Filter Function (Reads your JSON)
+async function filterMarkers(type, btnElement) {
+  markersGroup.clearLayers(); // Remove old markers
   
-  if(event) event.currentTarget.classList.add('active');
+  const response = await fetch('locations.json'); // Your exported Excel-JSON
+  const data = await response.json();
+  
+  data.filter(loc => loc.type === type).forEach(loc => {
+    L.marker([loc.lat, loc.lng]).addTo(markersGroup).bindPopup(loc.name);
+  });
+
+  // UI styling
+  document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+  btnElement.classList.add('active');
 }
 
-function launchInAppSearch() {
-  const destInput = document.getElementById('map-custom-destination').value.trim();
-  const mapIframe = document.getElementById('live-interactive-map');
-  
-  if (!destInput) {
-    alert("Please enter a destination!");
-    return;
-  }
-  
-  // Replace YOUR_GOOGLE_API_KEY with your key from Google Cloud Console
-  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU&q=${encodeURIComponent(destInput)}&center=16.8080889,79.4052030&zoom=14`;
-  
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-}
 
 
 
