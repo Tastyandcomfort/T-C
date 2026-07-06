@@ -1,0 +1,19 @@
+
+ {
+  "Name": "City Hospital",
+  "Lat": 16.81,
+  "Lng": 79.406,
+  "Type": "hospital"
+ },
+ {
+  "Name": "Central Police Station",
+  "Lat": 16.805,
+  "Lng": 79.402,
+  "Type": "police"
+ },
+ {
+  "Name": "Local Temple",
+  "Lat": 16.802,
+  "Lng": 79.408,
+  "Type": "temple"
+ }
