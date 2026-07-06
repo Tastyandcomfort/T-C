@@ -71,43 +71,65 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
-// ===================================================
-// IN-APP MAP RENDERING ENGINE CONTROLLERS
-// ===================================================
-function launchInAppSearch() {
-  const destInput = document.getElementById('map-custom-destination').value.trim();
-  const mapIframe = document.getElementById('live-interactive-map');
-  
-  if (!destInput) {
-    alert("Please enter a destination to search location parameters!");
-    return;
-  }
-  
-  const originAddress = encodeURIComponent("New Modern Mission");
-  const destinationAddress = encodeURIComponent(destInput);
-  
-  mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
-  
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
+
+
+//==============
+//Google Maps
+//==============
+let map, directionsService, directionsRenderer;
+const stallHub = { lat: 17.3850, lng: 78.4867 };
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: stallHub,
+        zoom: 15
+    });
+    
+    // Add Stall Hub Marker
+    new google.maps.Marker({ position: stallHub, map: map, title: "Tasty & Comfort" });
+    
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+    // Initialize Autocomplete
+    const input = document.getElementById('map-custom-destination');
+    new google.maps.places.Autocomplete(input);
 }
 
-function handleMapSearchKey(event) {
-  if (event.key === 'Enter') {
-    launchInAppSearch();
-  }
+async function calculateRoute() {
+    const destination = document.getElementById('map-custom-destination').value;
+    const spinner = document.getElementById('search-spinner');
+    
+    if (!destination) return;
+    spinner.classList.remove('hidden');
+
+    directionsService.route({
+        origin: stallHub,
+        destination: destination,
+        travelMode: 'DRIVING'
+    }, (response, status) => {
+        spinner.classList.add('hidden');
+        if (status === 'OK') {
+            directionsRenderer.setDirections(response);
+        } else {
+            // Trigger your custom Apple-style error modal
+            showAppleError("Location not found", "We couldn't find a route to that destination.");
+        }
+    });
 }
 
-function updateFreeMap(amenityType) {
-  const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "RC54+63P Thummadam, Telangana";
-  
-  mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
-
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+function showAppleError(title, msg) {
+    // Reuse your existing apple-alert-overlay logic
+    const overlay = document.getElementById('apple-alert-overlay');
+    document.querySelector('.apple-alert-title').innerText = title;
+    document.querySelector('.apple-alert-message').innerText = msg;
+    overlay.classList.remove('hidden');
 }
+
+// Ensure initMap runs on load
+window.initMap = initMap;
+
 
 // ===================================================
 // GEMINI NATIVE CHAT INTEGRATION (NO POPUPS)
