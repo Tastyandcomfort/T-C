@@ -101,7 +101,7 @@ function launchInAppSearch() {
   }
   
   // Replace YOUR_GOOGLE_API_KEY with your key from Google Cloud Console
-  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(destInput)}&center=16.8080889,79.4052030&zoom=14`;
+  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=AIzaSyCu7y4OvhUildHH_PotkZO3pVvEAXHiuGU&q=${encodeURIComponent(destInput)}&center=16.8080889,79.4052030&zoom=14`;
   
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
