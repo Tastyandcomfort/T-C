@@ -662,10 +662,13 @@ body {
   display: none;
 }
 
-#map-view.active-view {
-  display: flex !important;
-  flex-direction: column;
-}
+  #map-view.active-view {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    height: auto !important; 
+  }
+
 
 /* Updated to force 70% height */
 .luxury-map-height {
