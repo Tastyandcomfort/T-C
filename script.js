@@ -101,7 +101,8 @@ function handleMapSearchKey(event) {
 
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "New Modern Mission";
+  const baseLocation = "Max
+మాక్స్";
   
   mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
