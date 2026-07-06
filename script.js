@@ -100,7 +100,7 @@ function handleMapSearchKey(event) {
 
 function updateFreeMap(amenityType) {
   const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "New Modern Mission";
+  const baseLocation = "17.3686°N, 78.5257°E";
   
   mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
