@@ -71,43 +71,50 @@ function toggleUpi() {
   upiFrame.classList.toggle('hidden');
 }
 
-// ===================================================
-// IN-APP MAP RENDERING ENGINE CONTROLLERS
-// ===================================================
-function launchInAppSearch() {
-  const destInput = document.getElementById('map-custom-destination').value.trim();
-  const mapIframe = document.getElementById('live-interactive-map');
+// 1. Updated Search Logic: Filters your JSON locally
+async function launchInAppSearch() {
+  const destInput = document.getElementById('map-custom-destination').value.toLowerCase().trim();
   
   if (!destInput) {
-    alert("Please enter a destination to search location parameters!");
+    alert("Please enter a destination!");
     return;
   }
   
-  const originAddress = encodeURIComponent("New Modern Mission");
-  const destinationAddress = encodeURIComponent(destInput);
+  const response = await fetch('locations.json');
+  const data = await response.json();
   
-  mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
-  
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-}
+  // Filter by name or type
+  const results = data.filter(loc => 
+    loc.name.toLowerCase().includes(destInput) || 
+    loc.type.toLowerCase().includes(destInput)
+  );
 
-function handleMapSearchKey(event) {
-  if (event.key === 'Enter') {
-    launchInAppSearch();
+  if (results.length === 0) {
+    alert("Location not found in our directory.");
+  } else {
+    // Zoom to the first result
+    const first = results[0];
+    map.setView([first.lat, first.lng], 16);
+    L.marker([first.lat, first.lng]).addTo(map).bindPopup(first.name).openPopup();
   }
 }
 
-function updateFreeMap(amenityType) {
-  const mapIframe = document.getElementById('live-interactive-map');
-  const baseLocation = "New Modern Mission";
+// 2. Updated Filter Logic: Clean and efficient
+async function updateFreeMap(amenityType, element) {
+  markersGroup.clearLayers(); // Clear old pins
   
-  mapIframe.src = `https://maps.google.com/maps?q=${amenityType}+near+${baseLocation}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  const response = await fetch('locations.json');
+  const data = await response.json();
+  
+  data.filter(loc => loc.type.toLowerCase() === amenityType.toLowerCase()).forEach(loc => {
+    L.marker([loc.lat, loc.lng]).addTo(markersGroup).bindPopup(loc.name);
+  });
 
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  // UI state
+  document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+  element.classList.add('active');
 }
+
 
 // ===================================================
 // GEMINI NATIVE CHAT INTEGRATION (NO POPUPS)
