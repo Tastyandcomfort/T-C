@@ -1120,3 +1120,23 @@ body {
     height: 300px; /* More compact for mobile phones */
   }
 }
+/* Layout Fixes */
+.app-section {
+  display: none; /* Default state */
+  width: 100%;
+}
+
+.app-section.active-view {
+  display: flex; /* Or block, depending on your original layout */
+  flex-direction: column;
+}
+
+#map { 
+  height: 400px; 
+  width: 100%; 
+  border-radius: 20px; 
+  background: #1a1d26;
+  overflow: hidden;
+  /* Ensures the map doesn't overflow its parent container */
+  max-width: 100%; 
+}
