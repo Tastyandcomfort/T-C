@@ -74,39 +74,59 @@ function toggleUpi() {
 
 
 
-// Initialize Map
-const map = L.map('map').setView([17.3850, 78.4867], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-const marker = L.marker([17.3850, 78.4867]).addTo(map).bindPopup("Tasty & Comfort").openPopup();
+// ===================================================
+// LEAFLET MAP ENGINE (FIXED)
+// ===================================================
+let map, routingControl;
+
+function initMap() {
+  if (map) return; // Prevent multiple initializations
+
+  map = L.map('map').setView([17.3850, 78.4867], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  // Initialize Routing Control
+  routingControl = L.Routing.control({
+    waypoints: [L.latLng(17.3850, 78.4867)],
+    routeWhileDragging: true,
+    showAlternatives: false,
+    addWaypoints: false
+  }).addTo(map);
+}
+
+// Ensure map renders when "Map" tab is clicked
+const observer = new MutationObserver((mutations) => {
+  if (document.getElementById('map-view').classList.contains('active-view')) {
+    if (!map) {
+      initMap();
+    } else {
+      map.invalidateSize(); // Fixes blank map tiles
+    }
+  }
+});
+
+observer.observe(document.getElementById('map-view'), { attributes: true, attributeFilter: ['class'] });
 
 async function handleMapSearch() {
   const input = document.getElementById('map-custom-destination');
   const spinner = document.getElementById('search-spinner');
   const resultCard = document.getElementById('map-result-card');
   const errorMsg = document.getElementById('map-error-msg');
-  const resultText = document.getElementById('result-content');
   
   const query = input.value.trim();
   if (!query) return;
 
-  // Reset UI
   spinner.classList.remove('hidden');
-  resultCard.classList.add('hidden');
-  errorMsg.classList.add('hidden');
-
+  
   try {
     const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
     const data = await response.json();
 
     if (data && data.length > 0) {
-      const { lat, lon, display_name } = data[0];
-      const newPos = [parseFloat(lat), parseFloat(lon)];
-      
-      map.setView(newPos, 14);
-      marker.setLatLng(newPos);
-      
-      resultText.innerText = `Direction to: ${display_name}`;
+      const destination = L.latLng(data[0].lat, data[0].lon);
+      routingControl.setWaypoints([L.latLng(17.3850, 78.4867), destination]);
       resultCard.classList.remove('hidden');
+      document.getElementById('result-content').innerText = `Path to: ${data[0].display_name.split(',')[0]}`;
     } else {
       errorMsg.classList.remove('hidden');
     }
@@ -117,13 +137,6 @@ async function handleMapSearch() {
   }
 }
 
-// Listen for Enter key
-document.getElementById('map-custom-destination').addEventListener('input', (e) => {
-  if (e.target.value === "") {
-    document.getElementById('map-result-card').classList.add('hidden');
-    document.getElementById('map-error-msg').classList.add('hidden');
-  }
-});
 
 
 
