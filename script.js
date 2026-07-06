@@ -74,44 +74,39 @@ function toggleUpi() {
 // ===================================================
 // IN-APP MAP RENDERING ENGINE CONTROLLERS
 // ===================================================
+// Updated Map Engine
+function updateFreeMap(amenityType, event) {
+  const mapIframe = document.getElementById('live-interactive-map');
+  const lat = "16.8080889"; 
+  const lng = "79.4052030";
+  
+  // Using the official Google Maps Embed Search format
+  // Note: This replaces the broken URL structure
+  const query = `${amenityType} near ${lat},${lng}`;
+  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(query)}&zoom=16`;
+
+  const chips = document.querySelectorAll('.filter-chip');
+  chips.forEach(chip => chip.classList.remove('active'));
+  
+  if(event) event.currentTarget.classList.add('active');
+}
+
 function launchInAppSearch() {
   const destInput = document.getElementById('map-custom-destination').value.trim();
   const mapIframe = document.getElementById('live-interactive-map');
   
   if (!destInput) {
-    alert("Please enter a destination to search location parameters!");
+    alert("Please enter a destination!");
     return;
   }
   
-  const originAddress = encodeURIComponent("New Modern Mission");
-  const destinationAddress = encodeURIComponent(destInput);
-  
-  mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  // Replace YOUR_GOOGLE_API_KEY with your key from Google Cloud Console
+  mapIframe.src = `https://www.google.com/maps/embed/v1/search?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(destInput)}&center=16.8080889,79.4052030&zoom=14`;
   
   const chips = document.querySelectorAll('.filter-chip');
   chips.forEach(chip => chip.classList.remove('active'));
 }
 
-function handleMapSearchKey(event) {
-  if (event.key === 'Enter') {
-    launchInAppSearch();
-  }
-}
-
-function updateFreeMap(amenityType) {
-  const mapIframe = document.getElementById('live-interactive-map');
-  
-  // Replace these with your actual Latitude and Longitude
-  const lat = "16.8080889"; 
-  const lng = "79.4052030";
-  
-  // Construct the URL using the coordinates for more precision
-  mapIframe.src = `https://www.google.com/maps/search/${amenityType}/@${lat},${lng},16z?output=embed`;
-
-  const chips = document.querySelectorAll('.filter-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-}
 
 
 // ===================================================
