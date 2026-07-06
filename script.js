@@ -79,63 +79,53 @@ function toggleUpi() {
 // ===================================================
 let map, routingControl;
 
+// Initialize Map only when the section is shown
 function initMap() {
-  if (map) return; // Prevent multiple initializations
+    if (map) return; 
 
-  map = L.map('map').setView([17.3850, 78.4867], 14);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    // Target coordinates
+    const targetCoords = [17.3850, 78.4867];
+    
+    map = L.map('map').setView(targetCoords, 14);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
 
-  // Initialize Routing Control
-  routingControl = L.Routing.control({
-    waypoints: [L.latLng(17.3850, 78.4867)],
-    routeWhileDragging: true,
-    showAlternatives: false,
-    addWaypoints: false
-  }).addTo(map);
+    routingControl = L.Routing.control({
+        waypoints: [L.latLng(targetCoords[0], targetCoords[1])],
+        routeWhileDragging: true
+    }).addTo(map);
 }
 
-// Ensure map renders when "Map" tab is clicked
-const observer = new MutationObserver((mutations) => {
-  if (document.getElementById('map-view').classList.contains('active-view')) {
-    if (!map) {
-      initMap();
-    } else {
-      map.invalidateSize(); // Fixes blank map tiles
-    }
-  }
-});
-
-observer.observe(document.getElementById('map-view'), { attributes: true, attributeFilter: ['class'] });
-
+// Function triggered by the search button
 async function handleMapSearch() {
-  const input = document.getElementById('map-custom-destination');
-  const spinner = document.getElementById('search-spinner');
-  const resultCard = document.getElementById('map-result-card');
-  const errorMsg = document.getElementById('map-error-msg');
-  
-  const query = input.value.trim();
-  if (!query) return;
+    const input = document.getElementById('map-custom-destination').value.trim();
+    if (!input) return;
 
-  spinner.classList.remove('hidden');
-  
-  try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-    const data = await response.json();
+    // Fetch coordinates from Nominatim
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}`);
+    const data = await res.json();
 
     if (data && data.length > 0) {
-      const destination = L.latLng(data[0].lat, data[0].lon);
-      routingControl.setWaypoints([L.latLng(17.3850, 78.4867), destination]);
-      resultCard.classList.remove('hidden');
-      document.getElementById('result-content').innerText = `Path to: ${data[0].display_name.split(',')[0]}`;
+        const destination = L.latLng(data[0].lat, data[0].lon);
+        routingControl.setWaypoints([L.latLng(17.3850, 78.4867), destination]);
     } else {
-      errorMsg.classList.remove('hidden');
+        alert("Location not found.");
     }
-  } catch (err) {
-    errorMsg.classList.remove('hidden');
-  } finally {
-    spinner.classList.add('hidden');
-  }
 }
+
+// Ensure map renders correctly when the Map tab is clicked
+document.querySelector('[onclick*="map-view"]').addEventListener('click', () => {
+    setTimeout(() => {
+        if (!map) {
+            initMap();
+        } else {
+            map.invalidateSize(); // Forces the map to re-draw correctly
+        }
+    }, 200);
+});
+
 
 
 
