@@ -79,53 +79,47 @@ function toggleUpi() {
 // REPLACE 'YOUR_API_KEY' with your actual Google Maps API Key
 const STALL_LOCATION = { lat: 17.3850, lng: 78.4867 }; 
 let map, directionsService, directionsRenderer;
+const stallHub = { lat: 17.3850, lng: 78.4867 };
 
 function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: STALL_LOCATION,
-    zoom: 15,
-    styles: [{ featureType: "all", elementType: "labels", stylers: [{ visibility: "on" }] }]
-  });
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: stallHub,
+        zoom: 15
+    });
+    
+    // Add Stall Hub Marker
+    new google.maps.Marker({ position: stallHub, map: map, title: "Tasty & Comfort" });
+    
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
 
-  new google.maps.Marker({ position: STALL_LOCATION, map: map, title: "Tasty & Comfort" });
-  directionsService = new google.maps.DirectionsService();
-  directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-
-  // Enable Autocomplete for the search input
-  new google.maps.places.Autocomplete(document.getElementById('map-custom-destination'));
+    // Initialize Autocomplete
+    const input = document.getElementById('map-custom-destination');
+    new google.maps.places.Autocomplete(input);
 }
 
 async function calculateRoute() {
-  const dest = document.getElementById('map-custom-destination').value;
-  const spinner = document.getElementById('search-spinner');
-  const resultCard = document.getElementById('map-result-card');
-  
-  if (!dest) return;
-  spinner.classList.remove('hidden');
+    const destination = document.getElementById('map-custom-destination').value;
+    const spinner = document.getElementById('search-spinner');
+    
+    if (!destination) return;
+    spinner.classList.remove('hidden');
 
-  directionsService.route({
-    origin: STALL_LOCATION,
-    destination: dest,
-    travelMode: google.maps.TravelMode.DRIVING
-  }, (response, status) => {
-    spinner.classList.add('hidden');
-    if (status === 'OK') {
-      directionsRenderer.setDirections(response);
-      const leg = response.routes[0].legs[0];
-      
-      // Update result card
-      resultCard.classList.remove('hidden');
-      document.getElementById('result-content').innerHTML = `
-        <strong>Start:</strong> Tasty & Comfort<br>
-        <strong>Dest:</strong> ${leg.end_address.split(',')[0]}<br>
-        <strong>Time:</strong> ${leg.duration.text} | <strong>Dist:</strong> ${leg.distance.text}
-      `;
-    } else {
-      alert("Location not found. Please try again.");
-    }
-  });
+    directionsService.route({
+        origin: stallHub,
+        destination: destination,
+        travelMode: 'DRIVING'
+    }, (response, status) => {
+        spinner.classList.add('hidden');
+        if (status === 'OK') {
+            directionsRenderer.setDirections(response);
+        } else {
+            // Trigger your custom Apple-style error modal
+            showAppleError("Location not found", "We couldn't find a route to that destination.");
+        }
+    });
 }
-
 
 function showAppleError(title, msg) {
     // Reuse your existing apple-alert-overlay logic
@@ -137,6 +131,8 @@ function showAppleError(title, msg) {
 
 // Ensure initMap runs on load
 window.initMap = initMap;
+
+
 
 
 // ===================================================
