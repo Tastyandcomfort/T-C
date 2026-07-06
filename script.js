@@ -92,7 +92,7 @@ let markersGroup = L.layerGroup().addTo(map);
 async function filterMarkers(type, btnElement) {
   markersGroup.clearLayers(); // Remove old markers
   
-  const response = await fetch('locations.xlsx'); // Your exported Excel-JSON
+  const response = await fetch('locations.json'); // Your exported Excel-JSON
   const data = await response.json();
   
   data.filter(loc => loc.type === type).forEach(loc => {
