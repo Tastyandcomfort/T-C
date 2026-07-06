@@ -83,7 +83,8 @@ function launchInAppSearch() {
     return;
   }
   
-  const originAddress = encodeURIComponent("New Modern Mission");
+  const originAddress = encodeURIComponent("Max
+మాక్స్");
   const destinationAddress = encodeURIComponent(destInput);
   
   mapIframe.src = `https://maps.google.com/maps?q=${destinationAddress}+near+${originAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
