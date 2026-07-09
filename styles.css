@@ -1135,6 +1135,11 @@ body {
   transform: scale(0.95);
 }
 
+/* Add this to prevent the button from vibrating while you hold it */
+.float-btn:active {
+  animation: none;
+  transform: scale(0.95);
+}
 
 
   
