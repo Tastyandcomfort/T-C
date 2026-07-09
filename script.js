@@ -201,40 +201,47 @@ async function submitUserMessage() {
 
 //Floating emergency🚨 icon====
 const btn = document.getElementById('float-emergency');
+let isDragging = false;
+let startX, startY;
 
-// 1. Force the button to be draggable
-btn.onpointerdown = function(e) {
-  let shiftX = e.clientX - btn.getBoundingClientRect().left;
-  let shiftY = e.clientY - btn.getBoundingClientRect().top;
+btn.addEventListener('pointerdown', (e) => {
+    isDragging = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    btn.style.transition = 'none';
+});
 
-  function moveAt(pageX, pageY) {
-    btn.style.left = pageX - shiftX + 'px';
-    btn.style.top = pageY - shiftY + 'px';
-  }
-
-  function onPointerMove(e) {
-    btn.setPointerCapture(e.pointerId);
-    moveAt(e.pageX, e.pageY);
-    btn.dataset.moved = "true"; // Mark that it was dragged
-  }
-
-  document.addEventListener('pointermove', onPointerMove);
-
-  btn.onpointerup = function(e) {
-    document.removeEventListener('pointermove', onPointerMove);
-    
-    // If it WASN'T moved, treat as a click
-    if (!btn.dataset.moved) {
-      openEmergency();
+btn.addEventListener('pointermove', (e) => {
+    // Threshold to prevent accidental drags on a simple tap
+    if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
+        isDragging = true;
+        btn.style.left = (e.clientX - 27) + 'px';
+        btn.style.top = (e.clientY - 27) + 'px';
+        btn.style.right = 'auto'; // Disable CSS right constraint
     }
-    btn.dataset.moved = ""; // Reset for next time
-    btn.onpointerup = null;
-  };
-};
+});
 
-// Prevent default browser drag behavior
-btn.ondragstart = function() { return false; };
+btn.addEventListener('pointerup', (e) => {
+    if (!isDragging) {
+        openEmergency();
+    } else {
+        // Snap to side
+        btn.style.transition = 'all 0.3s ease';
+        const centerX = window.innerWidth / 2;
+        const finalLeft = (e.clientX > centerX) ? (window.innerWidth - 75) : 20;
+        
+        btn.style.left = finalLeft + 'px';
+        btn.style.top = Math.min(Math.max(e.clientY - 27, 80), window.innerHeight - 150) + 'px';
+    }
+    isDragging = false;
+});
 
+function openEmergency() {
+    document.getElementById('emergency-modal').classList.remove('hidden');
+}
+function closeEmergency() {
+    document.getElementById('emergency-modal').classList.add('hidden');
+}
 
 
 
