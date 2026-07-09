@@ -204,45 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('float-emergency');
     const modal = document.getElementById('emergency-modal');
 
-    let isDragging = false;
-    let startX, startY;
-
-    // Pointer Down
-    btn.addEventListener('pointerdown', (e) => {
-        isDragging = false;
-        startX = e.clientX;
-        startY = e.clientY;
-        btn.style.transition = 'none';
-    });
-
-    // Pointer Move
-    btn.addEventListener('pointermove', (e) => {
-        if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
-            isDragging = true;
-            btn.style.left = (e.clientX - 27) + 'px';
-            btn.style.top = (e.clientY - 27) + 'px';
-            btn.style.bottom = 'auto';
-            btn.style.right = 'auto';
-        }
-    });
-
-    // Pointer Up
-    btn.addEventListener('pointerup', (e) => {
-        if (!isDragging) {
-            // TAP: Open Modal
-            modal.classList.remove('hidden');
-        } else {
-            // DRAG: Snap
-            btn.style.transition = 'all 0.3s ease';
-            const centerX = window.innerWidth / 2;
-            btn.style.left = (e.clientX > centerX) ? (window.innerWidth - 75) + 'px' : '20px';
-            btn.style.top = Math.min(Math.max(e.clientY - 27, 80), window.innerHeight - 150) + 'px';
-        }
-        isDragging = false;
+    btn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
     });
 });
 
-// Global functions for the HTML 'onclick' attributes
 function closeEmergency() {
     document.getElementById('emergency-modal').classList.add('hidden');
 }
