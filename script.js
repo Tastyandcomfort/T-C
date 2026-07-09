@@ -242,9 +242,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Make sure these are sitting at the base level of the file
+function openEmergency() {
+    const modal = document.getElementById('emergency-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    } else {
+        console.error("Modal not found!");
+    }
+}
+
 function closeEmergency() {
     document.getElementById('emergency-modal').classList.add('hidden');
 }
+
 
 
 
