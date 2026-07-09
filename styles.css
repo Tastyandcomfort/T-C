@@ -1101,69 +1101,40 @@ body {
 /* Floating Button */
 /* 1. Updated Floating Button */
 /* Your existing floating button styles */
-.float-btn {
-  position: fixed !important;
-  top: calc(100vh - 150px);
-  left: calc(100vw - 75px);
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: rgba(220, 53, 69, 0.95);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  cursor: grab;
-  z-index: 9999 !important;
+.emergency-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-emergency {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  touch-action: none;
-  user-select: none;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  /* Add this line to trigger the pulse */
-  animation: pulse 2s infinite; 
-}
-
-/* Add the animation definition below it */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-
-/* Keep your existing .modal and .modal-content styles exactly as they are */
-
-
-/* 2. Updated Modal Backdrop */
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000; /* Stays above the button */
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-/* 3. Ensure hidden items are truly invisible and non-interactive */
-.modal.hidden {
-  display: none !important;
-}
-
-.modal-content {
-  width: 85%;
-  max-width: 350px;
-  padding: 25px;
-  border-radius: 20px;
-  background: rgba(30, 30, 30, 0.9); /* Ensures card is opaque glass */
+  padding: 15px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
+
+.btn-emergency i {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #ff4d4d;
+}
+
+.btn-emergency:active {
+  background: rgba(255, 77, 77, 0.2);
+  transform: scale(0.95);
+}
+
 
 
   
