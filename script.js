@@ -2,38 +2,34 @@
 // SECTION VIEW MANAGER ENGINE
 // ===================================================
 function switchView(viewId, element) {
-  // Hide all sections smoothly
+  // 1. NAVIGATION LOGIC
   const sections = document.querySelectorAll('.app-section');
   sections.forEach(sec => sec.classList.remove('active-view'));
   
-  // Show target section
   const targetView = document.getElementById(viewId);
-  if (targetView) {
-    targetView.classList.add('active-view');
-  }
+  if (targetView) targetView.classList.add('active-view');
 
-  // Update active states on desktop sidebar
   const sideItems = document.querySelectorAll('.side-item');
   sideItems.forEach(item => item.classList.remove('active'));
   
-  // Update active states on mobile bottom navigation tab-bar
   const navBtns = document.querySelectorAll('.nav-btn');
   navBtns.forEach(btn => btn.classList.remove('active'));
 
-  // Highlight active element trigger frame
-  if (element) {
-    element.classList.add('active');
+  if (element) element.classList.add('active');
 
-     // 2. NEW VIDEO CONTROL LOGIC (Added here)
+  // 2. VIDEO CONTROL LOGIC (Moved outside the 'if (element)' block)
   const videoPlayer = document.getElementById('live-video-player');
   if (videoPlayer) {
-    if (viewId === 'chat-view') { // Replace 'ai-chat-section' with your chat section's ID
+    if (viewId === 'chat-view') {
+      // Start video
       videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1";
     } else {
-      videoPlayer.src = ""; // Stops the video
+      // STOP video by clearing the source
+      videoPlayer.src = ""; 
     }
   }
 }
+
 //www.youtube.com/live/PoIrmiY0yjU?si=8BlNaz5BIpY8kHX5
 // ===================================================
 // INITIALIZE SYSTEM EVENTS & IMMEDIATE APPLE-STYLE POPUP
