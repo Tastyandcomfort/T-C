@@ -151,7 +151,7 @@ async function submitUserMessage() {
 
   try {
     // Integrated verified Key from Google AI Studio
-    const API_KEY = "AQ.Ab8RN6LTSdN1RwE8gkbiByzOSL-Nqs5DwSN0oVmx6YuCe9WKBQ"; 
+    const API_KEY = "AQ.Ab8RN6JbLJ8a8xNiL1Vq_msT-p8pg-nJHR6KpgfyU5vYol4Ihw"; 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     const systemContext = `You are the friendly, high-tech AI Assistant for "Tasty & Comfort" (T&C), a premium stall located at New Modern Mission. 
