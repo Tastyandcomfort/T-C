@@ -1113,15 +1113,25 @@ body {
 }
 
 /* The card style */
+/* Ensure the popup background card is visible and text is readable */
 #announcement-modal .glass-card {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    background: #ffffff !important; /* Forces a white background */
+    color: #333333 !important;      /* Forces dark text so it's visible */
+    padding: 30px !important;
+    border-radius: 20px !important;
+    text-align: center !important;
+    width: 85% !important;
+    max-width: 400px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
 }
+
+/* Ensure the heading is styled properly */
+#announcement-text {
+    color: #000000 !important;
+    font-size: 18px !important;
+    margin-bottom: 20px !important;
+}
+
 
 /* Ensure the 'hidden' class works */
 #announcement-modal.hidden {
