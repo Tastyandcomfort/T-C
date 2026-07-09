@@ -204,44 +204,48 @@ const btn = document.getElementById('float-emergency');
 let isDragging = false;
 let startX, startY;
 
-btn.addEventListener('pointerdown', (e) => {
-    isDragging = false;
-    startX = e.clientX;
-    startY = e.clientY;
-    btn.style.transition = 'none';
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('float-emergency');
+
+    let isDragging = false;
+    let startX, startY;
+
+    btn.addEventListener('pointerdown', (e) => {
+        isDragging = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        btn.style.transition = 'none';
+    });
+
+    btn.addEventListener('pointermove', (e) => {
+        if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
+            isDragging = true;
+            // Use absolute positioning for dragging
+            btn.style.left = (e.clientX - 27) + 'px';
+            btn.style.top = (e.clientY - 27) + 'px';
+            btn.style.bottom = 'auto';
+            btn.style.right = 'auto';
+        }
+    });
+
+    btn.addEventListener('pointerup', (e) => {
+        if (!isDragging) {
+            document.getElementById('emergency-modal').classList.remove('hidden');
+        } else {
+            // Snap to side
+            btn.style.transition = 'all 0.3s ease';
+            const centerX = window.innerWidth / 2;
+            btn.style.left = (e.clientX > centerX) ? (window.innerWidth - 75) + 'px' : '20px';
+            btn.style.top = Math.min(Math.max(e.clientY - 27, 80), window.innerHeight - 150) + 'px';
+        }
+        isDragging = false;
+    });
 });
 
-btn.addEventListener('pointermove', (e) => {
-    // Threshold to prevent accidental drags on a simple tap
-    if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
-        isDragging = true;
-        btn.style.left = (e.clientX - 27) + 'px';
-        btn.style.top = (e.clientY - 27) + 'px';
-        btn.style.right = 'auto'; // Disable CSS right constraint
-    }
-});
-
-btn.addEventListener('pointerup', (e) => {
-    if (!isDragging) {
-        openEmergency();
-    } else {
-        // Snap to side
-        btn.style.transition = 'all 0.3s ease';
-        const centerX = window.innerWidth / 2;
-        const finalLeft = (e.clientX > centerX) ? (window.innerWidth - 75) : 20;
-        
-        btn.style.left = finalLeft + 'px';
-        btn.style.top = Math.min(Math.max(e.clientY - 27, 80), window.innerHeight - 150) + 'px';
-    }
-    isDragging = false;
-});
-
-function openEmergency() {
-    document.getElementById('emergency-modal').classList.remove('hidden');
-}
 function closeEmergency() {
     document.getElementById('emergency-modal').classList.add('hidden');
 }
+
 
 
 
