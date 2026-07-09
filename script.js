@@ -199,50 +199,56 @@ async function submitUserMessage() {
 }
 
 
-//Parking alert....
-
+// Parking alert system
 let announcementActive = false;
 let messageContent = "";
 
 function checkAnnouncement() {
-    // Fetch the JSON file from your server
-    fetch('announcement.json?t=' + new Date().getTime()) // '?t=' prevents browser caching
+    fetch('announcement.json?t=' + new Date().getTime())
         .then(response => response.json())
         .then(data => {
+            const modal = document.getElementById('announcement-modal');
+            
             if (data.status === 'active') {
                 announcementActive = true;
                 messageContent = data.message;
                 
-                const modal = document.getElementById('announcement-modal');
                 // Only show if it's currently hidden
                 if (modal.classList.contains('hidden')) {
+                    // This targets your message paragraph
                     document.getElementById('announcement-text').innerText = messageContent;
                     modal.classList.remove('hidden');
                 }
             } else {
                 announcementActive = false;
-                document.getElementById('announcement-modal').classList.add('hidden');
+                modal.classList.add('hidden');
             }
         })
         .catch(error => console.log('Error loading announcement:', error));
 }
 
-// Check every 30 seconds
+// 1. Run once immediately when the page loads
+checkAnnouncement();
+
+// 2. Check every 30 seconds
 setInterval(checkAnnouncement, 30000);
 
 function closeAnnouncement() {
-    document.getElementById('announcement-modal').classList.add('hidden');
+    const modal = document.getElementById('announcement-modal');
+    modal.classList.add('hidden');
     
     // "Nag" feature: reappear after 1 minute if still active
     if (announcementActive) {
         setTimeout(() => {
             if (announcementActive) {
+                // Ensure text is set before showing
                 document.getElementById('announcement-text').innerText = messageContent;
-                document.getElementById('announcement-modal').classList.remove('hidden');
+                modal.classList.remove('hidden');
             }
         }, 60000); 
     }
 }
+
 
 
 
