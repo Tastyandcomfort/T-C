@@ -205,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('emergency-modal');
 
     btn.addEventListener('click', () => {
+        console.log("Button clicked!"); // Check F12 Console for this
         modal.classList.remove('hidden');
     });
 });
@@ -212,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function closeEmergency() {
     document.getElementById('emergency-modal').classList.add('hidden');
 }
+
 
 
 
