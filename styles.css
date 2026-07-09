@@ -1100,10 +1100,10 @@ body {
 
 /* Floating Button */
 /* 1. Updated Floating Button */
+/* Your existing floating button styles */
 .float-btn {
   position: fixed !important;
-  /* Remove bottom/right so JS can control position */
-  top: calc(100vh - 150px); 
+  top: calc(100vh - 150px);
   left: calc(100vw - 75px);
   width: 55px;
   height: 55px;
@@ -1120,8 +1120,17 @@ body {
   touch-action: none;
   user-select: none;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  transition: none; /* Important: No transition during drag */
+  /* Add this line to trigger the pulse */
+  animation: pulse 2s infinite; 
 }
+
+/* Add the animation definition below it */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 
 /* Keep your existing .modal and .modal-content styles exactly as they are */
 
