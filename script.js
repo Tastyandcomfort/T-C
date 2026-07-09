@@ -208,24 +208,27 @@ function checkAnnouncement() {
         .then(response => response.json())
         .then(data => {
             const modal = document.getElementById('announcement-modal');
+            const sound = document.getElementById('announcement-sound');
             
             if (data.status === 'active') {
                 announcementActive = true;
                 messageContent = data.message;
                 
-                // Only show if it's currently hidden
                 if (modal.classList.contains('hidden')) {
-                    // This targets your message paragraph
                     document.getElementById('announcement-text').innerText = messageContent;
                     modal.classList.remove('hidden');
+                    
+                    // Trigger the sound
+                    sound.play().catch(e => console.log("Audio play blocked by browser, user needs to click the page first."));
                 }
             } else {
                 announcementActive = false;
                 modal.classList.add('hidden');
             }
         })
-        .catch(error => console.log('Error loading announcement:', error));
+        .catch(error => console.log('Error:', error));
 }
+
 
 // 1. Run once immediately when the page loads
 checkAnnouncement();
