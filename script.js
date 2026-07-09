@@ -199,21 +199,6 @@ async function submitUserMessage() {
 }
 
 
-//Floating emergency🚨 icon====
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('float-emergency');
-    const modal = document.getElementById('emergency-modal');
-
-    btn.addEventListener('click', () => {
-        console.log("Button clicked!"); // Check F12 Console for this
-        modal.classList.remove('hidden');
-    });
-});
-
-function closeEmergency() {
-    document.getElementById('emergency-modal').classList.add('hidden');
-}
-
 
 
 
