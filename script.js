@@ -201,35 +201,48 @@ async function submitUserMessage() {
 
 //Parking alert....
 
-function doGet() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = {
-    status: sheet.getRange("A1").getValue(),
-    message: sheet.getRange("B1").getValue()
-  };
-  return ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-const SHEET_URL = 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE';
+let announcementActive = false;
+let messageContent = "";
 
 function checkAnnouncement() {
-    fetch(SHEET_URL)
+    // Fetch the JSON file from your server
+    fetch('announcement.json?t=' + new Date().getTime()) // '?t=' prevents browser caching
         .then(response => response.json())
         .then(data => {
             if (data.status === 'active') {
-                document.getElementById('announcement-text').innerText = data.message;
-                document.getElementById('announcement-modal').classList.remove('hidden');
+                announcementActive = true;
+                messageContent = data.message;
+                
+                const modal = document.getElementById('announcement-modal');
+                // Only show if it's currently hidden
+                if (modal.classList.contains('hidden')) {
+                    document.getElementById('announcement-text').innerText = messageContent;
+                    modal.classList.remove('hidden');
+                }
+            } else {
+                announcementActive = false;
+                document.getElementById('announcement-modal').classList.add('hidden');
             }
-        });
-}
-
-function closeAnnouncement() {
-    document.getElementById('announcement-modal').classList.add('hidden');
+        })
+        .catch(error => console.log('Error loading announcement:', error));
 }
 
 // Check every 30 seconds
 setInterval(checkAnnouncement, 30000);
 
+function closeAnnouncement() {
+    document.getElementById('announcement-modal').classList.add('hidden');
+    
+    // "Nag" feature: reappear after 1 minute if still active
+    if (announcementActive) {
+        setTimeout(() => {
+            if (announcementActive) {
+                document.getElementById('announcement-text').innerText = messageContent;
+                document.getElementById('announcement-modal').classList.remove('hidden');
+            }
+        }, 60000); 
+    }
+}
 
 
 
