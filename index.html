@@ -424,5 +424,24 @@ T&C does not collect or store your personal data.This website is for information
   </div>
 
   <script src="script.js"></script>
+  <!-- Floating Emergency Button -->
+<button class="float-emergency-btn" onclick="openEmergency()">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+</button>
+
+<!-- Emergency Modal (Hidden by default) -->
+<div id="emergency-modal" class="modal hidden">
+  <div class="glass-card modal-content">
+    <button class="close-btn" onclick="closeEmergency()">×</button>
+    <h3>Emergency Contacts</h3>
+    <div class="emergency-grid">
+      <a href="tel:100" class="btn-emergency">Police (100)</a>
+      <a href="tel:102" class="btn-emergency">Ambulance (102)</a>
+      <a href="tel:101" class="btn-emergency">Fire (101)</a>
+      <a href="tel:1930" class="btn-emergency">Cyber Crime (1930)</a>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
