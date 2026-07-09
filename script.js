@@ -198,10 +198,33 @@ async function submitUserMessage() {
   logBox.scrollTop = logBox.scrollHeight;
 }
 
-function openEmergency() {
-  document.getElementById('emergency-modal').classList.remove('hidden');
-}
 
-function closeEmergency() {
-  document.getElementById('emergency-modal').classList.add('hidden');
-}
+//Floating emergency🚨 icon====
+const btn = document.getElementById('float-emergency');
+
+let isDragging = false;
+
+btn.addEventListener('pointerdown', (e) => {
+  isDragging = false;
+  btn.style.transition = 'none';
+});
+
+btn.addEventListener('pointermove', (e) => {
+  if (e.buttons !== 1) return;
+  isDragging = true;
+  btn.style.left = (e.clientX - 25) + 'px';
+  btn.style.top = (e.clientY - 25) + 'px';
+});
+
+btn.addEventListener('pointerup', (e) => {
+  if (!isDragging) { openEmergency(); return; }
+  
+  // Magnetic Snap Logic
+  btn.style.transition = 'all 0.3s ease';
+  const centerX = window.innerWidth / 2;
+  btn.style.left = (e.clientX > centerX) ? 'calc(100% - 70px)' : '20px';
+  btn.style.top = Math.min(Math.max(e.clientY, 80), window.innerHeight - 150) + 'px';
+});
+
+function openEmergency() { document.getElementById('emergency-modal').classList.remove('hidden'); }
+function closeEmergency() { document.getElementById('emergency-modal').classList.add('hidden'); }
