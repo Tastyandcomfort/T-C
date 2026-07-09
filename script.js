@@ -23,9 +23,18 @@ function switchView(viewId, element) {
   // Highlight active element trigger frame
   if (element) {
     element.classList.add('active');
+
+     // 2. NEW VIDEO CONTROL LOGIC (Added here)
+  const videoPlayer = document.getElementById('live-video-player');
+  if (videoPlayer) {
+    if (viewId === 'ai-chat-section') { // Replace 'ai-chat-section' with your chat section's ID
+      videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1";
+    } else {
+      videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1"; // Stops the video
+    
   }
 }
-
+//www.youtube.com/live/PoIrmiY0yjU?si=8BlNaz5BIpY8kHX5
 // ===================================================
 // INITIALIZE SYSTEM EVENTS & IMMEDIATE APPLE-STYLE POPUP
 // ===================================================
