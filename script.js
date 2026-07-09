@@ -206,9 +206,20 @@ let startX, startY;
 
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('float-emergency');
+    const modal = document.getElementById('emergency-modal');
 
     let isDragging = false;
     let startX, startY;
+
+    // Helper function to open modal
+    const showModal = () => {
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    // Helper function to close modal
+    window.closeEmergency = () => {
+        if (modal) modal.classList.add('hidden');
+    };
 
     btn.addEventListener('pointerdown', (e) => {
         isDragging = false;
@@ -220,7 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('pointermove', (e) => {
         if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
             isDragging = true;
-            // Use absolute positioning for dragging
             btn.style.left = (e.clientX - 27) + 'px';
             btn.style.top = (e.clientY - 27) + 'px';
             btn.style.bottom = 'auto';
@@ -229,10 +239,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btn.addEventListener('pointerup', (e) => {
+        // If it was just a tap (not a drag), open the modal
         if (!isDragging) {
-            document.getElementById('emergency-modal').classList.remove('hidden');
+            showModal();
         } else {
-            // Snap to side
+            // It was a drag, so snap to side
             btn.style.transition = 'all 0.3s ease';
             const centerX = window.innerWidth / 2;
             btn.style.left = (e.clientX > centerX) ? (window.innerWidth - 75) + 'px' : '20px';
@@ -241,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
     });
 });
+
 
 // Make sure these are sitting at the base level of the file
 function openEmergency() {
