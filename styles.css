@@ -1150,4 +1150,13 @@ body {
     font-weight: bold;
 }
 
-  
+#announcement-modal h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+
+
+
