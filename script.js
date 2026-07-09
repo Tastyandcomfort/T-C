@@ -27,7 +27,7 @@ function switchView(viewId, element) {
      // 2. NEW VIDEO CONTROL LOGIC (Added here)
   const videoPlayer = document.getElementById('live-video-player');
   if (videoPlayer) {
-    if (viewId === 'ai-chat-section') { // Replace 'ai-chat-section' with your chat section's ID
+    if (viewId === 'chat-view') { // Replace 'ai-chat-section' with your chat section's ID
       videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1";
     } else {
       videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1"; // Stops the video
