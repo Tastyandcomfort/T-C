@@ -31,7 +31,7 @@ function switchView(viewId, element) {
       videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1";
     } else {
       videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1"; // Stops the video
-    
+}
   }
 }
 //www.youtube.com/live/PoIrmiY0yjU?si=8BlNaz5BIpY8kHX5
