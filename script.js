@@ -200,10 +200,6 @@ async function submitUserMessage() {
 
 
 //Floating emergency🚨 icon====
-const btn = document.getElementById('float-emergency');
-let isDragging = false;
-let startX, startY;
-
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('float-emergency');
     const modal = document.getElementById('emergency-modal');
@@ -211,16 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDragging = false;
     let startX, startY;
 
-    // Helper function to open modal
-    const showModal = () => {
-        if (modal) modal.classList.remove('hidden');
-    };
-
-    // Helper function to close modal
-    window.closeEmergency = () => {
-        if (modal) modal.classList.add('hidden');
-    };
-
+    // Pointer Down
     btn.addEventListener('pointerdown', (e) => {
         isDragging = false;
         startX = e.clientX;
@@ -228,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.style.transition = 'none';
     });
 
+    // Pointer Move
     btn.addEventListener('pointermove', (e) => {
         if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
             isDragging = true;
@@ -238,12 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Pointer Up
     btn.addEventListener('pointerup', (e) => {
-        // If it was just a tap (not a drag), open the modal
         if (!isDragging) {
-            showModal();
+            // TAP: Open Modal
+            modal.classList.remove('hidden');
         } else {
-            // It was a drag, so snap to side
+            // DRAG: Snap
             btn.style.transition = 'all 0.3s ease';
             const centerX = window.innerWidth / 2;
             btn.style.left = (e.clientX > centerX) ? (window.innerWidth - 75) + 'px' : '20px';
@@ -253,17 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
-// Make sure these are sitting at the base level of the file
-function openEmergency() {
-    const modal = document.getElementById('emergency-modal');
-    if (modal) {
-        modal.classList.remove('hidden');
-    } else {
-        console.error("Modal not found!");
-    }
-}
-
+// Global functions for the HTML 'onclick' attributes
 function closeEmergency() {
     document.getElementById('emergency-modal').classList.add('hidden');
 }
