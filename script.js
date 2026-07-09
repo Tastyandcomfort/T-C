@@ -197,3 +197,11 @@ async function submitUserMessage() {
   
   logBox.scrollTop = logBox.scrollHeight;
 }
+
+function openEmergency() {
+  document.getElementById('emergency-modal').classList.remove('hidden');
+}
+
+function closeEmergency() {
+  document.getElementById('emergency-modal').classList.add('hidden');
+}
