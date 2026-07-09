@@ -202,29 +202,39 @@ async function submitUserMessage() {
 //Floating emergency🚨 icon====
 const btn = document.getElementById('float-emergency');
 
-let isDragging = false;
+// 1. Force the button to be draggable
+btn.onpointerdown = function(e) {
+  let shiftX = e.clientX - btn.getBoundingClientRect().left;
+  let shiftY = e.clientY - btn.getBoundingClientRect().top;
 
-btn.addEventListener('pointerdown', (e) => {
-  isDragging = false;
-  btn.style.transition = 'none';
-});
+  function moveAt(pageX, pageY) {
+    btn.style.left = pageX - shiftX + 'px';
+    btn.style.top = pageY - shiftY + 'px';
+  }
 
-btn.addEventListener('pointermove', (e) => {
-  if (e.buttons !== 1) return;
-  isDragging = true;
-  btn.style.left = (e.clientX - 25) + 'px';
-  btn.style.top = (e.clientY - 25) + 'px';
-});
+  function onPointerMove(e) {
+    btn.setPointerCapture(e.pointerId);
+    moveAt(e.pageX, e.pageY);
+    btn.dataset.moved = "true"; // Mark that it was dragged
+  }
 
-btn.addEventListener('pointerup', (e) => {
-  if (!isDragging) { openEmergency(); return; }
-  
-  // Magnetic Snap Logic
-  btn.style.transition = 'all 0.3s ease';
-  const centerX = window.innerWidth / 2;
-  btn.style.left = (e.clientX > centerX) ? 'calc(100% - 70px)' : '20px';
-  btn.style.top = Math.min(Math.max(e.clientY, 80), window.innerHeight - 150) + 'px';
-});
+  document.addEventListener('pointermove', onPointerMove);
 
-function openEmergency() { document.getElementById('emergency-modal').classList.remove('hidden'); }
-function closeEmergency() { document.getElementById('emergency-modal').classList.add('hidden'); }
+  btn.onpointerup = function(e) {
+    document.removeEventListener('pointermove', onPointerMove);
+    
+    // If it WASN'T moved, treat as a click
+    if (!btn.dataset.moved) {
+      openEmergency();
+    }
+    btn.dataset.moved = ""; // Reset for next time
+    btn.onpointerup = null;
+  };
+};
+
+// Prevent default browser drag behavior
+btn.ondragstart = function() { return false; };
+
+
+
+
