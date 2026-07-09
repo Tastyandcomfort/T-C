@@ -30,8 +30,8 @@ function switchView(viewId, element) {
     if (viewId === 'chat-view') { // Replace 'ai-chat-section' with your chat section's ID
       videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1";
     } else {
-      videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1"; // Stops the video
-}
+      videoPlayer.src = ""; // Stops the video
+    }
   }
 }
 //www.youtube.com/live/PoIrmiY0yjU?si=8BlNaz5BIpY8kHX5
