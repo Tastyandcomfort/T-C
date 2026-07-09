@@ -199,7 +199,36 @@ async function submitUserMessage() {
 }
 
 
+//Parking alert....
 
+function doGet() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = {
+    status: sheet.getRange("A1").getValue(),
+    message: sheet.getRange("B1").getValue()
+  };
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+const SHEET_URL = 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE';
+
+function checkAnnouncement() {
+    fetch(SHEET_URL)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'active') {
+                document.getElementById('announcement-text').innerText = data.message;
+                document.getElementById('announcement-modal').classList.remove('hidden');
+            }
+        });
+}
+
+function closeAnnouncement() {
+    document.getElementById('announcement-modal').classList.add('hidden');
+}
+
+// Check every 30 seconds
+setInterval(checkAnnouncement, 30000);
 
 
 
