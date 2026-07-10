@@ -234,7 +234,7 @@ function checkAnnouncement() {
 checkAnnouncement();
 
 // 2. Check every 30 seconds
-setInterval(checkAnnouncement, 30000);
+setInterval(checkAnnouncement, 60000);
 
 function closeAnnouncement() {
     const modal = document.getElementById('announcement-modal');
