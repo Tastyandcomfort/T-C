@@ -52,3 +52,9 @@ body {
 }
 
 .gold-text { color: var(--gold); }
+
+.bottom-mobile-nav {
+  background: rgba(15, 17, 22, 0.9);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-color);
+}
