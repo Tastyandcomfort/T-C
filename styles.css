@@ -1158,57 +1158,41 @@ body {
 }
 
 /*R&D section*/
-/* Maintain card consistency */
+/* The main card container */
 .card {
     background-color: #1a1a1a;
     border-radius: 12px;
     padding: 20px;
     margin: 20px 0;
     color: #ffffff;
-    border: 1px solid #333;
-    cursor: pointer; /* Indicates it's clickable */
+    /* Adding the specific border effect */
+    border: 2px solid #ff0000; 
+    cursor: pointer;
 }
 
-/* Style for the header part */
-.rd-summary {
-    list-style: none; /* Removes the default arrow */
-    outline: none;
+/* The scrollable area for the description */
+.scroll-box {
+    height: 100px; /* Fixed height for scrolling */
+    overflow-y: auto; /* Enables vertical scrolling */
+    padding-right: 10px;
+    border: 1px solid #333; /* Subtle border for the scroll box */
+    margin-top: 10px;
 }
 
-.rd-summary::-webkit-details-marker {
-    display: none; /* Hides the default arrow in Chrome/Safari */
+/* Customizing scrollbar for webkit browsers */
+.scroll-box::-webkit-scrollbar {
+    width: 6px;
+}
+.scroll-box::-webkit-scrollbar-thumb {
+    background-color: #ff9800;
+    border-radius: 10px;
 }
 
-.member-info .role {
-    font-size: 0.75rem;
-    color: #ff9800;
-    text-transform: uppercase;
-    font-weight: bold;
-}
+.rd-summary { list-style: none; outline: none; }
+.rd-summary::-webkit-details-marker { display: none; }
+.description { font-size: 0.95rem; line-height: 1.6; color: #cccccc; }
+.section-title { font-size: 1.1rem; margin-bottom: 10px; }
 
-.member-info h3 {
-    margin: 5px 0 0 0;
-    font-size: 1.25rem;
-}
-
-/* Styling for the revealed content */
-.rd-details {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #333;
-}
-
-.section-title {
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-}
-
-.description {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #cccccc;
-    margin: 0;
-}
 
 
 
