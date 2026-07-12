@@ -1158,6 +1158,7 @@ body {
 }
 
 /*R&D section*/
+/* Maintain card consistency */
 .card {
     background-color: #1a1a1a;
     border-radius: 12px;
@@ -1165,25 +1166,41 @@ body {
     margin: 20px 0;
     color: #ffffff;
     border: 1px solid #333;
+    cursor: pointer; /* Indicates it's clickable */
 }
 
-.member-header .role {
+/* Style for the header part */
+.rd-summary {
+    list-style: none; /* Removes the default arrow */
+    outline: none;
+}
+
+.rd-summary::-webkit-details-marker {
+    display: none; /* Hides the default arrow in Chrome/Safari */
+}
+
+.member-info .role {
     font-size: 0.75rem;
     color: #ff9800;
     text-transform: uppercase;
     font-weight: bold;
 }
 
-.member-header h3 {
-    margin: 5px 0 15px 0;
+.member-info h3 {
+    margin: 5px 0 0 0;
     font-size: 1.25rem;
+}
+
+/* Styling for the revealed content */
+.rd-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
 }
 
 .section-title {
     font-size: 1.1rem;
     margin-bottom: 10px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 5px;
 }
 
 .description {
@@ -1192,6 +1209,7 @@ body {
     color: #cccccc;
     margin: 0;
 }
+
 
 
 
