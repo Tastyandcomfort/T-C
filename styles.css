@@ -1158,41 +1158,49 @@ body {
 }
 
 /*R&D section*/
-/* The main card container */
-.card {
+/* Card Container with the Orange Left-Border Accent */
+.rd-card-interactive {
     background-color: #1a1a1a;
     border-radius: 12px;
     padding: 20px;
     margin: 20px 0;
     color: #ffffff;
-    /* Adding the specific border effect */
-    border: 2px solid #ff0000; 
+    
+    /* Replaces the red border with the requested orange accent */
+    border-left: 8px solid #ff9800; 
+    border-top: 1px solid #333;
+    border-right: 1px solid #333;
+    border-bottom: 1px solid #333;
+    
     cursor: pointer;
+    list-style: none;
 }
+
+/* Hide default toggle marker */
+.rd-summary { outline: none; }
+.rd-summary::-webkit-details-marker { display: none; }
 
 /* The scrollable area for the description */
 .scroll-box {
-    height: 100px; /* Fixed height for scrolling */
-    overflow-y: auto; /* Enables vertical scrolling */
-    padding-right: 10px;
-    border: 1px solid #333; /* Subtle border for the scroll box */
-    margin-top: 10px;
+    height: 120px; /* Fixed height for scrolling */
+    overflow-y: auto; 
+    padding: 10px;
+    border: 1px solid #333;
+    margin-top: 15px;
+    background: #222;
+    border-radius: 8px;
 }
 
-/* Customizing scrollbar for webkit browsers */
-.scroll-box::-webkit-scrollbar {
-    width: 6px;
-}
+/* Customizing scrollbar */
+.scroll-box::-webkit-scrollbar { width: 6px; }
 .scroll-box::-webkit-scrollbar-thumb {
     background-color: #ff9800;
     border-radius: 10px;
 }
 
-.rd-summary { list-style: none; outline: none; }
-.rd-summary::-webkit-details-marker { display: none; }
-.description { font-size: 0.95rem; line-height: 1.6; color: #cccccc; }
+.description { font-size: 0.95rem; line-height: 1.6; color: #cccccc; margin: 0; }
 .section-title { font-size: 1.1rem; margin-bottom: 10px; }
-
+.rd-details-content { margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; }
 
 
 
