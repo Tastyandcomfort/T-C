@@ -1204,28 +1204,37 @@ body {
 
 
 /* Suppliers description Style for the bulleted list */
+/* Ensure the list has enough space on the left for the bullet to show */
 .description-list {
-    list-style-type: disc; /* Or 'none' if you want custom icons */
-    padding-left: 20px;
+    list-style-type: disc;
+    padding-left: 25px; /* Increased to prevent cutoff */
     margin: 0;
     color: #cccccc;
 }
 
+/* Ensure only the heading is bold */
 .description-list li {
     font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 10px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    font-weight: normal; /* Default text is not bold */
 }
 
-/* Ensure the scroll-box handles the list properly */
+.description-list li strong {
+    font-weight: bold; /* Only the heading inside <strong> is bold */
+    color: #ffffff;
+}
+
+/* Ensure scroll-box doesn't clip the bullets */
 .scroll-box {
-    height: 120px; 
-    overflow-y: auto; 
-    padding: 10px;
+    height: 120px;
+    overflow-y: auto;
+    padding: 10px 10px 10px 20px; /* Added padding-left for visibility */
     border: 1px solid #333;
     margin-top: 15px;
     background: #222;
     border-radius: 8px;
 }
+
 
 
