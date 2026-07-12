@@ -1157,45 +1157,41 @@ body {
     padding-bottom: 10px;
 }
 
-/*R&D.....
-.rd-card {
-    background-color: #1a1a1a; /* Match your dark card background */
+/*R&D section*/
+.card {
+    background-color: #1a1a1a;
     border-radius: 12px;
     padding: 20px;
     margin: 20px 0;
     color: #ffffff;
-    font-family: sans-serif;
     border: 1px solid #333;
 }
 
-.rd-header h2 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    color: #ff9800; /* Match your accent color */
+.member-header .role {
+    font-size: 0.75rem;
+    color: #ff9800;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
-.rd-sub {
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-bottom: 15px;
+.member-header h3 {
+    margin: 5px 0 15px 0;
+    font-size: 1.25rem;
 }
 
-.rd-content h3 {
-    font-size: 1rem;
+.section-title {
+    font-size: 1.1rem;
     margin-bottom: 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
 }
 
-.rd-content ul {
-    list-style-type: none;
-    padding: 0;
+.description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #cccccc;
+    margin: 0;
 }
 
-.rd-content li {
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-    padding-left: 15px;
-    position: relative;
-    color: #ddd;
-}
 
 
