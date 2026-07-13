@@ -282,39 +282,39 @@ function openMenuModal(imgSrc, title, price, type) {
 // News Auto Update
 async function fetchNews() {
     const container = document.getElementById('news-container');
-    container.innerHTML = "Fetching updates...";
-
-    // RSS URLs for specific regions
+    container.innerHTML = "<p>Loading...</p>";
+    
     const urls = [
-        'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN', // State
-        'https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN', // Country
-        'https://news.google.com/rss?hl=en-IN&gl=IN' // World
+        'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN',
+        'https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN',
+        'https://news.google.com/rss?hl=en-IN&gl=IN'
     ];
 
     try {
         let allNews = [];
-        // Fetch from all three and combine
         for (let url of urls) {
             let api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
             let response = await fetch(api);
             let data = await response.json();
-            allNews = allNews.concat(data.items.slice(0, 2)); // Get top 2 from each
+            allNews = allNews.concat(data.items.slice(0, 2));
         }
 
-        // Display combined list
         let html = '';
         allNews.forEach((item, index) => {
-            let label = index < 2 ? "Telangana" : (index < 4 ? "India" : "World");
-            html += `<p style="margin-bottom: 10px;">
-                        <small style="color:#00d4ff;">[${label}]</small> 
-                        ${item.title}
-                     </p>`;
+            let type = index < 2 ? "telangana" : (index < 4 ? "india" : "world");
+            let color = type === 'telangana' ? '#ff9f43' : (type === 'india' ? '#00d4ff' : '#2ecc71');
+            
+            html += `<div class="news-item">
+                        <span class="label" style="background:${color}33; color:${color};">[${type}]</span>
+                        <span style="font-size: 0.9rem; color: #fff;">${item.title}</span>
+                     </div>`;
         });
         container.innerHTML = html;
     } catch (e) {
-        container.innerHTML = "<p>Unable to connect to news server.</p>";
+        container.innerHTML = "<p>Please check connection.</p>";
     }
 }
+
 fetchNews();
 
 
