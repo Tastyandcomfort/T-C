@@ -258,13 +258,12 @@ function openModal(type, param1, param2, param3, param4) {
     const modal = document.getElementById('menuModal');
     const content = modal.querySelector('.modal-content');
     
-    // Check if we are opening a Menu Item or an App
+    // Clear previous content
+    content.innerHTML = `<button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>`;
+    
     if (type === 'menu') {
-        // Handle Menu Item: (img, title, price, vegType)
         const dotColor = (param4 === 'Veg') ? 'green' : (param4 === 'Non-Veg') ? 'red' : 'orange';
-        
-        content.innerHTML = `
-            <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
+        content.innerHTML += `
             <img src="${param1}" style="width:100%; border-radius:10px;">
             <h3 style="margin: 15px 0;">${param2}</h3>
             <div class="modal-tiles">
@@ -273,17 +272,15 @@ function openModal(type, param1, param2, param3, param4) {
             </div>`;
     } 
     else if (type === 'app') {
-        // Handle Apps: (appName, appType)
-        modal.querySelector('h3').innerText = param1;
         let appHTML = (param2 === 'notepad') ? 
-            `<textarea id="app-note" style="width:100%; height:200px; background:#1a1a1a; color:white; padding:10px;"></textarea>` :
-            `<div style="padding:20px; text-align:center;">${param1} Interface Loading...</div>`;
-            
-        content.innerHTML = `<button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button><h3>${param1}</h3>` + appHTML;
+            `<h3 style="margin-bottom:10px;">${param1}</h3><textarea id="app-note" style="width:100%; height:200px; background:#1a1a1a; color:white; padding:10px;"></textarea>` :
+            `<h3 style="margin-bottom:10px;">${param1}</h3><div style="padding:20px; text-align:center;">Interface Loading...</div>`;
+        content.innerHTML += appHTML;
     }
     
     modal.showModal();
 }
+
 
 
 // Note Pad Auto-save logic
