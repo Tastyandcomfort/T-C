@@ -1243,5 +1243,32 @@ body {
     border-radius: 8px;
 }
 
+/* Offer card popup*/
+.combo-modal {
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    background: #1a1a1a;
+    color: white;
+    width: 90%;
+    max-width: 400px;
+}
 
+.combo-modal::backdrop {
+    background: rgba(0, 0, 0, 0.8); /* Darkens the background */
+}
+
+.modal-content img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.modal-content button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    float: right;
+    cursor: pointer;
+}
 
