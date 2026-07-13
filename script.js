@@ -254,37 +254,31 @@ function closeAnnouncement() {
 
 
 // Image & Apps Popup
-function openModal(type, param1, param2, param3, param4) {
-    const modal = document.getElementById('menuModal');
-    const modalImg = document.getElementById('modal-img');
-    const dynamicContent = document.getElementById('dynamic-content');
+// Menu Function
+function openMenu(img, title, price, type) {
+    document.getElementById('menu-img').src = img;
+    document.getElementById('menu-title').innerText = title;
+    document.getElementById('menu-price').innerText = 'Price: ' + price;
     
-    // Clear content
-    dynamicContent.innerHTML = '';
+    const color = (type === 'Veg') ? 'green' : 'red';
+    document.getElementById('menu-type').innerHTML = `Type: ${type} <span style="color:${color};">●</span>`;
     
-    if (type === 'menu') {
-        // Set the image source directly
-        modalImg.src = param1;
-        modalImg.style.display = 'block'; // Ensure it's visible
-        
-        const dotColor = (param4 === 'Veg') ? 'green' : (param4 === 'Non-Veg') ? 'red' : 'orange';
-        dynamicContent.innerHTML = `
-            <h3 style="margin: 15px 0;">${param2}</h3>
-            <div class="modal-tiles">
-                <div class="tile">Price: ${param3}</div>
-                <div class="tile">Type: ${param4} <span style="color: ${dotColor};">●</span></div>
-            </div>`;
-    } 
-    else if (type === 'app') {
-        modalImg.style.display = 'none'; // Hide image for apps
-        dynamicContent.innerHTML = `<h3>${param1}</h3>` + 
-            ((param2 === 'notepad') ? `<textarea id="app-note" style="width:100%; height:200px; background:#1a1a1a; color:white; padding:10px;"></textarea>` : `<div style="padding:20px;">Interface Loading...</div>`);
-    }
-    
-    modal.showModal();
+    document.getElementById('menuModal').showModal();
 }
 
-
+// App Function
+function openApp(name, type) {
+    document.getElementById('app-title').innerText = name;
+    let body = document.getElementById('app-body');
+    
+    if(type === 'notepad') {
+        body.innerHTML = `<textarea style="width:100%; height:200px; background:#1a1a1a; color:white; border:1px solid #444;"></textarea>`;
+    } else {
+        body.innerHTML = `<div style="padding:20px; text-align:center;">${name} loading...</div>`;
+    }
+    
+    document.getElementById('appModal').showModal();
+}
 
 
 // Note Pad Auto-save logic
