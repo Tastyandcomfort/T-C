@@ -282,23 +282,39 @@ function openMenuModal(imgSrc, title, price, type) {
 // News Auto Update
 async function fetchNews() {
     const container = document.getElementById('news-container');
-    container.innerText = "Refreshing...";
-    
-    const rssUrl = 'https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-IN&gl=IN&ceid=IN:en';
-    const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-    
+    container.innerHTML = "Fetching updates...";
+
+    // RSS URLs for specific regions
+    const urls = [
+        'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN', // State
+        'https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN', // Country
+        'https://news.google.com/rss?hl=en-IN&gl=IN' // World
+    ];
+
     try {
-        const response = await fetch(api);
-        const data = await response.json();
-        
-        // Combine headlines into one scrolling string
-        let headlines = data.items.map(item => item.title).join(' ••• ');
-        container.innerText = headlines;
+        let allNews = [];
+        // Fetch from all three and combine
+        for (let url of urls) {
+            let api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+            let response = await fetch(api);
+            let data = await response.json();
+            allNews = allNews.concat(data.items.slice(0, 2)); // Get top 2 from each
+        }
+
+        // Display combined list
+        let html = '';
+        allNews.forEach((item, index) => {
+            let label = index < 2 ? "Telangana" : (index < 4 ? "India" : "World");
+            html += `<p style="margin-bottom: 10px;">
+                        <small style="color:#00d4ff;">[${label}]</small> 
+                        ${item.title}
+                     </p>`;
+        });
+        container.innerHTML = html;
     } catch (e) {
-        container.innerText = "Check back later for updates.";
+        container.innerHTML = "<p>Unable to connect to news server.</p>";
     }
 }
-// Run once on load
 fetchNews();
 
 
