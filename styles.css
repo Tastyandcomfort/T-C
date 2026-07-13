@@ -1280,37 +1280,37 @@ body {
 }
 
 /* Auto Slider*/
-/* 1. The Container - Holds the space */
+/* 1. Reset the slider wrapper */
 .slider-container {
     width: 100%;
-    height: 300px; /* Adjust height to fit your card size */
-    position: relative;
     overflow: hidden;
+    position: relative;
     border-radius: 15px;
+    background: transparent;
 }
 
-/* 2. The Cards - Stacked perfectly on top of each other */
+/* 2. Force the slider row to be exactly 200% width (100% per card) */
+.slider {
+    display: flex;
+    width: 200%; 
+    animation: autoSlide 12s infinite ease-in-out;
+}
+
+/* 3. The cards must be forced to take 50% of the slider (which is 100% of the container) */
 .offer-banner-card {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    opacity: 0;
-    animation: fadeSlide 10s infinite;
+    width: 50%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    display: block;
 }
 
-/* 3. The Timing - This makes them appear one by one */
-@keyframes fadeSlide {
-    0% { opacity: 0; }
-    5% { opacity: 1; }
-    45% { opacity: 1; }
-    50% { opacity: 0; }
-    100% { opacity: 0; }
-}
-
-/* Apply delay so they don't show at the same time */
-.offer-banner-card:nth-child(2) {
-    animation-delay: 5s;
+/* 4. The movement animation */
+@keyframes autoSlide {
+    0%, 40% { transform: translateX(0%); }
+    50%, 90% { transform: translateX(-50%); } /* Moves exactly 1 card width */
+    100% { transform: translateX(0%); }
 }
 
 
