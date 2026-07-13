@@ -286,6 +286,21 @@ function openModal(type, param1, param2, param3, param4) {
 }
 
 
+// Note Pad Auto-save logic
+document.addEventListener('input', function(e) {
+    if(e.target.id === 'app-note') {
+        localStorage.setItem('myNotes', e.target.value);
+    }
+});
+// Auto-load logic
+document.getElementById('menuModal').addEventListener('click', function() {
+    const noteField = document.getElementById('app-note');
+    if(noteField) noteField.value = localStorage.getItem('myNotes') || '';
+});
+
+
+
+
 
 
 
