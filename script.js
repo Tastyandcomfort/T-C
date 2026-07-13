@@ -279,6 +279,25 @@ function openMenuModal(imgSrc, title, price, type) {
 }
 
 
+// News Auto Update
+async function fetchNews() {
+    // This uses a public news API
+    const url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=YOUR_API_KEY';
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const container = document.getElementById('news-container');
+        // Displays the first headline
+        container.innerHTML = `<p>${data.articles[0].title}</p>`;
+    } catch (e) {
+        document.getElementById('news-container').innerHTML = "<p>Stay tuned for real-time updates.</p>";
+    }
+}
+fetchNews();
+setInterval(fetchNews, 60000); // Updates every minute
+
+
+
 
 
 
