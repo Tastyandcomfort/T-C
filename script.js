@@ -281,20 +281,28 @@ function openMenuModal(imgSrc, title, price, type) {
 
 // News Auto Update
 async function fetchNews() {
-    // This uses a public news API
-    const url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=79d897e7ddd24eadbcad12f391569dff';
+    // We use a free converter to turn RSS into JSON
+    const rssUrl = 'https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-IN&gl=IN&ceid=IN:en';
+    const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    
     try {
-        const response = await fetch(url);
+        const response = await fetch(api);
         const data = await response.json();
         const container = document.getElementById('news-container');
-        // Displays the first headline
-        container.innerHTML = `<p>${data.articles[0].title}</p>`;
+        
+        // Displays the first 3 headlines
+        let html = '';
+        for(let i = 0; i < 3; i++) {
+            html += `<p style="margin-bottom: 8px;">• ${data.items[i].title}</p>`;
+        }
+        container.innerHTML = html;
     } catch (e) {
-        document.getElementById('news-container').innerHTML = "<p>Stay tuned for real-time updates.</p>";
+        document.getElementById('news-container').innerHTML = "<p>Check back later for live updates.</p>";
     }
 }
 fetchNews();
-setInterval(fetchNews, 60000); // Updates every minute
+
+
 
 
 
