@@ -281,26 +281,26 @@ function openMenuModal(imgSrc, title, price, type) {
 
 // News Auto Update
 async function fetchNews() {
-    // We use a free converter to turn RSS into JSON
+    const container = document.getElementById('news-container');
+    container.innerText = "Refreshing...";
+    
     const rssUrl = 'https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-IN&gl=IN&ceid=IN:en';
     const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
     
     try {
         const response = await fetch(api);
         const data = await response.json();
-        const container = document.getElementById('news-container');
         
-        // Displays the first 3 headlines
-        let html = '';
-        for(let i = 0; i < 3; i++) {
-            html += `<p style="margin-bottom: 8px;">• ${data.items[i].title}</p>`;
-        }
-        container.innerHTML = html;
+        // Combine headlines into one scrolling string
+        let headlines = data.items.map(item => item.title).join(' ••• ');
+        container.innerText = headlines;
     } catch (e) {
-        document.getElementById('news-container').innerHTML = "<p>Check back later for live updates.</p>";
+        container.innerText = "Check back later for updates.";
     }
 }
+// Run once on load
 fetchNews();
+
 
 
 
