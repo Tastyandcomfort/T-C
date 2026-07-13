@@ -1287,6 +1287,8 @@ body {
     margin: 10px 0;    /* Remove side margins if you want it edge-to-edge */
     overflow: hidden;
     border-radius: 15px;
+    /* This makes it snap to the start of each card */
+    scroll-snap-type: x mandatory;
 }
 
 /* 2. The Slider Wrapper */
