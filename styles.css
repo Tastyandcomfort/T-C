@@ -1280,33 +1280,37 @@ body {
 }
 
 /* Auto Slider*/
-/* Container stays as the fixed window */
+/* Force the container to be exactly the width of the phone screen */
 .slider-container {
-    width: 100%;
+    width: 100vw; 
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     position: relative;
-    border-radius: 15px;
 }
 
-/* The wrapper holds the cards in a single row */
+/* The wrapper holds the cards */
 .slider {
     display: flex;
-    width: 100%; /* Must be 100% so cards don't squish */
+    width: 100%;
     animation: autoSlide 12s infinite ease-in-out;
 }
 
-/* Each card is exactly the width of the container */
+/* Force each card to be exactly 100% of the screen width */
 .offer-banner-card {
-    min-width: 100%; 
+    min-width: 100vw; 
     flex-shrink: 0;
     box-sizing: border-box;
+    /* Optional: Add a little padding inside the card so it doesn't touch the screen edge */
+    padding: 0 10px; 
 }
 
-/* Animation moves the whole row by 100% per slide */
+/* The animation now moves exactly 100% of the viewport width */
 @keyframes autoSlide {
-    0%, 40% { transform: translateX(0%); }
-    50%, 90% { transform: translateX(-100%); }
-    100% { transform: translateX(0%); }
+    0%, 40% { transform: translateX(0); }
+    50%, 90% { transform: translateX(-100vw); }
+    100% { transform: translateX(0); }
 }
+
 
 
