@@ -1432,19 +1432,28 @@ body {
 }
 
 /* News Card---*/
-/* Container for the scrolling effect */
+/* Container to hold the articles */
 .news-ticker-wrapper {
-    overflow: hidden;
-    white-space: nowrap;
     width: 100%;
+    padding: 10px 0;
+  }
+/* Style for each article/headline */
+.news-ticker {
+    display: block; /* Changes it to a stacked list */
+    color: #ffd700;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: normal; /* Allows text to wrap */
+    animation: none; /* Removes the movement */
 }
 
-.news-ticker {
-    display: inline-block;
-    padding-left: 100%;
-    animation: scrollNews 20s linear infinite;
-    color: #ffd700;
+/* Style for individual headlines */
+.news-ticker p {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #333; /* Separator line between news */
 }
+
 
 @keyframes scrollNews {
     from { transform: translateX(0); }
