@@ -253,16 +253,32 @@ function closeAnnouncement() {
 }
 
 
+// Image Popup
 function openMenuModal(imgSrc, title, price, type) {
     const modal = document.getElementById('menuModal');
-    // Update the content inside the modal
+    if (!modal) return;
+    
+    // Set color based on the type
+    let dotColor;
+    if (type === 'Veg') {
+        dotColor = 'green';
+    } else if (type === 'Non-Veg') {
+        dotColor = 'red';
+    } else {
+        dotColor = 'orange'; // Used for 'Both' or any other type
+    }
+    
+    // Update the modal content
     modal.querySelector('img').src = imgSrc;
     modal.querySelector('h3').innerText = title;
     modal.querySelector('.price-tile').innerText = 'Price: ' + price;
-    modal.querySelector('.type-tile').innerHTML = 'Type: ' + type + ' <span style="color: green;">●</span>';
+    modal.querySelector('.type-tile').innerHTML = 
+        'Type: ' + type + ' <span style="color: ' + dotColor + ';">●</span>';
     
     modal.showModal();
 }
+
+
 
 
 
