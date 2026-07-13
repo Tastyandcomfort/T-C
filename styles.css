@@ -1162,8 +1162,8 @@ body {
 .rd-card-interactive {
     background-color: #1c2331;
     border-radius: 12px;
-    padding: 8px 16px;
-    margin: 5px 0;
+    padding: 6px 14px;
+    margin: 6px 0;
     color: #ffffff;
     
     /* Replaces the red border with the requested orange accent */
