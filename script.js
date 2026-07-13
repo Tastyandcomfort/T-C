@@ -282,7 +282,7 @@ function openMenuModal(imgSrc, title, price, type) {
 // News Auto Update
 async function fetchNews() {
     // This uses a public news API
-    const url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=YOUR_API_KEY';
+    const url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=79d897e7ddd24eadbcad12f391569dff';
     try {
         const response = await fetch(url);
         const data = await response.json();
