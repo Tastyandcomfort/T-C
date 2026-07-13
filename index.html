@@ -408,11 +408,18 @@ T&C does not collect or store your personal data.This website is for information
     <!---News Card---->
     <div class="news-header">
         <i class="fa-solid fa-newspaper"></i>
-        <h3>News</h3>
+        <h3>Live Tech News</h3>
+        <!-- Added Refresh Button -->
+        <button id="refresh-btn" onclick="fetchNews()">
+            <i class="fa-solid fa-sync"></i>
+        </button>
     </div>
-    <div class="news-ticker" id="news-container">
-        <p>Loading latest updates...</p>
+    <div class="news-ticker-wrapper">
+        <div class="news-ticker" id="news-container">
+            <p>Loading...</p>
+        </div>
     </div>
+
 
 
         
