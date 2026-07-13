@@ -256,15 +256,19 @@ function closeAnnouncement() {
 // Image & Apps Popup
 function openModal(type, param1, param2, param3, param4) {
     const modal = document.getElementById('menuModal');
-    const content = modal.querySelector('.modal-content');
+    const modalImg = document.getElementById('modal-img');
+    const dynamicContent = document.getElementById('dynamic-content');
     
-    // Clear previous content
-    content.innerHTML = `<button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>`;
+    // Clear content
+    dynamicContent.innerHTML = '';
     
     if (type === 'menu') {
+        // Set the image source directly
+        modalImg.src = param1;
+        modalImg.style.display = 'block'; // Ensure it's visible
+        
         const dotColor = (param4 === 'Veg') ? 'green' : (param4 === 'Non-Veg') ? 'red' : 'orange';
-        content.innerHTML += `
-            <img src="${param1}" style="width:100%; border-radius:10px;">
+        dynamicContent.innerHTML = `
             <h3 style="margin: 15px 0;">${param2}</h3>
             <div class="modal-tiles">
                 <div class="tile">Price: ${param3}</div>
@@ -272,14 +276,14 @@ function openModal(type, param1, param2, param3, param4) {
             </div>`;
     } 
     else if (type === 'app') {
-        let appHTML = (param2 === 'notepad') ? 
-            `<h3 style="margin-bottom:10px;">${param1}</h3><textarea id="app-note" style="width:100%; height:200px; background:#1a1a1a; color:white; padding:10px;"></textarea>` :
-            `<h3 style="margin-bottom:10px;">${param1}</h3><div style="padding:20px; text-align:center;">Interface Loading...</div>`;
-        content.innerHTML += appHTML;
+        modalImg.style.display = 'none'; // Hide image for apps
+        dynamicContent.innerHTML = `<h3>${param1}</h3>` + 
+            ((param2 === 'notepad') ? `<textarea id="app-note" style="width:100%; height:200px; background:#1a1a1a; color:white; padding:10px;"></textarea>` : `<div style="padding:20px;">Interface Loading...</div>`);
     }
     
     modal.showModal();
 }
+
 
 
 
