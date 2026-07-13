@@ -1282,11 +1282,10 @@ body {
 /* Auto Slider*/
 /* 1. The Container */
 .slider-container {
-    width: 100%;
-    max-width: 400px; /* Adjust this to match your page width */
-    margin: 10px auto;
-    overflow: hidden; /* This hides the cards that are off-screen */
-    position: relative;
+    width: 100%;       /* Use 100% to fill the available space */
+    max-width: 100%;   /* Remove the 400px constraint */
+    margin: 10px 0;    /* Remove side margins if you want it edge-to-edge */
+    overflow: hidden;
     border-radius: 15px;
 }
 
