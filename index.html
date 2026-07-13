@@ -117,18 +117,22 @@ T&C does not collect or store your personal data.This website is for information
         <div class="menu-responsive-grid compact-grid">
           
           <div class="glass-card menu-box item-has-image compact-box">
-            <div class="menu-item-image-frame compact-frame">
-              <img src="1783742714672.png" alt="Premium Tea" onerror="this.style.display='none';">
-              <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
-            </div>
-            <div class="menu-item-info-frame compact-info">
-              <div class="menu-title-row">
-                <h4>Premium Tea</h4>
-                <span class="price-gold text-small-price">₹10</span>
-              </div>
-              <p class="menu-item-sub text-small-desc">Hot & Refreshing premium milk blends brewed freshly on order.</p>
-            </div>
-          </div>
+    <!-- Updated line below: Added onclick to trigger the popup -->
+    <div class="menu-item-image-frame compact-frame" 
+         onclick="openMenuModal('1783742714672.png', 'Premium Tea', '₹10', 'Veg')">
+        <img src="1783742714672.png" alt="Premium Tea" onerror="this.style.display='none';">
+        <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
+    </div>
+    
+    <div class="menu-item-info-frame compact-info">
+        <div class="menu-title-row">
+            <h4>Premium Tea</h4>
+            <span class="price-gold text-small-price">₹10</span>
+        </div>
+        <p class="menu-item-sub text-small-desc">Hot & Refreshing premium milk blends brewed freshly on order.</p>
+    </div>
+</div>
+
 
           <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame">
