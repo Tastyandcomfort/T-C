@@ -1320,28 +1320,26 @@ body {
     100% { transform: translateX(0%); }
 }
 
-
-.logo-container {
+/* Logo Animation*/
+/* 1. Target your specific HTML class */
+.hero-right-image {
     position: relative;
     display: inline-block;
-    /* Adjust these to match your logo's size */
-    width: 60px; 
-    height: 60px;
-    border-radius: 12px;
 }
 
-.logo-container::before {
+/* 2. The Aura Effect */
+.hero-right-image::before {
     content: "";
     position: absolute;
-    inset: -2px; /* The aura starts just outside the logo */
-    border: 2px solid rgba(255, 215, 0, 0.5);
-    border-radius: 14px;
+    inset: -4px; /* Adjust this to move the aura closer/further from the image */
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    border-radius: 16px; /* Matches the curve of your logo */
     pointer-events: none;
-    /* This adds the "pro" depth */
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); 
-    animation: proGoldenAura 4s infinite ease-in-out;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); 
+    animation: proGoldenAura 3s infinite ease-in-out;
 }
 
+/* 3. The Animation */
 @keyframes proGoldenAura {
     0%, 100% { 
         transform: scale(1); 
@@ -1349,9 +1347,9 @@ body {
         box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
     }
     50% { 
-        transform: scale(1.15); /* Soft expansion */
-        opacity: 0.8; 
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); /* Glow intensity */
+        transform: scale(1.1); 
+        opacity: 0.9; 
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.7); 
     }
 }
 
