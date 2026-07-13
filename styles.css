@@ -1282,36 +1282,31 @@ body {
 /* Auto Slider*/
 /* 1. The Container */
 .slider-container {
-    width: 100%;       /* Use 100% to fill the available space */
-    max-width: 100%;   /* Remove the 400px constraint */
-    margin: 10px 0;    /* Remove side margins if you want it edge-to-edge */
+    width: 100%;
     overflow: hidden;
+    position: relative;
     border-radius: 15px;
-    /* This makes it snap to the start of each card */
-    scroll-snap-type: x mandatory;
+    /* Forces the slider to act as a single viewable window */
 }
 
-/* 2. The Slider Wrapper */
 .slider {
     display: flex;
-    animation: autoSlide 10s infinite;
-    width: 100%;
+    /* This tells the slider to move left/right */
+    animation: autoSlide 12s infinite ease-in-out; 
+    /* Ensures we are not using width % which can be unstable */
+    width: 100%; 
 }
 
-
-/* 3. The Individual Card - THIS IS THE FIX */
 .offer-banner-card {
-    min-width: 100%;  /* Each card fills the container */
-    flex-shrink: 0;   /* This is the secret: it stops them from shrinking */
+    /* Critical: This forces every card to be EXACTLY the same width as the container */
+    min-width: 100%; 
+    flex-shrink: 0;
     box-sizing: border-box;
-    scroll-snap-align: start; /* Locks the snap position */
 }
 
-
-/* 4. The Animation */
 @keyframes autoSlide {
-    0%, 40% { transform: translateX(0); }
-    50%, 90% { transform: translateX(-100%); } /* Slides the second card into view */
-    100% { transform: translateX(0); }
+    0%, 40% { transform: translateX(0%); }
+    50%, 90% { transform: translateX(-100%); } /* Moves exactly 1 full card width */
+    100% { transform: translateX(0%); }
 }
 
