@@ -406,26 +406,19 @@ T&C does not collect or store your personal data.This website is for information
     </div>
 
     <!---News Card---->
-    <section class="news-card">
-    <div class="news-header">
-        <i class="fa-solid fa-newspaper"></i>
-        <h3>Latest Updates</h3>
-        <button id="refresh-btn" onclick="fetchNews()">
-            <i class="fa-solid fa-sync"></i>
-        </button>
+    <section class="news-main-container">
+    <div class="news-title-bar">
+        <i class="fa-solid fa-newspaper"></i> 
+        <h3>Latest News</h3>
+        <button id="refresh-btn" onclick="fetchNews()"><i class="fa-solid fa-sync"></i></button>
     </div>
-    <div class="news-ticker-wrapper">
-        <div class="news-ticker" id="news-container">
-            <p>Loading prioritized news...</p>
-        </div>
+    
+    <!-- This is the clean list area -->
+    <div id="news-container" class="news-list">
+        <p>Loading prioritized news...</p>
     </div>
 </section>
 
-
-
-
-        
-      </section>
 
       <section id="chat-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> AI ASSISTANT</h3>
