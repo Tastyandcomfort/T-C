@@ -22,7 +22,7 @@ function switchView(viewId, element) {
   if (videoPlayer) {
     if (viewId === 'chat-view') {
       // Start video
-      videoPlayer.src = "https://www.youtube.com/embed/PoIrmiY0yjU?autoplay=1";
+      videoPlayer.src = "https://youtu.be/nI9U3Je3XAM?si=ynpoD3e6VyYF2Qhd?autoplay=1";
     } else {
       // STOP video by clearing the source
       videoPlayer.src = ""; 
