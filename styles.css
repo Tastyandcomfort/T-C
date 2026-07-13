@@ -1298,9 +1298,9 @@ body {
 
 /* 3. The Individual Card - THIS IS THE FIX */
 .offer-banner-card {
-    min-width: 100%;  /* This ensures every card takes exactly 100% of the width */
-    box-sizing: border-box; /* Ensures padding doesn't expand the card */
-    padding: 0 5px; /* Adds a tiny buffer between the card and the screen edge */
+    min-width: 100%;   /* Ensures the card fills the full container width */
+    box-sizing: border-box;
+    padding: 0;        /* Remove padding if it's cutting off the edges */
 }
 
 /* 4. The Animation */
