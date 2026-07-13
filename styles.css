@@ -1157,14 +1157,14 @@ body {
     padding-bottom: 10px;
 }
 
-/*R&D section*/
+/*R&D section #ffffff */
 /* Card Container with the Orange Left-Border Accent */
 .rd-card-interactive {
     background-color: #1c2331;
     border-radius: 12px;
     padding: 4px 12px;
     margin: 5px 0;
-    color: #ffffff;
+    color: #ffff;
     
     /* Replaces the red border with the requested orange accent */
     border-left: 8px solid #ff9800; 
