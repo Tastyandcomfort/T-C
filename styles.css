@@ -1341,14 +1341,25 @@ body {
 }
 
 /* 1. The Host Container (The base) */
+.hero-right-image {
+    position: relative;
+    /* Ensure the container clips the background to the logo's area */
+    overflow: hidden; 
+    border-radius: 12px;
+}
+
 .circuit-background {
     position: absolute;
     inset: 0;
-    z-index: 1;
-    overflow: hidden; /* This keeps the beam inside the box */
+    z-index: 0;
+    /* This creates the grid look */
+    background-image: 
+        linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
 }
 
-/* 2. Your Beam Effect (The part you added) */
+/* The 'passing current' effect */
 .circuit-background::after {
     content: "";
     position: absolute;
@@ -1356,16 +1367,23 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent 50%, rgba(0, 212, 255, 0.2) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 40%, rgba(0, 212, 255, 0.3) 50%, transparent 60%);
     background-size: 200% 100%;
     animation: beamPass 3s linear infinite;
-    z-index: 2;
 }
 
 @keyframes beamPass {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
+
+/* Ensure the image stays on top */
+.hero-right-image img {
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
 
 
 
