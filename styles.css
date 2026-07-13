@@ -1340,6 +1340,15 @@ body {
     }
 }
 
+/* 1. The Host Container (The base) */
+.circuit-background {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden; /* This keeps the beam inside the box */
+}
+
+/* 2. Your Beam Effect (The part you added) */
 .circuit-background::after {
     content: "";
     position: absolute;
@@ -1350,12 +1359,14 @@ body {
     background: linear-gradient(90deg, transparent 50%, rgba(0, 212, 255, 0.2) 50%, transparent 100%);
     background-size: 200% 100%;
     animation: beamPass 3s linear infinite;
+    z-index: 2;
 }
 
 @keyframes beamPass {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
+
 
 
 
