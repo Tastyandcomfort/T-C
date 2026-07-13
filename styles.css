@@ -1340,7 +1340,44 @@ body {
     }
 }
 
+/* News ----*/
+.animation-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+}
 
+/* The Earth */
+.earth {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe);
+    border-radius: 50%;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
+}
+
+/* The Satellite */
+.satellite {
+    width: 12px;
+    height: 12px;
+    background: #ffd700; /* Golden to match your theme */
+    border-radius: 2px;
+    position: absolute;
+    top: 5px;
+    left: 44px;
+    /* This makes it orbit around the center */
+    transform-origin: 6px 45px; 
+    animation: orbit 4s linear infinite;
+}
+
+@keyframes orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 
 
 
