@@ -86,15 +86,16 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
 
-        <div class="glass-card offer-banner-card">
-  <!-- Added onclick attribute here -->
-  <div class="offer-image-slot" onclick="document.getElementById('comboModal').showModal()">
+    <div class="glass-card offer-banner-card">
+    <!-- Trigger the SAME function as your menu items -->
+    <div class="offer-image-slot" 
+       onclick="openMenuModal('1783010572533.png', 'Combo Mega Combo Deal', '₹65', 'Veg')">
     <img src="1783010572533.png" alt="Today's Deal Offer" onerror="this.style.display='none';">
     <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
-  </div>
+    </div>
   
-  <div class="offer-details-slot">
-    <!-- Your existing details remain exactly the same -->
+    <div class="offer-details-slot">
+    <!-- Rest of your existing code -->
     <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
     <h3>Combo Mega Combo Deal</h3>
     <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
