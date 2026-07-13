@@ -374,25 +374,28 @@ T&C does not collect or store your personal data.This website is for information
         </div>
         
   <!-- Apps-->
-      <h3 class="section-title"><i class="fa-solid fa-gear gold-text"></i> UTILITY & ENTERTAINMENT</h3>
+  <h3 class="section-title"><i class="fa-solid fa-gear gold-text"></i> UTILITY & ENTERTAINMENT</h3>
   <div class="menu-responsive-grid compact-grid">
-  <!-- Note Pad -->
-  <div class="glass-card menu-box" onclick="launchApp('Note Pad', 'notepad')">
-    <i class="fa-solid fa-note-sticky"></i> <span>Note Pad</span>
-  </div>
-  <!-- Calculator -->
-  <div class="glass-card menu-box" onclick="launchApp('Calculator', 'calculator')">
-    <i class="fa-solid fa-calculator"></i> <span>Calculator</span>
-  </div>
-  <!-- Music -->
-  <div class="glass-card menu-box" onclick="launchApp('Music Player', 'music')">
-    <i class="fa-solid fa-music"></i> <span>Music</span>
-  </div>
+
+<!-- Note Pad -->
+<div class="glass-card menu-box" onclick="openModal('app', 'Note Pad', 'notepad')">
+  <i class="fa-solid fa-note-sticky"></i> <span>Note Pad</span>
 </div>
+
+<!-- Calculator -->
+<div class="glass-card menu-box" onclick="openModal('app', 'Calculator', 'calculator')">
+  <i class="fa-solid fa-calculator"></i> <span>Calculator</span>
+</div>
+
+<!-- Music -->
+<div class="glass-card menu-box" onclick="openModal('app', 'Music Player', 'music')">
+  <i class="fa-solid fa-music"></i> <span>Music</span>
+</div>
+   </div>
 
 
         
-      </section>
+    </section>
 
       <section id="chat-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> AI ASSISTANT</h3>
