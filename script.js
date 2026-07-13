@@ -253,5 +253,16 @@ function closeAnnouncement() {
 }
 
 
+function openMenuModal(imgSrc, title, price, type) {
+    const modal = document.getElementById('menuModal');
+    // Update the content inside the modal
+    modal.querySelector('img').src = imgSrc;
+    modal.querySelector('h3').innerText = title;
+    modal.querySelector('.price-tile').innerText = 'Price: ' + price;
+    modal.querySelector('.type-tile').innerHTML = 'Type: ' + type + ' <span style="color: green;">●</span>';
+    
+    modal.showModal();
+}
+
 
 
