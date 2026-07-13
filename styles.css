@@ -1280,37 +1280,39 @@ body {
 }
 
 /* Auto Slider*/
-/* Force the container to be exactly the width of the phone screen */
+/* 1. The Container - Holds the space */
 .slider-container {
     width: 100%;
-    max-width: 800px; /* This keeps it from getting too wide on desktops */
-    margin: 0 auto;  /* This centers it on the page */
+    height: 300px; /* Adjust height to fit your card size */
+    position: relative;
     overflow: hidden;
+    border-radius: 15px;
 }
 
-
-/* The wrapper holds the cards */
-.slider {
-    display: flex;
-    width: 100%;
-    animation: autoSlide 12s infinite ease-in-out;
-}
-
-/* Force each card to be exactly 100% of the screen width */
+/* 2. The Cards - Stacked perfectly on top of each other */
 .offer-banner-card {
-    min-width: 100vw; 
-    flex-shrink: 0;
-    box-sizing: border-box;
-    /* Optional: Add a little padding inside the card so it doesn't touch the screen edge */
-    padding: 0 10px; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    animation: fadeSlide 10s infinite;
 }
 
-/* The animation now moves exactly 100% of the viewport width */
-@keyframes autoSlide {
-    0%, 40% { transform: translateX(0); }
-    50%, 90% { transform: translateX(-100vw); }
-    100% { transform: translateX(0); }
+/* 3. The Timing - This makes them appear one by one */
+@keyframes fadeSlide {
+    0% { opacity: 0; }
+    5% { opacity: 1; }
+    45% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 0; }
 }
+
+/* Apply delay so they don't show at the same time */
+.offer-banner-card:nth-child(2) {
+    animation-delay: 5s;
+}
+
 
 
 
