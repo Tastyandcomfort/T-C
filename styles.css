@@ -1289,27 +1289,36 @@ body {
     background: transparent;
 }
 
-/* 2. Force the slider row to be exactly 200% width (100% per card) */
 .slider {
     display: flex;
-    width: 200%; 
+    width: 200%; /* Total width for 2 slides */
     animation: autoSlide 12s infinite ease-in-out;
 }
 
-/* 3. The cards must be forced to take 50% of the slider (which is 100% of the container) */
 .offer-banner-card {
-    width: 50%;
+    width: 100%; /* Must be 100% of the slider container, which is 50% of the slider */
     flex-shrink: 0;
+    display: flex; 
+    flex-direction: column; 
     box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    display: block;
 }
 
-/* 4. The movement animation */
+.offer-image-slot {
+    width: 100%;
+    order: 1;
+}
+
+.offer-details-slot {
+    width: 100%;
+    order: 2;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* Animation moves the 200% wide slider by 50% (exactly one card) */
 @keyframes autoSlide {
     0%, 40% { transform: translateX(0%); }
-    50%, 90% { transform: translateX(-50%); } /* Moves exactly 1 card width */
+    50%, 90% { transform: translateX(-50%); } 
     100% { transform: translateX(0%); }
 }
 
