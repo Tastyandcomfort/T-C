@@ -1280,50 +1280,46 @@ body {
 }
 
 /* Auto Slider*/
-/* 1. Reset the slider wrapper */
-/* Container stays as the fixed window */
+/* 1. The Container */
 .slider-container {
     width: 100%;
     overflow: hidden;
     position: relative;
     border-radius: 15px;
+    background: transparent;
 }
+
+/* 2. The Slider Row */
 .slider {
     display: flex;
-    width: 200%; /* Total width for 2 slides */
+    width: 200%;
     animation: autoSlide 12s infinite ease-in-out;
 }
 
-/* The card now expands its height to fit the image */
+/* 3. The Cards (Ensures they fill the screen and stack vertically) */
 .offer-banner-card {
-    width: 100%;
+    width: 50%; /* This forces exactly two cards to fit */
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    height: auto; /* IMPORTANT: Allows the card to grow/shrink with the image */
-}
-
-/* The image dictates the height of the card */
-.offer-image-slot img {
-    width: 100%;
-    height: auto; /* Maintains the 16:9 aspect ratio */
-    display: block;
-    object-fit: contain; /* Keeps the whole image visible */
-}
-
-/* Ensure details don't force a minimum height */
-.offer-details-slot {
-    width: 100%;
-    padding: 15px;
     box-sizing: border-box;
 }
 
-/* Animation moves the 200% wide slider by 50% (exactly one card) */
+/* 4. The Image (Forces full display) */
+.offer-image-slot img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+/* 5. The Animation */
 @keyframes autoSlide {
     0%, 40% { transform: translateX(0%); }
-    50%, 90% { transform: translateX(-50%); } 
+    50%, 90% { transform: translateX(-50%); }
     100% { transform: translateX(0%); }
 }
+
 
 
 
