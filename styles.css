@@ -1343,41 +1343,95 @@ body {
 /* News ----*/
 .animation-container {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 140px;
+    height: 140px;
     margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 400px;
 }
 
-/* The Earth */
-.earth {
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe);
+/* 3D Earth Sphere Container */
+.earth-system {
+    position: relative;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+    box-shadow: 
+        0 0 20px rgba(0, 242, 256, 0.2),
+        inset -12px -12px 20px rgba(0, 0, 0, 0.8),
+        inset 4px 4px 10px rgba(255, 255, 255, 0.25);
+    background: #0d2c54;
+    z-index: 2;
 }
 
-/* The Satellite */
-.satellite {
-    width: 12px;
-    height: 12px;
-    background: #ffd700; /* Golden to match your theme */
-    border-radius: 2px;
+/* Realistic Landmass Texture Map */
+.earth-texture {
     position: absolute;
-    top: 5px;
-    left: 44px;
-    /* This makes it orbit around the center */
-    transform-origin: 6px 45px; 
-    animation: orbit 4s linear infinite;
+    width: 200%;
+    height: 100%;
+    /* Creates a realistic continent outline texture using standard linear patterns */
+    background-image: 
+        radial-gradient(circle at 20% 40%, #27ae60 12%, transparent 13%),
+        radial-gradient(circle at 40% 70%, #2ecc71 18%, transparent 19%),
+        radial-gradient(circle at 75% 30%, #1abc9c 15%, transparent 16%),
+        radial-gradient(circle at 85% 65%, #27ae60 10%, transparent 11%),
+        linear-gradient(to right, #2980b9, #0d2c54);
+    background-size: 50% 100%;
+    animation: spinEarth 12s linear infinite;
+    opacity: 0.85;
 }
 
-@keyframes orbit {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+/* Atmospheric Layer (Soft Outer Blue Ring) */
+.earth-atmosphere {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 12px rgba(0, 212, 255, 0.6);
+    pointer-events: none;
 }
+
+/* Satellite Orbiting System */
+.satellite-orbit {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    z-index: 3;
+    animation: maintainOrbit 6s linear infinite;
+}
+
+/* The Detailed Realistic Satellite Hardware Icon */
+.satellite-icon {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    color: #dcdde1; /* Silver metallic body */
+    font-size: 16px;
+    /* Golden solar panels effect utilizing text-shadow trick */
+    text-shadow: 
+        -4px 4px 0px #e1b12c, 
+        4px -4px 0px #e1b12c;
+    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.8));
+}
+
+/* Keyframe Animations */
+@keyframes spinEarth {
+    0% { background-position: 0% 0; }
+    100% { background-position: -100% 0; }
+}
+
+@keyframes maintainOrbit {
+    0% { transform: rotate(0deg); z-index: 3; }
+    /* Simulates moving behind the earth smoothly */
+    49% { z-index: 3; }
+    50% { transform: rotate(180deg); z-index: 1; filter: brightness(0.4); } 
+    99% { z-index: 1; }
+    100% { transform: rotate(360deg); z-index: 3; }
+}
+
 
 
 
