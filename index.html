@@ -677,15 +677,27 @@ T&C does not collect or store your personal data.This website is for information
   </div>
 </div>
 
-<dialog id="menuModal" class="combo-modal" onclick="if(event.target == this) this.close()">
+<!-- Menu Popup -->
+<dialog id="menuModal" class="combo-modal">
   <div class="modal-content">
     <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
-    <!-- ADDED ID="modal-img" HERE -->
-    <img id="modal-img" src="" alt="Item Image" style="width:100%; border-radius:10px;">
-    <div id="dynamic-content"></div> <!-- Wrapper for text/apps -->
+    <img id="menu-img" src="" style="width:100%; border-radius:10px;">
+    <h3 id="menu-title"></h3>
+    <div class="modal-tiles" style="display:flex; gap:10px;">
+      <div id="menu-price" class="tile"></div>
+      <div id="menu-type" class="tile"></div>
+    </div>
   </div>
 </dialog>
 
+<!-- App Popup -->
+<dialog id="appModal" class="combo-modal">
+  <div class="modal-content">
+    <button class="close-btn" onclick="document.getElementById('appModal').close()">✕</button>
+    <h3 id="app-title"></h3>
+    <div id="app-body"></div>
+  </div>
+</dialog>
 
   
 <script src="script.js"></script>
