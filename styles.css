@@ -1494,7 +1494,7 @@ body {
 .news-title-bar {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid #333;
@@ -1504,7 +1504,7 @@ body {
 .news-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     
     /* This makes it scrollable */
     max-height: 300px;  /* Adjust this height to fit your screen perfectly */
