@@ -1280,33 +1280,33 @@ body {
 }
 
 /* Auto Slider*/
-/* 1. The Container */
+/* Container stays as the fixed window */
 .slider-container {
     width: 100%;
     overflow: hidden;
     position: relative;
     border-radius: 15px;
-    /* Forces the slider to act as a single viewable window */
 }
 
+/* The wrapper holds the cards in a single row */
 .slider {
     display: flex;
-    /* This tells the slider to move left/right */
-    animation: autoSlide 12s infinite ease-in-out; 
-    /* Ensures we are not using width % which can be unstable */
-    width: 100%; 
+    width: 100%; /* Must be 100% so cards don't squish */
+    animation: autoSlide 12s infinite ease-in-out;
 }
 
+/* Each card is exactly the width of the container */
 .offer-banner-card {
-    /* Critical: This forces every card to be EXACTLY the same width as the container */
     min-width: 100%; 
     flex-shrink: 0;
     box-sizing: border-box;
 }
 
+/* Animation moves the whole row by 100% per slide */
 @keyframes autoSlide {
     0%, 40% { transform: translateX(0%); }
-    50%, 90% { transform: translateX(-100%); } /* Moves exactly 1 full card width */
+    50%, 90% { transform: translateX(-100%); }
     100% { transform: translateX(0%); }
 }
+
 
