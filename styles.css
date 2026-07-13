@@ -1282,12 +1282,12 @@ body {
 /* Auto Slider*/
 /* Force the container to be exactly the width of the phone screen */
 .slider-container {
-    width: 100vw; 
-    margin: 0;
-    padding: 0;
+    width: 100%;
+    max-width: 800px; /* This keeps it from getting too wide on desktops */
+    margin: 0 auto;  /* This centers it on the page */
     overflow: hidden;
-    position: relative;
 }
+
 
 /* The wrapper holds the cards */
 .slider {
