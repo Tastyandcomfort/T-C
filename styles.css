@@ -1483,7 +1483,7 @@ body {
 /* News Container*/
 .news-main-container {
     width: 100%;
-    margin: 20px auto;
+    margin: 30px auto;
     background: #111418; /* Slightly lighter than pure black for depth */
     border-radius: 16px;
     padding: 20px;
