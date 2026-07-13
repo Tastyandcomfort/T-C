@@ -640,12 +640,25 @@ T&C does not collect or store your personal data.This website is for information
 <div id="announcement-modal" class="modal hidden">
   <div class="glass-card">
     <audio id="announcement-sound" src="arunangshubanerjee-airbus-cabin-pa-beep-tone-passenger-announcement-chime-358248.mp3"></audio>
-    
     <h3 style="margin-top: 0; color: #dc3545;">Announcement</h3>
     <p id="announcement-text" style="white-space: pre-wrap;"></p>
     <button onclick="closeAnnouncement()">OK</button>
   </div>
 </div>
+
+<dialog id="menuModal" class="combo-modal" onclick="if(event.target == this) this.close()">
+  <div class="modal-content">
+    <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
+    <img src="" alt="Menu Item" style="width:100%; border-radius:10px;">
+    <h3 style="margin: 15px 0; color: #fff;"></h3>
+
+    <div class="modal-tiles" style="display: flex; gap: 10px;">
+      <div class="tile price-tile" style="background: #2a2e3d; padding: 10px; border-radius: 8px; flex: 1; text-align: center; color: white;"></div>
+      <div class="tile type-tile" style="background: #2a2e3d; padding: 10px; border-radius: 8px; flex: 1; text-align: center; color: white;"></div>
+    </div>
+  </div>
+</dialog>
+
   
 <script src="script.js"></script>
 </body>
