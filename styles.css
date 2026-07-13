@@ -1280,26 +1280,34 @@ body {
 }
 
 /* Auto Slider*/
+/* 1. The Container */
 .slider-container {
     width: 100%;
-    max-width: 400px; /* Adjust to match your previous card width */
-    margin: 20px auto;
-    overflow: hidden;
+    max-width: 400px; /* Adjust this to match your page width */
+    margin: 10px auto;
+    overflow: hidden; /* This hides the cards that are off-screen */
+    position: relative;
     border-radius: 15px;
 }
 
+/* 2. The Slider Wrapper */
 .slider {
     display: flex;
-    width: 200%; /* Change to 300% if you add 3 slides */
+    flex-wrap: nowrap; /* Forces cards to stay in a single row */
     animation: autoSlide 10s infinite;
 }
 
+/* 3. The Individual Card - THIS IS THE FIX */
 .offer-banner-card {
-    flex: 0 0 100%; /* Each card takes up the full slider width */
+    min-width: 100%;  /* This ensures every card takes exactly 100% of the width */
+    box-sizing: border-box; /* Ensures padding doesn't expand the card */
+    padding: 0 5px; /* Adds a tiny buffer between the card and the screen edge */
 }
 
+/* 4. The Animation */
 @keyframes autoSlide {
     0%, 40% { transform: translateX(0); }
-    50%, 90% { transform: translateX(-50%); } /* Change to -66.6% for 3 slides */
+    50%, 90% { transform: translateX(-100%); } /* Slides the second card into view */
     100% { transform: translateX(0); }
 }
+
