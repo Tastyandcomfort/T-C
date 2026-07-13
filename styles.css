@@ -1482,7 +1482,7 @@ body {
 
 /* News Container*/
 .news-main-container {
-    width: 95%;
+    width: 100%;
     margin: 20px auto;
     background: #111418; /* Slightly lighter than pure black for depth */
     border-radius: 16px;
@@ -1514,7 +1514,7 @@ body {
 
 /* Optional: Make the scrollbar look good on your dark theme */
 .news-list::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 .news-list::-webkit-scrollbar-thumb {
