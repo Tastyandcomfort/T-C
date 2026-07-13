@@ -1279,3 +1279,27 @@ body {
     cursor: pointer;
 }
 
+/* Auto Slider*/
+.slider-container {
+    width: 100%;
+    max-width: 400px; /* Adjust to match your previous card width */
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.slider {
+    display: flex;
+    width: 200%; /* Change to 300% if you add 3 slides */
+    animation: autoSlide 10s infinite;
+}
+
+.offer-banner-card {
+    flex: 0 0 100%; /* Each card takes up the full slider width */
+}
+
+@keyframes autoSlide {
+    0%, 40% { transform: translateX(0); }
+    50%, 90% { transform: translateX(-50%); } /* Change to -66.6% for 3 slides */
+    100% { transform: translateX(0); }
+}
