@@ -1301,10 +1301,12 @@ body {
 
 /* 3. The Individual Card - THIS IS THE FIX */
 .offer-banner-card {
-    min-width: 100%;   /* Ensures the card fills the full container width */
+    min-width: 100%;  /* Each card fills the container */
+    flex-shrink: 0;   /* This is the secret: it stops them from shrinking */
     box-sizing: border-box;
-    padding: 0;        /* Remove padding if it's cutting off the edges */
+    scroll-snap-align: start; /* Locks the snap position */
 }
+
 
 /* 4. The Animation */
 @keyframes autoSlide {
