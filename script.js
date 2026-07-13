@@ -262,7 +262,7 @@ function openMenuModal(imgSrc, title, price, type) {
     let dotColor;
     if (type === 'Veg') {
         dotColor = 'green';
-    } else if (type === 'Non-Veg') {
+    } else if (type === 'N.Veg') {
         dotColor = 'red';
     } else {
         dotColor = 'orange'; // Used for 'Both' or any other type
