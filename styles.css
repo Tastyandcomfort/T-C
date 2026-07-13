@@ -1294,9 +1294,10 @@ body {
 /* 2. The Slider Wrapper */
 .slider {
     display: flex;
-    flex-wrap: nowrap; /* Forces cards to stay in a single row */
     animation: autoSlide 10s infinite;
+    width: 100%;
 }
+
 
 /* 3. The Individual Card - THIS IS THE FIX */
 .offer-banner-card {
