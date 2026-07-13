@@ -87,20 +87,24 @@ T&C does not collect or store your personal data.This website is for information
         </div>
 
         <div class="glass-card offer-banner-card">
-          <div class="offer-image-slot">
-            <img src="1783010572533.png" alt="Today's Deal Offer" onerror="this.style.display='none';">
-            <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
-          </div>
-          <div class="offer-details-slot">
-            <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
-            <h3>Combo Mega Combo Deal</h3>
-            <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
-            <div class="offer-pricing-row">
-              <span class="old-price">₹80</span>
-              <span class="new-glow-price">₹65 Only</span>
-            </div>
-          </div>
+  <!-- Added onclick attribute here -->
+  <div class="offer-image-slot" onclick="document.getElementById('comboModal').showModal()">
+    <img src="1783010572533.png" alt="Today's Deal Offer" onerror="this.style.display='none';">
+    <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
+  </div>
+  
+  <div class="offer-details-slot">
+    <!-- Your existing details remain exactly the same -->
+    <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
+    <h3>Combo Mega Combo Deal</h3>
+    <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
+    <div class="offer-pricing-row">
+      <span class="old-price">₹80</span>
+      <span class="new-glow-price">₹65 Only</span>
         </div>
+        </div>
+        </div>
+
 
         <div class="glass-card instruction-card">
           <h3>Welcome to Comfort</h3>
