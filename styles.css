@@ -1281,40 +1281,39 @@ body {
 
 /* Auto Slider*/
 /* 1. Reset the slider wrapper */
+/* Container stays as the fixed window */
 .slider-container {
     width: 100%;
     overflow: hidden;
     position: relative;
     border-radius: 15px;
-    background: transparent;
 }
-
 .slider {
     display: flex;
     width: 200%; /* Total width for 2 slides */
     animation: autoSlide 12s infinite ease-in-out;
 }
 
+/* The card now expands its height to fit the image */
 .offer-banner-card {
-    width: 100%; /* Must be 100% of the slider container, which is 50% of the slider */
+    width: 100%;
     flex-shrink: 0;
-    display: flex; 
-    flex-direction: column; 
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: auto; /* IMPORTANT: Allows the card to grow/shrink with the image */
 }
 
+/* The image dictates the height of the card */
 .offer-image-slot img {
     width: 100%;
-    height: auto; /* This maintains the 16:9 aspect ratio */
+    height: auto; /* Maintains the 16:9 aspect ratio */
     display: block;
-    object-fit: contain; /* Prevents cropping */
-    border-radius: 10px;
+    object-fit: contain; /* Keeps the whole image visible */
 }
 
-
+/* Ensure details don't force a minimum height */
 .offer-details-slot {
     width: 100%;
-    order: 2;
     padding: 15px;
     box-sizing: border-box;
 }
