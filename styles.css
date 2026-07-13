@@ -1405,17 +1405,16 @@ body {
 /* The Detailed Realistic Satellite Hardware Icon */
 .satellite-icon {
     position: absolute;
-    top: 0;
+    top: -10px;
     left: 50%;
-    transform: translateX(-50%) rotate(-45deg);
-    color: #dcdde1; /* Silver metallic body */
-    font-size: 16px;
-    /* Golden solar panels effect utilizing text-shadow trick */
-    text-shadow: 
-        -4px 4px 0px #e1b12c, 
-        4px -4px 0px #e1b12c;
-    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.8));
+    transform: translateX(-50%) rotate(45deg);
+    color: #ffffff;
+    font-size: 18px;
+    /* Adds a metallic "space" glow */
+    text-shadow: 0 0 5px #00d4ff;
+    filter: drop-shadow(0 0 2px #fff);
 }
+
 
 /* Keyframe Animations */
 @keyframes spinEarth {
