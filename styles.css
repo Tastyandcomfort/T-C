@@ -1500,11 +1500,28 @@ body {
     border-bottom: 2px solid #333;
 }
 
+/* Update .news-list */
 .news-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    
+    /* This makes it scrollable */
+    max-height: 300px;  /* Adjust this height to fit your screen perfectly */
+    overflow-y: auto;   /* Enables the scrollbar */
+    padding-right: 5px; /* Adds space for the scrollbar */
 }
+
+/* Optional: Make the scrollbar look good on your dark theme */
+.news-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.news-list::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 4px;
+}
+
 
 /* Individual list item styling */
 .news-item {
