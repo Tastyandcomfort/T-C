@@ -280,6 +280,9 @@ function openMenuModal(imgSrc, title, price, type) {
 }
 
 
+
+
+//Text, News & T&C live
 async function fetchNews() {
     const container = document.getElementById('news-container');
     if (!container) return; // Safety check
