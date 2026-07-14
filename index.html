@@ -394,36 +394,44 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
   
-        
-    <!---News Card---->
-    <div class="news-main-container">
+<!---News Card---->
+<div class="news-main-container">
     <div class="news-title-bar">
         <i class="fa-solid fa-newspaper"></i>
         <h3>Latest Updates</h3>
         
-        <!-- Toggle Switch -->
-        <label class="switch">
-            <input type="checkbox" id="view-toggle" onchange="toggleView()">
-            <span class="slider"></span>
-        </label>
-        <span id="view-label" style="font-size: 0.8rem;">Text</span>
-        
-        <button id="refresh-btn" onclick="fetchNews()"><i class="fa-solid fa-sync"></i></button>
+        <!-- Segmented Controls -->
+        <div class="view-selector">
+            <button onclick="setMode('text')">Text</button>
+            <button onclick="setMode('video')">Video</button>
+            <button onclick="setMode('live')">T&C Live</button>
+        </div>
     </div>
 
     <div id="content-area">
-        <!-- Text View (Default) -->
+        <!-- Text View (With Refresh) -->
         <div id="text-view" class="view-mode">
+            <div style="text-align: right; margin-bottom: 5px;">
+                <button id="refresh-btn" onclick="fetchNews()"><i class="fa-solid fa-sync"></i> Refresh</button>
+            </div>
             <div id="news-container" class="news-list">Loading news...</div>
         </div>
 
-        <!-- Video View (Hidden by default) -->
+        <!-- Video View -->
         <div id="video-view" class="view-mode" style="display: none;">
             <div class="video-wrapper">
                 <iframe id="news-video-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
         </div>
+
+        <!-- T&C Live View -->
+        <div id="live-view" class="view-mode" style="display: none;">
+            <div class="video-wrapper">
+                <iframe id="tc-live-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
     </div>
+</div>
 
     </section>
 
