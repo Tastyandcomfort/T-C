@@ -1,4 +1,36 @@
 
+
+// ===================================================
+// SECTION VIEW MANAGER ENGINE
+// ===================================================
+function switchView(viewId, element) {
+  // 1. NAVIGATION LOGIC
+  const sections = document.querySelectorAll('.app-section');
+  sections.forEach(sec => sec.classList.remove('active-view'));
+  
+  const targetView = document.getElementById(viewId);
+  if (targetView) targetView.classList.add('active-view');
+
+  const sideItems = document.querySelectorAll('.side-item');
+  sideItems.forEach(item => item.classList.remove('active'));
+  
+  const navBtns = document.querySelectorAll('.nav-btn');
+  navBtns.forEach(btn => btn.classList.remove('active'));
+
+  if (element) element.classList.add('active');
+
+  // 2. VIDEO CONTROL LOGIC (Moved outside the 'if (element)' block)
+  const videoPlayer = document.getElementById('live-video-player');
+if (videoPlayer) {
+  if (viewId === 'chat-view') {
+    // Correct format: Use 'embed/' and add 'autoplay=1&mute=1'
+    videoPlayer.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
+  } else {
+    // This correctly stops the video
+    videoPlayer.src = ""; 
+  }
+ }
+}
 //www.youtube.com/live/PoIrmiY0yjU?si=8BlNaz5BIpY8kHX5
 // ===================================================
 // INITIALIZE SYSTEM EVENTS & IMMEDIATE APPLE-STYLE POPUP
@@ -318,35 +350,7 @@ function toggleView() {
 }
 
 // Auto stop video
-function switchView(viewId, element) {
-  // ... (Your existing navigation code remains the same) ...
 
-  // PLAYER 1: News Video (Services Section)
-  const newsPlayer = document.getElementById('news-video-player');
-  if (newsPlayer) {
-    if (viewId === 'services-view') {
-      // Logic for News Video
-      if (!newsPlayer.src.includes('G0FyrS4rjoQ')) {
-        newsPlayer.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
-      }
-    } else {
-      newsPlayer.src = ""; // STOPS ONLY the news video
-    }
-  }
-
-  // PLAYER 2: AI & Live Video
-  const livePlayer = document.getElementById('live-stream-player');
-  if (livePlayer) {
-    if (viewId === 'chat-view') {
-      // Logic for AI & Live Video
-      if (!livePlayer.src.includes('nI9U3Je3XAM')) {
-        livePlayer.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
-      }
-    } else {
-      livePlayer.src = ""; // STOPS ONLY the live stream video
-    }
-  }
-}
 
 
 
