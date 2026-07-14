@@ -566,7 +566,7 @@ body {
 .ai-terminal-box { 
   display: flex; 
   flex-direction: column; 
-  height: 800px; 
+  height: 700px; 
 }
 
 .ai-status { 
