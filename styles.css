@@ -1557,44 +1557,26 @@ body {
 }
 
 /* Data privacy */
-/* Add the shine effect container */
-.privacy-ribbon-container {
-    background: linear-gradient(135deg, #ffd700, #daa520); /* Gold */
-    padding: 2px; /* This creates the gold border effect */
-    border-radius: 8px;
+.privacy-note {
+    border-left: 3px solid #ffd700; /* Subtle gold accent */
+    background: rgba(255, 215, 0, 0.05); /* Very light gold tint */
+    padding: 10px 12px;
     margin: 10px 0;
-    position: relative;
-    overflow: hidden; /* This keeps the shine inside the rounded corners */
-}
-
-.privacy-ribbon {
-    background-color: #1a1a1a; /* Dark background to make text pop */
-    color: #ffd700; /* Gold text */
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    color: #ccc;
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-/* The Shine Effect */
-.privacy-ribbon-container::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-    transform: skewX(-25deg);
-    animation: shine 5s infinite;
+.privacy-note i {
+    color: #ffd700; /* Gold icon */
 }
 
-@keyframes shine {
-    0% { left: -100%; }
-    40% { left: 100%; }
-    100% { left: 100%; }
+.privacy-note strong {
+    color: #ffd700;
 }
+
 
 
 
