@@ -1557,25 +1557,35 @@ body {
 }
 
 /* Data privacy */
+/* Add the shine effect container */
 .privacy-ribbon {
-    background: linear-gradient(135deg, #ffd700, #daa520); /* Golden gradient */
-    color: #333;
-    padding: 10px 15px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-align: center;
-    border-radius: 6px;
-    margin-bottom: 10px; /* Space between ribbon and chat */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border: 1px solid #b8860b;
+    position: relative;
+    overflow: hidden; /* This keeps the shine inside the ribbon */
+    /* ... keep your existing background, border-radius, etc. ... */
 }
 
-.privacy-ribbon i {
-    font-size: 1rem;
-    color: #444;
+/* Create the shiny moving light */
+.privacy-ribbon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        to right, 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: shine 4s infinite; /* Adjust 4s to be faster or slower */
 }
+
+@keyframes shine {
+    0% { left: -100%; }
+    20% { left: 100%; } /* Light passes through once */
+    100% { left: 100%; } /* Pauses before repeating */
+}
+
 
