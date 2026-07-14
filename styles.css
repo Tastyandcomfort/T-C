@@ -1482,7 +1482,7 @@ body {
     color: #000;
 }
 
-/* Refresh Button Styling */
+/* Refresh Button Container Styling */
 #refresh-btn {
     background: transparent;
     border: none;
@@ -1490,16 +1490,28 @@ body {
     cursor: pointer;
     font-size: 0.9rem;
     padding: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px; /* Adds space between icon and text */
 }
 
-#refresh-btn:active {
+/* Ensure the icon is treated as an inline-block for rotation */
+#refresh-icon {
+    display: inline-block;
+    transition: transform 0.5s;
+}
+
+/* Trigger the spin animation ONLY on the icon when the button is pressed */
+#refresh-btn:active #refresh-icon {
     animation: spin 0.5s linear;
 }
 
+/* The spin animation remains the same */
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
 
 /* News List Scrollable Area */
 .news-list {
