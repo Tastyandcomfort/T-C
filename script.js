@@ -322,7 +322,7 @@ function toggleView() {
     const isVideo = document.getElementById('view-toggle').checked;
     const textView = document.getElementById('text-view');
     const videoView = document.getElementById('video-view');
-    const videoPlayer = document.getElementById('live-video-player');
+    const videoPlayer = document.getElementById('news-video-player');
     const label = document.getElementById('view-label');
 
     if (isVideo) {
