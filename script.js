@@ -348,8 +348,36 @@ function toggleView() {
     }
 }
 
+// Auto stop video
+function switchView(viewId, element) {
+  // ... (Your existing navigation code remains the same) ...
 
+  // PLAYER 1: News Video (Services Section)
+  const newsPlayer = document.getElementById('news-video-player');
+  if (newsPlayer) {
+    if (viewId === 'services') {
+      // Logic for News Video
+      if (!newsPlayer.src.includes('G0FyrS4rjoQ')) {
+        newsPlayer.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
+      }
+    } else {
+      newsPlayer.src = ""; // STOPS ONLY the news video
+    }
+  }
 
+  // PLAYER 2: AI & Live Video
+  const livePlayer = document.getElementById('live-stream-player');
+  if (livePlayer) {
+    if (viewId === 'chat-view') {
+      // Logic for AI & Live Video
+      if (!livePlayer.src.includes('nI9U3Je3XAM')) {
+        livePlayer.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
+      }
+    } else {
+      livePlayer.src = ""; // STOPS ONLY the live stream video
+    }
+  }
+}
 
 
 
