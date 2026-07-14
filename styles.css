@@ -1557,24 +1557,27 @@ body {
 }
 
 /* Data privacy */
-.privacy-note {
-    border-left: 3px solid #ffd700; /* Subtle gold accent */
-    background: rgba(255, 215, 0, 0.05); /* Very light gold tint */
-    padding: 10px 12px;
-    margin: 10px 0;
-    font-size: 0.75rem;
-    color: #ccc;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.privacy-notice {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  margin: 10px 0;
+  color: #a0a0a0; /* Soft grey for readability */
+  font-size: 0.75rem;
+  border-bottom: 1px solid #333; /* Very subtle line */
+  border-top: 1px solid #333;
 }
 
-.privacy-note i {
-    color: #ffd700; /* Gold icon */
+.lock-icon {
+  margin-right: 8px;
+  font-size: 0.9rem;
+  /* Gold glow effect */
+  text-shadow: 0 0 8px #ffd700;
 }
 
-.privacy-note strong {
-    color: #ffd700;
+.privacy-notice strong {
+  color: #ffd700; /* Gold text */
+  margin-right: 5px;
 }
 
 
