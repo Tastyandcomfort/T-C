@@ -318,6 +318,34 @@ async function fetchNews() {
 fetchNews();
 
 
+function toggleView() {
+    const isVideo = document.getElementById('view-toggle').checked;
+    const textView = document.getElementById('text-view');
+    const videoView = document.getElementById('video-view');
+    const videoPlayer = document.getElementById('live-video-player');
+    const label = document.getElementById('view-label');
+
+    if (isVideo) {
+        label.innerText = "Video";
+        textView.style.opacity = "0";
+        setTimeout(() => {
+            textView.style.display = "none";
+            videoView.style.display = "block";
+            // Replace CHANNEL_ID with the actual YouTube Channel ID
+            videoPlayer.src = "https://www.youtube.com/embed/live_stream?channel=YOUR_CHANNEL_ID&autoplay=1&mute=1";
+            videoView.style.opacity = "1";
+        }, 500);
+    } else {
+        label.innerText = "Text";
+        videoView.style.opacity = "0";
+        setTimeout(() => {
+            videoView.style.display = "none";
+            videoPlayer.src = ""; // Stop the video
+            textView.style.display = "block";
+            textView.style.opacity = "1";
+        }, 500);
+    }
+}
 
 
 
