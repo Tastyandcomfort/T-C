@@ -19,15 +19,15 @@ function switchView(viewId, element) {
 
   // 2. VIDEO CONTROL LOGIC (Moved outside the 'if (element)' block)
   const videoPlayer = document.getElementById('live-video-player');
-  if (videoPlayer) {
-    if (viewId === 'chat-view') {
-      // Start video
-      videoPlayer.src = "https://youtu.be/nI9U3Je3XAM?si=ynpoD3e6VyYF2Qhd?autoplay=1";
-    } else {
-      // STOP video by clearing the source
-      videoPlayer.src = ""; 
-    }
+if (videoPlayer) {
+  if (viewId === 'chat-view') {
+    // Correct format: Use 'embed/' and add 'autoplay=1&mute=1'
+    videoPlayer.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
+  } else {
+    // This correctly stops the video
+    videoPlayer.src = ""; 
   }
+ }
 }
 
 //www.youtube.com/live/PoIrmiY0yjU?si=8BlNaz5BIpY8kHX5
