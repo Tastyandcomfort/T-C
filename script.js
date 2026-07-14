@@ -321,8 +321,18 @@ async function fetchNews() {
 
 
 // 2nd half
-function setMode(mode) {
-    // Select elements
+function setMode(mode, element) {
+    // 1. Manage Button Highlighting
+    // Remove 'active-mode' from ALL buttons
+    document.querySelectorAll('.view-selector button').forEach(btn => {
+        btn.classList.remove('active-mode');
+    });
+    // Add 'active-mode' to the clicked button
+    if (element) {
+        element.classList.add('active-mode');
+    }
+
+    // 2. Select elements
     const views = {
         text: document.getElementById('text-view'),
         video: document.getElementById('video-view'),
@@ -334,12 +344,12 @@ function setMode(mode) {
         live: document.getElementById('tc-live-player')
     };
 
-    // 1. Reset all views and stop players
+    // 3. Reset all views and stop players
     Object.keys(views).forEach(key => views[key].style.display = 'none');
     players.news.src = "";
     players.live.src = "";
 
-    // 2. Activate chosen mode
+    // 4. Activate chosen mode
     if (mode === 'text') {
         views.text.style.display = 'block';
     } else if (mode === 'video') {
@@ -353,6 +363,7 @@ function setMode(mode) {
 
 // Automatically fetch news on startup
 document.addEventListener('DOMContentLoaded', fetchNews);
+
 
 // Auto stop video
 
