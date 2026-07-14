@@ -1431,60 +1431,13 @@ body {
     100% { transform: rotate(360deg); z-index: 3; }
 }
 
-/* News Card---*/
-/* Container to hold the articles */
-.news-ticker-wrapper {
-    width: 100%;
-    padding: 10px 0;
-  }
-/* Style for each article/headline */
-.news-ticker {
-    display: block; /* Changes it to a stacked list */
-    color: #ffd700;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    white-space: normal; /* Allows text to wrap */
-    animation: none; /* Removes the movement */
-}
 
-/* Style for individual headlines */
-.news-ticker p {
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #333; /* Separator line between news */
-}
-
-
-@keyframes scrollNews {
-    from { transform: translateX(0); }
-    to { transform: translateX(-100%); }
-}
-
-/* Refresh Button Styling */
-#refresh-btn {
-    background: transparent;
-    border: none;
-    color: #00d4ff;
-    cursor: pointer;
-    margin-left: auto;
-    font-size: 1.2rem;
-}
-
-/* Spin animation on click */
-#refresh-btn:active {
-    animation: spin 0.5s linear;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* News Container*/
+   
+/* News Container Styling */
 .news-main-container {
     width: 100%;
     margin: 20px auto;
-    background: #111418; /* Slightly lighter than pure black for depth */
+    background: #111418;
     border-radius: 16px;
     padding: 20px;
     border: 1px solid #222;
@@ -1498,63 +1451,100 @@ body {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid #333;
+    flex-wrap: wrap; /* Allows buttons to wrap on very small screens */
 }
 
-/* Update .news-list */
+/* Three-way View Selector (Pill Style) */
+.view-selector {
+    background: #222;
+    padding: 3px;
+    border-radius: 20px;
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+}
+
+.view-selector button {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 6px 12px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+/* Highlight the active button when clicked */
+.view-selector button:focus {
+    background: #ffd700;
+    color: #000;
+}
+
+/* Refresh Button Styling */
+#refresh-btn {
+    background: transparent;
+    border: none;
+    color: #00d4ff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 5px;
+}
+
+#refresh-btn:active {
+    animation: spin 0.5s linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* News List Scrollable Area */
 .news-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    
-    /* This makes it scrollable */
-    max-height: 300px;  /* Adjust this height to fit your screen perfectly */
-    overflow-y: auto;   /* Enables the scrollbar */
-    padding-right: 5px; /* Adds space for the scrollbar */
+    max-height: 300px;
+    overflow-y: auto;
 }
 
-/* Optional: Make the scrollbar look good on your dark theme */
-.news-list::-webkit-scrollbar {
-    width: 8px;
-}
+/* Dark Theme Scrollbar */
+.news-list::-webkit-scrollbar { width: 6px; }
+.news-list::-webkit-scrollbar-thumb { background-color: #333; border-radius: 4px; }
 
-.news-list::-webkit-scrollbar-thumb {
-    background-color: #333;
-    border-radius: 4px;
-}
-
-
-/* Individual list item styling */
+/* Individual Item */
 .news-item {
     padding: 10px;
     background: #1a1f26;
     border-radius: 8px;
-    transition: background 0.3s;
+    display: flex;
+    align-items: center;
 }
 
-.news-item:hover { background: #222933; }
-
-.label {
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-right: 8px;
-    text-transform: uppercase;
+/* Smooth Transitions for Views */
+.view-mode { 
+    transition: opacity 0.3s ease; 
+    opacity: 1; 
 }
 
-/* Video player smoothness*/
-.view-mode { transition: opacity 0.5s ease; opacity: 1; }
-
+/* Video Wrapper (for Video & Live) */
 .video-wrapper {
     position: relative;
-    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    padding-bottom: 56.25%; 
     height: 0;
     overflow: hidden;
     border-radius: 8px;
+    background: #000;
 }
 .video-wrapper iframe {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
 }
+
+
+
+
 
 /* Data privacy */
 .privacy-notice {
