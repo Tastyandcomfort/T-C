@@ -332,7 +332,8 @@ function toggleView() {
             textView.style.display = "none";
             videoView.style.display = "block";
             // Replace CHANNEL_ID with the actual YouTube Channel ID
-            videoPlayer.src = "https://www.youtube.com/embed/live_stream?channel=YOUR_CHANNEL_ID&autoplay=1&mute=1";
+            // Inside your toggleView function:
+            videoPlayer.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
             videoView.style.opacity = "1";
         }, 500);
     } else {
