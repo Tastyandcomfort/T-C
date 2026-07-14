@@ -324,7 +324,7 @@ function switchView(viewId, element) {
   // PLAYER 1: News Video (Services Section)
   const newsPlayer = document.getElementById('news-video-player');
   if (newsPlayer) {
-    if (viewId === 'Services') {
+    if (viewId === 'services-view') {
       // Logic for News Video
       if (!newsPlayer.src.includes('G0FyrS4rjoQ')) {
         newsPlayer.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
@@ -337,7 +337,7 @@ function switchView(viewId, element) {
   // PLAYER 2: AI & Live Video
   const livePlayer = document.getElementById('live-stream-player');
   if (livePlayer) {
-    if (viewId === 'Chat-view') {
+    if (viewId === 'chat-view') {
       // Logic for AI & Live Video
       if (!livePlayer.src.includes('nI9U3Je3XAM')) {
         livePlayer.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
