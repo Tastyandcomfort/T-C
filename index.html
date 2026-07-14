@@ -402,11 +402,12 @@ T&C does not collect or store your personal data.This website is for information
         
         <!-- Segmented Controls -->
         <div class="view-selector">
-            <button onclick="setMode('text')">Text</button>
-            <button onclick="setMode('video')">Video</button>
-            <button onclick="setMode('live')">T&C Live</button>
-        </div>
-    </div>
+    <!-- Note the added 'active-mode' class to Text by default -->
+    <button id="btn-text" class="active-mode" onclick="setMode('text', this)">Headlines</button>
+    <button id="btn-video" onclick="setMode('video', this)">Live News</button>
+    <button id="btn-live" onclick="setMode('live', this)">T&C Live</button>
+</div>
+</div>
 
     <div id="content-area">
         <!-- Text View (With Refresh) -->
