@@ -280,9 +280,10 @@ function openMenuModal(imgSrc, title, price, type) {
 }
 
 
-// News Auto Update
 async function fetchNews() {
     const container = document.getElementById('news-container');
+    if (!container) return; // Safety check
+    
     container.innerHTML = "<p>Loading...</p>";
     
     const urls = [
@@ -297,7 +298,9 @@ async function fetchNews() {
             let api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
             let response = await fetch(api);
             let data = await response.json();
-            allNews = allNews.concat(data.items.slice(0, 2));
+            if (data.items) {
+                allNews = allNews.concat(data.items.slice(0, 2));
+            }
         }
 
         let html = '';
@@ -305,9 +308,9 @@ async function fetchNews() {
             let type = index < 2 ? "telangana" : (index < 4 ? "india" : "world");
             let color = type === 'telangana' ? '#ff9f43' : (type === 'india' ? '#00d4ff' : '#2ecc71');
             
-            html += `<div class="news-item">
-                        <span class="label" style="background:${color}33; color:${color};">[${type}]</span>
-                        <span style="font-size: 0.9rem; color: #fff;">${item.title}</span>
+            html += `<div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #333;">
+                        <span class="label" style="background:${color}33; color:${color}; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">[${type}]</span>
+                        <a href="${item.link}" target="_blank" style="text-decoration: none; font-size: 0.9rem; color: #fff; margin-left: 8px;">${item.title}</a>
                      </div>`;
         });
         container.innerHTML = html;
@@ -316,38 +319,40 @@ async function fetchNews() {
     }
 }
 
-fetchNews();
 
+// 2nd half
+function setMode(mode) {
+    // Select elements
+    const views = {
+        text: document.getElementById('text-view'),
+        video: document.getElementById('video-view'),
+        live: document.getElementById('live-view')
+    };
+    
+    const players = {
+        news: document.getElementById('news-video-player'),
+        live: document.getElementById('tc-live-player')
+    };
 
-function toggleView() {
-    const isVideo = document.getElementById('view-toggle').checked;
-    const textView = document.getElementById('text-view');
-    const videoView = document.getElementById('video-view');
-    const videoPlayer = document.getElementById('news-video-player');
-    const label = document.getElementById('view-label');
+    // 1. Reset all views and stop players
+    Object.keys(views).forEach(key => views[key].style.display = 'none');
+    players.news.src = "";
+    players.live.src = "";
 
-    if (isVideo) {
-        label.innerText = "Video";
-        textView.style.opacity = "0";
-        setTimeout(() => {
-            textView.style.display = "none";
-            videoView.style.display = "block";
-            // Replace CHANNEL_ID with the actual YouTube Channel ID
-            // Inside your toggleView function:
-            videoPlayer.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
-            videoView.style.opacity = "1";
-        }, 500);
-    } else {
-        label.innerText = "Text";
-        videoView.style.opacity = "0";
-        setTimeout(() => {
-            videoView.style.display = "none";
-            videoPlayer.src = ""; // Stop the video
-            textView.style.display = "block";
-            textView.style.opacity = "1";
-        }, 500);
+    // 2. Activate chosen mode
+    if (mode === 'text') {
+        views.text.style.display = 'block';
+    } else if (mode === 'video') {
+        views.video.style.display = 'block';
+        players.news.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
+    } else if (mode === 'live') {
+        views.live.style.display = 'block';
+        players.live.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
     }
 }
+
+// Automatically fetch news on startup
+document.addEventListener('DOMContentLoaded', fetchNews);
 
 // Auto stop video
 
