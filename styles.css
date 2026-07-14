@@ -566,7 +566,7 @@ body {
 .ai-terminal-box { 
   display: flex; 
   flex-direction: column; 
-  height: 710px; 
+  height: 705px; 
 }
 
 .ai-status { 
@@ -623,7 +623,7 @@ body {
 .suggested-prompts { 
   display: flex; 
   gap: 6px; 
-  margin-bottom: 8px; 
+  margin-bottom: 6px; 
   flex-wrap: wrap; 
 }
 
