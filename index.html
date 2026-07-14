@@ -413,7 +413,9 @@ T&C does not collect or store your personal data.This website is for information
         <!-- Text View (With Refresh) -->
         <div id="text-view" class="view-mode">
             <div style="text-align: right; margin-bottom: 5px;">
-                <button id="refresh-btn" onclick="fetchNews()"><i class="fa-solid fa-sync"></i> Refresh</button>
+                <button id="refresh-btn" onclick="fetchNews()">
+    <i id="refresh-icon" class="fa-solid fa-sync"></i> Refresh</button>
+
             </div>
             <div id="news-container" class="news-list">Loading news...</div>
         </div>
