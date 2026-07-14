@@ -394,15 +394,33 @@ T&C does not collect or store your personal data.This website is for information
     <!---News Card---->
     <div class="news-main-container">
     <div class="news-title-bar">
-        <i class="fa-solid fa-newspaper"></i> 
-        <h3>Latest News</h3>
+        <i class="fa-solid fa-newspaper"></i>
+        <h3>Latest Updates</h3>
+        
+        <!-- Toggle Switch -->
+        <label class="switch">
+            <input type="checkbox" id="view-toggle" onchange="toggleView()">
+            <span class="slider"></span>
+        </label>
+        <span id="view-label" style="font-size: 0.8rem;">Text</span>
+        
         <button id="refresh-btn" onclick="fetchNews()"><i class="fa-solid fa-sync"></i></button>
     </div>
-    
-    <!-- This is the clean list area -->
-    <div id="news-container" class="news-list">
-        <p>Loading prioritized news...</p>
+
+    <div id="content-area">
+        <!-- Text View (Default) -->
+        <div id="text-view" class="view-mode">
+            <div id="news-container" class="news-list">Loading news...</div>
+        </div>
+
+        <!-- Video View (Hidden by default) -->
+        <div id="video-view" class="view-mode" style="display: none;">
+            <div class="video-wrapper">
+                <iframe id="live-video-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
     </div>
+
     </section>
 
 
