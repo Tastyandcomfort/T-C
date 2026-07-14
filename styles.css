@@ -1579,12 +1579,12 @@ body {
         rgba(255, 255, 255, 0) 100%
     );
     transform: skewX(-25deg);
-    animation: shine 4s infinite; /* Adjust 4s to be faster or slower */
+    animation: shine 6s infinite; /* Adjust 4s to be faster or slower */
 }
 
 @keyframes shine {
-    0% { left: -100%; }
-    20% { left: 100%; } /* Light passes through once */
+    05% { left: -100%; }
+    50% { left: 100%; } /* Light passes through once */
     100% { left: 100%; } /* Pauses before repeating */
 }
 
