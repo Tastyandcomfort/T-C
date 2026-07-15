@@ -352,7 +352,7 @@ function setMode(mode, element) {
     players.news.src = "";
     players.live.src = "";
 
-    // 4. Activate chosen mode
+    // 4. Activate chosen mode  https://www.youtube.com/live/e1FIApIafWE?si=E5vRZkAwI9foStrS 
     if (mode === 'text') {
         views.text.style.display = 'block';
     } else if (mode === 'video') {
@@ -360,7 +360,7 @@ function setMode(mode, element) {
         players.news.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
     } else if (mode === 'live') {
         views.live.style.display = 'block';
-        players.live.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
+        players.live.src = "https://www.youtube.com/embed/e1FIApIafWE?autoplay=1&mute=1";
     }
 }
 
