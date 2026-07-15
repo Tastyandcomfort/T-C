@@ -308,8 +308,8 @@ async function fetchNews() {
 
         let html = '';
         allNews.forEach((item, index) => {
-            let type = index < 2 ? "telangana" : (index < 4 ? "india" : "world");
-            let color = type === 'telangana' ? '#ff9f43' : (type === 'india' ? '#00d4ff' : '#2ecc71');
+            let type = index < 2 ? " Telangana " : (index < 4 ? " India " : " World ");
+            let color = type === ' Telangana ' ? '#ff9f43' : (type === ' India ' ? '#00d4ff' : '#2ecc71');
             
             html += `<div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #333;">
                         <span class="label" style="background:${color}33; color:${color}; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">[${type}]</span>
