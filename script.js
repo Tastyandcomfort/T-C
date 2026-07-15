@@ -357,7 +357,7 @@ function setMode(mode, element) {
         views.text.style.display = 'block';
     } else if (mode === 'video') {
         views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/G0FyrS4rjoQ?autoplay=1&mute=1";
+        players.news.src = "https://www.youtube.com/embed/e1FIApIafWE?autoplay=1&mute=1";
     } else if (mode === 'live') {
         views.live.style.display = 'block';
         players.live.src = "https://www.youtube.com/embed/e1FIApIafWE?autoplay=1&mute=1";
