@@ -326,16 +326,14 @@ async function fetchNews() {
 // 2nd half
 function setMode(mode, element) {
     // 1. Manage Button Highlighting
-    // Remove 'active-mode' from ALL buttons
     document.querySelectorAll('.view-selector button').forEach(btn => {
         btn.classList.remove('active-mode');
     });
-    // Add 'active-mode' to the clicked button
     if (element) {
         element.classList.add('active-mode');
     }
 
-    // 2. Select elements
+    // 2. Select Elements
     const views = {
         text: document.getElementById('text-view'),
         video: document.getElementById('video-view'),
@@ -347,27 +345,34 @@ function setMode(mode, element) {
         live: document.getElementById('tc-live-player')
     };
 
+    // New: Select title and dot elements
+    const title = document.getElementById('current-channel-title');
+    const dot = document.getElementById('live-indicator');
+
     // 3. Reset all views and stop players
     Object.keys(views).forEach(key => views[key].style.display = 'none');
     players.news.src = "";
     players.live.src = "";
 
-    // 4. Activate chosen mode  https://www.youtube.com/live/e1FIApIafWE?si=E5vRZkAwI9foStrS 
-   // https://www.youtube.com/live/vhwVhXkFV2U?si=3c_TMIu-IEvoivaj
-  if (mode === 'text') {
+    // 4. Activate chosen mode & Update Title/Dot
+    if (mode === 'text') {
+        title.innerText = "Latest Updates";
+        dot.style.display = "none";
         views.text.style.display = 'block';
-    } else if (mode === 'video') {
+    } 
+    else if (mode === 'video') {
+        title.innerText = "Live NEWS";
+        dot.style.display = "inline-block";
         views.video.style.display = 'block';
         players.news.src = "https://www.youtube.com/embed/e1FIApIafWE?autoplay=1&mute=1";
-    } else if (mode === 'live') {
+    } 
+    else if (mode === 'live') {
+        title.innerText = "T&C Live";
+        dot.style.display = "inline-block";
         views.live.style.display = 'block';
         players.live.src = "https://www.youtube.com/embed/vhwVhXkFV2U?autoplay=1&mute=1";
     }
 }
-
-// Automatically fetch news on startup
-document.addEventListener('DOMContentLoaded', fetchNews);
-
 
 // Auto stop video
 
