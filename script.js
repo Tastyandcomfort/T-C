@@ -370,11 +370,11 @@ function setMode(mode, element) {
         title.innerText = "T&C Live";
         dot.style.display = "inline-block";
         views.live.style.display = 'block';
-        players.live.src = "https://www.youtube.com/embed/vhwVhXkFV2U?autoplay=1&mute=1";
+        players.live.src = "https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1";
     }
 }
 
-// Auto stop video
+// Auto stop video  https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
 
 
 
