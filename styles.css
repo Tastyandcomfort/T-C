@@ -1582,6 +1582,17 @@ body {
   margin-right: 5px;
 }
 
+.privacy-note .read-more {
+    color: #00d4ff; /* A bright, readable blue */
+    text-decoration: underline;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.privacy-note .read-more:hover {
+    color: #ffd700; /* Turns gold when hovered for interactivity */
+}
 
 
 
