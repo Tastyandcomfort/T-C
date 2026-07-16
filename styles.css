@@ -1613,3 +1613,18 @@ body {
     100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
 }
 
+/* App Language*/
+.lang-selector select {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.lang-selector select:hover {
+    border-color: #00d4ff;
+}
