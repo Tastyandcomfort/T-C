@@ -319,25 +319,31 @@ T&C does not collect or store your personal data.This website is for information
           </div>
 
         <div class="glass-card menu-box item-has-image compact-box">
-            <div class="menu-item-image-frame compact-frame"
-              onclick="openMenuModal('1783788723316.png', 'Noodles', '₹45', 'Veg')">
-              <img src="1783788723316.png" alt="Roll" onerror="this.style.display='none';">
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
-            </div>
-            <div class="menu-item-info-frame compact-info">
-              <div class="menu-title-row">
-                <h5>Soft Noodles</h5>
-              </div>
-              <p class="menu-item-sub text-small-desc">Soft bread egg omelet, crisp pastry crust stuffed with a spiced savory filling.</p>
-              
-              <div class="portions-flex compact-portions">
-                <div class="portion-column">
-                  <span class="p-title">Classic</span>
-                  <div class="p-price"><span>Plate:</span> <strong>₹45</strong></div>
-                </div>
-              </div>
-            </div>
+    <div class="menu-item-image-frame compact-frame"
+        onclick="openMenuModal('1783788723316.png', 'Noodles', '₹45', 'Veg')">
+        <img src="1783788723316.png" alt="Roll" onerror="this.style.display='none';">
+        <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+    </div>
+    <div class="menu-item-info-frame compact-info">
+        <div class="menu-title-row">
+            <h5>Soft Noodles</h5>
         </div>
+        <p class="menu-item-sub text-small-desc">Soft bread egg omelet, crisp pastry crust stuffed with a spiced savory filling.</p>
+        
+        <!-- UPDATED PORTIONS SECTION -->
+        <div class="portions-flex compact-portions" style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+            <div class="portion-column">
+                <span class="p-title">Classic</span>
+                <div class="p-price"><span>Plate:</span> <strong>₹45</strong></div>
+            </div>
+            
+            <!-- Quantity Selection & Add Button -->
+            <input type="number" id="qty-noodles" value="1" min="1" style="width: 40px; border-radius: 5px; border: 1px solid #444; background: #222; color: white;">
+            <button onclick="addToCart('Soft Noodles', 45, 'qty-noodles')" style="background: #ff9800; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; color: black; font-weight: bold;">Add</button>
+        </div>
+    </div>
+</div>
+
 
       <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame"
