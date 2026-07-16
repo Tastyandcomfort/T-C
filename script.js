@@ -446,6 +446,13 @@ function showAdminPanel() {
         alert("Incorrect passcode!");
     }
 }
+// Clear order
+function clearOrder(index) {
+    let orders = JSON.parse(localStorage.getItem('stallOrders'));
+    orders.splice(index, 1);
+    localStorage.setItem('stallOrders', JSON.stringify(orders));
+    showAdminPanel(); // Refresh view
+}
 
 // Order section
 function placeOrder(itemName) {
