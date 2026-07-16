@@ -374,8 +374,20 @@ function setMode(mode, element) {
     }
 }
 
-// Auto stop video  https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
+// https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
 
+
+//App Language
+function changeLanguage() {
+    const lang = document.getElementById('language').value;
+    
+    // Example: Simple alert, or you could redirect to a specific URL
+    console.log("Language changed to: " + lang);
+    
+    // Logic to handle translations:
+    // If you have different pages like 'index_te.html', you can use:
+    // if (lang === 'te') window.location.href = 'index_te.html';
+}
 
 
 
