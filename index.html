@@ -448,31 +448,33 @@ T&C does not collect or store your personal data.This website is for information
     </section>
 
 
-      <section id="chat-view" class="app-section">
-     <!---  <h3 class="section-title"><i class="fa-solid fa-robot gold-text">AI ASSISTANT</i></h3>--->
-        <div class="glass-card ai-terminal-box">
-          <div class="ai-status"><span class="pulse-dot"></span> AI Coming Soon</div>
-          <div class="chatbot-history" id="chat-log-box">
-            <div class="msg-bubble bot-msg">Hello! Ask me anything about our menu items, operating times, or safety options!</div>
-          </div>
-          <div class="suggested-prompts">
-            <button class="prompt-chip" onclick="sendChipPrompt('What are your shop operating hours?')">Store Timings</button>
-            <button class="prompt-chip" onclick="sendChipPrompt('Where are you located exactly?')">Store Location</button>
-            <button class="prompt-chip" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
-          </div>
-          <!-- Data Privacy Ribbon -->
-          <div class="privacy-notice">
-           <span class="lock-icon">🛡</span>
-           <span class="privacy-text">
-           <strong>Data Privacy:</strong> We recommend not to share personal info in chat/website. It's against to T&C's Customer Privacy Policy.
-            <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Read More</a>
-         </span>
-          </div>
-          <div class="chat-input-bar">
-            <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
-            <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-          </div>
-        </div>
+      <!-- Inside <section id="chat-view" class="app-section"> -->
+<div class="glass-card ai-terminal-box">
+  <div class="ai-status"><span class="pulse-dot"></span> AI Coming Soon</div>
+  <div class="chatbot-history" id="chat-log-box">
+    <div class="msg-bubble bot-msg">Hello! Ask me anything about our menu items, operating times, or safety options!</div>
+  </div>
+  <div class="suggested-prompts">
+    <button class="prompt-chip" onclick="sendChipPrompt('What are your shop operating hours?')">Store Timings</button>
+    <button class="prompt-chip" onclick="sendChipPrompt('Where are you located exactly?')">Store Location</button>
+    <button class="prompt-chip" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
+  </div>
+  
+  <!-- ADD YOUR NEW CODE HERE -->
+  <div class="privacy-notice">
+    <span class="lock-icon">🛡</span>
+    <span class="privacy-text">
+      <strong>Data Privacy:</strong> We recommend not to share personal info in chat/website. It's against to T&C's Customer Privacy Policy.
+      <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Read More</a>
+    </span>
+  </div>
+  
+  <div class="chat-input-bar">
+    <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
+    <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+
 
 
 </section>
