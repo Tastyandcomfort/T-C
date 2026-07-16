@@ -392,7 +392,7 @@ function setMode(mode, element) {
     }
     // Added New Modes
     else if (mode === 'wildlife') {
-        title.innerText = "Wildl Live";
+        title.innerText = "Wild Live";
         dot.style.display = "inline-block";
         views.wildlife.style.display = 'block';
         players.wildlife.src = "https://www.youtube.com/embed/MiQe9ob9aDc?autoplay=1&mute=1";
