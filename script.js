@@ -484,25 +484,34 @@ function addToCart(itemName, price, inputId) {
 }
 
 function submitOrder() {
+    let cart = JSON.parse(localStorage.getItem('currentCart')) || [];
+    
     if (cart.length === 0) {
         alert("Your cart is empty!");
         return;
     }
-    
+
     let total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
     let orders = JSON.parse(localStorage.getItem('stallOrders')) || [];
     
+    // Save to Admin list
     orders.push({
         items: cart,
         total: total,
         time: new Date().toLocaleTimeString(),
         status: 'Pending'
     });
-    
     localStorage.setItem('stallOrders', JSON.stringify(orders));
+    
+    // Clear the cart
+    localStorage.removeItem('currentCart'); 
+    
     alert("Order Proceeded! Total: ₹" + total);
-    cart = []; // Clear cart after order
+    
+    // Close the modal automatically
+    document.getElementById('cart-modal').style.display = 'none';
 }
+
 
 
 // Cart items
