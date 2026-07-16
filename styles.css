@@ -1630,13 +1630,16 @@ body {
 }
 
 
-/* Hide the Google Translate toolbar at the bottom */
+/* Hide the Google Translate toolbar and feedback banner */
 .goog-te-banner-frame.skiptranslate, 
 .goog-te-balloon-frame {
     display: none !important;
 }
 
+/* Ensure the layout remains at the top of the screen */
 body {
     top: 0px !important; 
 }
+
+
   
