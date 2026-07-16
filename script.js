@@ -503,3 +503,26 @@ function submitOrder() {
     alert("Order Proceeded! Total: ₹" + total);
     cart = []; // Clear cart after order
 }
+
+
+
+function openCartModal() {
+    let cart = JSON.parse(localStorage.getItem('currentCart')) || [];
+    let listDiv = document.getElementById('cart-items-list');
+    let modal = document.getElementById('cart-modal');
+    
+    if (cart.length === 0) {
+        listDiv.innerHTML = "<p>Your cart is empty.</p>";
+    } else {
+        let html = "<ul>";
+        let total = 0;
+        cart.forEach(item => {
+            html += `<li>${item.qty} x ${item.item} = ₹${item.price * item.qty}</li>`;
+            total += (item.price * item.qty);
+        });
+        html += `</ul><h3>Total: ₹${total}</h3>`;
+        listDiv.innerHTML = html;
+    }
+    
+    modal.style.display = 'block'; // Show the modal
+}
