@@ -505,11 +505,15 @@ function submitOrder() {
 }
 
 
-
+// Cart items
 function openCartModal() {
+    // 1. Get the latest data
     let cart = JSON.parse(localStorage.getItem('currentCart')) || [];
     let listDiv = document.getElementById('cart-items-list');
     let modal = document.getElementById('cart-modal');
+    
+    // 2. Clear the old list before adding new items
+    listDiv.innerHTML = ""; 
     
     if (cart.length === 0) {
         listDiv.innerHTML = "<p>Your cart is empty.</p>";
@@ -524,5 +528,7 @@ function openCartModal() {
         listDiv.innerHTML = html;
     }
     
-    modal.style.display = 'block'; // Show the modal
+    // 3. Show the modal
+    modal.style.display = 'block'; 
 }
+
