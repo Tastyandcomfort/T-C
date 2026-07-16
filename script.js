@@ -420,7 +420,32 @@ function changeLang(lang) {
     }
 }
 
+// Admin section
+function showAdminPanel() {
+    // Prompt the user for a password
+    const passcode = prompt("Enter Admin Passcode:");
 
+    // Check if the code is correct (Change '1234' to your secret code)
+    if (passcode === "1234") {
+        document.getElementById('admin-panel').style.display = 'block';
+        
+        // Load the orders
+        const list = document.getElementById('orders-list');
+        const orders = JSON.parse(localStorage.getItem('stallOrders')) || [];
+        
+        list.innerHTML = orders.length > 0 
+            ? orders.map((o, index) => `
+                <div style="border-bottom:1px solid #ccc; padding:10px; color: black;">
+                    <strong>${o.item}</strong> - ${o.time} 
+                    <button onclick="clearOrder(${index})" style="margin-left: 10px;">Done</button>
+                </div>
+            `).join('')
+            : "<p>No new orders.</p>";
+            
+    } else if (passcode !== null) {
+        alert("Incorrect passcode!");
+    }
+}
 
 
 
