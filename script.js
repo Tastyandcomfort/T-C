@@ -20,8 +20,10 @@ function switchView(viewId, element) {
   const videoSources = {
     'chat-view': "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1",
     'wildlife-view': "https://www.youtube.com/embed/MiQe9ob9aDc?autoplay=1&mute=1",
-    'sports-view': "YOUR_SPORTS_URL?autoplay=1&mute=1"
+    'sports-view': "https://www.youtube.com/embed/Qd5gniZgN-Y?autoplay=1&mute=1"
   };
+
+  // https://www.youtube.com/live/Qd5gniZgN-Y?si=3n_b25T29V1aohYv
 
   // Select all potential players
   const players = {
@@ -399,7 +401,7 @@ function setMode(mode, element) {
         title.innerText = "Sports Live";
         dot.style.display = "inline-block";
         views.sports.style.display = 'block';
-        players.sports.src = "https://www.youtube.com/embed/-6aJD-4Yu4w?autoplay=1&mute=1";
+        players.sports.src = "https://www.youtube.com/embed/Qd5gniZgN-Y?autoplay=1&mute=1";
     }
 }
 
