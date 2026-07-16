@@ -1561,20 +1561,19 @@ body {
 /* Data privacy */
 .privacy-notice {
   display: flex;
-  align-items: center;
-  padding: 8px 0;
-  margin: 10px 0;
-  color: #a0a0a0; /* Soft grey for readability */
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 12px;
   font-size: 0.75rem;
-  border-bottom: 1px solid #333; /* Very subtle line */
-  border-top: 1px solid #333;
+  color: #cccccc;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .lock-icon {
-  margin-right: 8px;
-  font-size: 0.9rem;
-  /* Gold glow effect */
-  text-shadow: 0 0 8px #ffd700;
+  font-size: 1rem;
 }
 
 .privacy-notice strong {
@@ -1582,17 +1581,20 @@ body {
   margin-right: 5px;
 }
 
-.privacy-note .read-more {
-    color: #00d4ff; /* A bright, readable blue */
+/* Consolidated the read-more styles */
+.privacy-notice .read-more {
+    color: #00d4ff; /* Bright blue */
     text-decoration: underline;
     font-size: 0.75rem;
     cursor: pointer;
     margin-left: 5px;
+    transition: color 0.3s ease; /* Adds a smooth transition */
 }
 
-.privacy-note .read-more:hover {
-    color: #ffd700; /* Turns gold when hovered for interactivity */
+.privacy-notice .read-more:hover {
+    color: #ffd700; /* Gold on hover */
 }
+
 
 
 /* live dot or signal*/
