@@ -466,3 +466,40 @@ function placeOrder(itemName) {
     alert("Order sent to Kitchen!");
 }
 
+
+
+// Cart section
+let cart = [];
+
+function addToCart(itemName, price, inputId) {
+    let qty = parseInt(document.getElementById(inputId).value);
+    // Check if item is already in cart, if so, update quantity
+    let existingItem = cart.find(i => i.item === itemName);
+    if (existingItem) {
+        existingItem.qty += qty;
+    } else {
+        cart.push({ item: itemName, price: price, qty: qty });
+    }
+    alert(qty + " x " + itemName + " added to order!");
+}
+
+function submitOrder() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+    
+    let total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    let orders = JSON.parse(localStorage.getItem('stallOrders')) || [];
+    
+    orders.push({
+        items: cart,
+        total: total,
+        time: new Date().toLocaleTimeString(),
+        status: 'Pending'
+    });
+    
+    localStorage.setItem('stallOrders', JSON.stringify(orders));
+    alert("Order Proceeded! Total: ₹" + total);
+    cart = []; // Clear cart after order
+}
