@@ -378,16 +378,14 @@ function setMode(mode, element) {
 
 
 //App Language
-function changeLanguage() {
-    const lang = document.getElementById('language').value;
-    
-    // Example: Simple alert, or you could redirect to a specific URL
-    console.log("Language changed to: " + lang);
-    
-    // Logic to handle translations:
-    // If you have different pages like 'index_te.html', you can use:
-    // if (lang === 'te') window.location.href = 'index_te.html';
+function changeLang(lang) {
+    var combo = document.querySelector('.goog-te-combo');
+    if (combo) {
+        combo.value = lang;
+        combo.dispatchEvent(new Event('change'));
+    }
 }
+
 
 
 
