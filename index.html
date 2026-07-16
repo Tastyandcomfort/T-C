@@ -318,31 +318,27 @@ T&C does not collect or store your personal data.This website is for information
             </div>
           </div>
 
-        <div class="glass-card menu-box item-has-image compact-box">
-    <div class="menu-item-image-frame compact-frame"
-        onclick="openMenuModal('1783788723316.png', 'Noodles', '₹45', 'Veg')">
-        <img src="1783788723316.png" alt="Roll" onerror="this.style.display='none';">
-        <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
-    </div>
-    <div class="menu-item-info-frame compact-info">
-        <div class="menu-title-row">
-            <h5>Soft Noodles</h5>
-        </div>
-        <p class="menu-item-sub text-small-desc">Soft bread egg omelet, crisp pastry crust stuffed with a spiced savory filling.</p>
         
-        <!-- UPDATED PORTIONS SECTION -->
-        <div class="portions-flex compact-portions" style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
-            <div class="portion-column">
-                <span class="p-title">Classic</span>
-                <div class="p-price"><span>Plate:</span> <strong>₹45</strong></div>
+       <div class="glass-card menu-box item-has-image compact-box">
+            <div class="menu-item-image-frame compact-frame"
+              onclick="openMenuModal('1783788723316.png', 'Noodles', '₹45', 'Veg')">
+              <img src="1783788723316.png" alt="Roll" onerror="this.style.display='none';">
+              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
-            
-            <!-- Quantity Selection & Add Button -->
-            <input type="number" id="qty-noodles" value="1" min="1" style="width: 40px; border-radius: 5px; border: 1px solid #444; background: #222; color: white;">
-            <button onclick="addToCart('Soft Noodles', 45, 'qty-noodles')" style="background: #ff9800; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; color: black; font-weight: bold;">Add</button>
+            <div class="menu-item-info-frame compact-info">
+              <div class="menu-title-row">
+                <h5>Soft Noodles</h5>
+              </div>
+              <p class="menu-item-sub text-small-desc">Soft bread egg omelet, crisp pastry crust stuffed with a spiced savory filling.</p>
+              
+              <div class="portions-flex compact-portions">
+                <div class="portion-column">
+                  <span class="p-title">Classic</span>
+                  <div class="p-price"><span>Plate:</span> <strong>₹45</strong></div>
+                </div>
+              </div>
+            </div>
         </div>
-    </div>
-</div>
 
 
       <div class="glass-card menu-box item-has-image compact-box">
@@ -720,31 +716,15 @@ T&C does not collect or store your personal data.This website is for information
 </section>
     </main>
 
-    <footer class="bottom-mobile-nav">
+ <footer class="bottom-mobile-nav">
   <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
   <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
- 
-
-  <!-- ... existing items ... -->
-  <div class="nav-btn" onclick="openCartModal()">
-    <i class="fa-solid fa-cart-shopping"></i>
-    <span>Cart</span>
-  </div>
-  
-      
   <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i><span>NEWS</span></div>
   <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>AI Chat</span></div>
   <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
   <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Cert</span></div>
-  
-  <!-- Updated "About" button with Long-Press trigger -->
-  <div class="nav-btn" 
-       onclick="switchView('owner-view', this)" 
-       oncontextmenu="showAdminPanel(); return false;">
-       <i class="fa-solid fa-user-tie"></i>
-       <span>About</span>
-  </div>
-</footer>
+  <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-fa-user-tie"></i><span>About</span></div>
+ </footer>
 
   </div>
 
@@ -788,28 +768,6 @@ T&C does not collect or store your personal data.This website is for information
     navigator.serviceWorker.register('sw.js');
   }
 </script>
-
-<!-- Hidden trigger -->
-<div class="admin-trigger" onclick="showAdminPanel()"></div>
-
-<!-- Admin Panel -->
-<div id="admin-panel">
-    <h2>Admin Dashboard</h2>
-    <button onclick="document.getElementById('admin-panel').style.display='none'">Close</button>
-    <div id="orders-list">
-        <!-- New orders will appear here -->
-    </div>
-</div>
-
-  <div id="cart-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:3000; padding:20px; color:white; overflow-y:auto;">
-    <h2>Your Cart</h2>
-    <div id="cart-items-list"></div>
-    <button onclick="document.getElementById('cart-modal').style.display='none'">Close</button>
-    <button onclick="submitOrder()">Proceed to Order</button>
-</div>
-
-
-  
 <script src="script.js"></script>
 </body>
 </html>
