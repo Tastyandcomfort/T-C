@@ -3,44 +3,34 @@
 // ===================================================
 // SECTION VIEW MANAGER ENGINE
 // ===================================================
+
 function switchView(viewId, element) {
-  // 1. NAVIGATION LOGIC (Existing)
+  // 1. NAVIGATION LOGIC
   const sections = document.querySelectorAll('.app-section');
   sections.forEach(sec => sec.classList.remove('active-view'));
   
   const targetView = document.getElementById(viewId);
   if (targetView) targetView.classList.add('active-view');
 
+  const sideItems = document.querySelectorAll('.side-item');
+  sideItems.forEach(item => item.classList.remove('active'));
+  
   const navBtns = document.querySelectorAll('.nav-btn');
   navBtns.forEach(btn => btn.classList.remove('active'));
+
   if (element) element.classList.add('active');
 
-  // 2. VIDEO CONTROL LOGIC
-  // Map your views to their specific video URLs
-  const videoSources = {
-    'chat-view': "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1",
-    'wildlife-view': "https://www.youtube.com/embed/MiQe9ob9aDc?autoplay=1&mute=1",
-    'sports-view': "https://www.youtube.com/embed/Qd5gniZgN-Y?autoplay=1&mute=1"
-  };
-
-  // https://www.youtube.com/live/Qd5gniZgN-Y?si=3n_b25T29V1aohYv
-
-  // Select all potential players
-  const players = {
-    'chat-view': document.getElementById('live-video-player'),
-    'wildlife-view': document.getElementById('wildlife-player'),
-    'sports-view': document.getElementById('sports-player')
-  };
-
-  // Stop all players first
-  Object.values(players).forEach(player => {
-    if (player) player.src = "";
-  });
-
-  // Play the one corresponding to the active view
-  if (videoSources[viewId] && players[viewId]) {
-    players[viewId].src = videoSources[viewId];
+  // 2. VIDEO CONTROL LOGIC (Moved outside the 'if (element)' block)
+  const videoPlayer = document.getElementById('live-video-player');
+if (videoPlayer) {
+  if (viewId === 'chat-view') {
+    // Correct format: Use 'embed/' and add 'autoplay=1&mute=1'
+    videoPlayer.src = "https://www.youtube.com/embed/nI9U3Je3XAM?autoplay=1&mute=1";
+  } else {
+    // This correctly stops the video
+    videoPlayer.src = ""; 
   }
+ }
 }
 
 //www.youtube.com/live/PoIrmiY0yjU?si=8BlNaz5BIpY8kHX5
