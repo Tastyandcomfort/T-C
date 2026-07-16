@@ -447,5 +447,15 @@ function showAdminPanel() {
     }
 }
 
-
+// Order section
+function placeOrder(itemName) {
+    let orders = JSON.parse(localStorage.getItem('stallOrders')) || [];
+    orders.push({
+        item: itemName,
+        time: new Date().toLocaleTimeString(),
+        status: 'Pending'
+    });
+    localStorage.setItem('stallOrders', JSON.stringify(orders));
+    alert("Order sent to Kitchen!");
+}
 
