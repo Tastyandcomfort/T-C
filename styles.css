@@ -1561,7 +1561,8 @@ body {
 /* Data privacy */
 .privacy-notice {
   display: flex;
-  align-items: flex-start;
+  /* Change this to center to align with the vertical middle of the text */
+  align-items: center; 
   gap: 10px;
   background: rgba(255, 255, 255, 0.05);
   padding: 10px;
@@ -1573,8 +1574,13 @@ body {
 }
 
 .lock-icon {
-  font-size: 1rem;
+  font-size: 1.2rem; /* Slightly increased for better visibility */
+  /* This creates the glowing 'shining' effect */
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6)); 
+  display: flex;
+  align-items: center;
 }
+
 
 .privacy-notice strong {
   color: #ffd700; /* Gold text */
