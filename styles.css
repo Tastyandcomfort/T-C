@@ -1628,3 +1628,15 @@ body {
 .lang-selector select:hover {
     border-color: #00d4ff;
 }
+
+
+/* Hide the Google Translate toolbar at the bottom */
+.goog-te-banner-frame.skiptranslate, 
+.goog-te-balloon-frame {
+    display: none !important;
+}
+
+body {
+    top: 0px !important; 
+}
+  
