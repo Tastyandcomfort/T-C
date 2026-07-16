@@ -333,26 +333,32 @@ function setMode(mode, element) {
         element.classList.add('active-mode');
     }
 
-    // 2. Select Elements
+    // 2. Select Elements (Added wildlife and sports)
     const views = {
         text: document.getElementById('text-view'),
         video: document.getElementById('video-view'),
-        live: document.getElementById('live-view')
+        live: document.getElementById('live-view'),
+        wildlife: document.getElementById('wildlife-view'),
+        sports: document.getElementById('sports-view')
     };
     
     const players = {
         news: document.getElementById('news-video-player'),
-        live: document.getElementById('tc-live-player')
+        live: document.getElementById('tc-live-player'),
+        wildlife: document.getElementById('wildlife-player'),
+        sports: document.getElementById('sports-player')
     };
 
-    // New: Select title and dot elements
     const title = document.getElementById('current-channel-title');
     const dot = document.getElementById('live-indicator');
 
-    // 3. Reset all views and stop players
-    Object.keys(views).forEach(key => views[key].style.display = 'none');
-    players.news.src = "";
-    players.live.src = "";
+    // 3. Reset all views and stop ALL players
+    Object.keys(views).forEach(key => {
+        if(views[key]) views[key].style.display = 'none';
+    });
+    Object.keys(players).forEach(key => {
+        if(players[key]) players[key].src = "";
+    });
 
     // 4. Activate chosen mode & Update Title/Dot
     if (mode === 'text') {
@@ -372,7 +378,21 @@ function setMode(mode, element) {
         views.live.style.display = 'block';
         players.live.src = "https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1";
     }
+    // Added New Modes
+    else if (mode === 'wildlife') {
+        title.innerText = "Wildlife Live";
+        dot.style.display = "inline-block";
+        views.wildlife.style.display = 'block';
+        players.wildlife.src = "YOUR_WILDLIFE_URL_HERE?autoplay=1&mute=1";
+    }
+    else if (mode === 'sports') {
+        title.innerText = "Sports Live";
+        dot.style.display = "inline-block";
+        views.sports.style.display = 'block';
+        players.sports.src = "YOUR_SPORTS_URL_HERE?autoplay=1&mute=1";
+    }
 }
+
 
 // https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
 
