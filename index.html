@@ -44,6 +44,16 @@ T&C does not collect or store your personal data.This website is for information
         <div class="side-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i> Owner Bio</div>
       </nav>
 
+
+    <div class="lang-selector">
+    <div id="google_translate_element"></div>
+    <div class="custom-lang-menu">
+    <button onclick="changeLang('en')">EN</button>
+    <button onclick="changeLang('te')">TE</button>
+    <button onclick="changeLang('hi')">HI</button>
+    </div>
+
+      
       <div class="sidebar-weather">
         <i class="fa-solid fa-cloud-sun weather-sun"></i>
         <div>
@@ -124,6 +134,10 @@ T&C does not collect or store your personal data.This website is for information
             </div>
             </div>
 
+        
+
+
+        
         <div class="glass-card instruction-card">
           <h3>Welcome to Comfort</h3>
           <p>Tap the dynamic layout navigation bar shortcuts to immediately explore our hot item menus, safety features, location navigation avenues, and certifications.</p>
@@ -390,24 +404,52 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
   
-        
-    <!---News Card---->
-    <div class="news-main-container">
-    <div class="news-title-bar">
-        <i class="fa-solid fa-newspaper"></i> 
-        <h3>Latest News</h3>
-        <button id="refresh-btn" onclick="fetchNews()"><i class="fa-solid fa-sync"></i></button>
+<!---News Card---->
+<div class="news-main-container">
+    <div class="title-left">
+        <span id="live-indicator" class="live-dot" style="display: none;"></span>
+        <h3 id="current-channel-title">Headlines</h3>
+        <!-- Segmented Controls -->
+        <div class="view-selector">
+    <!-- Note the added 'active-mode' class to Text by default -->
+    <button id="btn-text" class="active-mode" onclick="setMode('text', this)">Headlines</button>
+    <button id="btn-video" onclick="setMode('video', this)">Live News</button>
+    <button id="btn-live" onclick="setMode('live', this)">Live T&C</button>
+</div>
+</div>
+
+    <div id="content-area">
+        <!-- Text View (With Refresh) -->
+        <div id="text-view" class="view-mode">
+            <div style="text-align: right; margin-bottom: 5px;">
+                <button id="refresh-btn" onclick="fetchNews()">
+    <i id="refresh-icon" class="fa-solid fa-sync"></i> Refresh</button>
+
+            </div>
+            <div id="news-container" class="news-list">Loading news...</div>
+        </div>
+
+        <!-- Video View -->
+        <div id="video-view" class="view-mode" style="display: none;">
+            <div class="video-wrapper">
+                <iframe id="news-video-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- T&C Live View -->
+        <div id="live-view" class="view-mode" style="display: none;">
+            <div class="video-wrapper">
+                <iframe id="tc-live-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
     </div>
-    
-    <!-- This is the clean list area -->
-    <div id="news-container" class="news-list">
-        <p>Loading prioritized news...</p>
-    </div>
+</div>
+
     </section>
 
 
       <section id="chat-view" class="app-section">
-        <h3 class="section-title"><i class="fa-solid fa-robot gold-text"></i> AI ASSISTANT</h3>
+     <!---  <h3 class="section-title"><i class="fa-solid fa-robot gold-text">AI ASSISTANT</i></h3>--->
         <div class="glass-card ai-terminal-box">
           <div class="ai-status"><span class="pulse-dot"></span> AI Coming Soon</div>
           <div class="chatbot-history" id="chat-log-box">
@@ -418,29 +460,21 @@ T&C does not collect or store your personal data.This website is for information
             <button class="prompt-chip" onclick="sendChipPrompt('Where are you located exactly?')">Store Location</button>
             <button class="prompt-chip" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
           </div>
+          <!-- Data Privacy Ribbon -->
+          <div class="privacy-notice">
+           <span class="lock-icon">🛡</span>
+           <span class="privacy-text">
+           <strong>Data Privacy:</strong> We recommend not to share personal info in chat/website. It's against to T&C's Customer Privacy Policy.
+            <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Read More</a>
+         </span>
+          </div>
           <div class="chat-input-bar">
             <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
             <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
           </div>
         </div>
 
-<!-- Live Cooking Stream -->
-<div class="glass-card" style="margin-top: 20px; padding: 10px;">
-  <h4 style="font-size: 0.9rem; margin-bottom: 10px; color: #fff;">
 
-    <div class="ai-status"><span class="pulse-dot"></span> T&C Live Coming Soon</div>
-    
-  </h4>
-  <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--glass-border);">
-    <!-- Replace the src with your actual live stream URL -->
-    <iframe id="live-video-player" 
-      src="https://www.youtube.com/live/gPOgl7zwvlE?si=MotNUJ1Pq4lydz8n" 
-      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
-      allow="autoplay; encrypted-media" 
-      allowfullscreen>
-    </iframe>
-  </div>
-</div>
 </section>
 
       <section id="map-view" class="app-section">
@@ -699,8 +733,18 @@ T&C does not collect or store your personal data.This website is for information
   </div>
 </dialog>
 
+<script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'en,hi,te',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+  }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+</script>
   
 <script src="script.js"></script>
 </body>
 </html>
-
