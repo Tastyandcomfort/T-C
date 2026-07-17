@@ -1644,33 +1644,28 @@ body {
     display: none !important;
 }
 
-/* Ensure the layout remains at the top of the screen */
-body {
-    top: 0px !important; 
-}
-
-
-/* Ensure the body and html take up exactly the full screen height */
+/* 1. Force the page to ignore extra browser UI and use the full viewport */
 html, body {
     margin: 0;
     padding: 0;
-    height: 100vh;
-    overflow: hidden; /* Prevents the whole page from scrolling */
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Stops the entire page from bouncing or scrolling */
 }
 
-/* Your main app container */
+/* 2. The main container fills the entire visible window */
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
+    height: 100vh; /* This means 100% of the visible height */
+    width: 100vw;  /* This means 100% of the visible width */
 }
 
-/* This is the part that holds your content */
+/* 3. The content area fills all remaining space automatically */
 .app-view-container {
-    flex: 1; /* Takes all available space */
-    overflow-y: auto; /* Only this section will scroll if content is long */
+    flex-grow: 1;      /* This is the key: it grows to fill all empty space */
+    overflow-y: auto;  /* Only this section scrolls if content is too long */
+    padding: 10px;     /* Optional: adds breathing room */
 }
 
 
