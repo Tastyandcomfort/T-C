@@ -1650,6 +1650,28 @@ body {
 }
 
 
+/* Ensure the body and html take up exactly the full screen height */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden; /* Prevents the whole page from scrolling */
+}
+
+/* Your main app container */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* This is the part that holds your content */
+.app-view-container {
+    flex: 1; /* Takes all available space */
+    overflow-y: auto; /* Only this section will scroll if content is long */
+}
 
 
 
