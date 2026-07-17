@@ -1,3 +1,20 @@
+
+* {
+    box-sizing: border-box; /* Padding is included in the width, no overflow */
+    max-width: 100%;        /* NOTHING can ever be wider than the screen */
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;     /* Removes the side-to-side scrollbar forever */
+}
+
+
+
+
 :root {
   --app-bg: #0d0e12;
   --glass-card-bg: rgba(26, 29, 38, 0.65);
@@ -1644,35 +1661,22 @@ body {
     display: none !important;
 }
 
-/* 1. Force the page to ignore extra browser UI and use the full viewport */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* Stops the entire page from bouncing or scrolling */
-}
-
-/* 2. The main container fills the entire visible window */
 .app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* This means 100% of the visible height */
-    width: 100vw;  /* This means 100% of the visible width */
+    display: grid;
+    /* This creates one column. On big screens, we change it. */
+    grid-template-columns: 1fr; 
+    min-height: 100vh;
 }
 
-/* 3. The content area fills all remaining space automatically */
-.app-view-container {
-    flex-grow: 1;      /* This is the key: it grows to fill all empty space */
-    overflow-y: auto;  /* Only this section scrolls if content is too long */
-    padding: 10px;     /* Optional: adds breathing room */
+/* This is the secret to fitting "Any" screen */
+@media (min-width: 900px) {
+    .app-container {
+        /* On screens wider than 900px, it automatically adds a sidebar */
+        grid-template-columns: 250px 1fr; 
+    }
 }
 
 
 
-img {
-    max-width: 100%;
-    height: auto;
-}
 
 
