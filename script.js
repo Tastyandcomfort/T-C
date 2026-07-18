@@ -421,21 +421,14 @@ async function fetchWeather() {
         const response = await fetch(url);
         const data = await response.json();
         
-        // This targets the container and injects the live data into your existing layout
-        document.getElementById('weather-display').innerHTML = `
-            <i class="fa-solid fa-cloud-sun weather-sun"></i>
-            <div>
-                <div class="temp-text">${Math.round(data.main.temp)}°C</div>
-                <div class="condition-text">${data.weather[0].description}</div>
-            </div>
-        `;
+        // This targets the specific span in your mobile header
+        const display = document.getElementById('mobile-weather-display');
+        if (display) {
+            display.innerText = `${Math.round(data.main.temp)}°C ${data.weather[0].description}`;
+        }
     } catch (error) {
-        // Keeps the layout even if the API fails
-        console.error("Weather load error:", error);
+        console.error("Weather error:", error);
     }
 }
 
-// Trigger once when the page loads
 window.addEventListener('load', fetchWeather);
-
-
