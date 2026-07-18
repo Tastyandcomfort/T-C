@@ -412,23 +412,4 @@ function changeLang(lang) {
 
 
 // Weather Fetching
-async function fetchWeather() {
-    const apiKey = '238416beb1e4e9ee3e1c4c8f16fc2a2c';
-    const city = 'Hyderabad';
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        // This targets the specific span in your mobile header
-        const display = document.getElementById('mobile-weather-display');
-        if (display) {
-            display.innerText = `${Math.round(data.main.temp)}°C ${data.weather[0].description}`;
-        }
-    } catch (error) {
-        console.error("Weather error:", error);
-    }
-}
-
-window.addEventListener('load', fetchWeather);
