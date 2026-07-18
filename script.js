@@ -412,4 +412,29 @@ function changeLang(lang) {
 
 
 // Weather Fetching
+window.addEventListener('load', async () => {
+    console.log("Page loaded, starting weather fetch...");
+    
+    const display = document.getElementById('mobile-weather-display');
+    if (!display) {
+        console.error("CRITICAL ERROR: Could not find an element with id='mobile-weather-display'. Check your HTML!");
+        return;
+    }
+
+    try {
+        const apiKey = '238416beb1e4e9ee3e1c4c8f16fc2a2c';
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=${apiKey}&units=metric`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        console.log("Weather data received:", data);
+        
+        // Update the display
+        display.innerText = `${Math.round(data.main.temp)}°C ${data.weather[0].description}`;
+    } catch (error) {
+        console.error("Fetch failed:", error);
+        display.innerText = "Weather unavailable";
+    }
+});
 
