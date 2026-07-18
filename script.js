@@ -420,12 +420,22 @@ async function fetchWeather() {
     try {
         const response = await fetch(url);
         const data = await response.json();
-        document.getElementById('weather-display').innerHTML = 
-            `<strong>${data.main.temp}°C</strong> | ${data.weather[0].description}`;
+        
+        // This targets the container and injects the live data into your existing layout
+        document.getElementById('weather-display').innerHTML = `
+            <i class="fa-solid fa-cloud-sun weather-sun"></i>
+            <div>
+                <div class="temp-text">${Math.round(data.main.temp)}°C</div>
+                <div class="condition-text">${data.weather[0].description}</div>
+            </div>
+        `;
     } catch (error) {
-        document.getElementById('weather-display').innerText = "Unable to load weather.";
+        // Keeps the layout even if the API fails
+        console.error("Weather load error:", error);
     }
 }
 
+// Trigger once when the page loads
+window.addEventListener('load', fetchWeather);
 
 
