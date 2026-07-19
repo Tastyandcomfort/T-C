@@ -447,18 +447,24 @@ async function fetchWeather() {
     try {
         const response = await fetch(url);
         const data = await response.json();
+        
         const temp = `${Math.round(data.main.temp)}°C`;
         const cond = data.weather[0].description;
         
-        // Update both mobile and desktop containers
-        const ids = ['mobile-temp', 'desktop-temp'];
-        const condIds = ['mobile-condition', 'desktop-condition'];
+        // Update all elements
+        ['mobile-temp', 'desktop-temp'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = temp;
+        });
         
-        ids.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = temp; });
-        condIds.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = cond; });
+        ['mobile-condition', 'desktop-condition'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = cond;
+        });
         
     } catch (error) {
         console.error("Weather error:", error);
     }
 }
+
 
