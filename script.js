@@ -485,6 +485,8 @@ async function fetchWeather() {
 
 // Run when page loads
 window.addEventListener('load', fetchWeather);
+// Update every 10 minutes (10 minutes * 60 seconds * 1000 milliseconds)
+setInterval(fetchWeather, 600000);
 
 
 
