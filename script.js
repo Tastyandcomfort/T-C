@@ -451,7 +451,8 @@ async function fetchWeather() {
         // Target the specific IDs we just set
         const tempElement = document.getElementById('mobile-temp');
         const condElement = document.getElementById('mobile-condition');
-        
+        const tempElement = document.getElementById('desktop-temp');
+        const condElement = document.getElementById('desktop-condition');
         if (tempElement && condElement) {
             tempElement.innerText = `${Math.round(data.main.temp)}°C`;
             condElement.innerText = data.weather[0].description;
