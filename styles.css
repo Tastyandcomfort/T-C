@@ -1649,6 +1649,20 @@ body {
     top: 0px !important; 
 }
 
+/* Adjust the size of the weather icon */
+.mobile-weather img, 
+.sidebar-weather img {
+    width: 30px !important;  /* Make it smaller */
+    height: 30px !important; /* Keep it square */
+    margin-right: 5px;       /* Add a little gap between icon and text */
+    vertical-align: middle;  /* Align it with the center of the text */
+}
+
+/* Optional: Make the container a flexbox to keep them side-by-side */
+.mobile-weather, .sidebar-weather {
+    display: flex;
+    align-items: center;     /* This keeps the icon and text perfectly aligned */
+}
 
 
 
