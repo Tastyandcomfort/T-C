@@ -1629,14 +1629,22 @@ body {
 /* live dot or signal*/
 .title-left { display: flex; align-items: center; gap: 8px; }
 
+/* Ensure dots are hidden by default */
 .live-dot {
-    width: 10px;
-    height: 10px;
-    background-color: #ff3b30;
+    display: none; 
+    width: 8px;
+    height: 8px;
+    background-color: #ff3333;
     border-radius: 50%;
-    display: inline-block;
+    margin-right: 5px; /* Adds space before the text */
     animation: pulse 1.5s infinite;
 }
+
+/* Force show only when the parent button has 'active-mode' */
+button.active-mode .live-dot {
+    display: inline-block; 
+}
+
 
 @keyframes pulse {
     0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
