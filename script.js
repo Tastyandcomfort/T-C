@@ -439,35 +439,29 @@ window.addEventListener('load', async () => {
 });
 
 // Weather updates
-async function updateWeather() {
-    console.log("Weather update starting...");
+async function fetchWeather() {
     const apiKey = '238416beb1e4e9ee3e1c4c8f16fc2a2c';
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=${apiKey}&units=metric`;
+    const city = 'Hyderabad';
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
     try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-
-        // Update elements
-        const tempEl = document.getElementById('weather-temp');
-        const condEl = document.getElementById('weather-condition');
-
-        if (tempEl) tempEl.innerText = Math.round(data.main.temp) + '°C';
-        if (condEl) condEl.innerText = data.weather[0].description;
         
-        console.log("Weather updated successfully!");
+        // Target the specific IDs we just set
+        const tempElement = document.getElementById('mobile-temp');
+        const condElement = document.getElementById('mobile-condition');
+        
+        if (tempElement && condElement) {
+            tempElement.innerText = `${Math.round(data.main.temp)}°C`;
+            condElement.innerText = data.weather[0].description;
+        }
     } catch (error) {
-        console.error("Weather update failed:", error);
-        const tempEl = document.getElementById('weather-temp');
-        if (tempEl) tempEl.innerText = "Error";
+        console.error("Weather error:", error);
     }
 }
 
-// Run immediately when page loads
-window.addEventListener('load', updateWeather);
-
-
+window.addEventListener('load', fetchWeather);
 
 
 
