@@ -81,13 +81,12 @@ T&C does not collect or store your personal data.This website is for information
     <div class="mobile-weather">
     <i class="fa-solid fa-cloud-sun weather-sun"></i>
     <div>
-        <!-- The JS will target these two IDs specifically -->
-        <div id="mobile-temp" class="temp-text">Loading...</div>
-        <div id="mobile-condition" class="condition-text">Fetching data...</div>
+    <!-- API Target -->
+    <div id="mobile-temp" class="temp-text">Loading...</div>
+    <div id="mobile-condition" class="condition-text">Fetching data...</div>
     </div>
     </div>
-
-      </header>
+    </header>
 
       <section id="home-view" class="app-section active-view">
         <div class="hero-showcase horizontal-hero">
@@ -777,29 +776,7 @@ T&C does not collect or store your personal data.This website is for information
     navigator.serviceWorker.register('sw.js');
   }
 </script>
-  <!-- Put this right before your closing </body> tag -->
-<script>
-    async function fetchWeather() {
-        console.log("Attempting to fetch weather...");
-        const apiKey = '238416beb1e4e9ee3e1c4c8f16fc2a2c';
-        const city = 'Hyderabad';
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            const display = document.getElementById('mobile-weather-display');
-            if (display) {
-                display.innerText = `${Math.round(data.main.temp)}°C ${data.weather[0].description}`;
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    }
-    window.addEventListener('load', fetchWeather);
-</script>
-
+  
 <script src="script.js"></script>
 </body>
 </html>
