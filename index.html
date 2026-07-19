@@ -413,20 +413,24 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
   
-<!---News Card---->
+<!---News Card--<!-- Add 'event.currentTarget' to the function call -->
+<button id="btn-video" onclick="setMode('video', event.currentTarget)">
+    <span class="live-dot"></span> News
+</button>
+-->
 <div class="news-main-container">
     <div class="view-selector">
         <!-- Add the span inside every button -->
         <button id="btn-text" class="active-mode" onclick="setMode('text', this)">
             <span class="live-dot"></span> Headlines
         </button>
-        <button id="btn-video" onclick="setMode('video', this)">
+        <button id="btn-video" onclick="setMode('video', event.currentTarget)">
             <span class="live-dot"></span> News
         </button>
-        <button id="btn-live" onclick="setMode('live', this)">
+        <button id="btn-live" onclick="setMode('live', event.currentTarget)">
             <span class="live-dot"></span> T&C
         </button>
-        <button id="btn-wildlife" onclick="setMode('wildlife', this)">
+        <button id="btn-wildlife" onclick="setMode('wildlife', event.currentTarget)">
             <span class="live-dot"></span> Wild
         </button>
         <button id="btn-sports" onclick="setMode('sports', this)">
