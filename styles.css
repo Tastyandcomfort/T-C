@@ -1650,18 +1650,27 @@ body {
 }
 
 /* Adjust the size of the weather icon */
-.mobile-weather img, 
-.sidebar-weather img {
-    width: 30px !important;  /* Make it smaller */
-    height: 30px !important; /* Keep it square */
-    margin-right: 5px;       /* Add a little gap between icon and text */
-    vertical-align: middle;  /* Align it with the center of the text */
-}
-
-/* Optional: Make the container a flexbox to keep them side-by-side */
 .mobile-weather, .sidebar-weather {
     display: flex;
-    align-items: center;     /* This keeps the icon and text perfectly aligned */
+    align-items: center;
+    gap: 8px;            /* Controls the space between icon and text block */
+    padding: 5px;        /* Reduces the space inside the container */
+    min-height: auto;    /* Forces it to only be as tall as the content */
+}
+
+/* Ensure the text container doesn't have extra margins */
+.mobile-weather > div, .sidebar-weather > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.2;    /* Tightens the gap between Temp and Condition */
+}
+
+/* Force the icon to not have extra space */
+.mobile-weather img, .sidebar-weather img {
+    width: 35px !important;
+    height: 35px !important;
+    display: block;
 }
 
 
