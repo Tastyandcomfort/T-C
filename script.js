@@ -438,6 +438,7 @@ window.addEventListener('load', async () => {
     }
 });
 
+// Weather updates
 async function fetchWeather() {
     const apiKey = '238416beb1e4e9ee3e1c4c8f16fc2a2c';
     const city = 'Hyderabad';
@@ -446,20 +447,18 @@ async function fetchWeather() {
     try {
         const response = await fetch(url);
         const data = await response.json();
+        const temp = `${Math.round(data.main.temp)}°C`;
+        const cond = data.weather[0].description;
         
-        // Target the specific IDs we just set
-        const tempElement = document.getElementById('mobile-temp');
-        const condElement = document.getElementById('mobile-condition');
+        // Update both mobile and desktop containers
+        const ids = ['mobile-temp', 'desktop-temp'];
+        const condIds = ['mobile-condition', 'desktop-condition'];
         
-        if (tempElement && condElement) {
-            tempElement.innerText = `${Math.round(data.main.temp)}°C`;
-            condElement.innerText = data.weather[0].description;
-        }
+        ids.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = temp; });
+        condIds.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = cond; });
+        
     } catch (error) {
         console.error("Weather error:", error);
     }
 }
-
-window.addEventListener('load', fetchWeather);
-
 
