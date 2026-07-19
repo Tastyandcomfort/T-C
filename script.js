@@ -447,26 +447,44 @@ async function fetchWeather() {
     try {
         const response = await fetch(url);
         const data = await response.json();
+        
+        // 1. Prepare the Data
         const temp = `${Math.round(data.main.temp)}°C`;
         const cond = data.weather[0].description;
         
-        // Update Mobile
-        const mTemp = document.getElementById('mobile-temp');
-        const mCond = document.getElementById('mobile-condition');
-        if (mTemp) mTemp.innerText = temp;
-        if (mCond) mCond.innerText = cond;
-
-        // Update Desktop
-        const dTemp = document.getElementById('desktop-temp');
-        const dCond = document.getElementById('desktop-condition');
-        if (dTemp) dTemp.innerText = temp;
-        if (dCond) dCond.innerText = cond;
+        // 2. Get the Dynamic Icon URL
+        const iconCode = data.weather[0].icon; 
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        
+        // 3. Define all targets
+        const textElements = {
+            'mobile-temp': temp,
+            'desktop-temp': temp,
+            'mobile-condition': cond,
+            'desktop-condition': cond
+        };
+        
+        const iconElements = ['mobile-icon', 'desktop-icon'];
+        
+        // 4. Update Text Elements
+        for (const [id, value] of Object.entries(textElements)) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = value;
+        }
+        
+        // 5. Update Icons
+        iconElements.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.src = iconUrl;
+        });
         
     } catch (error) {
         console.error("Weather error:", error);
     }
 }
 
+// Run when page loads
 window.addEventListener('load', fetchWeather);
+
 
 
