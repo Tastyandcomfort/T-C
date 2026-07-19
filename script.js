@@ -447,31 +447,26 @@ async function fetchWeather() {
     try {
         const response = await fetch(url);
         const data = await response.json();
-        
         const temp = `${Math.round(data.main.temp)}°C`;
         const cond = data.weather[0].description;
         
-        // Define all IDs to be updated
-        const targets = [
-            { id: 'mobile-temp', value: temp },
-            { id: 'desktop-temp', value: temp },
-            { id: 'mobile-condition', value: cond },
-            { id: 'desktop-condition', value: cond }
-        ];
+        // Update Mobile
+        const mTemp = document.getElementById('mobile-temp');
+        const mCond = document.getElementById('mobile-condition');
+        if (mTemp) mTemp.innerText = temp;
+        if (mCond) mCond.innerText = cond;
+
+        // Update Desktop
+        const dTemp = document.getElementById('desktop-temp');
+        const dCond = document.getElementById('desktop-condition');
+        if (dTemp) dTemp.innerText = temp;
+        if (dCond) dCond.innerText = cond;
         
-        // Update each element if it exists on the page
-        targets.forEach(item => {
-            const el = document.getElementById(item.id);
-            if (el) {
-                el.innerText = item.value;
-            }
-        });
     } catch (error) {
         console.error("Weather error:", error);
     }
 }
 
 window.addEventListener('load', fetchWeather);
-
 
 
