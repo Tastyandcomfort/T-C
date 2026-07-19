@@ -413,32 +413,21 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
   
-<!---News Card--<!-- Add 'event.currentTarget' to the function call -->
-<button id="btn-video" onclick="setMode('video', event.currentTarget)">
-    <span class="live-dot"></span> News
-</button>
--->
+<!---News Card-->
 <div class="news-main-container">
-    <div class="view-selector">
-        <!-- Add the span inside every button -->
-        <button id="btn-text" class="active-mode" onclick="setMode('text', this)">
-            <span class="live-dot"></span> Headlines
-        </button>
-        <button id="btn-video" onclick="setMode('video', event.currentTarget)">
-            <span class="live-dot"></span> News
-        </button>
-        <button id="btn-live" onclick="setMode('live', event.currentTarget)">
-            <span class="live-dot"></span> T&C
-        </button>
-        <button id="btn-wildlife" onclick="setMode('wildlife', event.currentTarget)">
-            <span class="live-dot"></span> Wild
-        </button>
-        <button id="btn-sports" onclick="setMode('sports', this)">
-            <span class="live-dot"></span> Sports
-        </button>
-    </div>
+    <div class="title-left">
+        <span id="live-indicator" class="live-dot" style="display: none;"></span>
+        <h3 id="current-channel-title">Headlines</h3>
+        <!-- Segmented Controls -->
+        <div class="view-selector">
+    <!-- Note the added 'active-mode' class to Text by default -->
+    <button id="btn-text" class="active-mode" onclick="setMode('text', this)">Headlines</button>
+    <button id="btn-video" onclick="setMode('video', this)">News</button>
+    <button id="btn-live" onclick="setMode('live', this)">T&C</button>
+    <button id="btn-wildlife" onclick="setMode('wildlife', this)">Wild</button>
+    <button id="btn-sports" onclick="setMode('sports', this)">Sports</button>
 </div>
-
+</div>
 
     <div id="content-area">
         <!-- Text View (With Refresh) -->
