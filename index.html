@@ -500,6 +500,55 @@ T&C does not collect or store your personal data.This website is for information
 
 </section>
 
+<section>
+
+<div class="search-box">
+    <div class="input-wrapper">
+      <input type="text" id="search" placeholder="Enter city, town, or village..." onkeypress="handleKeyPress(event)" oninput="handleInputSuggestions(event)" autocomplete="off">
+      <div id="mac-spinner" class="mac-spinner hidden"></div>
+      <div id="suggestions-dropdown" class="suggestions-box hidden"></div>
+    </div>
+    <button onclick="triggerSearch()">Search</button>
+  </div>
+  <div id="search-error-toast" class="error-toast hidden"></div>
+</div>
+
+<div class="app-view-area">
+  <div id="gis-workspace-panel" class="app-layout hidden">
+    <div id="results-wrapper" class="workspace-card">
+      <div id="results"></div>
+    </div>
+    <div id="map-wrapper" class="workspace-card">
+      <div id="map"></div>
+    </div>
+  </div>
+  
+  <div id="no-results-state">
+    <div class="radar-canvas">
+      <div class="radar-viewport-core">
+        <div class="radar-glow-core"></div>
+        <div class="radar-wave wave-1"></div>
+        <div class="radar-wave wave-2"></div>
+        <div class="radar-wave wave-3"></div>
+        <div class="radar-sweeper"></div>
+        <div class="radar-logo-capsule">
+          <img src="Care-Hospitals-removebg-preview.png" class="radar-logo" alt="CARE Logo">
+        </div>
+      </div>
+      <div class="radar-title">A promise of 99.9% accuracy</div>
+      <div class="radar-subtitle">Search with city, town or area name to find near CARE.</div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+      
+
+
+
+      
+
       <section id="map-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE Coming Soon</h3>
         
