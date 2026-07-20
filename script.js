@@ -391,7 +391,7 @@ function setMode(mode, element) {
         title.innerText = "Sports Live";
         dot.style.display = "inline-block";
         views.sports.style.display = 'block';
-        players.sports.src = "https://www.youtube.com/embed/Qd5gniZgN-Y?autoplay=1&mute=1";
+        players.sports.src = "https://www.youtube.com/embed/fE_xxKiCHO0?autoplay=1&mute=1";
     }
 }
 
@@ -399,7 +399,7 @@ function setMode(mode, element) {
 // https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
 // https://www.youtube.com/live/MiQe9ob9aDc?si=8j_VKUJ6F7B9i7vy
 // https://www.youtube.com/live/-6aJD-4Yu4w?si=arobwb4tdTKjwmld
-
+// https://www.youtube.com/live/fE_xxKiCHO0?si=lLv3s6P-AKr07hiC
 
 //App Language
 function changeLang(lang) {
