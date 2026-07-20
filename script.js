@@ -498,32 +498,41 @@ setInterval(fetchWeather, 600000);
 
 
 
-  let selectedMood = '';
+// Global variable to hold the audio object
+let currentAudio = null;
 
 function selectMood(mood) {
-    selectedMood = mood;
-    checkHeadphones();
-}
-
-function checkHeadphones() {
-    // SECURITY NOTE: Browsers cannot detect physical headphone connection.
-    // We simulate the detection by forcing the user to acknowledge they have them.
-    const hasHeadphones = confirm("🎧 Please ensure your headphones are connected for the best experience. Click OK to start your music.");
-
-    if (hasHeadphones) {
-        startMusic(selectedMood);
-    } else {
-        // This creates the cycle: if they click Cancel, it re-triggers the function
-        checkHeadphones();
+    // 1. Forced acknowledgement cycle
+    function askForHeadphones() {
+        const confirmed = confirm("🎧 Please ensure your headphones are connected. Click OK to play " + mood + ".");
+        
+        if (confirmed) {
+            playMusic(mood);
+        } else {
+            askForHeadphones(); // The cycle
+        }
     }
+    askForHeadphones();
 }
 
-function startMusic(mood) {
-    console.log("Playing song for mood: " + mood);
-    // Add your audio logic here:
-    // const audio = new Audio(`path/to/your/files/${mood}.mp3`);
-    // audio.play();
+function playMusic(mood) {
+    // Stop any music currently playing
+    if (currentAudio) {
+        currentAudio.pause();
+    }
+
+    // 2. Load and Play (Make sure these file paths are correct!)
+    // If your files are in the same folder, use "./" + mood + ".mp3"
+    currentAudio = new Audio(`music/${mood}.mp3`); 
+    
+    currentAudio.play().catch(error => {
+        console.log("Playback failed. Ensure the file exists at the path.");
+    });
+
+    // Update your UI "Play" button to "Pause" icon
+    document.getElementById('play-pause').innerText = "⏸";
 }
+
 
     
 
