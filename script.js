@@ -335,13 +335,14 @@ function setMode(mode, element) {
         element.classList.add('active-mode');
     }
 
-    // 2. Select Elements (Added wildlife and sports)
+    // 2. Select Elements (Added music)
     const views = {
         text: document.getElementById('text-view'),
         video: document.getElementById('video-view'),
         live: document.getElementById('live-view'),
         wildlife: document.getElementById('wildlife-view'),
-        sports: document.getElementById('sports-view')
+        sports: document.getElementById('sports-view'),
+        music: document.getElementById('music-view') // New music view
     };
     
     const players = {
@@ -380,7 +381,6 @@ function setMode(mode, element) {
         views.live.style.display = 'block';
         players.live.src = "https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1";
     }
-    // Added New Modes
     else if (mode === 'wildlife') {
         title.innerText = "Wild Live";
         dot.style.display = "inline-block";
@@ -393,7 +393,14 @@ function setMode(mode, element) {
         views.sports.style.display = 'block';
         players.sports.src = "https://www.youtube.com/embed/fE_xxKiCHO0?autoplay=1&mute=1";
     }
+    // New Music Mode Logic
+    else if (mode === 'music') {
+        title.innerText = "T&C Player";
+        dot.style.display = "none"; // Music is not "live"
+        views.music.style.display = 'block';
+    }
 }
+
 
 
 // https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
