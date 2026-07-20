@@ -480,10 +480,16 @@ T&C does not collect or store your personal data.This website is for information
                 <div class="apple-card">
                     <div id="song-duration">0:00 / 3:00</div>
                     <div class="controls">
-                        <button>⏮</button>
-                        <button id="play-pause">▶</button>
-                        <button>⏭</button>
-                    </div>
+    <!-- Backward 10s -->
+    <button onclick="skip(-10)">⏮</button>
+    
+    <!-- Play/Pause -->
+    <button id="play-pause" onclick="togglePlay()">▶</button>
+    
+    <!-- Forward 10s -->
+    <button onclick="skip(10)">⏭</button>
+</div>
+
                 </div>
                 <p><small>Playlist is polished and shortened by T&C to provide the best experience to its customers.</small></p>
                 <div id="mood-selection">
