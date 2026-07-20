@@ -521,17 +521,21 @@ function playMusic(mood) {
         currentAudio.pause();
     }
 
-    // 2. Load and Play (Make sure these file paths are correct!)
-    // If your files are in the same folder, use "./" + mood + ".mp3"
-    currentAudio = new Audio(`music/${mood}.mp3`); 
-    
+    // Use the exact filename provided
+    if (mood === 'Peace') {
+        currentAudio = new Audio('David Kushner - Daylight (Official Music Video).mp3');
+    } else {
+        // Handle your other moods here, e.g.,
+        currentAudio = new Audio('music/' + mood + '.mp3');
+    }
+
     currentAudio.play().catch(error => {
-        console.log("Playback failed. Ensure the file exists at the path.");
+        console.error("Playback failed. Please check if the file exists: ", error);
     });
 
-    // Update your UI "Play" button to "Pause" icon
     document.getElementById('play-pause').innerText = "⏸";
 }
+
 
 
     
