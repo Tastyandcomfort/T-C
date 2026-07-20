@@ -468,6 +468,38 @@ T&C does not collect or store your personal data.This website is for information
          </div>
       </div>
     </div>
+
+
+         <!-- New Music Button -->
+<button onclick="openMusicMenu()">Music</button>
+
+<!-- Music Player Overlay/Card -->
+<div id="music-player-card" style="display:none;">
+    <h3>T&C Player</h3>
+    
+    <!-- Apple Style Controls -->
+    <div class="apple-card">
+        <div id="song-duration">0:00 / 3:00</div>
+        <div class="controls">
+            <button>⏮</button>
+            <button id="play-pause">▶</button>
+            <button>⏭</button>
+        </div>
+    </div>
+
+    <p><small>Playlist is polished and shortened by T&C to provide the best experience to its customers.</small></p>
+    
+    <!-- Mood Selection -->
+    <div id="mood-selection">
+        <button onclick="selectMood('Peace')">Peace</button>
+        <button onclick="selectMood('Rising')">Rising</button>
+        <button onclick="selectMood('Chill')">Chill</button>
+        <button onclick="selectMood('Attitude')">Attitude</button>
+    </div>
+</div>
+
+         
+        
   </section>
 
 
