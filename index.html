@@ -427,11 +427,6 @@ T&C does not collect or store your personal data.This website is for information
     <button id="btn-wildlife" onclick="setMode('wildlife', this)">Wild</button>
     <button id="btn-sports" onclick="setMode('sports', this)">Sports</button>
     <button id="btn-music" onclick="setMode('music', this)">Music</button>
-<button onclick="selectMood('Peace')">Peace</button>
-<button onclick="selectMood('Rising')">Rising</button>
-<button onclick="selectMood('Chill')">Chill</button>
-<button onclick="selectMood('Attitude')">Attitude</button>
-
 </div>
 </div>
 
@@ -480,31 +475,37 @@ T&C does not collect or store your personal data.This website is for information
 
        <!-- Music Player Overlay/Card -->
        <div id="music-view" class="view-mode" style="display: none;">
-            <div id="music-player-card">
-                <h3>T&C Player</h3>
-                <div class="apple-card">
-                    <div id="song-duration">0:00 / 3:00</div>
-                    <div class="controls">
-    <!-- Backward 10s -->
-    <button onclick="skip(-10)">⏮</button>
-    
-    <!-- Play/Pause -->
-    <button id="play-pause" onclick="togglePlay()">▶</button>
-    
-    <!-- Forward 10s -->
-    <button onclick="skip(10)">⏭</button>
-</div>
+    <div id="music-player-card">
+        
+        <!-- Mood Selector Dropdown -->
+        <div style="margin-bottom: 15px;">
+            <select id="mood-selector" onchange="selectMood(this.value)" style="padding: 10px; border-radius: 10px; width: 100%; cursor: pointer;">
+                <option value="" disabled selected>Choose a Mood</option>
+                <option value="Peace">Peace</option>
+                <option value="Rising">Rising</option>
+                <option value="Chill">Chill</option>
+                <option value="Attitude">Attitude</option>
+            </select>
+        </div>
 
-                </div>
-                <p><small>Playlist is polished and shortened by T&C to provide the best experience to its customers.</small></p>
-                <div id="mood-selection">
-                    <button onclick="selectMood('Peace')">Peace</button>
-                    <button onclick="selectMood('Rising')">Rising</button>
-                    <button onclick="selectMood('Chill')">Chill</button>
-                    <button onclick="selectMood('Attitude')">Attitude</button>
-                </div>
+        <div class="apple-card">
+            <div id="song-duration">0:00 / 3:00</div>
+            <div class="controls">
+                <!-- Backward 10s -->
+                <button onclick="skip(-10)">⏮</button>
+                
+                <!-- Play/Pause -->
+                <button id="play-pause" onclick="togglePlay()">▶</button>
+                
+                <!-- Forward 10s -->
+                <button onclick="skip(10)">⏭</button>
             </div>
         </div>
+
+        <p><small>Playlist is polished and shortened by T&C to provide the best experience to its customers.</small></p>
+    </div>
+</div>
+
         
   </section>
 
