@@ -501,13 +501,18 @@ setInterval(fetchWeather, 600000);
 // Global variable to hold the audio object
 let currentAudio = null;
 
+// This sets up the song based on the mood selected
 function selectMood(mood) {
-    // 1. Forced acknowledgement cycle
     function askForHeadphones() {
-        const confirmed = confirm("🎧 Please ensure your headphones are connected. Click OK to play " + mood + ".");
-        
+        const confirmed = confirm("🎧 Please ensure your headphones are connected. Click OK to load " + mood + ".");
         if (confirmed) {
-            playMusic(mood);
+            // Load the song based on mood
+            if (mood === 'Peace') {
+                currentAudio = new Audio('David Kushner - Daylight (Official Music Video).mp3');
+            } else {
+                currentAudio = new Audio('music/' + mood + '.mp3');
+            }
+            alert(mood + " is loaded. Click the Play button to start.");
         } else {
             askForHeadphones(); // The cycle
         }
@@ -515,25 +520,23 @@ function selectMood(mood) {
     askForHeadphones();
 }
 
-function playMusic(mood) {
-    // Stop any music currently playing
-    if (currentAudio) {
-        currentAudio.pause();
-    }
-
-    // Use the exact filename provided
-    if (mood === 'Peace') {
-        currentAudio = new Audio('David Kushner - Daylight (Official Music Video).mp3');
+// This manages the manual Play/Pause button
+function togglePlay() {
+    if (!currentAudio) return alert("Please select a mood first!");
+    
+    if (currentAudio.paused) {
+        currentAudio.play();
+        document.getElementById('play-pause').innerText = "⏸";
     } else {
-        // Handle your other moods here, e.g.,
-        currentAudio = new Audio('music/' + mood + '.mp3');
+        currentAudio.pause();
+        document.getElementById('play-pause').innerText = "▶";
     }
+}
 
-    currentAudio.play().catch(error => {
-        console.error("Playback failed. Please check if the file exists: ", error);
-    });
-
-    document.getElementById('play-pause').innerText = "⏸";
+// This manages the Skip buttons
+function skip(seconds) {
+    if (!currentAudio) return;
+    currentAudio.currentTime += seconds;
 }
 
 
