@@ -503,28 +503,27 @@ let currentAudio = null;
 
 // This sets up the song based on the mood selected
 function selectMood(mood) {
-    // Define your playlist mapping here
     const playlist = {
         'Peace': 'David Kushner - Daylight (Official Music Video).mp3',
-        'Rising': 'Rising-Song-Filename.mp3', // Replace with your actual file names
-        'Chill': 'Chill-Song-Filename.mp3',
-        'Attitude': 'Attitude-Song-Filename.mp3'
+        'Rising': 'Rising-Song.mp3',
+        'Chill': 'Chill-Song.mp3',
+        'Attitude': 'Attitude-Song.mp3'
     };
 
     function askForHeadphones() {
-        const confirmed = confirm("🎧 Please ensure your headphones are connected. Click OK to load " + mood + ".");
+        const confirmed = confirm("🎧 Please ensure your headphones are connected for the best experience. Click OK to continue.");
+        
         if (confirmed) {
-            // Check if the mood exists in our playlist object
+            // Only load the audio, no extra alert here
             if (playlist[mood]) {
                 currentAudio = new Audio(playlist[mood]);
-                alert(mood + " is loaded. Click the Play button to start.");
-            } else {
-                alert("Sorry, no song found for this mood.");
             }
         } else {
-            askForHeadphones(); // The cycle
+            // Keep the cycle until they click OK
+            askForHeadphones(); 
         }
     }
+    
     askForHeadphones();
 }
 
