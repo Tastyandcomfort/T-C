@@ -491,7 +491,33 @@ setInterval(fetchWeather, 600000);
 
 
 
-  
+  let selectedMood = '';
+
+function selectMood(mood) {
+    selectedMood = mood;
+    checkHeadphones();
+}
+
+function checkHeadphones() {
+    // SECURITY NOTE: Browsers cannot detect physical headphone connection.
+    // We simulate the detection by forcing the user to acknowledge they have them.
+    const hasHeadphones = confirm("🎧 Please ensure your headphones are connected for the best experience. Click OK to start your music.");
+
+    if (hasHeadphones) {
+        startMusic(selectedMood);
+    } else {
+        // This creates the cycle: if they click Cancel, it re-triggers the function
+        checkHeadphones();
+    }
+}
+
+function startMusic(mood) {
+    console.log("Playing song for mood: " + mood);
+    // Add your audio logic here:
+    // const audio = new Audio(`path/to/your/files/${mood}.mp3`);
+    // audio.play();
+}
+
     
 
     
