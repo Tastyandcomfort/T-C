@@ -475,39 +475,24 @@ T&C does not collect or store your personal data.This website is for information
 
        <!-- Music Player Overlay/Card -->
        <div id="music-view" class="view-mode" style="display: none;">
-    <div id="music-player-card">
-        
-        <!-- Mood Selector Dropdown -->
-        <div style="margin-bottom: 15px;">
-            <select id="mood-selector" onchange="selectMood(this.value)" style="padding: 10px; border-radius: 10px; width: 100%; cursor: pointer;">
-                <option value="" disabled selected>Choose a Mood</option>
-                <option value="Peace">Peace</option>
-                <option value="Rising">Rising</option>
-                <option value="Chill">Chill</option>
-                <option value="Attitude">Attitude</option>
-            </select>
-        </div>
+  
+    <select id="mood-selector" onchange="selectMood(this.value)">
+        <option value="" disabled selected>Choose a Mood</option>
+        <option value="Peace">Peace</option>
+    </select>
 
-        <div class="apple-card">
-            <div id="song-duration">0:00 / 3:00</div>
-            <div class="controls">
-                <!-- Backward 10s -->
-                <button onclick="skip(-10)">⏮</button>
-                
-                <!-- Play/Pause -->
-                <button id="play-pause" onclick="togglePlay()">▶</button>
-                
-                <!-- Forward 10s -->
-                <button onclick="skip(10)">⏭</button>
-            </div>
+    <div class="apple-card">
+        <div id="song-title" style="font-weight: bold; margin-bottom: 10px;">Select a mood to load</div>
+        <div id="song-duration">0:00 / 0:00</div>
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        <div class="controls">
+            <button onclick="skip(-10)">⏮</button>
+            <button id="play-pause" onclick="togglePlay()">▶</button>
+            <button onclick="skip(10)">⏭</button>
         </div>
-
-        <p><small>Playlist is polished and shortened by T&C to provide the best experience to its customers.</small></p>
     </div>
-</div>
 
         
-  </section>
 
 
       <section id="chat-view" class="app-section">
