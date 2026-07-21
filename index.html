@@ -415,7 +415,7 @@ T&C does not collect or store your personal data.This website is for information
         
 
 <!---News Card-->
-<section id="news-main-container" class="app-section">>
+<div class="news-main-container">
     <div class="title-left">
         <span id="live-indicator" class="live-dot" style="display: none;"></span>
         <h3 id="current-channel-title">Headlines</h3>
@@ -427,7 +427,6 @@ T&C does not collect or store your personal data.This website is for information
     <button id="btn-live" onclick="setMode('live', this)">T&C</button>
     <button id="btn-wildlife" onclick="setMode('wildlife', this)">Wild</button>
     <button id="btn-sports" onclick="setMode('sports', this)">Sports</button>
-    <button id="btn-music" onclick="setMode('music', this)">Music</button>
 </div>
 </div>
 
@@ -469,30 +468,8 @@ T&C does not collect or store your personal data.This website is for information
              </div>
          </div>
       </div>
-
-
-      
-
-       <!-- Music Player Overlay/Card -->
-       <div id="music-view" class="view-mode" style="display: none;">
-  
-    <select id="mood-selector" onchange="selectMood(this.value)">
-        <option value="" disabled selected>Choose a Mood</option>
-        <option value="Peace">Peace</option>
-        <option value="Peace">Rising</option>
-    </select>
-
-    <div class="apple-card">
-        <div id="song-title" style="font-weight: bold; margin-bottom: 10px;"></div>
-        <div id="song-duration">0:00 / 0:00</div>
-        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
-        <div class="controls">
-            <button onclick="skip(-10)">⏮</button>
-            <button id="play-pause" onclick="togglePlay()">▶</button>
-            <button onclick="skip(10)">⏭</button>
-        </div>
     </div>
-   </section>
+  </section>
         
 
 
