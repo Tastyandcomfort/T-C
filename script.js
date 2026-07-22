@@ -192,7 +192,7 @@ async function submitUserMessage() {
     } else if (lowerMsg.includes('price') || lowerMsg.includes('cost')) {
       fallbackResponse = "Our Premium Tea is ₹10. Crispy French Fries start at just ₹50 for a small portion and ₹60 for a big portion!";
     } else if (lowerMsg.includes('location') || lowerMsg.includes('where')) {
-      fallbackResponse = "We are located at New Modern Mission. Check out the 'You Are Here' tab to get direct navigation views on our live interactive map!";
+      fallbackResponse = "We are currently not located on earth but in soon we will. Please and check out the 'You Are Here' tab to get direct navigation views on our live interactive map!";
     }
     
     typingBubble.innerText = fallbackResponse;
