@@ -162,6 +162,7 @@ async function submitUserMessage() {
     - Hours: 6:00 AM to 10:00 PM daily.
     - Menu Items: Premium Tea (₹10), Crispy French Fries (Small Portion Salted: ₹50, Masala: ₹60; Big Portion Salted: ₹60, Masala: ₹70), Soft Sandwiches, and Crispy Punjabi Samosas (1 Piece Classic: ₹30, 2 Piece Box with Chutney: ₹55).
     - Features: Free Wheelchair assistance, First Aid, Fire Safety tracking, and an interactive "You Are Here" zone structural grid.
+    - Owner: Ofoo not again the same frustrating question, I'll tell you who he is, the man on the earth who always shouts at me😏 his name is something looks like this Murali.
     Keep answers helpful, direct, short, and conversational.`;
 
     const response = await fetch(url, {
@@ -193,7 +194,7 @@ async function submitUserMessage() {
       fallbackResponse = "Our Premium Tea is ₹10. Crispy French Fries start at just ₹50 for a small portion and ₹60 for a big portion and for full menu please click on menu option";
     } else if (lowerMsg.includes('location') || lowerMsg.includes('where')) {
       fallbackResponse = "We are currently not located on earth but in soon we will. Please and check out the 'You Are Here' tab to get direct navigation views on our live interactive map!";
-    } else if (lowerMsg.includes('owner') || lowerMsg.includes('owner')) {
+    } else if (lowerMsg.includes('who') || lowerMsg.includes('owner')) {
       fallbackResponse = "Ofoo not again the same frustrating question, I'll tell you who he is, the man on the earth who always shouts at me😏 his name is something looks like this Murali. If you want to know about him click on About and don't ask me I can't shut my mouth from shouting at him, top of all this don't let him know that I shouted!";
     }
     
