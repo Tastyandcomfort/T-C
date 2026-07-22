@@ -188,9 +188,9 @@ async function submitUserMessage() {
     const lowerMsg = rawMsg.toLowerCase();
 
     if (lowerMsg.includes('hour') || lowerMsg.includes('time')) {
-      fallbackResponse = "Our stall is open from 6:00 AM to 10:00 PM every day! Drop by anytime for hot tea and crispy fries.";
+      fallbackResponse = "We are not yet launched but once started our stall is open from 6:00 AM to 10:00 PM every day! 'Drop by' for cup of tea and crispy fries.";
     } else if (lowerMsg.includes('price') || lowerMsg.includes('cost')) {
-      fallbackResponse = "Our Premium Tea is ₹10. Crispy French Fries start at just ₹50 for a small portion and ₹60 for a big portion!";
+      fallbackResponse = "Our Premium Tea is ₹10. Crispy French Fries start at just ₹50 for a small portion and ₹60 for a big portion and for full menu please click on menu option";
     } else if (lowerMsg.includes('location') || lowerMsg.includes('where')) {
       fallbackResponse = "We are currently not located on earth but in soon we will. Please and check out the 'You Are Here' tab to get direct navigation views on our live interactive map!";
     }
