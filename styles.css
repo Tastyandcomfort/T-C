@@ -1822,24 +1822,28 @@ body {
 }
 
 /* Floating Overlay Next Button */
+/* Sleek, Low-Distraction Floating Next Button */
 .floating-next-btn {
   position: absolute;
   top: 12px;
   right: 12px;
-  background-color: rgba(255, 188, 0, 0.9);
-  color: #000;
-  border: none;
+  background-color: rgba(0, 0, 0, 0.6); /* Dark translucent background */
+  color: #ffbc00; /* Subtle yellow text matching your theme */
+  border: 1px solid rgba(255, 188, 0, 0.3); /* Soft matching border */
   padding: 6px 12px;
   border-radius: 6px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   font-size: 0.8rem;
   z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  transition: background-color 0.2s, transform 0.1s;
+  backdrop-filter: blur(4px); /* Adds a modern frosted glass effect */
+  transition: all 0.2s ease-in-out;
 }
 
+/* Lights up nicely only when hovered or touched */
+.video-container:hover .floating-next-btn,
 .floating-next-btn:hover {
-  background-color: #ffbc00;
-  transform: scale(1.05);
+  background-color: rgba(255, 188, 0, 0.9);
+  color: #000;
+  border-color: #ffbc00;
 }
