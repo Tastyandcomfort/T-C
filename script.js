@@ -555,7 +555,7 @@ function skip(seconds) {
 // Video password
 // Array of your uploaded videos from the repository
 const videoPlaylist = [
-  "assets/video1.mp4",
+  "video_240p (1).mp4",
   "assets/video2.mp4",
   "assets/video3.mp4" // You can add as many as you like!
 ];
