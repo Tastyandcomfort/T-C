@@ -1773,3 +1773,26 @@ body {
   background-color: #ffa500;
 }
 
+
+.video-controls-bar {
+  padding: 10px;
+  background-color: #111317;
+  text-align: right;
+}
+
+.next-btn {
+  background-color: #ffbc00;
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.next-btn:hover {
+  background-color: #ffa500;
+}
+
