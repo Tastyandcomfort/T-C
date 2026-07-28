@@ -523,7 +523,7 @@ const videoPlaylist = [
 let currentVideoIndex = 0;
 
 function checkPasscode() {
-  const correctCode = "1234"; // Your secret passcode
+  const correctCode = "728699"; // Your secret passcode
   const userInput = document.getElementById("video-pass").value;
   const passcodeBox = document.getElementById("passcode-box");
   const videoContainer = document.getElementById("video-container");
