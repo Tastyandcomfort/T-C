@@ -1737,3 +1737,39 @@ body {
     margin: 0 15px;
     cursor: pointer;
 }
+
+
+/* video password*/
+.passcode-container {
+  background-color: #111317;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  color: #fff;
+}
+
+.passcode-container input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-color: #222;
+  color: #fff;
+  width: 70%;
+  max-width: 200px;
+  margin-right: 8px;
+}
+
+.passcode-container button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ffbc00;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.passcode-container button:hover {
+  background-color: #ffa500;
+}
+
