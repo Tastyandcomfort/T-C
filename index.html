@@ -480,14 +480,14 @@ T&C does not collect or store your personal data.This website is for information
   
   <!-- Passcode Protection Box -->
   <div id="passcode-box" class="passcode-container">
-    <p>Redhead Topic:</p>
+    <p>Redhead topic:</p>
     <input type="password" id="video-pass" placeholder="Enter passcode">
     <button onclick="checkPasscode()">Unlock</button>
     <p id="error-msg" style="color: #ff3b30; display: none; margin-top: 8px;">Incorrect passcode!</p>
   </div>
 
-  <!-- Hidden Video Container with Floating Next Button -->
-  <div id="video-container" class="video-container" style="display: none;">
+  <!-- Hidden Video Container with Auto-Fading Next Button -->
+  <div id="video-container" class="video-container" style="display: none;" onmousemove="showControls()" ontouchstart="showControls()">
     <video id="my-video" controls playsinline>
       <source id="video-source" src="" type="video/mp4">
       Your browser does not support the video tag.
@@ -495,10 +495,11 @@ T&C does not collect or store your personal data.This website is for information
 
     <iframe id="youtube-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: none;"></iframe>
 
-    <!-- Floating Next Button -->
-    <button onclick="nextVideo()" class="floating-next-btn">Next Video ➔</button>
+    <!-- Auto-fading Next Button -->
+    <button onclick="nextVideo()" id="next-btn-overlay" class="floating-next-btn">Next Video ➔</button>
   </div>
 </div>
+
 
 
 
