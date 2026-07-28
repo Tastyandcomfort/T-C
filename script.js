@@ -552,7 +552,25 @@ function skip(seconds) {
 
 
 
+// Video password
+function checkPasscode() {
+  const correctCode = "986640"; // Set your secret passcode here
+  const userInput = document.getElementById("video-pass").value;
+  const passcodeBox = document.getElementById("passcode-box");
+  const videoContainer = document.getElementById("video-container");
+  const errorMsg = document.getElementById("error-msg");
+
+  if (userInput === correctCode) {
+    passcodeBox.style.display = "none";
+    videoContainer.style.display = "block";
     
+    // Optional: Auto-play video once unlocked
+    const video = videoContainer.querySelector("video");
+    video.play();
+  } else {
+    errorMsg.style.display = "block";
+  }
+}
 
     
           
