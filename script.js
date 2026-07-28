@@ -553,8 +553,17 @@ function skip(seconds) {
 
 
 // Video password
+// Array of your uploaded videos from the repository
+const videoPlaylist = [
+  "assets/video1.mp4",
+  "assets/video2.mp4",
+  "assets/video3.mp4" // You can add as many as you like!
+];
+
+let currentVideoIndex = 0;
+
 function checkPasscode() {
-  const correctCode = "986640"; // Set your secret passcode here
+  const correctCode = "728699"; // Your secret passcode
   const userInput = document.getElementById("video-pass").value;
   const passcodeBox = document.getElementById("passcode-box");
   const videoContainer = document.getElementById("video-container");
@@ -564,13 +573,28 @@ function checkPasscode() {
     passcodeBox.style.display = "none";
     videoContainer.style.display = "block";
     
-    // Optional: Auto-play video once unlocked
-    const video = videoContainer.querySelector("video");
-    video.play();
+    // Load and play the first video
+    loadVideo(currentVideoIndex);
   } else {
     errorMsg.style.display = "block";
   }
 }
+
+function loadVideo(index) {
+  const videoPlayer = document.getElementById("my-video");
+  const videoSource = document.getElementById("video-source");
+  
+  videoSource.src = videoPlaylist[index];
+  videoPlayer.load();
+  videoPlayer.play();
+}
+
+function nextVideo() {
+  // Move to the next video, loop back to the first one if at the end
+  currentVideoIndex = (currentVideoIndex + 1) % videoPlaylist.length;
+  loadVideo(currentVideoIndex);
+}
+
 
     
           
