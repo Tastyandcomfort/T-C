@@ -501,54 +501,7 @@ setInterval(fetchWeather, 600000);
 
 
 
-// Global variable to hold the audio object
-let currentAudio = null;
 
-// This sets up the song based on the mood selected
-function selectMood(mood) {
-    const playlist = {
-        'Peace': 'David Kushner - Daylight (Official Music Video).mp3',
-        'Rising': 'Rising-Song.mp3',
-        'Chill': 'Chill-Song.mp3',
-        'Attitude': 'Attitude-Song.mp3'
-    };
-
-    function askForHeadphones() {
-        const confirmed = confirm("🎧 Please ensure your headphones are connected for the best experience. Click OK to continue.");
-        
-        if (confirmed) {
-            // Only load the audio, no extra alert here
-            if (playlist[mood]) {
-                currentAudio = new Audio(playlist[mood]);
-            }
-        } else {
-            // Keep the cycle until they click OK
-            askForHeadphones(); 
-        }
-    }
-    
-    askForHeadphones();
-}
-
-
-// This manages the manual Play/Pause button
-function togglePlay() {
-    if (!currentAudio) return alert("Please select a mood first!");
-    
-    if (currentAudio.paused) {
-        currentAudio.play();
-        document.getElementById('play-pause').innerText = "⏸";
-    } else {
-        currentAudio.pause();
-        document.getElementById('play-pause').innerText = "▶";
-    }
-}
-
-// This manages the Skip buttons
-function skip(seconds) {
-    if (!currentAudio) return;
-    currentAudio.currentTime += seconds;
-}
 
 
 
@@ -557,7 +510,7 @@ function skip(seconds) {
 const videoPlaylist = [
   { type: "local", src: "video_ (1).mp4" },
   { type: "local", src: "video_ (3).mp4" },
-  { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" } // Replace with your YouTube embed link
+  { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/wWEnxWA7nnY?autoplay=1&mute=1" }
 ];
 
