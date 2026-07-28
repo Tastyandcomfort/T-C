@@ -613,6 +613,22 @@ function nextVideo() {
   loadVideo(currentVideoIndex);
 }
 
+let controlTimeout;
+
+function showControls() {
+  const nextBtn = document.getElementById("next-btn-overlay");
+  
+  // Make button visible
+  nextBtn.classList.add("visible");
+  
+  // Clear any existing timer
+  clearTimeout(controlTimeout);
+  
+  // Hide the button automatically after 2.5 seconds of inactivity
+  controlTimeout = setTimeout(() => {
+    nextBtn.classList.remove("visible");
+  }, 2500);
+}
 
     
           
