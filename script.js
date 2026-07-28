@@ -557,7 +557,7 @@ function skip(seconds) {
 const videoPlaylist = [
   { type: "local", src: "assets/video1.mp4" },
   { type: "local", src: "assets/video2.mp4" },
-  { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs" } // Replace with your YouTube embed link
+  { type: "youtube", src: "https://youtu.be/SF7htyffezs" } // Replace with your YouTube embed link
 ];
 
 
