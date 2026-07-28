@@ -1823,27 +1823,26 @@ body {
 
 /* Floating Overlay Next Button */
 /* Sleek, Low-Distraction Floating Next Button */
+/* Permanently dim and quiet floating Next button */
 .floating-next-btn {
   position: absolute;
   top: 12px;
   right: 12px;
-  background-color: rgba(0, 0, 0, 0.6); /* Dark translucent background */
-  color: #ffbc00; /* Subtle yellow text matching your theme */
-  border: 1px solid rgba(255, 188, 0, 0.3); /* Soft matching border */
-  padding: 6px 12px;
+  background-color: rgba(0, 0, 0, 0.4); /* Dark and subtle */
+  color: #ffbc00; /* Soft yellow text */
+  border: 1px solid rgba(255, 188, 0, 0.2); /* Faint border */
+  padding: 5px 10px;
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   z-index: 10;
-  backdrop-filter: blur(4px); /* Adds a modern frosted glass effect */
-  transition: all 0.2s ease-in-out;
+  backdrop-filter: blur(3px);
+  opacity: 0.75; /* Keeps it naturally soft and dim all the time */
+  transition: opacity 0.2s ease;
 }
 
-/* Lights up nicely only when hovered or touched */
-.video-container:hover .floating-next-btn,
-.floating-next-btn:hover {
-  background-color: rgba(255, 188, 0, 0.9);
-  color: #000;
-  border-color: #ffbc00;
+/* Optional: Slight feedback when actually clicked, but stays dim otherwise */
+.floating-next-btn:active {
+  opacity: 1;
 }
