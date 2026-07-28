@@ -1725,7 +1725,7 @@ body {
 .video-container video, 
 .video-container iframe {
   width: 100%;
-  height: 250px; /* Adjust this value if you want it taller or shorter to match the top player */
+  height: 240px; /* Adjust this value if you want it taller or shorter to match the top player */
   object-fit: cover;
   display: block;
   border: none;
