@@ -555,8 +555,8 @@ function skip(seconds) {
 // Video password
 // Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
-  { type: "local", src: "video_240p (1).mp4" },
-  { type: "local", src: "video_240p (3).mp4" },
+  { type: "local", src: "video_ (1).mp4" },
+  { type: "local", src: "video_ (3).mp4" },
   { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" } // Replace with your YouTube embed link
 ];
 
@@ -569,7 +569,7 @@ const videoPlaylist = [
 let currentVideoIndex = 0;
 
 function checkPasscode() {
-  const correctCode = "728699"; // Your secret passcode
+  const correctCode = "1234"; // Your secret passcode
   const userInput = document.getElementById("video-pass").value;
   const passcodeBox = document.getElementById("passcode-box");
   const videoContainer = document.getElementById("video-container");
