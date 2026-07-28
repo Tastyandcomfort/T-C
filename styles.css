@@ -1773,29 +1773,7 @@ body {
   background-color: #ffa500;
 }
 
-
-.video-controls-bar {
-  padding: 10px;
-  background-color: #111317;
-  text-align: right;
-}
-
-.next-btn {
-  background-color: #ffbc00;
-  color: #000;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-}
-
-.next-btn:hover {
-  background-color: #ffa500;
-}
-
+/* Video container*/
 .broadcast-card {
   background-color: #16181c;
   border-radius: 16px;
@@ -1830,12 +1808,40 @@ body {
   border-radius: 12px;
   overflow: hidden;
   background-color: #000;
+  display: flex;
+  flex-direction: column;
 }
 
-.video-container video {
+/* Forces both local video and YouTube iframe to match your exact desired height */
+.video-container video, 
+.video-container iframe {
   width: 100%;
-  height: auto;
-  max-height: 250px;
+  height: 220px; /* Adjust this value if you want it taller or shorter to match the top player */
   object-fit: cover;
   display: block;
+  border: none;
 }
+
+.video-controls-bar {
+  padding: 10px;
+  background-color: #16181c; /* Matches your card background for a seamless look */
+  text-align: right;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.next-btn {
+  background-color: #ffbc00;
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.next-btn:hover {
+  background-color: #ffa500;
+}
+
