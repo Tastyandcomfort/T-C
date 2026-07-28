@@ -1824,25 +1824,28 @@ body {
 /* Floating Overlay Next Button */
 /* Sleek, Low-Distraction Floating Next Button */
 /* Permanently dim and quiet floating Next button */
+/* Hidden by default, fades in smoothly when active */
 .floating-next-btn {
   position: absolute;
   top: 12px;
   right: 12px;
-  background-color: rgba(0, 0, 0, 0.4); /* Dark and subtle */
-  color: #ffbc00; /* Soft yellow text */
-  border: 1px solid rgba(255, 188, 0, 0.2); /* Faint border */
-  padding: 5px 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffbc00;
+  border: 1px solid rgba(255, 188, 0, 0.4);
+  padding: 6px 12px;
   border-radius: 6px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   z-index: 10;
-  backdrop-filter: blur(3px);
-  opacity: 0.75; /* Keeps it naturally soft and dim all the time */
-  transition: opacity 0.2s ease;
+  backdrop-filter: blur(4px);
+  opacity: 0; /* Starts completely hidden */
+  pointer-events: none; /* Prevents clicking when invisible */
+  transition: opacity 0.3s ease-in-out;
 }
 
-/* Optional: Slight feedback when actually clicked, but stays dim otherwise */
-.floating-next-btn:active {
+/* Class added via JavaScript when controls are shown */
+.floating-next-btn.visible {
   opacity: 1;
+  pointer-events: auto; /* Enables clicking when visible */
 }
