@@ -618,17 +618,30 @@ let controlTimeout;
 function showControls() {
   const nextBtn = document.getElementById("next-btn-overlay");
   
-  // Make button visible
+  // Make the button visible
   nextBtn.classList.add("visible");
   
-  // Clear any existing timer
+  // Reset the timer
   clearTimeout(controlTimeout);
   
-  // Hide the button automatically after 2.5 seconds of inactivity
+  // Hide again after 3 seconds of inactivity
   controlTimeout = setTimeout(() => {
     nextBtn.classList.remove("visible");
-  }, 2500);
+  }, 3000);
 }
+
+// Automatically trigger the button to show whenever the user plays, pauses, or seeks the video
+document.addEventListener("DOMContentLoaded", () => {
+  const videoPlayer = document.getElementById("my-video");
+  
+  if (videoPlayer) {
+    videoPlayer.addEventListener("play", showControls);
+    videoPlayer.addEventListener("pause", showControls);
+    videoPlayer.addEventListener("seeking", showControls);
+    videoPlayer.addEventListener("click", showControls);
+    videoPlayer.addEventListener("touchstart", showControls);
+  }
+});
 
     
           
