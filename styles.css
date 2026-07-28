@@ -1796,3 +1796,46 @@ body {
   background-color: #ffa500;
 }
 
+.broadcast-card {
+  background-color: #16181c;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.section-header h3 {
+  color: #ffffff;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ff3b30;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.video-container {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: cover;
+  display: block;
+}
