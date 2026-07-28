@@ -556,7 +556,7 @@ function skip(seconds) {
 // Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
   { type: "local", src: "video_240p (1).mp4" },
-  { type: "local", src: "video_240p (2).mp4" },
+  { type: "local", src: "video_240p (3).mp4" },
   { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" } // Replace with your YouTube embed link
 ];
 
