@@ -557,8 +557,14 @@ function skip(seconds) {
 const videoPlaylist = [
   { type: "local", src: "assets/video1.mp4" },
   { type: "local", src: "assets/video2.mp4" },
-  { type: "youtube", src: "https://www.youtube.com/embed/YOUR_VIDEO_ID" } // Replace with your YouTube embed link
+  { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs" } // Replace with your YouTube embed link
 ];
+
+
+
+// https://youtu.be/SF7htyffezs?si=g1IeK_xKH09yft8b
+
+
 
 let currentVideoIndex = 0;
 
