@@ -475,7 +475,7 @@ T&C does not collect or store your personal data.This website is for information
 <div class="broadcast-card">
   <div class="section-header">
     <span class="live-dot"></span>
-    <h3>Prime Users only</h3>
+    <h3>Prime Users</h3>
   </div>
   
   <!-- Passcode Protection Box -->
@@ -486,14 +486,18 @@ T&C does not collect or store your personal data.This website is for information
     <p id="error-msg" style="color: #ff3b30; display: none; margin-top: 8px;">Incorrect passcode!</p>
   </div>
 
-  <!-- Hidden Video Container -->
+  <!-- Hidden Video Container with Next Button -->
   <div id="video-container" class="video-container" style="display: none;">
-    <video controls playsinline>
-      <source src="video_240p (1).mp4" type="video/mp4">
+    <video id="my-video" controls playsinline>
+      <source id="video-source" src="" type="video/mp4">
       Your browser does not support the video tag.
     </video>
+    <div class="video-controls-bar">
+      <button onclick="nextVideo()" class="next-btn">Next Video ➔</button>
+    </div>
   </div>
 </div>
+
 
  </section>
 <!---https://youtu.be/-aTWDnQttks?si=F63moS-BX4ah__8E--->  
