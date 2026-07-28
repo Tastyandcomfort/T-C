@@ -558,10 +558,11 @@ const videoPlaylist = [
   { type: "local", src: "video_ (1).mp4" },
   { type: "local", src: "video_ (3).mp4" },
   { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" } // Replace with your YouTube embed link
+  { type: "youtube", src: "https://www.youtube.com/embed/wWEnxWA7nnY?autoplay=1&mute=1" }
 ];
 
 
-
+// https://www.youtube.com/live/wWEnxWA7nnY?si=kgRkz2EkTnmvuO2h
 // https://youtu.be/SF7htyffezs?si=g1IeK_xKH09yft8b
 
 
