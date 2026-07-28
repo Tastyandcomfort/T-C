@@ -553,17 +553,17 @@ function skip(seconds) {
 
 
 // Video password
-// Array of your uploaded videos from the repository
+// Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
-  "video_240p (1).mp4",
-  "video_240p (3).mp4",
-  "assets/video3.mp4" // You can add as many as you like!
+  { type: "local", src: "assets/video1.mp4" },
+  { type: "local", src: "assets/video2.mp4" },
+  { type: "youtube", src: "https://www.youtube.com/embed/YOUR_VIDEO_ID" } // Replace with your YouTube embed link
 ];
 
 let currentVideoIndex = 0;
 
 function checkPasscode() {
-  const correctCode = "728699"; // Your secret passcode
+  const correctCode = "1234"; // Your secret passcode
   const userInput = document.getElementById("video-pass").value;
   const passcodeBox = document.getElementById("passcode-box");
   const videoContainer = document.getElementById("video-container");
@@ -572,8 +572,6 @@ function checkPasscode() {
   if (userInput === correctCode) {
     passcodeBox.style.display = "none";
     videoContainer.style.display = "block";
-    
-    // Load and play the first video
     loadVideo(currentVideoIndex);
   } else {
     errorMsg.style.display = "block";
@@ -581,16 +579,30 @@ function checkPasscode() {
 }
 
 function loadVideo(index) {
-  const videoPlayer = document.getElementById("my-video");
+  const item = videoPlaylist[index];
+  const localVideo = document.getElementById("my-video");
   const videoSource = document.getElementById("video-source");
-  
-  videoSource.src = videoPlaylist[index];
-  videoPlayer.load();
-  videoPlayer.play();
+  const youtubeIframe = document.getElementById("youtube-iframe");
+
+  if (item.type === "local") {
+    // Show local video player, hide YouTube iframe
+    localVideo.style.display = "block";
+    youtubeIframe.style.display = "none";
+    
+    videoSource.src = item.src;
+    localVideo.load();
+    localVideo.play();
+  } else if (item.type === "youtube") {
+    // Show YouTube iframe, hide local video player and pause it
+    localVideo.style.display = "none";
+    localVideo.pause();
+    youtubeIframe.style.display = "block";
+    
+    youtubeIframe.src = item.src;
+  }
 }
 
 function nextVideo() {
-  // Move to the next video, loop back to the first one if at the end
   currentVideoIndex = (currentVideoIndex + 1) % videoPlaylist.length;
   loadVideo(currentVideoIndex);
 }
