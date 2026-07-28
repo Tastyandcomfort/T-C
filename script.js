@@ -556,7 +556,7 @@ function skip(seconds) {
 // Array of your uploaded videos from the repository
 const videoPlaylist = [
   "video_240p (1).mp4",
-  "assets/video2.mp4",
+  "video_240p (3).mp4",
   "assets/video3.mp4" // You can add as many as you like!
 ];
 
