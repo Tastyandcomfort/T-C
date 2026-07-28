@@ -508,8 +508,8 @@ setInterval(fetchWeather, 600000);
 // Video password
 // Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
-  { type: "local", src: "video_ (1).mp4" },
-  { type: "local", src: "video_ (3).mp4" },
+  { type: "local", src: "video_240p (1).mp4" },
+  { type: "local", src: "video_240p (3).mp4" },
   { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/wWEnxWA7nnY?autoplay=1&mute=1" }
 ];
