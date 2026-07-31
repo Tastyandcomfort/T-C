@@ -514,7 +514,7 @@ const videoPlaylist = [
   { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
+  { type: "youtube", src: "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1" },
   { type: "local", src: "video_240p (1).mp4" }
 ];
 
@@ -524,7 +524,7 @@ const videoPlaylist = [
 // https://www.youtube.com/live/awQzjn72bI0?si=Rs7-SccHSzm04R7U
 // https://youtu.be/FFtPSPByBmk?si=Q10Q8_-i3ilLweMn   Bhagat geetha
 // https://youtu.be/_1FpcN1U_KY?si=yt42pjpMEmp6i-oj   Kuran
-
+// https://youtu.be/dmgsOBr2lAA?si=DuRb_ODZvhy034cG   Bibul
 
 
 let currentVideoIndex = 0;
