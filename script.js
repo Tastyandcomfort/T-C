@@ -573,6 +573,15 @@ function loadVideo(index) {
 function nextVideo() {
   currentVideoIndex = (currentVideoIndex + 1) % videoPlaylist.length;
   loadVideo(currentVideoIndex);
+
+function updateNextButtonTitle(nextTitle) {
+  const btn = document.querySelector(".floating-next-btn");
+  if (btn) {
+    btn.innerHTML = `${nextTitle} ➔`;
+  }
+}
+
+
 }
 
 let controlTimeout;
