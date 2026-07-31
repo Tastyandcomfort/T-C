@@ -508,16 +508,17 @@ setInterval(fetchWeather, 600000);
 // Video password
 // Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
-  { type: "local", src: "video_240p (1).mp4" },
-  { type: "local", src: "video_240p (3).mp4" },
+  
+  { type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" }
+  { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
+  { type: "local", src: "video_240p (1).mp4" }
 ];
 
 // https://www.youtube.com/live/n4I0d44oBEs?si=ZZk2MGtVRmlZG6jp
 // https://www.youtube.com/live/wWEnxWA7nnY?si=kgRkz2EkTnmvuO2h
 // https://youtu.be/SF7htyffezs?si=g1IeK_xKH09yft8b
-
+// https://www.youtube.com/live/awQzjn72bI0?si=Rs7-SccHSzm04R7U
 
 
 let currentVideoIndex = 0;
