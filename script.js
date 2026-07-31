@@ -588,9 +588,6 @@ function nextVideo() {
   nextButton.innerHTML = `${playlist[followingIndex].title} ➔`;
 }
 
-
-}
-
 let controlTimeout;
 
 function showControls() {
