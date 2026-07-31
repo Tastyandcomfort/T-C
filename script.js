@@ -571,14 +571,21 @@ function loadVideo(index) {
 }
 
 function nextVideo() {
-  currentVideoIndex = (currentVideoIndex + 1) % videoPlaylist.length;
-  loadVideo(currentVideoIndex);
+  // Move to the next video, loop back to the start if it's the last one
+  currentIndex = (currentIndex + 1) % playlist.length;
+  const nextItem = playlist[currentIndex];
 
-function updateNextButtonTitle(nextTitle) {
-  const btn = document.querySelector(".floating-next-btn");
-  if (btn) {
-    btn.innerHTML = `${nextTitle} ➔`;
-  }
+  // Update the video source (adjust IDs to match your setup)
+  const videoSource = document.getElementById("video-source");
+  const videoPlayer = document.getElementById("my-video");
+  videoSource.src = nextItem.src;
+  videoPlayer.load();
+  videoPlayer.play();
+
+  // Automatically update the button to show the *following* video's title
+  const followingIndex = (currentIndex + 1) % playlist.length;
+  const nextButton = document.getElementById("next-btn-overlay");
+  nextButton.innerHTML = `${playlist[followingIndex].title} ➔`;
 }
 
 
