@@ -513,6 +513,8 @@ const videoPlaylist = [
   { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
+  { type: "youtube", src: "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1" },
+  { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
   { type: "local", src: "video_240p (1).mp4" }
 ];
 
@@ -521,6 +523,9 @@ const videoPlaylist = [
 // https://youtu.be/SF7htyffezs?si=g1IeK_xKH09yft8b
 // https://www.youtube.com/live/awQzjn72bI0?si=Rs7-SccHSzm04R7U
 // https://youtu.be/FFtPSPByBmk?si=Q10Q8_-i3ilLweMn   Bhagat geetha
+// https://youtu.be/_1FpcN1U_KY?si=yt42pjpMEmp6i-oj   Kuran
+
+
 
 let currentVideoIndex = 0;
 
