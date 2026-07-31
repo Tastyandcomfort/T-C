@@ -508,13 +508,13 @@ setInterval(fetchWeather, 600000);
 // Video password
 // Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
-  { title: "NASA", type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
+  { title: "🇺🇸🚀", type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
   { title: "TechM", type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
-  { title: "Airport", type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
-  { title: "BHAGAVAT GEETHA", type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
-  { title: "Khuran", type: "youtube", src: "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1" },
-  { title: "Bibul", type: "youtube", src: "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1" },
-  { title: "Our Constitution", type: "youtube", src: "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1" },
+  { title: "✈️", type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
+  { title: "🕉️Ram", type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
+  { title: "☪️️Aala", type: "youtube", src: "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1" },
+  { title: "✝Jesis", type: "youtube", src: "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1" },
+  { title: "🇮🇳Law", type: "youtube", src: "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1" },
   { title: "Local", type: "local", src: "video_240p (1).mp4" }
 ];
 
