@@ -509,14 +509,14 @@ setInterval(fetchWeather, 600000);
 // Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
   
-  { type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1" },
-  { type: "youtube", src: "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1" },
-  { type: "local", src: "video_240p (1).mp4" }
+  { title: "Prime NEWS", type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
+  { title: "1 NEWS", type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
+  { title: "2 NEWS", type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
+  { title: "3 NEWS", type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
+  { title: "4 NEWS", type: "youtube", src: "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1" },
+  { title: "5 NEWS", type: "youtube", src: "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1" },
+  { title: "6 NEWS", type: "youtube", src: "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1" },
+  { title: "Local", type: "local", src: "video_240p (1).mp4" }
 ];
 
 // https://www.youtube.com/live/n4I0d44oBEs?si=ZZk2MGtVRmlZG6jp
