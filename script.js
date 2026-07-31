@@ -512,6 +512,7 @@ const videoPlaylist = [
   { type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
   { type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
+  { type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
   { type: "local", src: "video_240p (1).mp4" }
 ];
 
@@ -519,7 +520,7 @@ const videoPlaylist = [
 // https://www.youtube.com/live/wWEnxWA7nnY?si=kgRkz2EkTnmvuO2h
 // https://youtu.be/SF7htyffezs?si=g1IeK_xKH09yft8b
 // https://www.youtube.com/live/awQzjn72bI0?si=Rs7-SccHSzm04R7U
-
+// https://youtu.be/FFtPSPByBmk?si=Q10Q8_-i3ilLweMn   Bhagat geetha
 
 let currentVideoIndex = 0;
 
