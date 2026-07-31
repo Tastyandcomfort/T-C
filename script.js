@@ -508,7 +508,6 @@ setInterval(fetchWeather, 600000);
 // Video password
 // Mix your repository videos and YouTube links together here!
 const videoPlaylist = [
-  
   { title: "Prime NEWS", type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
   { title: "1 NEWS", type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
   { title: "2 NEWS", type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
@@ -518,15 +517,6 @@ const videoPlaylist = [
   { title: "6 NEWS", type: "youtube", src: "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1" },
   { title: "Local", type: "local", src: "video_240p (1).mp4" }
 ];
-
-// https://www.youtube.com/live/n4I0d44oBEs?si=ZZk2MGtVRmlZG6jp
-// https://www.youtube.com/live/wWEnxWA7nnY?si=kgRkz2EkTnmvuO2h
-// https://youtu.be/SF7htyffezs?si=g1IeK_xKH09yft8b
-// https://www.youtube.com/live/awQzjn72bI0?si=Rs7-SccHSzm04R7U
-// https://youtu.be/FFtPSPByBmk?si=Q10Q8_-i3ilLweMn   Bhagat geetha
-// https://youtu.be/_1FpcN1U_KY?si=yt42pjpMEmp6i-oj   Kuran
-// https://youtu.be/dmgsOBr2lAA?si=DuRb_ODZvhy034cG   Bibul
-// https://youtu.be/U71NrLiWWjI?si=tnNMuHx0J26RTlR-   Indian Constitution
 
 let currentVideoIndex = 0;
 
@@ -541,6 +531,7 @@ function checkPasscode() {
     passcodeBox.style.display = "none";
     videoContainer.style.display = "block";
     loadVideo(currentVideoIndex);
+    updateNextButtonDisplay();
   } else {
     errorMsg.style.display = "block";
   }
@@ -571,21 +562,24 @@ function loadVideo(index) {
 }
 
 function nextVideo() {
-  // Move to the next video, loop back to the start if it's the last one
-  currentIndex = (currentIndex + 1) % playlist.length;
-  const nextItem = playlist[currentIndex];
+  // Move to the next index, loop back to 0 if it reaches the end
+  currentVideoIndex = (currentVideoIndex + 1) % videoPlaylist.length;
+  
+  // Load the new video
+  loadVideo(currentVideoIndex);
+  
+  // Update button text to display the upcoming video title
+  updateNextButtonDisplay();
+}
 
-  // Update the video source (adjust IDs to match your setup)
-  const videoSource = document.getElementById("video-source");
-  const videoPlayer = document.getElementById("my-video");
-  videoSource.src = nextItem.src;
-  videoPlayer.load();
-  videoPlayer.play();
-
-  // Automatically update the button to show the *following* video's title
-  const followingIndex = (currentIndex + 1) % playlist.length;
+function updateNextButtonDisplay() {
+  // Get the index of the video that comes AFTER the current one
+  const followingIndex = (currentVideoIndex + 1) % videoPlaylist.length;
   const nextButton = document.getElementById("next-btn-overlay");
-  nextButton.innerHTML = `${playlist[followingIndex].title} ➔`;
+  
+  if (nextButton) {
+    nextButton.innerHTML = `${videoPlaylist[followingIndex].title} ➔`;
+  }
 }
 
 let controlTimeout;
@@ -593,19 +587,17 @@ let controlTimeout;
 function showControls() {
   const nextBtn = document.getElementById("next-btn-overlay");
   
-  // Make the button visible
-  nextBtn.classList.add("visible");
-  
-  // Reset the timer
-  clearTimeout(controlTimeout);
-  
-  // Hide again after 3 seconds of inactivity
-  controlTimeout = setTimeout(() => {
-    nextBtn.classList.remove("visible");
-  }, 3000);
+  if (nextBtn) {
+    nextBtn.classList.add("visible");
+    clearTimeout(controlTimeout);
+    
+    controlTimeout = setTimeout(() => {
+      nextBtn.classList.remove("visible");
+    }, 3000);
+  }
 }
 
-// Automatically trigger the button to show whenever the user plays, pauses, or seeks the video
+// Automatically trigger button events on the local video player
 document.addEventListener("DOMContentLoaded", () => {
   const videoPlayer = document.getElementById("my-video");
   
@@ -617,6 +609,7 @@ document.addEventListener("DOMContentLoaded", () => {
     videoPlayer.addEventListener("touchstart", showControls);
   }
 });
+
 
     
           
