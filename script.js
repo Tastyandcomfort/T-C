@@ -411,6 +411,27 @@ function setMode(mode, element) {
 // https://www.youtube.com/live/-6aJD-4Yu4w?si=arobwb4tdTKjwmld
 // https://www.youtube.com/live/fE_xxKiCHO0?si=lLv3s6P-AKr07hiC
 
+
+
+// Selector bar of videos
+function scrollToActiveTab(buttonElement) {
+    const container = buttonElement.parentElement;
+    
+    // Calculate position to center or bring the active button into view
+    const containerWidth = container.offsetWidth;
+    const buttonLeft = buttonElement.offsetLeft;
+    const buttonWidth = buttonElement.offsetWidth;
+    
+    // Smoothly scroll the container to center the active button
+    container.scrollTo({
+        left: buttonLeft - (containerWidth / 2) + (buttonWidth / 2),
+        behavior: 'smooth'
+    });
+}
+
+
+
+
 //App Language
 function changeLang(lang) {
     var combo = document.querySelector('.goog-te-combo');
