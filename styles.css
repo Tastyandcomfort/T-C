@@ -1378,6 +1378,8 @@ body {
     -ms-overflow-style: none; /* Hides scrollbar on IE/Edge */
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch; /* Momentum scrolling on mobile touchscreens */
+    max-width: 100%; /* Ensures it never overflows its container */
+    box-sizing: border-box;
 }
 
 /* Hides scrollbar on Chrome, Safari, and Opera */
@@ -1407,6 +1409,7 @@ body {
     background: #ffd700;
     color: #000;
 }
+
 
 /* The dot is hidden by default in all buttons */
 .live-dot {
