@@ -360,6 +360,7 @@ function setMode(mode, element) {
         muslim: document.getElementById('muslim-player'),
         christian: document.getElementById('christian-video-player'),
         law: document.getElementById('law-video-player'),
+        file: document.getElementById('file-video-player'),
     };
 
     const title = document.getElementById('current-channel-title');
@@ -446,10 +447,16 @@ function setMode(mode, element) {
         views.video.style.display = 'block';
         players.news.src = "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1";
     } 
+     else if (mode === 'file') {
+        title.innerText = "Media";
+        dot.style.display = "inline-block";
+        views.video.style.display = 'block';
+        players.news.src = "video_240p (1).mp4?autoplay=1&mute=1";
+    } 
 }
 
 
-
+// src: "video_240p (1).mp4"
 // https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
 // https://www.youtube.com/live/MiQe9ob9aDc?si=8j_VKUJ6F7B9i7vy
 // https://www.youtube.com/live/-6aJD-4Yu4w?si=arobwb4tdTKjwmld
