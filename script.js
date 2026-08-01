@@ -451,7 +451,7 @@ function setMode(mode, element) {
         title.innerText = "Media";
         dot.style.display = "inline-block";
         views.video.style.display = 'block';
-        players.news.src = "0cc97f69-41fe-4344-80ca-6668201e80fb-ezgif.com-crop.gif";
+        players.news.src = "sample-5s-360p.mp4";
     } 
 }
 
