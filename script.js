@@ -384,7 +384,7 @@ function setMode(mode, element) {
         title.innerText = "Live NEWS";
         dot.style.display = "inline-block";
         views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/e1FIApIafWE?autoplay=1&mute=1";
+        players.news.src = "https://www.youtube.com/embed/QCwq5Lg7Xes?autoplay=1&mute=1";
     } 
     else if (mode === 'live') {
         title.innerText = "T&C Live";
@@ -451,7 +451,7 @@ function setMode(mode, element) {
         title.innerText = "Media";
         dot.style.display = "inline-block";
         views.video.style.display = 'block';
-        players.news.src = "sample-5s-360p.mp4";
+        players.news.src = "sample.mp4";
     } 
 }
 
@@ -461,7 +461,7 @@ function setMode(mode, element) {
 // https://www.youtube.com/live/MiQe9ob9aDc?si=8j_VKUJ6F7B9i7vy
 // https://www.youtube.com/live/-6aJD-4Yu4w?si=arobwb4tdTKjwmld
 // https://www.youtube.com/live/fE_xxKiCHO0?si=lLv3s6P-AKr07hiC
-
+// https://www.youtube.com/live/QCwq5Lg7Xes?si=Zer6F4zIFHC9Z6SR
 
 
 // Selector bar of videos
