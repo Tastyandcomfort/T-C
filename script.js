@@ -429,6 +429,17 @@ function scrollToActiveTab(buttonElement) {
     });
 }
 
+// Example usage inside your tab click listener:
+document.querySelectorAll('.view-selector button').forEach(button => {
+    button.addEventListener('click', function() {
+        // Remove active class from all, add to current
+        document.querySelectorAll('.view-selector button').forEach(btn => btn.classList.remove('active-mode'));
+        this.classList.add('active-mode');
+        
+        // Automatically scroll to keep it visible
+        scrollToActiveTab(this);
+    });
+});
 
 
 
