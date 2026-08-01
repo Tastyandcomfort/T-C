@@ -352,7 +352,14 @@ function setMode(mode, element) {
         news: document.getElementById('news-video-player'),
         live: document.getElementById('tc-live-player'),
         wildlife: document.getElementById('wildlife-player'),
-        sports: document.getElementById('sports-player')
+        sports: document.getElementById('sports-player'),
+
+        nasa: document.getElementById('nasa-video-player'),
+        airport: document.getElementById('airport-player'),
+        hindu: document.getElementById('hindu-player'),
+        muslim: document.getElementById('muslim-player'),
+        christian: document.getElementById('christian-video-player'),
+        law: document.getElementById('law-video-player'),
     };
 
     const title = document.getElementById('current-channel-title');
@@ -402,6 +409,43 @@ function setMode(mode, element) {
         dot.style.display = "none"; // Music is not "live"
         views.music.style.display = 'block';
     }
+
+     else if (mode === 'video') {
+        title.innerText = "NASA";
+        dot.style.display = "inline-block";
+        views.video.style.display = 'block';
+        players.news.src = "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1";
+    } 
+     else if (mode === 'video') {
+        title.innerText = "Airside";
+        dot.style.display = "inline-block";
+        views.video.style.display = 'block';
+        players.news.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
+    } 
+     else if (mode === 'video') {
+        title.innerText = " Bhagavat Geetha";
+        dot.style.display = "inline-block";
+        views.video.style.display = 'block';
+        players.news.src = "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1";
+    } 
+     else if (mode === 'video') {
+        title.innerText = "Khuran";
+        dot.style.display = "inline-block";
+        views.video.style.display = 'block';
+        players.news.src = "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1";
+    } 
+     else if (mode === 'video') {
+        title.innerText = "Bibul";
+        dot.style.display = "inline-block";
+        views.video.style.display = 'block';
+        players.news.src = "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1";
+    } 
+     else if (mode === 'video') {
+        title.innerText = "Constitution";
+        dot.style.display = "inline-block";
+        views.video.style.display = 'block';
+        players.news.src = "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1";
+    } 
 }
 
 
