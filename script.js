@@ -451,11 +451,11 @@ function setMode(mode, element) {
         title.innerText = "Media";
         dot.style.display = "inline-block";
         views.video.style.display = 'block';
-        players.news.src = "video_240p (1).mp4?autoplay=1&mute=1";
+        players.news.src = "https://www.youtube.com/embed/-000000-?autoplay=1&mute=1";
     } 
 }
 
-
+// https://youtu.be/-aTWDnQttks?si=9fNdqun3qpwJRSSf
 // src: "video_240p (1).mp4"
 // https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
 // https://www.youtube.com/live/MiQe9ob9aDc?si=8j_VKUJ6F7B9i7vy
