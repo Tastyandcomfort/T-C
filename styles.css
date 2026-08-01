@@ -1361,17 +1361,28 @@ body {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid #333;
-    flex-wrap: wrap; /* Allows buttons to wrap on very small screens */
+    overflow: hidden; /* Contains child elements neatly */
 }
 
-/* Three-way View Selector (Pill Style) */
+/* Three-way View Selector (Pill Style) - Now Horizontally Swipeable */
 .view-selector {
     background: #222;
     padding: 3px;
     border-radius: 20px;
     display: flex;
-    gap: 2px;
+    gap: 4px;
     margin-left: auto;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none; /* Hides scrollbar on Firefox */
+    -ms-overflow-style: none; /* Hides scrollbar on IE/Edge */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Momentum scrolling on mobile touchscreens */
+}
+
+/* Hides scrollbar on Chrome, Safari, and Opera */
+.view-selector::-webkit-scrollbar {
+    display: none;
 }
 
 .view-selector button {
@@ -1384,14 +1395,18 @@ body {
     font-size: 0.75rem;
     font-weight: 600;
     transition: all 0.3s;
+    flex-shrink: 0; /* Prevents buttons from squishing */
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
-/* Highlight the active button when clicked */
-.view-selector button:focus {
+/* Highlight the active button when focused or clicked */
+.view-selector button:focus,
+.view-selector button.active-mode {
     background: #ffd700;
     color: #000;
 }
-
 
 /* The dot is hidden by default in all buttons */
 .live-dot {
@@ -1405,7 +1420,7 @@ body {
 
 /* Show the dot only when the button has 'active-mode' */
 .view-selector button.active-mode .live-dot {
-    display: block; 
+    display: inline-block; 
 }
 
 @keyframes pulse {
