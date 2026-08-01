@@ -451,12 +451,12 @@ function setMode(mode, element) {
         title.innerText = "Media";
         dot.style.display = "inline-block";
         views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/-000000-?autoplay=1&mute=1";
+        players.news.src = "0cc97f69-41fe-4344-80ca-6668201e80fb-ezgif.com-crop.gif";
     } 
 }
 
 // https://youtu.be/-aTWDnQttks?si=9fNdqun3qpwJRSSf
-// src: "video_240p (1).mp4"
+// src: "0cc97f69-41fe-4344-80ca-6668201e80fb-ezgif.com-crop.gif"
 // https://youtu.be/IzOOvR-XzAg?si=Wejt5kdTn-Kh1rew
 // https://www.youtube.com/live/MiQe9ob9aDc?si=8j_VKUJ6F7B9i7vy
 // https://www.youtube.com/live/-6aJD-4Yu4w?si=arobwb4tdTKjwmld
