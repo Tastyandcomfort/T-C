@@ -409,7 +409,7 @@ function setMode(mode, element) {
         title.innerText = "Music";
         dot.style.display = "inline-block";
         views.sports.style.display = 'block';
-        players.sports.src = "https://www.youtube.com/embed/fE_xxKiCH O0?autoplay=1&mute=1";
+        players.sports.src = "https://www.youtube.com/embed/-aTWDnQttks?autoplay=1&mute=1";
     }
 
      else if (mode === 'nasa') {
@@ -464,6 +464,10 @@ function setMode(mode, element) {
 // https://www.youtube.com/live/fE_xxKiCHO0?si=lLv3s6P-AKr07hiC
 // https://www.youtube.com/live/QCwq5Lg7Xes?si=Zer6F4zIFHC9Z6SR
 // https://www.youtube.com/live/e1FIApIafWE?si=ZtVRb0WntF9uYHZx
+// https://youtu.be/-aTWDnQttks?si=SBTx1z6N_MK20dUw
+
+
+
 
 // Selector bar of videos
 function scrollToActiveTab(buttonElement) {
