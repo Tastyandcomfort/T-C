@@ -353,7 +353,7 @@ function setMode(mode, element) {
         live: document.getElementById('tc-live-player'),
         wildlife: document.getElementById('wildlife-player'),
         sports: document.getElementById('sports-player'),
-
+        music: document.getElementById('music-player'),
         nasa: document.getElementById('nasa-video-player'),
         airport: document.getElementById('airport-player'),
         hindu: document.getElementById('hindu-player'),
