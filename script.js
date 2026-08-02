@@ -406,9 +406,10 @@ function setMode(mode, element) {
     }
     // New Music Mode Logic
     else if (mode === 'music') {
-        title.innerText = "T&C Player";
-        dot.style.display = "none"; // Music is not "live"
-        views.music.style.display = 'block';
+        title.innerText = "Music";
+        dot.style.display = "inline-block";
+        views.sports.style.display = 'block';
+        players.sports.src = "https://www.youtube.com/embed/fE_xxKiCH O0?autoplay=1&mute=1";
     }
 
      else if (mode === 'nasa') {
