@@ -1922,3 +1922,63 @@ body {
   font-weight: 600;
   color: #ffd700;
 }
+
+
+
+
+/* Quick Amenity Chips */
+.amenities-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 4px 0 12px 0;
+  scrollbar-width: none;
+}
+
+.amenities-container::-webkit-scrollbar {
+  display: none;
+}
+
+.amenity-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e6edf3;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.amenity-chip:hover {
+  background: #ffd700;
+  color: #000;
+  border-color: #ffd700;
+}
+
+/* Route Alternatives Container */
+.route-options-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.route-option-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.route-option-btn.active-route {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.08);
+}
