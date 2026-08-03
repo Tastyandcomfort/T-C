@@ -624,34 +624,32 @@ T&C does not collect or store your personal data.This website is for information
 <section id="map-view" class="app-section">
   <h3>YOU ARE HERE MAP</h3>
   
-  <!-- Map Container First -->
+  <!-- Map Container -->
   <div id="map"></div>
 
-  <!-- Search Bar at the Bottom of Map -->
+  <!-- Search Bar -->
   <div class="map-search-container">
     <input type="text" id="destination-input" placeholder="Search destination (e.g., Lb nagar)...">
     <button onclick="searchDestination()">How Fare</button>
   </div>
 
-<!-- Quick Amenity Chips -->
-<div class="amenities-container">
-  <button class="amenity-chip" onclick="searchAmenity('hospital')">🏥 Hospital</button>
-  <button class="amenity-chip" onclick="searchAmenity('police station')">👮 Police</button>
-  <button class="amenity-chip" onclick="searchAmenity('metro station')">🚇 Metro</button>
-  <button class="amenity-chip" onclick="searchAmenity('bus station')">🚌 Bus Stop</button>
-</div>
-
-<!-- Modern Route Results Card -->
-<div id="route-info" class="modern-route-card">
-  <div class="card-placeholder">
-    <span class="pulse-icon">📍</span>
-    <p>Search a destination or tap an amenity tile above.</p>
+  <!-- Quick Amenity Chips -->
+  <div class="amenities-container">
+    <button class="amenity-chip" onclick="searchAmenity('hospital')">🏥 Hospital</button>
+    <button class="amenity-chip" onclick="searchAmenity('police station')">👮 Police</button>
+    <button class="amenity-chip" onclick="searchAmenity('metro station')">🚇 Metro</button>
+    <button class="amenity-chip" onclick="searchAmenity('bus station')">🚌 Bus Stop</button>
   </div>
-</div>
 
-
-
+  <!-- Modern Route Results Card -->
+  <div id="route-info" class="modern-route-card">
+    <div class="card-placeholder">
+      <span class="pulse-icon">📍</span>
+      <p>Search a destination or tap an amenity tile above.</p>
+    </div>
+  </div>
 </section>
+
 
 
 
