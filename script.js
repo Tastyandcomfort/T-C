@@ -781,31 +781,24 @@ async function fetchRouteData(query, customDisplayName = null) {
       destLng = parseFloat(match[3]);
       destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
     } else {
-      // 2. Smart handling for "near me" or category queries (e.g., "atm near", "fuel pump", "temple")
-      let searchQuery = query;
-      const lowerQuery = query.toLowerCase();
+      // 2. Clean up search query safely
+      let searchQuery = query.trim();
+      const lowerQuery = searchQuery.toLowerCase();
 
-      // Clean up conversational filler words like "near me" or "near"
       if (lowerQuery.includes('near')) {
         searchQuery = lowerQuery.replace(/near\s*me/g, '').replace(/near/g, '').trim();
       }
 
-      // Append context or use Nominatim's structured viewbox around your stall to find nearby results
-      // viewbox format: left,top,right,bottom (roughly a ~5km box around your stall coordinates)
-      const viewbox = `${stallLng - 0.05},${stallLat + 0.05},${stallLng + 0.05},${stallLat - 0.05}`;
-      const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery + ' Hyderabad')}&viewbox=${viewbox}&bounded=1`;
+      // 3. Search via Nominatim globally, allowing any combination of city, district, or state
+      const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=1`;
+      const geoRes = await fetch(geoUrl);
+      
+      if (!geoRes.ok) throw new Error("Failed to connect to location search service.");
+      
+      const geoData = await geoRes.json();
 
-      const geoRes = await fetch(nominatimUrl);
-      let geoData = await geoRes.json();
-
-      // Fallback: if bounded search returns nothing, search broader in Hyderabad
-      if (geoData.length === 0) {
-        const fallbackRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' Hyderabad')}`);
-        geoData = await fallbackRes.json();
-      }
-
-      if (geoData.length === 0) {
-        infoBox.innerHTML = `<div class="card-placeholder"><p>Location not found. Try a specific place name or valid address.</p></div>`;
+      if (!geoData || geoData.length === 0) {
+        infoBox.innerHTML = `<div class="card-placeholder"><p>Location not found. Try a valid address, city, or place name.</p></div>`;
         return;
       }
 
@@ -820,7 +813,7 @@ async function fetchRouteData(query, customDisplayName = null) {
     destMarker = L.marker([destLat, destLng]).addTo(map)
       .bindPopup(`<b>${destName}</b>`).openPopup();
 
-    // Fetch driving and walking routes using OSRM
+    // 4. Fetch routing data from OSRM safely
     const [driveRes, walkRes] = await Promise.all([
       fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
       fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`)
@@ -834,7 +827,7 @@ async function fetchRouteData(query, customDisplayName = null) {
       
       walkData.routes.forEach(route => {
         if (route.duration <= driveData.routes[0].duration) {
-          route.duration = (route.distance / 1.25); // Realistic walking speed fallback
+          route.duration = (route.distance / 1.25); 
         }
       });
 
@@ -844,14 +837,15 @@ async function fetchRouteData(query, customDisplayName = null) {
       renderRouteCard();
       drawRouteOnMap(currentMode, 0);
     } else {
-      infoBox.innerHTML = `<div class="card-placeholder"><p>Could not calculate route paths.</p></div>`;
+      infoBox.innerHTML = `<div class="card-placeholder"><p>Could not calculate route paths for this location.</p></div>`;
     }
 
   } catch (err) {
-    console.error(err);
-    infoBox.innerHTML = `<div class="card-placeholder"><p>Error fetching route details.</p></div>`;
+    console.error("Route fetch error:", err);
+    infoBox.innerHTML = `<div class="card-placeholder"><p>Something went wrong. Please check your spelling or connection.</p></div>`;
   }
 }
+
 
 
 
