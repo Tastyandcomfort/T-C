@@ -699,8 +699,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-    
-       // 1. Define your stall's coordinates (Change these to your actual location)
+    // 1. Define your stall's coordinates (Change these to your actual location)
 const stallLat = 17.3850; 
 const stallLng = 78.4867; 
 
@@ -718,6 +717,7 @@ const stallMarker = L.marker([stallLat, stallLng]).addTo(map)
   .bindPopup("<b>T&C Stall</b><br>You are here!").openPopup();
 
 let routeLayer = null; // Stores the current route line on the map
+let destMarker = null; // Stores the destination marker so we can clear/update it
 
 async function searchDestination() {
   const query = document.getElementById('destination-input').value;
@@ -728,7 +728,13 @@ async function searchDestination() {
     return;
   }
 
-  infoBox.innerHTML = "Searching destination and calculating routes...";
+  // Show loading state in modern style
+  infoBox.innerHTML = `
+    <div class="card-placeholder">
+      <span class="pulse-icon">⏳</span>
+      <p>Searching destination and calculating routes...</p>
+    </div>
+  `;
 
   try {
     // 3. Geocode the search query using free Nominatim API
@@ -736,7 +742,12 @@ async function searchDestination() {
     const geoData = await geoResponse.json();
 
     if (geoData.length === 0) {
-      infoBox.innerHTML = "Destination not found. Try a more specific name.";
+      infoBox.innerHTML = `
+        <div class="card-placeholder">
+          <span class="pulse-icon">❌</span>
+          <p>Destination not found. Try a more specific name.</p>
+        </div>
+      `;
       return;
     }
 
@@ -744,16 +755,19 @@ async function searchDestination() {
     const destLng = parseFloat(geoData[0].lon);
     const destName = geoData[0].display_name;
 
-    // Add destination marker
-    const destMarker = L.marker([destLat, destLng]).addTo(map)
+    // Remove previous destination marker if it exists
+    if (destMarker) {
+      map.removeLayer(destMarker);
+    }
+
+    // Add new destination marker
+    destMarker = L.marker([destLat, destLng]).addTo(map)
       .bindPopup(`<b>Destination:</b> ${destName}`).openPopup();
 
     // 4. Fetch routing data from free OSRM public API (Driving & Walking)
-    // Fetch driving route
     const drivingRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`);
     const drivingData = await drivingRes.json();
 
-    // Fetch walking route
     const walkingRes = await fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`);
     const walkingData = await walkingRes.json();
 
@@ -767,11 +781,24 @@ async function searchDestination() {
       const walkDistKm = (walkRoute.distance / 1000).toFixed(1);
       const walkHours = (walkRoute.duration / 3600).toFixed(1);
 
-      // Display metrics in info box
+      // Display metrics in modern innovative card layout
       infoBox.innerHTML = `
-        📍 <b>To:</b> ${destName}<br>
-        🚗 <b>Driving:</b> ${driveDistKm} km (~${driveMins} mins)<br>
-        🚶 <b>Walking:</b> ${walkDistKm} km (~${walkHours} hours)
+        <div class="route-results-grid">
+          <div class="destination-header">
+            <span>📍</span>
+            <div><strong>Destination:</strong> ${destName}</div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-pill">
+              <span class="metric-label">🚗 Driving</span>
+              <span class="metric-value">${driveDistKm} km <span style="font-size:0.75rem; color:#aaa;">(~${driveMins} mins)</span></span>
+            </div>
+            <div class="metric-pill">
+              <span class="metric-label">🚶 Walking</span>
+              <span class="metric-value">${walkDistKm} km <span style="font-size:0.75rem; color:#aaa;">(~${walkHours} hrs)</span></span>
+            </div>
+          </div>
+        </div>
       `;
 
       // Remove previous route line if it exists
@@ -788,13 +815,23 @@ async function searchDestination() {
       map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
 
     } else {
-      infoBox.innerHTML = "Could not calculate route path.";
+      infoBox.innerHTML = `
+        <div class="card-placeholder">
+          <span class="pulse-icon">⚠️</span>
+          <p>Could not calculate route path.</p>
+        </div>
+      `;
     }
 
   } catch (error) {
     console.error(error);
-    infoBox.innerHTML = "An error occurred while fetching location data.";
+    infoBox.innerHTML = `
+      <div class="card-placeholder">
+        <span class="pulse-icon">⚠️</span>
+        <p>An error occurred while fetching location data.</p>
+      </div>
+    `;
   }
 }
-   
+
 
