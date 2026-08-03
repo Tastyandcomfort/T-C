@@ -804,16 +804,26 @@ function renderRouteCard() {
   let optionsHtml = '';
   routes.forEach((route, index) => {
     const dist = (route.distance / 1000).toFixed(1);
-    const timeVal = currentMode === 'driving' 
-      ? `${Math.round(route.duration / 60)} mins` 
-      : `${(route.duration / 3600).toFixed(1)} hrs`;
+    
+    // Calculate total minutes for both driving and walking
+    const totalMins = Math.round(route.duration / 60);
+    
+    // Format time nicely: if over 60 mins, show hours and minutes (e.g., "1 hr 15 mins"), otherwise just minutes
+    let timeFormatted = "";
+    if (totalMins >= 60) {
+      const hrs = Math.floor(totalMins / 60);
+      const mins = totalMins % 60;
+      timeFormatted = mins > 0 ? `${hrs} hrs ${mins} mins` : `${hrs} hrs`;
+    } else {
+      timeFormatted = `${totalMins} mins`;
+    }
     
     const label = index === 0 ? "⚡ Shortest" : `🛣️ Option ${index + 1}`;
     
     optionsHtml += `
       <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
         <div style="font-weight:600; color:#ffd700;">${label}</div>
-        <div>${dist} km (~${timeVal})</div>
+        <div>${dist} km (~${timeFormatted})</div>
       </button>
     `;
   });
@@ -838,6 +848,7 @@ function renderRouteCard() {
     </div>
   `;
 }
+
 
 function switchRouteIndex(index, btnElement) {
   document.querySelectorAll('.route-option-btn').forEach(b => b.classList.remove('active-route'));
