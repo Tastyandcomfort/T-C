@@ -805,10 +805,10 @@ function renderRouteCard() {
   routes.forEach((route, index) => {
     const dist = (route.distance / 1000).toFixed(1);
     
-    // Calculate total minutes for both driving and walking
+    // Calculate total minutes for BOTH driving and walking
     const totalMins = Math.round(route.duration / 60);
     
-    // Format time nicely: if over 60 mins, show hours and minutes (e.g., "1 hr 15 mins"), otherwise just minutes
+    // Format time nicely: if over 60 mins, show hours and minutes, otherwise just minutes
     let timeFormatted = "";
     if (totalMins >= 60) {
       const hrs = Math.floor(totalMins / 60);
@@ -848,6 +848,7 @@ function renderRouteCard() {
     </div>
   `;
 }
+
 
 
 function switchRouteIndex(index, btnElement) {
