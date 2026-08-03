@@ -729,60 +729,37 @@ async function searchDestination() {
 }
 
 // Triggered when clicking amenity chips
-async function searchAmenity(amenityKey) {
-  const facility = customAmenities[amenityKey];
-  if (!facility) return;
+async function searchAmenity(amenityType) {
+  const facility = customAmenities[amenityType];
+  
+  if (!facility) {
+    // Fallback if amenity type isn't predefined
+    document.getElementById('destination-input').value = amenityType;
+    fetchRouteData(amenityType, true);
+    return;
+  }
 
+  // Set the search input field to match the selected amenity name
   document.getElementById('destination-input').value = facility.name;
-  await fetchRouteData(facility.query, facility.name);
-}
+  currentDestName = facility.name;
 
-// Universal function that handles Lat/Lng, Plus Codes, and Text Addresses
-async function fetchRouteData(query, customDisplayName = null) {
   const infoBox = document.getElementById('route-info');
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Resolving location and calculating routes...</p>
+      <p>Calculating routes to ${facility.name}...</p>
     </div>
   `;
 
+  if (destMarker) map.removeLayer(destMarker);
+  destMarker = L.marker([facility.lat, facility.lng]).addTo(map)
+    .bindPopup(`<b>${facility.name}</b>`).openPopup();
+
   try {
-    let destLat, destLng, destName;
-
-    // Check if the query is directly a pair of Latitude/Longitude coordinates (e.g., "17.372, 78.541")
-    const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
-    const match = query.match(latLngRegex);
-
-    if (match) {
-      destLat = parseFloat(match[1]);
-      destLng = parseFloat(match[3]);
-      destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
-    } else {
-      // Otherwise, use Nominatim to look up Text Addresses or Plus Codes for free
-      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-      const geoData = await geoRes.json();
-
-      if (geoData.length === 0) {
-        infoBox.innerHTML = `<div class="card-placeholder"><p>Location not found. Try a valid address, Plus Code, or lat/lng.</p></div>`;
-        return;
-      }
-
-      destLat = parseFloat(geoData[0].lat);
-      destLng = parseFloat(geoData[0].lon);
-      destName = customDisplayName || geoData[0].display_name;
-    }
-
-    currentDestName = destName;
-
-    if (destMarker) map.removeLayer(destMarker);
-    destMarker = L.marker([destLat, destLng]).addTo(map)
-      .bindPopup(`<b>${destName}</b>`).openPopup();
-
-    // Fetch driving and walking routes using OSRM
+    // Fetch driving and walking routes directly using the precise hardcoded coordinates
     const [driveRes, walkRes] = await Promise.all([
-      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
-      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`)
+      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${facility.lng},${facility.lat}?overview=full&geometries=geojson&alternatives=true`),
+      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${facility.lng},${facility.lat}?overview=full&geometries=geojson`)
     ]);
 
     const driveData = await driveRes.json();
@@ -811,8 +788,6 @@ async function fetchRouteData(query, customDisplayName = null) {
     infoBox.innerHTML = `<div class="card-placeholder"><p>Error fetching route details.</p></div>`;
   }
 }
-
-
 
 
 function switchMode(mode) {
