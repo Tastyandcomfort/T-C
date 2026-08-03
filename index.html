@@ -633,13 +633,22 @@ T&C does not collect or store your personal data.This website is for information
     <button onclick="searchDestination()">How Fare</button>
   </div>
 
-  <!-- Modern Innovative Route Results Card -->
-  <div id="route-info" class="modern-route-card">
-    <div class="card-placeholder">
-      <span class="pulse-icon">📍</span>
-      <p>Search a destination above to calculate travel details.</p>
-    </div>
+  <!-- Quick Amenity Tiles -->
+<div class="amenities-container">
+  <button class="amenity-chip" onclick="searchAmenity('hospital')">🏥 Hospital</button>
+  <button class="amenity-chip" onclick="searchAmenity('police station')">👮 Police</button>
+  <button class="amenity-chip" onclick="searchAmenity('metro station')">🚇 Metro</button>
+  <button class="amenity-chip" onclick="searchAmenity('bus station')">🚌 Bus Stop</button>
+</div>
+
+<!-- Modern Route Results Card with Multi-Route Selector -->
+<div id="route-info" class="modern-route-card">
+  <div class="card-placeholder">
+    <span class="pulse-icon">📍</span>
+    <p>Search a destination or tap an amenity tile above.</p>
   </div>
+</div>
+
 
 </section>
 
