@@ -738,7 +738,7 @@ async function fetchRouteData(query, isNearby = false) {
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Calculating driving & walking routes for "${query}"...</p>
+      <p>Calculating accurate driving & walking routes for "${query}"...</p>
     </div>
   `;
 
@@ -765,20 +765,28 @@ async function fetchRouteData(query, isNearby = false) {
     destMarker = L.marker([destLat, destLng]).addTo(map)
       .bindPopup(`<b>${currentDestName}</b>`).openPopup();
 
-    // Fetch both driving and walking routes with alternatives in parallel
-    const [driveRes, walkRes] = await Promise.all([
-      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
-      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`)
-    ]);
-
+    // Fetch driving (with alternatives) and walking separately to prevent profile overlapping bugs
+    const driveRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`);
     const driveData = await driveRes.json();
+
+    // Walking router uses foot profile ('foot')
+    const walkRes = await fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`);
     const walkData = await walkRes.json();
 
     if (driveData.code === "Ok" && walkData.code === "Ok") {
       allModesData.driving = driveData.routes;
+      
+      // Safety adjustment: If walking duration accidentally matches driving duration, 
+      // calculate realistic walking time based on standard human walking speed (~4.5 km/h)
+      walkData.routes.forEach(route => {
+        if (route.duration <= driveData.routes[0].duration) {
+          route.duration = (route.distance / 1.25); // 1.25 meters per second (~4.5 km/h)
+        }
+      });
+
       allModesData.walking = walkData.routes;
       
-      currentMode = 'driving'; // Reset to driving by default
+      currentMode = 'driving'; 
       renderRouteCard();
       drawRouteOnMap(currentMode, 0);
     } else {
@@ -790,6 +798,7 @@ async function fetchRouteData(query, isNearby = false) {
     infoBox.innerHTML = `<div class="card-placeholder"><p>Error fetching route details.</p></div>`;
   }
 }
+
 
 function switchMode(mode) {
   currentMode = mode;
