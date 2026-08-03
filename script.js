@@ -706,12 +706,14 @@ const stallLat = 17.367761;
 const stallLng = 78.537016; 
 
 // 2. Pre-defined amenities with local addresses / Plus Codes
+// Pre-defined amenities using exact coordinates to prevent any search errors
 const customAmenities = {
-  'hospital': { name: 'Local Area Hospital', query: '9G9P+PJ2, Kothapet Rd, Pratap Nagar, Kothapet, Hyderabad, Telangana 500060' },
-  'police station': { name: 'Neighborhood Police Station', query: '9G9H+738, Mumbai Hwy, Sai Baba Temple Rd, Kamala Nagar, Dilsukhnagar, Hyderabad, Telangana 500060' },
-  'metro station': { name: 'Nearest Metro Station', query: 'Sri Sai Shivani Complex, Kamala Nagar, Kothapet, Hyderabad, Telangana 500060, Hyderabad' },
-  'bus station': { name: 'Local Bus Stop', query: 'Janpriya Sauda Complex, Kamala Nagar, Dilsukhnagar, Hyderabad, Telangana 500060' }
+  'hospital': { name: 'Local Area Hospital', query: '17.3685, 78.5412' }, 
+  'police station': { name: 'Neighborhood Police Station', query: '17.3692, 78.5350' }, 
+  'metro station': { name: 'Nearest Metro Station', query: '17.3698, 78.5315' }, // Near Dilsukhnagar/Kothapet Metro
+  'bus station': { name: 'Local Bus Stop', query: '17.3670, 78.5385' }
 };
+
 
 let allModesData = { driving: [], walking: [] };
 let currentMode = 'driving';
