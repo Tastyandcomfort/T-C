@@ -713,11 +713,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.marker([stallLat, stallLng]).addTo(map)
   .bindPopup("<b>T&C Stall</b><br>You are here!").openPopup();
 
-let currentRoutes = [];
+let allModesData = { driving: [], walking: [] };
+let currentMode = 'driving'; // default mode
 let routeLayers = [];
 let destMarker = null;
+let currentDestName = "";
 
-// Search text input destination
 async function searchDestination() {
   const query = document.getElementById('destination-input').value;
   if (!query) {
@@ -727,10 +728,9 @@ async function searchDestination() {
   fetchRouteData(query);
 }
 
-// Quick click amenity tiles
 async function searchAmenity(amenityType) {
   document.getElementById('destination-input').value = amenityType;
-  fetchRouteData(amenityType, true); // true indicates a nearby search query centered around/near the region
+  fetchRouteData(amenityType, true);
 }
 
 async function fetchRouteData(query, isNearby = false) {
@@ -738,48 +738,49 @@ async function fetchRouteData(query, isNearby = false) {
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Finding best & alternative routes for "${query}"...</p>
+      <p>Calculating driving & walking routes for "${query}"...</p>
     </div>
   `;
 
   try {
-    let destLat, destLng, destName;
+    let destLat, destLng;
 
-    if (isNearby) {
-      // Search for nearest amenity using bounding box or viewbox around the stall
-      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&lat=${stallLat}&lon=${stallLng}&limit=1`);
-      const geoData = await geoRes.json();
-      if (geoData.length === 0) {
-        infoBox.innerHTML = `<div class="card-placeholder"><p>No nearby ${query} found.</p></div>`;
-        return;
-      }
-      destLat = parseFloat(geoData[0].lat);
-      destLng = parseFloat(geoData[0].lon);
-      destName = geoData[0].display_name;
-    } else {
-      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-      const geoData = await geoRes.json();
-      if (geoData.length === 0) {
-        infoBox.innerHTML = `<div class="card-placeholder"><p>Destination not found.</p></div>`;
-        return;
-      }
-      destLat = parseFloat(geoData[0].lat);
-      destLng = parseFloat(geoData[0].lon);
-      destName = geoData[0].display_name;
+    const geoUrl = isNearby 
+      ? `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&lat=${stallLat}&lon=${stallLng}&limit=1`
+      : `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+
+    const geoRes = await fetch(geoUrl);
+    const geoData = await geoRes.json();
+
+    if (geoData.length === 0) {
+      infoBox.innerHTML = `<div class="card-placeholder"><p>Destination not found.</p></div>`;
+      return;
     }
+
+    destLat = parseFloat(geoData[0].lat);
+    destLng = parseFloat(geoData[0].lon);
+    currentDestName = geoData[0].display_name;
 
     if (destMarker) map.removeLayer(destMarker);
     destMarker = L.marker([destLat, destLng]).addTo(map)
-      .bindPopup(`<b>${destName}</b>`).openPopup();
+      .bindPopup(`<b>${currentDestName}</b>`).openPopup();
 
-    // Requesting alternatives=true from OSRM to get multiple route paths (Shortest/Alternative)
-    const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`);
-    const data = await res.json();
+    // Fetch both driving and walking routes with alternatives in parallel
+    const [driveRes, walkRes] = await Promise.all([
+      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
+      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`)
+    ]);
 
-    if (data.code === "Ok") {
-      currentRoutes = data.routes;
-      renderRouteCard(destName, currentRoutes);
-      drawRouteOnMap(0); // Display the primary (shortest) route by default
+    const driveData = await driveRes.json();
+    const walkData = await walkRes.json();
+
+    if (driveData.code === "Ok" && walkData.code === "Ok") {
+      allModesData.driving = driveData.routes;
+      allModesData.walking = walkData.routes;
+      
+      currentMode = 'driving'; // Reset to driving by default
+      renderRouteCard();
+      drawRouteOnMap(currentMode, 0);
     } else {
       infoBox.innerHTML = `<div class="card-placeholder"><p>Could not calculate route paths.</p></div>`;
     }
@@ -790,19 +791,29 @@ async function fetchRouteData(query, isNearby = false) {
   }
 }
 
-function renderRouteCard(destName, routes) {
+function switchMode(mode) {
+  currentMode = mode;
+  renderRouteCard();
+  drawRouteOnMap(currentMode, 0); // Select first option by default when switching mode
+}
+
+function renderRouteCard() {
   const infoBox = document.getElementById('route-info');
-  
+  const routes = allModesData[currentMode];
+
   let optionsHtml = '';
   routes.forEach((route, index) => {
     const dist = (route.distance / 1000).toFixed(1);
-    const mins = Math.round(route.duration / 60);
-    const label = index === 0 ? "⚡ Shortest Route" : `🛣️ Option ${index + 1}`;
+    const timeVal = currentMode === 'driving' 
+      ? `${Math.round(route.duration / 60)} mins` 
+      : `${(route.duration / 3600).toFixed(1)} hrs`;
+    
+    const label = index === 0 ? "⚡ Shortest" : `🛣️ Option ${index + 1}`;
     
     optionsHtml += `
-      <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRoute(${index}, this)">
+      <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
         <div style="font-weight:600; color:#ffd700;">${label}</div>
-        <div>${dist} km (~${mins} mins)</div>
+        <div>${dist} km (~${timeVal})</div>
       </button>
     `;
   });
@@ -811,9 +822,16 @@ function renderRouteCard(destName, routes) {
     <div class="route-results-grid">
       <div class="destination-header">
         <span>📍</span>
-        <div><strong>Destination:</strong> ${destName}</div>
+        <div><strong>Destination:</strong> ${currentDestName}</div>
       </div>
-      <div style="font-size:0.75rem; color:#8b949e;">Select available driving route options:</div>
+      
+      <!-- Mode Switcher Tabs -->
+      <div class="mode-switcher">
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')">🚗 Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')">🚶 Walking</button>
+      </div>
+
+      <div style="font-size:0.75rem; color:#8b949e;">Select available paths:</div>
       <div class="route-options-group">
         ${optionsHtml}
       </div>
@@ -821,25 +839,20 @@ function renderRouteCard(destName, routes) {
   `;
 }
 
-function switchRoute(index, btnElement) {
-  // Update active button styling
+function switchRouteIndex(index, btnElement) {
   document.querySelectorAll('.route-option-btn').forEach(b => b.classList.remove('active-route'));
   btnElement.classList.add('active-route');
-
-  // Draw selected route on map
-  drawRouteOnMap(index);
+  drawRouteOnMap(currentMode, index);
 }
 
-function drawRouteOnMap(index) {
-  // Clear old route lines
+function drawRouteOnMap(mode, index) {
   routeLayers.forEach(layer => map.removeLayer(layer));
   routeLayers = [];
 
-  const route = currentRoutes[index];
+  const routes = allModesData[mode];
   
-  // Render alternative lines dimmer, and selected line bright green
-  currentRoutes.forEach((r, i) => {
-    const color = i === index ? '#34c759' : '#888888';
+  routes.forEach((r, i) => {
+    const color = i === index ? (mode === 'driving' ? '#34c759' : '#00c7be') : '#888888';
     const weight = i === index ? 5 : 3;
     const opacity = i === index ? 0.9 : 0.4;
 
@@ -850,8 +863,11 @@ function drawRouteOnMap(index) {
     routeLayers.push(layer);
   });
 
-  map.fitBounds(routeLayers[index].getBounds(), { padding: [50, 50] });
+  if (routeLayers[index]) {
+    map.fitBounds(routeLayers[index].getBounds(), { padding: [50, 50] });
+  }
 }
+
 
 
 
