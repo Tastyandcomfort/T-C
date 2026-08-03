@@ -700,77 +700,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // Map updated
+// 1. Stall coordinates
 const stallLat = 17.367761; 
 const stallLng = 78.537016; 
-// 1. Define your stall using a Plus Code or standard coordinates
-const stallPlusCode = ""; // Example Plus Code for your stall
 
-// 2. Pre-defined accurate amenities using Plus Codes
+// 2. Amenities can use Coordinates, Plus Codes, or exact Address text!
 const customAmenities = {
-  'hospital': { name: 'Local Area Hospital', code: '8PFW4V22+X5' },
-  'police station': { name: 'Neighborhood Police Station', code: '8PFW4V2X+22' },
-  'metro station': { name: 'Nearest Metro Station', code: '8PFW4V33+89' },
-  'bus station': { name: 'Local Bus Stop', code: '8PFW4V11+44' }
+  'hospital': { name: 'Local Area Hospital', query: '9G9P+PJ2, Kothapet Rd, Pratap Nagar, Kothapet, Hyderabad, Telangana 500060' }, // Can be lat/lng, plus code, or address
+  'police station': { name: 'Neighborhood Police Station', query: '9G9H+738, Mumbai Hwy, Sai Baba Temple Rd, Kamala Nagar, Dilsukhnagar, Hyderabad, Telangana 500060' }, // Example Plus Code
+  'metro station': { name: 'Nearest Metro Station', query: 'Sri Sai Shivani Complex, Kamala Nagar, Kothapet, Hyderabad, Telangana 500060, Hyderabad' }, // Example Address
+  'bus station': { name: 'Local Bus Stop', query: 'Janpriya Sauda Complex, Kamala Nagar, Dilsukhnagar, Hyderabad, Telangana 500060' }
 };
 
-
-
-const map = L.map('map').setView([stallLat, stallLng], 13);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '© OpenStreetMap contributors'
-}).addTo(map);
-
-L.marker([stallLat, stallLng]).addTo(map)
-  .bindPopup("<b>T&C Stall</b><br>You are here!").openPopup();
-
 let allModesData = { driving: [], walking: [] };
-let currentMode = 'driving'; // default mode
+let currentMode = 'driving';
 let routeLayers = [];
 let destMarker = null;
 let currentDestName = "";
 
+// Triggered when typing in the search bar
 async function searchDestination() {
-  const query = document.getElementById('destination-input').value;
+  const query = document.getElementById('destination-input').value.trim();
   if (!query) {
-    alert("Please enter a destination!");
+    alert("Please enter a destination, coordinates, or Plus Code!");
     return;
   }
-  fetchRouteData(query);
+  await fetchRouteData(query);
 }
 
-async function searchAmenity(amenityType) {
-  const facility = customAmenities[amenityType];
-  
-  if (!facility) {
-    // Fallback if amenity type isn't predefined
-    document.getElementById('destination-input').value = amenityType;
-    fetchRouteData(amenityType, true);
-    return;
-  }
+// Triggered when clicking amenity chips
+async function searchAmenity(amenityKey) {
+  const facility = customAmenities[amenityKey];
+  if (!facility) return;
 
-  // Set the search input field to match the selected amenity name
   document.getElementById('destination-input').value = facility.name;
-  currentDestName = facility.name;
+  await fetchRouteData(facility.query, facility.name);
+}
 
+// Universal function that handles Lat/Lng, Plus Codes, and Text Addresses
+async function fetchRouteData(query, customDisplayName = null) {
   const infoBox = document.getElementById('route-info');
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Calculating routes to ${facility.name}...</p>
+      <p>Resolving location and calculating routes...</p>
     </div>
   `;
 
-  if (destMarker) map.removeLayer(destMarker);
-  destMarker = L.marker([facility.lat, facility.lng]).addTo(map)
-    .bindPopup(`<b>${facility.name}</b>`).openPopup();
-
   try {
-    // Fetch driving and walking routes directly using the precise hardcoded coordinates
+    let destLat, destLng, destName;
+
+    // Check if the query is directly a pair of Latitude/Longitude coordinates (e.g., "17.372, 78.541")
+    const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
+    const match = query.match(latLngRegex);
+
+    if (match) {
+      destLat = parseFloat(match[1]);
+      destLng = parseFloat(match[3]);
+      destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
+    } else {
+      // Otherwise, use Nominatim to look up Text Addresses or Plus Codes for free
+      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+      const geoData = await geoRes.json();
+
+      if (geoData.length === 0) {
+        infoBox.innerHTML = `<div class="card-placeholder"><p>Location not found. Try a valid address, Plus Code, or lat/lng.</p></div>`;
+        return;
+      }
+
+      destLat = parseFloat(geoData[0].lat);
+      destLng = parseFloat(geoData[0].lon);
+      destName = customDisplayName || geoData[0].display_name;
+    }
+
+    currentDestName = destName;
+
+    if (destMarker) map.removeLayer(destMarker);
+    destMarker = L.marker([destLat, destLng]).addTo(map)
+      .bindPopup(`<b>${destName}</b>`).openPopup();
+
+    // Fetch driving and walking routes using OSRM
     const [driveRes, walkRes] = await Promise.all([
-      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${facility.lng},${facility.lat}?overview=full&geometries=geojson&alternatives=true`),
-      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${facility.lng},${facility.lat}?overview=full&geometries=geojson`)
+      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
+      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`)
     ]);
 
     const driveData = await driveRes.json();
@@ -799,6 +811,7 @@ async function searchAmenity(amenityType) {
     infoBox.innerHTML = `<div class="card-placeholder"><p>Error fetching route details.</p></div>`;
   }
 }
+
 
 
 
