@@ -737,7 +737,7 @@ function openMapView() {
   // Force Leaflet to redraw and fill the blank space correctly
   setTimeout(() => {
     map.invalidateSize();
-  }, 150);
+  }, 400);
 }
 
 // Triggered when typing in the search bar
