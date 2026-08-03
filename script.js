@@ -864,6 +864,22 @@ function switchMode(mode) {
   renderRouteCard();
   drawRouteOnMap(currentMode, 0); // Select first option by default when switching mode
 }
+function formatDuration(seconds) {
+  const days = Math.floor(seconds / (3600 * 24));
+  const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+  const minutes = Math.round((seconds % 3600) / 60);
+
+  let parts = [];
+  if (days > 0) {
+    parts.push(`${days} day${days > 1 ? 's' : ''}`);
+  }
+  if (hours > 0 || days > 0) {
+    parts.push(`${hours}h`);
+  }
+  parts.push(`${minutes}min`);
+
+  return parts.join(' ');
+}
 
 function renderRouteCard() {
   const infoBox = document.getElementById('route-info');
