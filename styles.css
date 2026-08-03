@@ -1982,3 +1982,61 @@ body {
   border-color: #ffd700;
   background: rgba(255, 215, 0, 0.08);
 }
+
+
+
+
+/* Mode Switcher Tabs (Driving / Walking) */
+.mode-switcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.mode-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn.active-mode {
+  background: #ffd700;
+  color: #000;
+}
+
+/* Route Options Grid */
+.route-options-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.route-option-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.route-option-btn.active-route {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.08);
+}
+
+
