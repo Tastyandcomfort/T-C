@@ -702,14 +702,17 @@ document.addEventListener("DOMContentLoaded", () => {
 // Map updated
 const stallLat = 17.367761; 
 const stallLng = 78.537016; 
+// 1. Define your stall using a Plus Code or standard coordinates
+const stallPlusCode = ""; // Example Plus Code for your stall
 
-// Pre-defined accurate coordinates for your truly nearest amenities
+// 2. Pre-defined accurate amenities using Plus Codes
 const customAmenities = {
-  'hospital': { name: 'Local Area Hospital / Clinic', lat: 17.3900, lng: 78.4900 },
-  'police station': { name: 'Neighborhood Police Station', lat: 17.3800, lng: 78.4800 },
-  'metro station': { name: 'Nearest Metro Station', lat: 17.3653, lng: 78.5446 },
-  'bus station': { name: 'Local Bus Stop / Terminal', lat: 17.3830, lng: 78.4920 }
+  'hospital': { name: 'Local Area Hospital', code: '8PFW4V22+X5' },
+  'police station': { name: 'Neighborhood Police Station', code: '8PFW4V2X+22' },
+  'metro station': { name: 'Nearest Metro Station', code: '8PFW4V33+89' },
+  'bus station': { name: 'Local Bus Stop', code: '8PFW4V11+44' }
 };
+
 
 
 const map = L.map('map').setView([stallLat, stallLng], 13);
