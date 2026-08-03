@@ -707,7 +707,7 @@ const stallLng = 78.537016;
 const customAmenities = {
   'hospital': { name: 'Local Area Hospital / Clinic', lat: 17.3900, lng: 78.4900 },
   'police station': { name: 'Neighborhood Police Station', lat: 17.3800, lng: 78.4800 },
-  'metro station': { name: 'Nearest Metro Station', lat: 17.3653° N, lng: 78.5446° E },
+  'metro station': { name: 'Nearest Metro Station', lat: 17.3653, lng: 78.5446 },
   'bus station': { name: 'Local Bus Stop / Terminal', lat: 17.3830, lng: 78.4920 }
 };
 
