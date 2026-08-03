@@ -624,24 +624,28 @@ T&C does not collect or store your personal data.This website is for information
 <section id="map-view" class="news-main-container">
   <h3>T&C Stall Route Finder</h3>
   
-  <!-- Search bar underneath map -->
+  <!-- Map Container First -->
+  <div id="map"></div>
+
+  <!-- Search Bar at the Bottom of Map -->
   <div class="map-search-container">
-    <input type="text" id="destination-input" placeholder="Search destination (e.g., Charminar, Hyderabad)...">
+    <input type="text" id="destination-input" placeholder="Search destination (e.g., Lb nagar)...">
     <button onclick="searchDestination()">Find Route</button>
   </div>
 
-  <!-- Map Container -->
-  <div id="map"></div>
-
-  <!-- Distance & Travel Time info box -->
-  <div id="route-info">Enter a destination to calculate distance and travel time.</div>
-
+  <!-- Modern Innovative Route Results Card -->
+  <div id="route-info" class="modern-route-card">
+    <div class="card-placeholder">
+      <span class="pulse-icon">📍</span>
+      <p>Search a destination above to calculate travel details.</p>
+    </div>
+  </div>
 </section>
 
 
 
       
-      <section id="map-view" class="app-section">
+   <!---   <section id="map-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> You Are Here (Coming Soon)</h3>
         
         <div class="visual-map-container luxury-map-height">
@@ -676,7 +680,9 @@ T&C does not collect or store your personal data.This website is for information
           <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand')"><i class="fa-solid fa-taxi"></i> Cab Points</button>
         </div>
       </section>
+--->
 
+      
       <section id="cert-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
         <div class="glass-card cert-container">
