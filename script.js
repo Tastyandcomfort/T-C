@@ -700,20 +700,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // Map updated
-// Your T&C Stall Coordinates
 // 1. Your exact stall coordinates
 const stallLat = 17.367761; 
 const stallLng = 78.537016; 
 
-// 2. Pre-defined amenities with local addresses / Plus Codes
-// Pre-defined amenities using exact coordinates to prevent any search errors
+// 2. Pre-defined amenities using exact coordinates to prevent search errors
 const customAmenities = {
   'hospital': { name: 'Local Area Hospital', query: '17.3685, 78.5412' }, 
   'police station': { name: 'Neighborhood Police Station', query: '17.3692, 78.5350' }, 
-  'metro station': { name: 'Nearest Metro Station', query: '17.3698, 78.5315' }, // Near Dilsukhnagar/Kothapet Metro
+  'metro station': { name: 'Nearest Metro Station', query: '17.3698, 78.5315' }, 
   'bus station': { name: 'Local Bus Stop', query: '17.3670, 78.5385' }
 };
-
 
 let allModesData = { driving: [], walking: [] };
 let currentMode = 'driving';
@@ -732,6 +729,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Add Stall Marker
 L.marker([stallLat, stallLng]).addTo(map)
   .bindPopup('<b>Tasty & Comfort Stall</b>').openPopup();
+
+// 3. Tab click function to fix the half-blank map rendering bug
+function openMapView() {
+  // If you have code that shows your map section/tab, put it here (e.g., document.getElementById('map-view').style.display = 'block';)
+  
+  // Force Leaflet to redraw and fill the blank space correctly
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 150);
+}
 
 // Triggered when typing in the search bar
 async function searchDestination() {
@@ -765,7 +772,6 @@ async function fetchRouteData(query, customDisplayName = null) {
   try {
     let destLat, destLng, destName;
 
-    // Check if query is raw lat/lng coordinates
     const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
     const match = query.match(latLngRegex);
 
@@ -774,7 +780,6 @@ async function fetchRouteData(query, customDisplayName = null) {
       destLng = parseFloat(match[3]);
       destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
     } else {
-      // Otherwise, use Nominatim to look up text addresses or Plus Codes
       const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
       const geoData = await geoRes.json();
 
@@ -794,7 +799,6 @@ async function fetchRouteData(query, customDisplayName = null) {
     destMarker = L.marker([destLat, destLng]).addTo(map)
       .bindPopup(`<b>${destName}</b>`).openPopup();
 
-    // Fetch driving and walking routes using OSRM
     const [driveRes, walkRes] = await Promise.all([
       fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
       fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`)
@@ -808,7 +812,7 @@ async function fetchRouteData(query, customDisplayName = null) {
       
       walkData.routes.forEach(route => {
         if (route.duration <= driveData.routes[0].duration) {
-          route.duration = (route.distance / 1.25); // Realistic walking speed fallback (~4.5 km/h)
+          route.duration = (route.distance / 1.25);
         }
       });
 
@@ -826,6 +830,7 @@ async function fetchRouteData(query, customDisplayName = null) {
     infoBox.innerHTML = `<div class="card-placeholder"><p>Error fetching route details.</p></div>`;
   }
 }
+
 
 // Fix map sizing bug if using hidden tabs/sections
 window.addEventListener('resize', () => { map.invalidateSize(); });
