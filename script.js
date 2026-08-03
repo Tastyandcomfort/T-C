@@ -723,7 +723,7 @@ const map = L.map('map').setView([stallLat, stallLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
-  attribution: '© From New Modern Mission by T&C'
+  attribution: '© from New Modern Mission by T&C'
 }).addTo(map);
 
 // Add Stall Marker
@@ -759,7 +759,7 @@ async function searchAmenity(amenityKey) {
   await fetchRouteData(facility.query, facility.name);
 }
 
-// Universal function that handles Lat/Lng, Plus Codes, and Text Addresses
+// Universal function that handles Lat/Lng, Plus Codes, Text Addresses, and "Near Me" searches
 async function fetchRouteData(query, customDisplayName = null) {
   const infoBox = document.getElementById('route-info');
   infoBox.innerHTML = `
@@ -772,6 +772,7 @@ async function fetchRouteData(query, customDisplayName = null) {
   try {
     let destLat, destLng, destName;
 
+    // 1. Check if query is raw lat/lng coordinates
     const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
     const match = query.match(latLngRegex);
 
@@ -780,11 +781,31 @@ async function fetchRouteData(query, customDisplayName = null) {
       destLng = parseFloat(match[3]);
       destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
     } else {
-      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-      const geoData = await geoRes.json();
+      // 2. Smart handling for "near me" or category queries (e.g., "atm near", "fuel pump", "temple")
+      let searchQuery = query;
+      const lowerQuery = query.toLowerCase();
+
+      // Clean up conversational filler words like "near me" or "near"
+      if (lowerQuery.includes('near')) {
+        searchQuery = lowerQuery.replace(/near\s*me/g, '').replace(/near/g, '').trim();
+      }
+
+      // Append context or use Nominatim's structured viewbox around your stall to find nearby results
+      // viewbox format: left,top,right,bottom (roughly a ~5km box around your stall coordinates)
+      const viewbox = `${stallLng - 0.05},${stallLat + 0.05},${stallLng + 0.05},${stallLat - 0.05}`;
+      const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery + ' Hyderabad')}&viewbox=${viewbox}&bounded=1`;
+
+      const geoRes = await fetch(nominatimUrl);
+      let geoData = await geoRes.json();
+
+      // Fallback: if bounded search returns nothing, search broader in Hyderabad
+      if (geoData.length === 0) {
+        const fallbackRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' Hyderabad')}`);
+        geoData = await fallbackRes.json();
+      }
 
       if (geoData.length === 0) {
-        infoBox.innerHTML = `<div class="card-placeholder"><p>Location not found. Try a valid address, Plus Code, or lat/lng.</p></div>`;
+        infoBox.innerHTML = `<div class="card-placeholder"><p>Location not found. Try a specific place name or valid address.</p></div>`;
         return;
       }
 
@@ -799,6 +820,7 @@ async function fetchRouteData(query, customDisplayName = null) {
     destMarker = L.marker([destLat, destLng]).addTo(map)
       .bindPopup(`<b>${destName}</b>`).openPopup();
 
+    // Fetch driving and walking routes using OSRM
     const [driveRes, walkRes] = await Promise.all([
       fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
       fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`)
@@ -812,7 +834,7 @@ async function fetchRouteData(query, customDisplayName = null) {
       
       walkData.routes.forEach(route => {
         if (route.duration <= driveData.routes[0].duration) {
-          route.duration = (route.distance / 1.25);
+          route.duration = (route.distance / 1.25); // Realistic walking speed fallback
         }
       });
 
@@ -830,6 +852,7 @@ async function fetchRouteData(query, customDisplayName = null) {
     infoBox.innerHTML = `<div class="card-placeholder"><p>Error fetching route details.</p></div>`;
   }
 }
+
 
 
 // Fix map sizing bug if using hidden tabs/sections
