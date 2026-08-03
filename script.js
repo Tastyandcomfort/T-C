@@ -699,4 +699,160 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// Map updated
+const stallLat = 17.3850; 
+const stallLng = 78.4867; 
+
+const map = L.map('map').setView([stallLat, stallLng], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+L.marker([stallLat, stallLng]).addTo(map)
+  .bindPopup("<b>T&C Stall</b><br>You are here!").openPopup();
+
+let currentRoutes = [];
+let routeLayers = [];
+let destMarker = null;
+
+// Search text input destination
+async function searchDestination() {
+  const query = document.getElementById('destination-input').value;
+  if (!query) {
+    alert("Please enter a destination!");
+    return;
+  }
+  fetchRouteData(query);
+}
+
+// Quick click amenity tiles
+async function searchAmenity(amenityType) {
+  document.getElementById('destination-input').value = amenityType;
+  fetchRouteData(amenityType, true); // true indicates a nearby search query centered around/near the region
+}
+
+async function fetchRouteData(query, isNearby = false) {
+  const infoBox = document.getElementById('route-info');
+  infoBox.innerHTML = `
+    <div class="card-placeholder">
+      <span class="pulse-icon">⏳</span>
+      <p>Finding best & alternative routes for "${query}"...</p>
+    </div>
+  `;
+
+  try {
+    let destLat, destLng, destName;
+
+    if (isNearby) {
+      // Search for nearest amenity using bounding box or viewbox around the stall
+      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&lat=${stallLat}&lon=${stallLng}&limit=1`);
+      const geoData = await geoRes.json();
+      if (geoData.length === 0) {
+        infoBox.innerHTML = `<div class="card-placeholder"><p>No nearby ${query} found.</p></div>`;
+        return;
+      }
+      destLat = parseFloat(geoData[0].lat);
+      destLng = parseFloat(geoData[0].lon);
+      destName = geoData[0].display_name;
+    } else {
+      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+      const geoData = await geoRes.json();
+      if (geoData.length === 0) {
+        infoBox.innerHTML = `<div class="card-placeholder"><p>Destination not found.</p></div>`;
+        return;
+      }
+      destLat = parseFloat(geoData[0].lat);
+      destLng = parseFloat(geoData[0].lon);
+      destName = geoData[0].display_name;
+    }
+
+    if (destMarker) map.removeLayer(destMarker);
+    destMarker = L.marker([destLat, destLng]).addTo(map)
+      .bindPopup(`<b>${destName}</b>`).openPopup();
+
+    // Requesting alternatives=true from OSRM to get multiple route paths (Shortest/Alternative)
+    const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`);
+    const data = await res.json();
+
+    if (data.code === "Ok") {
+      currentRoutes = data.routes;
+      renderRouteCard(destName, currentRoutes);
+      drawRouteOnMap(0); // Display the primary (shortest) route by default
+    } else {
+      infoBox.innerHTML = `<div class="card-placeholder"><p>Could not calculate route paths.</p></div>`;
+    }
+
+  } catch (err) {
+    console.error(err);
+    infoBox.innerHTML = `<div class="card-placeholder"><p>Error fetching route details.</p></div>`;
+  }
+}
+
+function renderRouteCard(destName, routes) {
+  const infoBox = document.getElementById('route-info');
+  
+  let optionsHtml = '';
+  routes.forEach((route, index) => {
+    const dist = (route.distance / 1000).toFixed(1);
+    const mins = Math.round(route.duration / 60);
+    const label = index === 0 ? "⚡ Shortest Route" : `🛣️ Option ${index + 1}`;
     
+    optionsHtml += `
+      <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRoute(${index}, this)">
+        <div style="font-weight:600; color:#ffd700;">${label}</div>
+        <div>${dist} km (~${mins} mins)</div>
+      </button>
+    `;
+  });
+
+  infoBox.innerHTML = `
+    <div class="route-results-grid">
+      <div class="destination-header">
+        <span>📍</span>
+        <div><strong>Destination:</strong> ${destName}</div>
+      </div>
+      <div style="font-size:0.75rem; color:#8b949e;">Select available driving route options:</div>
+      <div class="route-options-group">
+        ${optionsHtml}
+      </div>
+    </div>
+  `;
+}
+
+function switchRoute(index, btnElement) {
+  // Update active button styling
+  document.querySelectorAll('.route-option-btn').forEach(b => b.classList.remove('active-route'));
+  btnElement.classList.add('active-route');
+
+  // Draw selected route on map
+  drawRouteOnMap(index);
+}
+
+function drawRouteOnMap(index) {
+  // Clear old route lines
+  routeLayers.forEach(layer => map.removeLayer(layer));
+  routeLayers = [];
+
+  const route = currentRoutes[index];
+  
+  // Render alternative lines dimmer, and selected line bright green
+  currentRoutes.forEach((r, i) => {
+    const color = i === index ? '#34c759' : '#888888';
+    const weight = i === index ? 5 : 3;
+    const opacity = i === index ? 0.9 : 0.4;
+
+    const layer = L.geoJSON(r.geometry, {
+      style: { color: color, weight: weight, opacity: opacity }
+    }).addTo(map);
+
+    routeLayers.push(layer);
+  });
+
+  map.fitBounds(routeLayers[index].getBounds(), { padding: [50, 50] });
+}
+
+
+
+
