@@ -700,8 +700,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // Map updated
-const stallLat = 17.3850; 
-const stallLng = 78.4867; 
+const stallLat = 17.367761; 
+const stallLng = 78.537016; 
 
 const map = L.map('map').setView([stallLat, stallLng], 13);
 
