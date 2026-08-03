@@ -723,7 +723,7 @@ const map = L.map('map').setView([stallLat, stallLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
-  attribution: '© from New Modern Mission by T&C'
+  attribution: 'From New Modern Mission by T&C'
 }).addTo(map);
 
 // Add Stall Marker
@@ -886,7 +886,7 @@ function renderRouteCard() {
     // Format duration nicely using the day/hour/minute helper function
     const timeFormatted = formatDuration(route.duration);
     
-    const label = index === 0 ? "⚡ Shortest" : `🛣️ Option ${index + 1}`;
+    const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
     
     optionsHtml += `
       <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -909,7 +909,7 @@ function renderRouteCard() {
         <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')">🚶 Walking</button>
       </div>
 
-      <div style="font-size:0.75rem; color:#8b949e;">Select available paths:</div>
+      <div style="font-size:0.75rem; color:#8b949e;">Route suggestion:</div>
       <div class="route-options-group">
         ${optionsHtml}
       </div>
