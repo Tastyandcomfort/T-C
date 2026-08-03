@@ -700,5 +700,101 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     
-          
+       // 1. Define your stall's coordinates (Change these to your actual location)
+const stallLat = 17.3850; 
+const stallLng = 78.4867; 
+
+// 2. Initialize the Leaflet Map centered at your stall
+const map = L.map('map').setView([stallLat, stallLng], 13);
+
+// Add free OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+// Add a marker for your T&C Stall
+const stallMarker = L.marker([stallLat, stallLng]).addTo(map)
+  .bindPopup("<b>T&C Stall</b><br>You are here!").openPopup();
+
+let routeLayer = null; // Stores the current route line on the map
+
+async function searchDestination() {
+  const query = document.getElementById('destination-input').value;
+  const infoBox = document.getElementById('route-info');
+
+  if (!query) {
+    alert("Please enter a destination!");
+    return;
+  }
+
+  infoBox.innerHTML = "Searching destination and calculating routes...";
+
+  try {
+    // 3. Geocode the search query using free Nominatim API
+    const geoResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+    const geoData = await geoResponse.json();
+
+    if (geoData.length === 0) {
+      infoBox.innerHTML = "Destination not found. Try a more specific name.";
+      return;
+    }
+
+    const destLat = parseFloat(geoData[0].lat);
+    const destLng = parseFloat(geoData[0].lon);
+    const destName = geoData[0].display_name;
+
+    // Add destination marker
+    const destMarker = L.marker([destLat, destLng]).addTo(map)
+      .bindPopup(`<b>Destination:</b> ${destName}`).openPopup();
+
+    // 4. Fetch routing data from free OSRM public API (Driving & Walking)
+    // Fetch driving route
+    const drivingRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`);
+    const drivingData = await drivingRes.json();
+
+    // Fetch walking route
+    const walkingRes = await fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`);
+    const walkingData = await walkingRes.json();
+
+    if (drivingData.code === "Ok" && walkingData.code === "Ok") {
+      const driveRoute = drivingData.routes[0];
+      const walkRoute = walkingData.routes[0];
+
+      const driveDistKm = (driveRoute.distance / 1000).toFixed(1);
+      const driveMins = Math.round(driveRoute.duration / 60);
+
+      const walkDistKm = (walkRoute.distance / 1000).toFixed(1);
+      const walkHours = (walkRoute.duration / 3600).toFixed(1);
+
+      // Display metrics in info box
+      infoBox.innerHTML = `
+        📍 <b>To:</b> ${destName}<br>
+        🚗 <b>Driving:</b> ${driveDistKm} km (~${driveMins} mins)<br>
+        🚶 <b>Walking:</b> ${walkDistKm} km (~${walkHours} hours)
+      `;
+
+      // Remove previous route line if it exists
+      if (routeLayer) {
+        map.removeLayer(routeLayer);
+      }
+
+      // Draw route line on map (using driving geometry)
+      routeLayer = L.geoJSON(driveRoute.geometry, {
+        style: { color: '#34c759', weight: 5, opacity: 0.8 }
+      }).addTo(map);
+
+      // Adjust map view to fit both the stall and the destination
+      map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+
+    } else {
+      infoBox.innerHTML = "Could not calculate route path.";
+    }
+
+  } catch (error) {
+    console.error(error);
+    infoBox.innerHTML = "An error occurred while fetching location data.";
+  }
+}
+   
 
