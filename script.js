@@ -710,8 +710,9 @@ const stallLng = 78.537016;
 
 // 2. Pre-defined amenities using exact coordinates to prevent search errors
 const customAmenities = {
-  'hospital': { name: 'Near Hospital', query: '17.369313, 78.536573' }, 
-  'police station': { name: 'Near Police Station', query: '17.368289, 78.527748' }, 
+  'hospital': { name: 'Near Hospital', query: '17.369313, 78.536573' },
+  'police station': { name: 'Near Police Station', query: '17.368289, 78.527748' },
+  'fire station': { name: 'Near Fire Station', query: '17.368435, 78.501937' },
   'metro station': { name: 'Near Metro Station', query: '17.368154, 78.536516' }, 
   'bus station': { name: 'Near Bus Stop', query: '17.368161, 78.534952' },
   'atm': { name: 'Near by 24*7 ATMs', query: '17.368727, 78.533186' },
