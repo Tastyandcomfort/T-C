@@ -2106,7 +2106,7 @@ body {
 .map-side-ticker {
   display: inline-flex;
   align-items: center;
-  width: 60%;
+  width: 70%;
   box-sizing: border-box;
   overflow: hidden;
   white-space: nowrap;
@@ -2121,7 +2121,7 @@ body {
 
 .map-side-ticker .ticker-text-wrap {
   overflow: hidden;
-  width: 60%;
+  width: 70%;
   white-space: nowrap;
 }
 
@@ -2139,18 +2139,18 @@ body {
 /* Leaflet attribution text takes up the remaining 30% */
 .leaflet-attribution-flag {
   display: inline-block;
-  vertical-align: middle;
+  horizontal-align: middle;
 }
 
 .leaflet-control-attribution a {
   display: inline-block;
-  width: 40%;
-  text-align: right;
+  width: 30%;
+  text-align: left;
   box-sizing: border-box;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  vertical-align: middle;
+  horizontal-align: middle;
 }
 
 @keyframes marqueeScroll {
