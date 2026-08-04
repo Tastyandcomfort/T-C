@@ -2058,6 +2058,7 @@ body {
 .ticker-icon {
   font-size: 1rem;
   margin-right: 8px;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6)); /* Gives it a matching glowing yellow aura */
   animation: pulseIcon 2s infinite;
 }
 
@@ -2076,7 +2077,6 @@ body {
   margin: 0;
 }
 
-/* Smooth continuous scrolling animation */
 @keyframes marqueeScroll {
   0% {
     transform: translateX(100%);
@@ -2090,6 +2090,5 @@ body {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.6; transform: scale(0.9); }
 }
-
 
 
