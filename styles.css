@@ -2092,21 +2092,30 @@ body {
 }
 
 /*Map Caution*/
+/* Force the Leaflet attribution box to span the full width cleanly */
+.leaflet-control-attribution {
+  display: flex !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  margin: 0 !important;
+  padding: 2px 4px !important;
+}
+
+/* Ticker takes up exactly 70% of the width */
 .map-side-ticker {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 1px 4px;
-  margin-right: 8px;
-  border-radius: 2px;
-  vertical-align: middle;
-  max-width: 60vw; /* Keeps it perfectly proportioned to mobile screen width */
+  width: 70%;
   box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 .map-side-ticker .ticker-icon {
   font-size: 0.7rem;
-  margin-right: 3px;
+  margin-right: 4px;
   flex-shrink: 0;
 }
 
@@ -2127,8 +2136,24 @@ body {
   white-space: nowrap;
 }
 
+/* Leaflet attribution text takes up the remaining 30% */
+.leaflet-attribution-flag {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.leaflet-control-attribution a {
+  display: inline-block;
+  width: 30%;
+  text-align: right;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 @keyframes marqueeScroll {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
-
