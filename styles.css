@@ -2173,16 +2173,17 @@ body {
   overflow: hidden !important;
 }
 
-/* Forces the blur effect using backdrop-filter */
 .bass-blur-container .blur-overlay {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  backdrop-filter: blur(12px) !important; /* Adjust blur intensity here (e.g., 8px, 15px) */
-  -webkit-backdrop-filter: blur(12px) !important;
-  background: rgba(0, 0, 0, 0.1) !important; /* Optional dark tint */
-  pointer-events: none !important; /* Allows you to still click play/pause on the video */
+  /* Adding a visible background tint forces the blur effect to render over the iframe */
+  background: rgba(15, 15, 15, 0.4) !important; 
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  pointer-events: none !important;
   z-index: 10 !important;
 }
+
