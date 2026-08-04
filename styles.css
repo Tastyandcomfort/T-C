@@ -2095,11 +2095,13 @@ body {
 .map-side-ticker {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 0 4px;
-  margin-right: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1px 4px;
+  margin-right: 8px;
   border-radius: 2px;
   vertical-align: middle;
+  max-width: 50vw; /* Keeps it perfectly proportioned to mobile screen width */
+  box-sizing: border-box;
 }
 
 .map-side-ticker .ticker-icon {
@@ -2110,17 +2112,17 @@ body {
 
 .map-side-ticker .ticker-text-wrap {
   overflow: hidden;
-  max-width: 160px; /* Limits the scrolling window width so it fits nicely */
+  width: 100%;
   white-space: nowrap;
 }
 
 .map-side-ticker .ticker-text {
   display: inline-block;
   color: #333333;
-  font-size: 11px;
+  font-size: 10.5px;
   font-family: Helvetica, Arial, sans-serif;
   font-weight: normal;
-  animation: marqueeScroll 16s linear infinite;
+  animation: marqueeScroll 18s linear infinite;
   margin: 0;
   white-space: nowrap;
 }
@@ -2129,5 +2131,4 @@ body {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
-
 
