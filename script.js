@@ -419,7 +419,7 @@ function setMode(mode, element) {
             title.innerText = "NASA";
             dot.style.display = "inline-block";
             views.video.style.display = 'block';
-            players.news.src = "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1";
+            players.news.src = "https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1";
         } 
         else if (mode === 'airport') {
             title.innerText = "Airside";
