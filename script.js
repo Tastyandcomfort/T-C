@@ -712,7 +712,7 @@ const stallLng = 78.537016;
 const customAmenities = {
   'hospital': { name: 'Near Hospital', query: '17.369313, 78.536573' }, 
   'police station': { name: 'Near Police Station', query: '17.368289, 78.527748' }, 
-  'metro station': { name: 'Near Metro Station', query: '17.368346, 78.536100' }, 
+  'metro station': { name: 'Near Metro Station', query: '17.368154, 78.536516' }, 
   'bus station': { name: 'Near Bus Stop', query: '17.368161, 78.534952' },
   'atm': { name: 'Near by 24*7 ATMs', query: '17.368727, 78.533186' },
   'gas station': { name: 'Near Petrol Bunk', query: '17.367467, 78.539245' }
