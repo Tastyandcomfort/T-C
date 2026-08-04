@@ -640,13 +640,7 @@ T&C does not collect or store your personal data.This website is for information
     <div id="map"></div>
     
     <!-- Compact Side Ticker Bar inside the map -->
-    <div class="map-side-ticker">
-      <span class="ticker-icon">🌎</span>
-      <div class="ticker-text-wrap">
-        <p class="ticker-text">Users are advised by T&C: You are here map is customized by T&C only for its customers internal purposes, does not support for rerouting/navigation.</p>
-      </div>
-    </div>
-  </div>
+    
 
   
   <!-- Search Bar -->
@@ -1060,6 +1054,26 @@ Smart Headphones Reminder Modal
     }, 'google_translate_element');
   }
 </script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const attributionControl = document.querySelector('.leaflet-control-attribution');
+    if (attributionControl) {
+      const tickerHtml = `
+        <span class="map-side-ticker">
+          <span class="ticker-icon">🌎</span>
+          <span class="ticker-text-wrap">
+            <span class="ticker-text">Users are advised by T&C: You are here map is customized by T&C only for its customers internal purposes, does not support for rerouting/navigation.</span>
+          </span>
+        </span>
+      `;
+      // Prepend it right before "Leaflet | From New Modern Mission..."
+      attributionControl.insertAdjacentHTML('afterbegin', tickerHtml);
+    }
+  });
+</script>
+
+  
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
 </script>
 
