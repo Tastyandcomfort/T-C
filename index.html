@@ -1091,27 +1091,39 @@ Smart Headphones Reminder Modal
   function checkHeadphonesTicker() {
     if (!tickerBar) return;
     
-    // Find the currently active view
+    // Find if any video/media view is currently visible
     const videoViews = ['video-view', 'live-view', 'wildlife-view', 'sports-view', 'music-view', 'nasa-view', 'airport-view', 'hindu-view', 'muslim-view', 'christian-view', 'law-view', 'file-view'];
-    let activeViewId = videoViews.find(id => {
+    const isActiveVideoView = videoViews.some(id => {
       const el = document.getElementById(id);
       return el && el.style.display !== 'none';
     });
 
-    // If any video/media view is open, show the headphones ticker reminder
-    if (activeViewId) {
+    // Show ticker only if a video view is active AND it hasn't been manually dismissed/unmuted
+    if (isActiveVideoView && !tickerBar.dataset.unmuted) {
       tickerBar.style.display = 'flex';
     } else {
-      // Hide if on text headlines or other non-video views
       tickerBar.style.display = 'none';
     }
   }
 
-  // Hook into your existing setMode function if it exists, or listen to button clicks
+  // Make the ticker clickable so tapping it unmunts/dismisses it
+  if (tickerBar) {
+    tickerBar.style.cursor = 'pointer';
+    tickerBar.title = "Click to dismiss / Audio unmuted";
+    tickerBar.addEventListener('click', () => {
+      // Mark as unmuted/dismissed and hide immediately
+      tickerBar.dataset.unmuted = 'true';
+      tickerBar.style.display = 'none';
+    });
+  }
+
+  // Reset the dismissal state whenever the user switches channels/tabs
   const viewButtons = document.querySelectorAll('.view-selector button');
   viewButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Small timeout to allow the view to toggle display style first
+      if (tickerBar) {
+        delete tickerBar.dataset.unmuted; // Reset so ticker can show on the next video if needed
+      }
       setTimeout(checkHeadphonesTicker, 50);
     });
   });
@@ -1119,6 +1131,7 @@ Smart Headphones Reminder Modal
   // Initial check on load
   checkHeadphonesTicker();
 });
+
 
 </script>
   
