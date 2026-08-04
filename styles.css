@@ -2094,28 +2094,23 @@ body {
 /*Map Caution*/
 .map-side-ticker {
   position: absolute;
-  bottom: 2px;
-  left: 4px;
+  bottom: 0px;
+  left: 0px;
   z-index: 999;
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: rgba(13, 17, 23, 0.85);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
-  padding: 2px 6px;
-  max-width: 55%;
+  background: rgba(255, 255, 255, 0.85); /* Matches Leaflet's light background */
+  padding: 2px 5px;
+  max-width: 60%;
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .map-side-ticker .ticker-icon {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   margin-right: 4px;
   flex-shrink: 0;
-  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6));
 }
 
 .map-side-ticker .ticker-text-wrap {
@@ -2126,15 +2121,15 @@ body {
 
 .map-side-ticker .ticker-text {
   display: inline-block;
-  color: #ffd700;
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.2px;
-  animation: marqueeScroll 14s linear infinite;
+  color: #333333; /* Matches Leaflet's dark text color */
+  font-size: 11px; /* Matches Leaflet's exact font size */
+  font-family: Helvetica, Arial, sans-serif; /* Matches Leaflet's font family */
+  font-weight: normal;
+  letter-spacing: normal;
+  animation: marqueeScroll 18s linear infinite;
   margin: 0;
   white-space: nowrap;
 }
-
 
 
 
