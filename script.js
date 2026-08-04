@@ -957,13 +957,14 @@ function drawRouteOnMap(mode, index) {
 
 // 🎧 headphones pop-up
 // Track whether we already reminded them in this browser session
+let hasShownHeadphones = false;
+
 function checkAndShowHeadphonesNotice() {
-  // If they already acknowledged it during this session, don't spam them again
-  const alreadyNotified = sessionStorage.getItem('headphones_reminded');
-  if (alreadyNotified === 'true') return;
+  if (hasShownHeadphones) return; // Only show once per page load
 
   const modal = document.getElementById('smart-headphones-popup');
   if (modal) {
+    hasShownHeadphones = true;
     modal.style.display = 'block';
 
     // Smart Auto-dismiss: hide automatically after 10 seconds if they don't click anything
@@ -977,10 +978,6 @@ function dismissHeadphonesNotice(rememberChoice) {
   const modal = document.getElementById('smart-headphones-popup');
   if (modal) {
     modal.style.display = 'none';
-    if (rememberChoice) {
-      // Remember for the rest of the session so it doesn't pop up on every single video switch
-      sessionStorage.setItem('headphones_reminded', 'true');
-    }
   }
 }
 
