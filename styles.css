@@ -2106,7 +2106,7 @@ body {
 .map-side-ticker {
   display: inline-flex;
   align-items: center;
-  width: 70%;
+  width: 60%;
   box-sizing: border-box;
   overflow: hidden;
   white-space: nowrap;
@@ -2121,7 +2121,7 @@ body {
 
 .map-side-ticker .ticker-text-wrap {
   overflow: hidden;
-  width: 100%;
+  width: 60%;
   white-space: nowrap;
 }
 
@@ -2157,3 +2157,6 @@ body {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
+
+
+
