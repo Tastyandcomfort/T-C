@@ -949,6 +949,33 @@ function drawRouteOnMap(mode, index) {
 }
 
 
+// 🎧 headphones pop-up
+// Track whether we already reminded them in this browser session
+function checkAndShowHeadphonesNotice() {
+  // If they already acknowledged it during this session, don't spam them again
+  const alreadyNotified = sessionStorage.getItem('headphones_reminded');
+  if (alreadyNotified === 'true') return;
 
+  const modal = document.getElementById('smart-headphones-popup');
+  if (modal) {
+    modal.style.display = 'block';
+
+    // Smart Auto-dismiss: hide automatically after 6 seconds if they don't click anything
+    setTimeout(() => {
+      dismissHeadphonesNotice(false);
+    }, 6000);
+  }
+}
+
+function dismissHeadphonesNotice(rememberChoice) {
+  const modal = document.getElementById('smart-headphones-popup');
+  if (modal) {
+    modal.style.display = 'none';
+    if (rememberChoice) {
+      // Remember for the rest of the session so it doesn't pop up on every single video switch
+      sessionStorage.setItem('headphones_reminded', 'true');
+    }
+  }
+}
 
 
