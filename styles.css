@@ -2039,4 +2039,57 @@ body {
   background: rgba(255, 215, 0, 0.08);
 }
 
+/* Audio caution*/
+.audio-ticker-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(22, 27, 34, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-top: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ticker-icon {
+  font-size: 1rem;
+  margin-right: 8px;
+  animation: pulseIcon 2s infinite;
+}
+
+.ticker-text-wrap {
+  overflow: hidden;
+  width: 100%;
+}
+
+.ticker-text {
+  display: inline-block;
+  color: #ffd700;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  animation: marqueeScroll 16s linear infinite;
+  margin: 0;
+}
+
+/* Smooth continuous scrolling animation */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes pulseIcon {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.9); }
+}
+
+
 
