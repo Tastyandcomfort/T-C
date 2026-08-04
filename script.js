@@ -417,10 +417,10 @@ function setMode(mode, element) {
             players.music.src = "https://www.youtube.com/embed/-aTWDnQttks?autoplay=1&mute=1";
         }
           else if (mode === 'bass') {
-            title.innerText = "Bass Lover";
+            title.innerText = "Bass Boosted";
             dot.style.display = "inline-block";
             views.video.style.display = 'block';
-            players.news.src = "https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1";
+            players.news.src = "https://www.youtube.com/embed/tIH92rdousA?autoplay=1&mute=1";
         } 
         else if (mode === 'nasa') {
             title.innerText = "NASA";
