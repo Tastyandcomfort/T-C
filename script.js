@@ -714,8 +714,8 @@ const customAmenities = {
   'police station': { name: 'Near Police Station', query: '17.368289, 78.527748' }, 
   'metro station': { name: 'Near Metro Station', query: '17.368346, 78.536100' }, 
   'bus station': { name: 'Near Bus Stop', query: '17.368161, 78.534952' },
-  'atm': { name: 'Near by 24/7 ATMs', query: '17.368727, 78.533186' },
-  'gas station': { name: 'Near fuel bunk', query: '17.367117, 78.541359' }
+  'atm': { name: 'Near by 24*7 ATMs', query: '17.368727, 78.533186' },
+  'gas station': { name: 'Near Petrol Bunk', query: '17.367467, 78.539245' }
 };
 
 let allModesData = { driving: [], walking: [] };
