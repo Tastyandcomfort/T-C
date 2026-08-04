@@ -1063,20 +1063,24 @@ Smart Headphones Reminder Modal
 
 <script>
   window.addEventListener('DOMContentLoaded', () => {
-    const attributionControl = document.querySelector('.leaflet-control-attribution');
-    if (attributionControl) {
-      const tickerHtml = `
-        <span class="map-side-ticker">
-          <span class="ticker-icon">🌎</span>
-          <span class="ticker-text-wrap">
-            <span class="ticker-text">Users are advised by T&C: You are here map is customized by T&C only for its customers internal purposes, does not support for rerouting/navigation.</span>
-          </span>
+  const attributionControl = document.querySelector('.leaflet-control-attribution');
+  if (attributionControl && !document.querySelector('.map-side-ticker')) {
+    // Save existing attribution text/links (e.g., "Leaflet | From New Modern Mission")
+    const existingContent = attributionControl.innerHTML;
+    
+    const combinedHtml = `
+      <span class="map-side-ticker">
+        <span class="ticker-icon">🌎</span>
+        <span class="ticker-text-wrap">
+          <span class="ticker-text">Users are advised by T&C: You are here map is customized by T&C only for its customers internal purposes, does not support for rerouting/navigation.</span>
         </span>
-      `;
-      // Prepend it right before "Leaflet | From New Modern Mission..."
-      attributionControl.insertAdjacentHTML('afterbegin', tickerHtml);
-    }
-  });
+      </span>
+      <span>${existingContent}</span>
+    `;
+    attributionControl.innerHTML = combinedHtml;
+  }
+});
+
 </script>
 
   
