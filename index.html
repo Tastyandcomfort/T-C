@@ -1084,6 +1084,44 @@ Smart Headphones Reminder Modal
 
 </script>
 
+<script>
+   window.addEventListener('DOMContentLoaded', () => {
+  const tickerBar = document.getElementById('headphones-ticker');
+  
+  function checkHeadphonesTicker() {
+    if (!tickerBar) return;
+    
+    // Find the currently active view
+    const videoViews = ['video-view', 'live-view', 'wildlife-view', 'sports-view', 'music-view', 'nasa-view', 'airport-view', 'hindu-view', 'muslim-view', 'christian-view', 'law-view', 'file-view'];
+    let activeViewId = videoViews.find(id => {
+      const el = document.getElementById(id);
+      return el && el.style.display !== 'none';
+    });
+
+    // If any video/media view is open, show the headphones ticker reminder
+    if (activeViewId) {
+      tickerBar.style.display = 'flex';
+    } else {
+      // Hide if on text headlines or other non-video views
+      tickerBar.style.display = 'none';
+    }
+  }
+
+  // Hook into your existing setMode function if it exists, or listen to button clicks
+  const viewButtons = document.querySelectorAll('.view-selector button');
+  viewButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Small timeout to allow the view to toggle display style first
+      setTimeout(checkHeadphonesTicker, 50);
+    });
+  });
+
+  // Initial check on load
+  checkHeadphonesTicker();
+});
+
+</script>
+  
   
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
 </script>
