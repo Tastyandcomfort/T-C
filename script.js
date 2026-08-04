@@ -710,13 +710,13 @@ const stallLng = 78.537016;
 
 // 2. Pre-defined amenities using exact coordinates to prevent search errors
 const customAmenities = {
-  'hospital': { name: 'Near Hospital', query: '17.369313, 78.536573' },
-  'police station': { name: 'Near Police Station', query: '17.368289, 78.527748' },
-  'fire station': { name: 'Near Fire Station', query: '17.368435, 78.501937' },
-  'metro station': { name: 'Near Metro Station', query: '17.368154, 78.536516' }, 
-  'bus station': { name: 'Near Bus Stop', query: '17.368161, 78.534952' },
-  'atm': { name: 'Near by 24*7 ATMs', query: '17.368727, 78.533186' },
-  'gas station': { name: 'Near Petrol Bunk', query: '17.367467, 78.539245' }
+  'hospital': { name: 'TIMS Hospital', query: '17.369313, 78.536573' },
+  'police station': { name: 'Saroor Nagar Police Station', query: '17.368289, 78.527748' },
+  'fire station': { name: 'Malakpet Fire Station', query: '17.368435, 78.501937' },
+  'metro station': { name: 'Chaitanyapuri Metro Station', query: '17.368154, 78.536516' }, 
+  'bus station': { name: 'Bus Stop infront of Gautham Electrical Shop', query: '17.368161, 78.534952' },
+  'atm': { name: '24*7 ATMs of SBI/ICICI/DCB', query: '17.368727, 78.533186' },
+  'gas station': { name: 'Bharat Petroleum Bunk', query: '17.367467, 78.539245' }
 };
 
 let allModesData = { driving: [], walking: [] };
