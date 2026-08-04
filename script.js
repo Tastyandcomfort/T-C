@@ -730,7 +730,7 @@ const map = L.map('map').setView([stallLat, stallLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
-  attribution: 'From New Modern Mission by T&C'
+  attribution: 'New Modern Mission by T&C'
 }).addTo(map);
 
 // Add Stall Marker
