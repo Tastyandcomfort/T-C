@@ -354,6 +354,7 @@ function setMode(mode, element) {
         wildlife: document.getElementById('wildlife-player'),
         sports: document.getElementById('sports-player'),
         music: document.getElementById('music-player'),
+        bass: document.getElementById('bass-player'),
         nasa: document.getElementById('nasa-video-player'),
         airport: document.getElementById('airport-player'),
         hindu: document.getElementById('hindu-player'),
@@ -410,10 +411,17 @@ function setMode(mode, element) {
         }
         else if (mode === 'music') {
             title.innerText = "Music";
-            dot.style.display = "inline-block";
+            dot.style.display = "inline-block"; 
             // Fixed typo here to properly target views.music instead of views.sports
             if (views.music) views.music.style.display = 'block';
             players.music.src = "https://www.youtube.com/embed/-aTWDnQttks?autoplay=1&mute=1";
+        }
+          else if (mode === 'bass') {
+            title.innerText = "Bass Lover";
+            dot.style.display = "inline-block"; 
+            // Fixed typo here to properly target views.music instead of views.sports
+            if (views.bass) views.bass.style.display = 'block';
+            players.bass.src = "https://www.youtube.com/embed/NW4pceuO9Zw?autoplay=1&mute=1";
         }
         else if (mode === 'nasa') {
             title.innerText = "NASA";
