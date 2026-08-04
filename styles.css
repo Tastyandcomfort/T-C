@@ -2100,7 +2100,7 @@ body {
   margin-right: 8px;
   border-radius: 2px;
   vertical-align: middle;
-  max-width: 70vw; /* Keeps it perfectly proportioned to mobile screen width */
+  max-width: 60vw; /* Keeps it perfectly proportioned to mobile screen width */
   box-sizing: border-box;
 }
 
@@ -2112,7 +2112,7 @@ body {
 
 .map-side-ticker .ticker-text-wrap {
   overflow: hidden;
-  width: 70%;
+  width: 100%;
   white-space: nowrap;
 }
 
