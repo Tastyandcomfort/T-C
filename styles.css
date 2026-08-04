@@ -2167,4 +2167,15 @@ body {
 }
 
 
+/* Custom blur effect for the Bass Lovers video view */
+.bass-blur-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.bass-blur-wrapper iframe {
+  filter: blur(12px) !important; /* Adjust pixel strength (e.g., 8px, 15px) */
+  -webkit-filter: blur(12px) !important;
+  pointer-events: auto; /* Allows interaction if needed */
+}
 
