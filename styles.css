@@ -2091,4 +2091,42 @@ body {
   50% { opacity: 0.6; transform: scale(0.9); }
 }
 
+/*Map Caution*/
+.map-ticker-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(22, 27, 34, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-top: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.map-ticker-bar .ticker-icon {
+  font-size: 1rem;
+  margin-right: 8px;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+}
+
+.map-ticker-bar .ticker-text-wrap {
+  overflow: hidden;
+  width: 100%;
+}
+
+.map-ticker-bar .ticker-text {
+  display: inline-block;
+  color: #ffd700;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  animation: marqueeScroll 16s linear infinite;
+  margin: 0;
+}
+
+
 
