@@ -2168,14 +2168,21 @@ body {
 
 
 /* Custom blur effect for the Bass Lovers video view */
-.bass-blur-wrapper {
-  position: relative;
-  overflow: hidden;
+.bass-blur-container {
+  position: relative !important;
+  overflow: hidden !important;
 }
 
-.bass-blur-wrapper iframe {
-  filter: blur(12px) !important; /* Adjust pixel strength (e.g., 8px, 15px) */
-  -webkit-filter: blur(12px) !important;
-  pointer-events: auto; /* Allows interaction if needed */
+/* Forces the blur effect using backdrop-filter */
+.bass-blur-container .blur-overlay {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  backdrop-filter: blur(12px) !important; /* Adjust blur intensity here (e.g., 8px, 15px) */
+  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(0, 0, 0, 0.1) !important; /* Optional dark tint */
+  pointer-events: none !important; /* Allows you to still click play/pause on the video */
+  z-index: 10 !important;
 }
-
