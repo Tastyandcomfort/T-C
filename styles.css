@@ -2092,43 +2092,49 @@ body {
 }
 
 /*Map Caution*/
-.map-ticker-bar {
+.map-side-ticker {
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  z-index: 999;
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: rgba(22, 27, 34, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0 0 12px 12px;
-  padding: 6px 12px;
-  margin-top: -12px;
-  margin-bottom: -12px;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 2px 6px;
+  max-width: 55%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
-.map-ticker-bar .ticker-icon {
-  font-size: 1rem;
-  margin-right: 8px;
-  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+.map-side-ticker .ticker-icon {
+  font-size: 0.75rem;
+  margin-right: 4px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6));
 }
 
-.map-ticker-bar .ticker-text-wrap {
+.map-side-ticker .ticker-text-wrap {
   overflow: hidden;
   width: 100%;
+  white-space: nowrap;
 }
 
-.map-ticker-bar .ticker-text {
+.map-side-ticker .ticker-text {
   display: inline-block;
   color: #ffd700;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 500;
-  letter-spacing: 0.3px;
-  animation: marqueeScroll 16s linear infinite;
+  letter-spacing: 0.2px;
+  animation: marqueeScroll 14s linear infinite;
   margin: 0;
+  white-space: nowrap;
 }
+
 
 
 
