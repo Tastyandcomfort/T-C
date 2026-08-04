@@ -380,80 +380,84 @@ function setMode(mode, element) {
         dot.style.display = "none";
         views.text.style.display = 'block';
     } 
-    else if (mode === 'video') {
-        title.innerText = "Live NEWS";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/e1FIApIafWE?autoplay=1&mute=1";
-    } 
-    else if (mode === 'live') {
-        title.innerText = "T&C Live";
-        dot.style.display = "inline-block";
-        views.live.style.display = 'block';
-        players.live.src = "https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1";
-    }
-    else if (mode === 'wildlife') {
-        title.innerText = "Wild Live";
-        dot.style.display = "inline-block";
-        views.wildlife.style.display = 'block';
-        players.wildlife.src = "https://www.youtube.com/embed/MiQe9ob9aDc?autoplay=1&mute=1";
-    }
-    else if (mode === 'sports') {
-        title.innerText = "Sports Live";
-        dot.style.display = "inline-block";
-        views.sports.style.display = 'block';
-        players.sports.src = "https://www.youtube.com/embed/fE_xxKiCHO0?autoplay=1&mute=1";
-    }
-    // New Music Mode Logic
-    else if (mode === 'music') {
-        title.innerText = "Music";
-        dot.style.display = "inline-block";
-        views.sports.style.display = 'block';
-        players.sports.src = "https://www.youtube.com/embed/-aTWDnQttks?autoplay=1&mute=1";
-    }
+    else {
+        // Any mode other than 'text' is a video/audio medium, trigger the smart headphone reminder!
+        checkAndShowHeadphonesNotice();
 
-     else if (mode === 'nasa') {
-        title.innerText = "NASA";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1";
-    } 
-     else if (mode === 'airport') {
-        title.innerText = "Airside";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
-    } 
-     else if (mode === 'hindu') {
-        title.innerText = " Bhagavat Geetha";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1";
-    } 
-     else if (mode === 'muslim') {
-        title.innerText = "Khuran";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1";
-    } 
-     else if (mode === 'christian') {
-        title.innerText = "Bibul";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1";
-    } 
-     else if (mode === 'law') {
-        title.innerText = "Constitution";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1";
-    } 
-     else if (mode === 'file') {
-        title.innerText = "Media";
-        dot.style.display = "inline-block";
-        views.video.style.display = 'block';
-        players.news.src = "sample.mp4";
-    } 
+        if (mode === 'video') {
+            title.innerText = "Live NEWS";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "https://www.youtube.com/embed/e1FIApIafWE?autoplay=1&mute=1";
+        } 
+        else if (mode === 'live') {
+            title.innerText = "T&C Live";
+            dot.style.display = "inline-block";
+            views.live.style.display = 'block';
+            players.live.src = "https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1";
+        }
+        else if (mode === 'wildlife') {
+            title.innerText = "Wild Live";
+            dot.style.display = "inline-block";
+            views.wildlife.style.display = 'block';
+            players.wildlife.src = "https://www.youtube.com/embed/MiQe9ob9aDc?autoplay=1&mute=1";
+        }
+        else if (mode === 'sports') {
+            title.innerText = "Sports Live";
+            dot.style.display = "inline-block";
+            views.sports.style.display = 'block';
+            players.sports.src = "https://www.youtube.com/embed/fE_xxKiCHO0?autoplay=1&mute=1";
+        }
+        else if (mode === 'music') {
+            title.innerText = "Music";
+            dot.style.display = "inline-block";
+            // Fixed typo here to properly target views.music instead of views.sports
+            if (views.music) views.music.style.display = 'block';
+            players.music.src = "https://www.youtube.com/embed/-aTWDnQttks?autoplay=1&mute=1";
+        }
+        else if (mode === 'nasa') {
+            title.innerText = "NASA";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1";
+        } 
+        else if (mode === 'airport') {
+            title.innerText = "Airside";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
+        } 
+        else if (mode === 'hindu') {
+            title.innerText = " Bhagavat Geetha";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1";
+        } 
+        else if (mode === 'muslim') {
+            title.innerText = "Khuran";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1";
+        } 
+        else if (mode === 'christian') {
+            title.innerText = "Bibul";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1";
+        } 
+        else if (mode === 'law') {
+            title.innerText = "Constitution";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1";
+        } 
+        else if (mode === 'file') {
+            title.innerText = "Media";
+            dot.style.display = "inline-block";
+            views.video.style.display = 'block';
+            players.news.src = "sample.mp4";
+        }
+    }
 }
 
 // https://youtu.be/-aTWDnQttks?si=9fNdqun3qpwJRSSf
