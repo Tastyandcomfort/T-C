@@ -543,12 +543,20 @@ T&C does not collect or store your personal data.This website is for information
         
 
         <div id="bass-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper bass-blur-container">
-            <iframe id="bass-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <!-- This overlay creates the guaranteed blur effect -->
-            <div class="blur-overlay"></div>
-       </div>
-       </div>
+    <div class="video-wrapper bass-blur-container" onclick="unlockBassVideo(this)">
+        <iframe id="bass-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        
+        <!-- Interactive Blur Cover Card -->
+        <div class="bass-cover-blur">
+            <div class="blur-content">
+                <span class="play-icon">▶</span>
+                <h3>Deep Bass</h3>
+                <p>Click to Play (Protected Audio/Visual)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
       
