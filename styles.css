@@ -2168,4 +2168,131 @@ body {
 
 
 
+/* ==========================================
+   GLOBAL RESPONSIVE BASE STYLES
+   ================================---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #0f0f13; /* Matches your dark theme */
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ==========================================
+   MAIN CONTAINER (Adapts to Laptop & Mobile)
+   ================================---------- */
+.news-main-container {
+  width: 100%;
+  max-width: 1200px; /* Limits max stretch on large laptop/desktop screens */
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #0f0f13;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================
+   NAVIGATION / VIEW SELECTOR (Scrollable on phones)
+   ================================---------- */
+.view-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.view-selector button {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  background: #1f1f23;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.view-selector button.active-mode,
+.view-selector button:hover {
+  background: #ffb700; /* Your theme accent color */
+  color: #000;
+  font-weight: bold;
+}
+
+/* ==========================================
+   MAP & VIDEO WRAPPERS (Fixed scaling ratio)
+   ================================---------- */
+/* Fixes the Map container view seen in your screenshot */
+#map, .map-container {
+  width: 100% !important;
+  height: 450px !important; /* Perfect height for laptops, scales down via mobile */
+  border-radius: 12px;
+}
+
+/* Video wrappers keep proper proportions and never stretch weirdly */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+
+.video-wrapper iframe,
+.video-wrapper video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ==========================================
+   MEDIA QUERIES FOR DIFFERENT SCREENS
+   ================================---------- */
+
+/* Tablets & Small Laptops (Width up to 1024px) */
+@media screen and (max-width: 1024px) {
+  .news-main-container {
+    padding: 15px;
+    max-width: 100%;
+  }
+  
+  #map, .map-container {
+    height: 380px !important;
+  }
+}
+
+/* Mobile Phones (Width up to 600px) */
+@media screen and (max-width: 600px) {
+  .news-main-container {
+    padding: 10px;
+    min-height: 100vh;
+  }
+
+  .view-selector {
+    flex-wrap: nowrap; /* Allows smooth horizontal touch scrolling on mobile buttons */
+    justify-content: flex-start;
+  }
+
+  #map, .map-container {
+    height: 300px !important;
+  }
+}
 
