@@ -354,7 +354,6 @@ function setMode(mode, element) {
         wildlife: document.getElementById('wildlife-player'),
         sports: document.getElementById('sports-player'),
         music: document.getElementById('music-player'),
-        bass: document.getElementById('bass-player'),
         nasa: document.getElementById('nasa-video-player'),
         airport: document.getElementById('airport-player'),
         hindu: document.getElementById('hindu-player'),
@@ -416,12 +415,6 @@ function setMode(mode, element) {
             if (views.music) views.music.style.display = 'block';
             players.music.src = "https://www.youtube.com/embed/-aTWDnQttks?autoplay=1&mute=1";
         }
-          else if (mode === 'bass') {
-            title.innerText = "Bass Boosted";
-            dot.style.display = "inline-block";
-            views.video.style.display = 'block';
-            players.news.src = "https://www.youtube.com/embed/tIH92rdousA?autoplay=1&mute=1";
-        } 
         else if (mode === 'nasa') {
             title.innerText = "NASA";
             dot.style.display = "inline-block";
@@ -598,116 +591,6 @@ window.addEventListener('load', fetchWeather);
 setInterval(fetchWeather, 600000);
 
 
-
-
-
-
-
-
-// Video password
-// Mix your repository videos and YouTube links together here!
-const videoPlaylist = [
-  { title: "🇺🇸🚀", type: "youtube", src: "https://www.youtube.com/embed/awQzjn72bI0?autoplay=1&mute=1" },
-  { title: "TechM", type: "youtube", src: "https://www.youtube.com/embed/SF7htyffezs?autoplay=1&mute=1" },
-  { title: "✈️", type: "youtube", src: "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1" },
-  { title: "🕉️Ram", type: "youtube", src: "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1" },
-  { title: "☪️️Aala", type: "youtube", src: "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1" },
-  { title: "✝Jesis", type: "youtube", src: "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1" },
-  { title: "🇮🇳Law", type: "youtube", src: "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1" },
-  { title: "Local", type: "local", src: "video_240p (1).mp4" }
-];
-
-let currentVideoIndex = 0;
-
-function checkPasscode() {
-  const correctCode = "1234"; // Your secret passcode
-  const userInput = document.getElementById("video-pass").value;
-  const passcodeBox = document.getElementById("passcode-box");
-  const videoContainer = document.getElementById("video-container");
-  const errorMsg = document.getElementById("error-msg");
-
-  if (userInput === correctCode) {
-    passcodeBox.style.display = "none";
-    videoContainer.style.display = "block";
-    loadVideo(currentVideoIndex);
-    updateNextButtonDisplay();
-  } else {
-    errorMsg.style.display = "block";
-  }
-}
-
-function loadVideo(index) {
-  const item = videoPlaylist[index];
-  const localVideo = document.getElementById("my-video");
-  const videoSource = document.getElementById("video-source");
-  const youtubeIframe = document.getElementById("youtube-iframe");
-
-  if (item.type === "local") {
-    // Show local video player, hide YouTube iframe
-    localVideo.style.display = "block";
-    youtubeIframe.style.display = "none";
-    
-    videoSource.src = item.src;
-    localVideo.load();
-    localVideo.play();
-  } else if (item.type === "youtube") {
-    // Show YouTube iframe, hide local video player and pause it
-    localVideo.style.display = "none";
-    localVideo.pause();
-    youtubeIframe.style.display = "block";
-    
-    youtubeIframe.src = item.src;
-  }
-}
-
-function nextVideo() {
-  // Move to the next index, loop back to 0 if it reaches the end
-  currentVideoIndex = (currentVideoIndex + 1) % videoPlaylist.length;
-  
-  // Load the new video
-  loadVideo(currentVideoIndex);
-  
-  // Update button text to display the upcoming video title
-  updateNextButtonDisplay();
-}
-
-function updateNextButtonDisplay() {
-  // Get the index of the video that comes AFTER the current one
-  const followingIndex = (currentVideoIndex + 1) % videoPlaylist.length;
-  const nextButton = document.getElementById("next-btn-overlay");
-  
-  if (nextButton) {
-    nextButton.innerHTML = `${videoPlaylist[followingIndex].title} ➔`;
-  }
-}
-
-let controlTimeout;
-
-function showControls() {
-  const nextBtn = document.getElementById("next-btn-overlay");
-  
-  if (nextBtn) {
-    nextBtn.classList.add("visible");
-    clearTimeout(controlTimeout);
-    
-    controlTimeout = setTimeout(() => {
-      nextBtn.classList.remove("visible");
-    }, 3000);
-  }
-}
-
-// Automatically trigger button events on the local video player
-document.addEventListener("DOMContentLoaded", () => {
-  const videoPlayer = document.getElementById("my-video");
-  
-  if (videoPlayer) {
-    videoPlayer.addEventListener("play", showControls);
-    videoPlayer.addEventListener("pause", showControls);
-    videoPlayer.addEventListener("seeking", showControls);
-    videoPlayer.addEventListener("click", showControls);
-    videoPlayer.addEventListener("touchstart", showControls);
-  }
-});
 
 
 // Map updated
@@ -989,13 +872,6 @@ function dismissHeadphonesNotice(rememberChoice) {
   }
 }
 
-//Bass unlock
-function unlockBassVideo(containerElement) {
-  const cover = containerElement.querySelector('.bass-cover-blur');
-  if (cover) {
-    cover.classList.add('hidden');
-  }
-}
 
 
 
