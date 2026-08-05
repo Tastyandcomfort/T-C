@@ -989,4 +989,17 @@ function dismissHeadphonesNotice(rememberChoice) {
   }
 }
 
+//Bass unlock
+function unlockBassVideo(containerElement) {
+  const cover = containerElement.querySelector('.bass-cover-blur');
+  if (cover) {
+    cover.classList.add('hidden');
+  }
+}
+
+
+
+
+
+
 
