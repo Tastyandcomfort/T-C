@@ -616,6 +616,7 @@ let destMarker = null;
 let currentDestName = "";
 
 // Initialize Leaflet Map
+// Initialize Leaflet Map
 const map = L.map('map').setView([stallLat, stallLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -627,12 +628,19 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.marker([stallLat, stallLng]).addTo(map)
   .bindPopup('<b>Tasty & Comfort Stall</b>').openPopup();
 
-// Automatically force map to render fully on window load
+// FIX: Automatically force Leaflet to refresh and render tiles on initial page load
+window.addEventListener('DOMContentLoaded', () => {
+  requestAnimationFrame(() => {
+    map.invalidateSize();
+  });
+});
+
 window.addEventListener('load', () => {
   setTimeout(() => {
     map.invalidateSize();
-  }, 200);
+  }, 250);
 });
+
 
 // Tab click function to fix the half-blank map rendering bug if switched later
 function openMapView() {
@@ -850,6 +858,7 @@ function drawRouteOnMap(mode, index) {
     map.fitBounds(routeLayers[index].getBounds(), { padding: [50, 50] });
   }
 }
+
 
 
 
