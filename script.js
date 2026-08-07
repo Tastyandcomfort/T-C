@@ -598,7 +598,6 @@ setInterval(fetchWeather, 600000);
 const stallLat = 17.367761; 
 const stallLng = 78.537016; 
 
-// 2. Pre-defined amenities using exact coordinates to prevent search errors
 const customAmenities = {
   'hospital': { name: 'TIMS Hospital', query: '17.369313, 78.536573' },
   'police station': { name: 'Saroor Nagar Police Station', query: '17.368289, 78.527748' },
@@ -616,7 +615,6 @@ let destMarker = null;
 let currentDestName = "";
 
 // Initialize Leaflet Map
-// Initialize Leaflet Map
 const map = L.map('map').setView([stallLat, stallLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -628,18 +626,24 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.marker([stallLat, stallLng]).addTo(map)
   .bindPopup('<b>Tasty & Comfort Stall</b>').openPopup();
 
-// FIX: Automatically force Leaflet to refresh and render tiles on initial page load
+// FORCE MAP TO RENDER AUTOMATICALLY ON LOAD (Multiple staggered intervals catch mobile browser layout delays)
+function triggerMapRefresh() {
+  if (typeof map !== 'undefined') {
+    map.invalidateSize(true);
+  }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
-  requestAnimationFrame(() => {
-    map.invalidateSize();
-  });
+  setTimeout(triggerMapRefresh, 100);
+  setTimeout(triggerMapRefresh, 400);
+  setTimeout(triggerMapRefresh, 1000);
 });
 
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 250);
+  setTimeout(triggerMapRefresh, 100);
+  setTimeout(triggerMapRefresh, 500);
 });
+
 
 
 // Tab click function to fix the half-blank map rendering bug if switched later
