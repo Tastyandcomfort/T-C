@@ -629,13 +629,15 @@ L.marker([stallLat, stallLng]).addTo(map)
 
 // 3. Tab click function to fix the half-blank map rendering bug
 function openMapView() {
-  // If you have code that shows your map section/tab, put it here (e.g., document.getElementById('map-view').style.display = 'block';)
+  document.getElementById('map-view').style.display = 'block'; // or your class toggle
+  // THIS LINE FIXES THE GRAY MAP ISSUE:
+  if (typeof map !== 'undefined') {
+    setTimeout(function() {
+      map.invalidateSize();
+    }, 100);
+  }
+  }
   
-  // Force Leaflet to redraw and fill the blank space correctly
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 400);
-}
 
 // Triggered when typing in the search bar
 async function searchDestination() {
