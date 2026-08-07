@@ -2176,12 +2176,11 @@ body {
 /* Ensure the map container has a fully responsive height on all screens */
 #map {
   width: 100% !important;
-  height: 50vh !important; /* Uses 50% of the screen height dynamically on any device */
-  min-height: 300px !important; /* Ensures it never shrinks too small on tiny phones */
-  max-height: 600px !important; /* Prevents it from getting too tall on giant desktop monitors */
+  height: 400px !important; /* Locks explicit height so tiles load immediately */
+  min-height: 350px !important;
   display: block !important;
-  border-radius: 12px;
 }
+
 
 /* Ensure the parent view wrapper scales gracefully everywhere */
 #map-view, .view-mode {
