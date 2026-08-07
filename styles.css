@@ -2092,18 +2092,10 @@ body {
 }
 
 /*Map Caution*/
-/* Force the Leaflet attribution box to span the full width cleanly */
-.leaflet-control-attribution {
-  display: flex !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  margin: 0 !important;
-  padding: 2px 4px !important;
-}
+/* ==========================================
+   RESPONSIVE LEAFLET ATTRIBUTION & TICKER FIX
+   ================================---------- */
 
-/* Ticker takes up exactly 70% of the width */
-/* Make the Leaflet attribution container responsive and flexible */
 .leaflet-control-attribution {
   display: flex !important;
   align-items: center !important;
@@ -2167,11 +2159,7 @@ body {
 }
 
 
-/* Forces the Leaflet map container to render fully on laptops and desktops */
 
-/* ==========================================
-   UNIVERSAL RESPONSIVE MAP & VIEW FIX
-   ================================---------- */
 
 /* Ensure the map container has a fully responsive height on all screens */
 #map {
