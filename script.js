@@ -627,17 +627,26 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.marker([stallLat, stallLng]).addTo(map)
   .bindPopup('<b>Tasty & Comfort Stall</b>').openPopup();
 
-// 3. Tab click function to fix the half-blank map rendering bug
+// Automatically force map to render fully on window load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 200);
+});
+
+// Tab click function to fix the half-blank map rendering bug if switched later
 function openMapView() {
-  document.getElementById('map-view').style.display = 'block'; // or your class toggle
-  // THIS LINE FIXES THE GRAY MAP ISSUE:
+  const mapView = document.getElementById('map-view');
+  if (mapView) {
+    mapView.style.display = 'block';
+  }
+  
   if (typeof map !== 'undefined') {
     setTimeout(function() {
       map.invalidateSize();
     }, 100);
   }
-  }
-  
+}
 
 // Triggered when typing in the search bar
 async function searchDestination() {
@@ -688,7 +697,7 @@ async function fetchRouteData(query, customDisplayName = null) {
         searchQuery = lowerQuery.replace(/near\s*me/g, '').replace(/near/g, '').trim();
       }
 
-      // 3. Search via Nominatim globally, allowing any combination of city, district, or state
+      // 3. Search via Nominatim globally
       const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=1`;
       const geoRes = await fetch(geoUrl);
       
@@ -745,18 +754,19 @@ async function fetchRouteData(query, customDisplayName = null) {
   }
 }
 
-
-
-
-// Fix map sizing bug if using hidden tabs/sections
-window.addEventListener('resize', () => { map.invalidateSize(); });
-
+// Fix map sizing bug on window resize
+window.addEventListener('resize', () => { 
+  if (typeof map !== 'undefined') {
+    map.invalidateSize(); 
+  }
+});
 
 function switchMode(mode) {
   currentMode = mode;
   renderRouteCard();
-  drawRouteOnMap(currentMode, 0); // Select first option by default when switching mode
+  drawRouteOnMap(currentMode, 0); 
 }
+
 function formatDuration(seconds) {
   const days = Math.floor(seconds / (3600 * 24));
   const hours = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -781,10 +791,7 @@ function renderRouteCard() {
   let optionsHtml = '';
   routes.forEach((route, index) => {
     const dist = (route.distance / 1000).toFixed(1);
-    
-    // Format duration nicely using the day/hour/minute helper function
     const timeFormatted = formatDuration(route.duration);
-    
     const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
     
     optionsHtml += `
@@ -802,7 +809,6 @@ function renderRouteCard() {
         <div><strong>Destination:</strong> ${currentDestName}</div>
       </div>
       
-      <!-- Mode Switcher Tabs -->
       <div class="mode-switcher">
         <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')">🚗 Driving</button>
         <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')">🚶 Walking</button>
@@ -815,8 +821,6 @@ function renderRouteCard() {
     </div>
   `;
 }
-
-
 
 function switchRouteIndex(index, btnElement) {
   document.querySelectorAll('.route-option-btn').forEach(b => b.classList.remove('active-route'));
@@ -846,6 +850,8 @@ function drawRouteOnMap(mode, index) {
     map.fitBounds(routeLayers[index].getBounds(), { padding: [50, 50] });
   }
 }
+
+
 
 
 // 🎧 headphones pop-up
