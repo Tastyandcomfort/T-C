@@ -864,6 +864,16 @@ function drawRouteOnMap(mode, index) {
 }
 
 
+// Automatically fix map tiles the exact moment the container finishes rendering
+const mapContainerElement = document.getElementById('map');
+if (mapContainerElement) {
+  const observer = new ResizeObserver(() => {
+    if (typeof map !== 'undefined') {
+      map.invalidateSize();
+    }
+  });
+  observer.observe(mapContainerElement);
+}
 
 
 
