@@ -1068,21 +1068,23 @@ Smart Headphones Reminder Modal
   window.addEventListener('DOMContentLoaded', () => {
   const attributionControl = document.querySelector('.leaflet-control-attribution');
   if (attributionControl && !document.querySelector('.map-side-ticker')) {
-    // Save existing attribution text/links (e.g., "Leaflet | From New Modern Mission")
-    const existingContent = attributionControl.innerHTML;
+    // Save existing attribution text/links safely
+    const existingContent = attributionControl.innerHTML.trim();
     
     const combinedHtml = `
-      <span class="map-side-ticker">
+      <div class="map-side-ticker">
         <span class="ticker-icon">🌎</span>
-        <span class="ticker-text-wrap">
+        <div class="ticker-text-wrap">
           <span class="ticker-text">Users are advised by T&C: You are here map is developed by T&C only for geographical knowledge of area/destination/locations. It does not support for rerouting/navigation.</span>
-        </span>
-      </span>
-      <span>${existingContent}</span>
+        </div>
+      </div>
+      <span class="attribution-links">${existingContent}</span>
     `;
+    
     attributionControl.innerHTML = combinedHtml;
   }
 });
+
 
 </script>
 
