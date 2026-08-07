@@ -624,7 +624,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Add Stall Marker
 L.marker([stallLat, stallLng]).addTo(map)
-  .bindPopup('<b>Tasty & Comfort Stall</b>').openPopup();
+  .bindPopup('<b>You are here Tasty & Comfort Stall</b>').openPopup();
 
 // FORCE MAP TO RENDER AUTOMATICALLY ON LOAD (Multiple staggered intervals catch mobile browser layout delays)
 function triggerMapRefresh() {
