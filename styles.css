@@ -2168,11 +2168,25 @@ body {
 
 
 /* Forces the Leaflet map container to render fully on laptops and desktops */
+
+/* ==========================================
+   UNIVERSAL RESPONSIVE MAP & VIEW FIX
+   ================================---------- */
+
+/* Ensure the map container has a fully responsive height on all screens */
 #map {
   width: 100% !important;
-  height: 450px !important; /* Adjust height if you want it taller or shorter */
-  min-height: 350px !important;
+  height: 50vh !important; /* Uses 50% of the screen height dynamically on any device */
+  min-height: 300px !important; /* Ensures it never shrinks too small on tiny phones */
+  max-height: 600px !important; /* Prevents it from getting too tall on giant desktop monitors */
   display: block !important;
+  border-radius: 12px;
+}
+
+/* Ensure the parent view wrapper scales gracefully everywhere */
+#map-view, .view-mode {
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* ==========================================
