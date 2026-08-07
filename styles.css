@@ -2167,6 +2167,13 @@ body {
 }
 
 
+/* Forces the Leaflet map container to render fully on laptops and desktops */
+#map {
+  width: 100% !important;
+  height: 450px !important; /* Adjust height if you want it taller or shorter */
+  min-height: 350px !important;
+  display: block !important;
+}
 
 /* ==========================================
    GLOBAL RESPONSIVE BASE STYLES
