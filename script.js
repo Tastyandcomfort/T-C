@@ -906,6 +906,54 @@ function dismissHeadphonesNotice(rememberChoice) {
 
 
 
+//Chatbot
+const chatInput = document.getElementById('chat-user-input');
+const sendBtn = document.getElementById('chat-send-btn');
+const chatMessages = document.getElementById('chat-messages');
+
+function appendMessage(text, sender) {
+  const messageDiv = document.createElement('div');
+  messageDiv.classList.add('chat-message', sender === 'user' ? 'user-message' : 'bot-message');
+  messageDiv.textContent = text;
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to bottom
+}
+
+function handleUserMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  // Display user message
+  appendMessage(text, 'user');
+  chatInput.value = '';
+
+  // Simulate automated bot response (You can hook this up to an external API like OpenAI later if needed)
+  setTimeout(() => {
+    let reply = "I'm here to help you navigate Tasty & Comfort! You can search for destinations like hospitals, police stations, or cafes above.";
+    
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes('hospital')) {
+      reply = "The nearest hospital listed is TIMS Hospital near Saroor Nagar.";
+    } else if (lowerText.includes('police')) {
+      reply = "The Saroor Nagar Police Station is your local station.";
+    } else if (lowerText.includes('hello') || lowerText.includes('hi')) {
+      reply = "Hello there! How can I assist your journey today?";
+    }
+
+    appendMessage(reply, 'bot');
+  }, 600);
+}
+
+if (sendBtn && chatInput) {
+  sendBtn.addEventListener('click', handleUserMessage);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      handleUserMessage();
+    }
+  });
+}
+
+
 
 
 
