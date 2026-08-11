@@ -1,3 +1,87 @@
+/* ===================================================
+   DEFAULT STATE: MOBILE-FIRST DESIGN (Like Image 1)
+   =================================================== */
+
+/* Hide the desktop sidebar on mobile phones */
+.desktop-sidebar {
+  display: none !important;
+}
+
+/* Show or fit the mobile bottom navigation bar */
+.mobile-bottom-nav {
+  display: flex !important;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(20, 20, 25, 0.95);
+  backdrop-filter: blur(10px);
+  justify-content: space-around;
+  padding: 10px 0;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* Single-column stacked layout for mobile cards */
+.main-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 15px;
+  padding-bottom: 90px; /* Leaves space so bottom nav doesn't cover content */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* ===================================================
+   DESKTOP SCREEN VIEW (Width 1024px and above - Like Image 2)
+   =================================================== */
+
+@media screen and (min-width: 1024px) {
+
+  /* Show the fixed left-side navigation panel */
+  .desktop-sidebar {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #121216;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
+
+  /* Optional: Hide or adapt the mobile bottom dock on desktop if you use the sidebar instead */
+  .mobile-bottom-nav {
+    display: none !important; 
+  }
+
+  /* Shift the main content container to the right to make room for the sidebar */
+  .main-dashboard-container {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    display: grid;
+    grid-template-columns: repeat(12, 1fr); /* Multi-column desktop grid layout */
+    gap: 20px;
+    padding: 30px;
+    box-sizing: border-box;
+  }
+
+  /* Example: Make specific widgets span wider on desktop */
+  .ai-terminal-box {
+    grid-column: span 4; /* Places the chat widget neatly on the right side like Image 2 */
+  }
+}
+
+
+
+
+
 :root {
   --app-bg: #0d0e12;
   --glass-card-bg: rgba(26, 29, 38, 0.65);
