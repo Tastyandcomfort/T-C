@@ -2177,6 +2177,34 @@ body {
 }
 
 
+/* ==========================================
+   FIX CHAT SECTION WIDTH & ALIGNMENT
+   ================================---------- */
+
+/* Ensure the main container fits the device screen properly */
+.ai-chat-wrapper, .chat-container, #ai-chat-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Fix the quick chips (Timings, Hub Location, Menu, Owner) so they wrap and don't overflow on mobile */
+.chat-chips-container, .quick-replies, .amenities-group {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 4px !important;
+}
+
+/* Make sure input row and privacy notice span properly within the card boundaries */
+.chat-input-area, .data-privacy-box {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
 
   
 
