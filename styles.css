@@ -561,12 +561,17 @@ body {
 .s-teal i { color: #1abc9c; }
 
 /* ===================================================
-   VIEW SYSTEM 4: AI CHAT CONSOLE MODULE
+   VIEW SYSTEM 4: AI CHAT CONSOLE MODULE (UPDATED)
 =================================================== */
 .ai-terminal-box { 
   display: flex; 
   flex-direction: column; 
-  height: 705px; 
+  width: 100% !important;
+  max-width: 100% !important;
+  height: calc(100vh - 180px) !important; /* Dynamically fits mobile screen height minus headers/nav */
+  max-height: 705px; 
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 .ai-status { 
@@ -576,6 +581,7 @@ body {
   align-items: center; 
   gap: 6px; 
   margin-bottom: 12px; 
+  flex-shrink: 0;
 }
 
 .pulse-dot { 
@@ -596,6 +602,7 @@ body {
   display: flex; 
   flex-direction: column; 
   gap: 10px; 
+  box-sizing: border-box;
 }
 
 .msg-bubble { 
@@ -604,6 +611,7 @@ body {
   border-radius: 14px; 
   font-size: 0.85rem; 
   line-height: 1.4; 
+  word-break: break-word;
 }
 
 .bot-msg { 
@@ -623,8 +631,11 @@ body {
 .suggested-prompts { 
   display: flex; 
   gap: 6px; 
-  margin-bottom: 6px; 
+  margin-bottom: 10px; 
   flex-wrap: wrap; 
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .prompt-chip { 
@@ -635,15 +646,20 @@ body {
   border-radius: 20px; 
   font-size: 0.75rem; 
   cursor: pointer; 
+  white-space: nowrap;
 }
 
 .chat-input-bar { 
   display: flex; 
   gap: 8px; 
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .chat-input-bar input { 
   flex-grow: 1; 
+  min-width: 0; /* Prevents input from blowing out flex container width */
   background: #161922; 
   border: 1px solid var(--glass-border); 
   padding: 12px; 
@@ -651,6 +667,7 @@ body {
   color: #fff; 
   font-size: 0.85rem; 
   outline: none; 
+  box-sizing: border-box;
 }
 
 .chat-send-btn { 
@@ -658,6 +675,7 @@ body {
   color: #000; 
   border: none; 
   width: 45px; 
+  flex-shrink: 0;
   border-radius: 10px; 
   cursor: pointer; 
 }
