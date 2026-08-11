@@ -8,8 +8,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="manifest" href="manifest.json">
 
-
-
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <!-- Leaflet JS -->
@@ -51,8 +49,6 @@
     font-size: 0.9rem;
   }
 </style>
-
-
   
 </head>
 <body>
@@ -92,27 +88,23 @@ T&C does not collect or store your personal data.This website is for information
         <div class="side-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>About</span></div>
       </nav>
 
-
-
-
-      
     <div class="lang-selector">
-    <div id="google_translate_element"></div>
-    <div class="custom-lang-menu">
-    <button onclick="changeLang('en')">EN</button>
-    <button onclick="changeLang('te')">TE</button>
-    <button onclick="changeLang('hi')">HI</button>
+      <div id="google_translate_element"></div>
+      <div class="custom-lang-menu">
+        <button onclick="changeLang('en')">EN</button>
+        <button onclick="changeLang('te')">TE</button>
+        <button onclick="changeLang('hi')">HI</button>
+      </div>
     </div>
 
-
- <!-- Desktop Weather -->
-<div class="sidebar-weather">
-    <img id="desktop-icon" src="" alt="Weather Icon">
-    <div>
+    <!-- Desktop Weather -->
+    <div class="sidebar-weather">
+      <img id="desktop-icon" src="" alt="Weather Icon">
+      <div>
         <div id="desktop-temp" class="temp-text">--°C</div>
         <div id="desktop-condition" class="condition-text">...</div>
+      </div>
     </div>
-</div>
 
   </aside>
 
@@ -127,15 +119,15 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
   
-    <!---Mobile Weather--->
-    <div class="mobile-weather">
-    <img id="mobile-icon" src="" alt="Weather Icon">
-    <div>
-        <div id="mobile-temp" class="temp-text">--°C</div>
-        <div id="mobile-condition" class="condition-text">...</div>
-    </div>
-    </div>
-    </header>
+        <!---Mobile Weather--->
+        <div class="mobile-weather">
+          <img id="mobile-icon" src="" alt="Weather Icon">
+          <div>
+            <div id="mobile-temp" class="temp-text">--°C</div>
+            <div id="mobile-condition" class="condition-text">...</div>
+          </div>
+        </div>
+      </header>
 
       <section id="home-view" class="app-section active-view">
         <div class="hero-showcase horizontal-hero">
@@ -154,47 +146,43 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
 
-       <div class="slider-container">
-       <div class="slider">
-       <!-- Slide 1 (Your current deal) -->
-       <div class="glass-card offer-banner-card">
-       <div class="offer-image-slot" onclick="openMenuModal('IMG_20260713_153143.png', 'Mega Combo Deal', '₹65', 'Veg')">
-            <img src="IMG_20260713_153143.png" alt="Today's Deal Offer" onerror="this.style.display='none';">
-            <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
-       </div>
-       <div class="offer-details-slot">
-            <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
-            <h3>Mega Combo Deal</h3>
-            <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
-            <div class="offer-pricing-row">
-                <span class="old-price">₹80</span>
-                <span class="new-glow-price">₹65 Only</span>
-           </div>
-           </div>
-           </div>
-
-    <!-- Slide 2 (Example of another deal) -->
-    <div class="glass-card offer-banner-card">
-    <div class="offer-image-slot" onclick="openMenuModal('IMG_20260713_153103.png', 'Second Combo', '₹99', 'Non-Veg')">
-         <img src="IMG_20260713_153103.png" alt="Second Deal" onerror="this.style.display='none';">
-         <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
-    </div>
-    <div class="offer-details-slot">
-            <span class="offer-tag-badge">HOT DEAL</span>
-            <h3>Second Combo Deal</h3>
-            <p>The second combo test run.</p>
-            <div class="offer-pricing-row">
-                <span class="old-price">₹120</span>
-                <span class="new-glow-price">₹99 Only</span>
-            </div>
-            </div>
-            </div>
-            </div>
+        <div class="slider-container">
+          <div class="slider">
+            <!-- Slide 1 -->
+            <div class="glass-card offer-banner-card">
+              <div class="offer-image-slot" onclick="openMenuModal('IMG_20260713_153143.png', 'Mega Combo Deal', '₹65', 'Veg')">
+                <img src="IMG_20260713_153143.png" alt="Today's Deal Offer" onerror="this.style.display='none';">
+                <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
+              </div>
+              <div class="offer-details-slot">
+                <span class="offer-tag-badge">TODAY'S SPECIAL DEAL</span>
+                <h3>Mega Combo Deal</h3>
+                <p>Get a Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
+                <div class="offer-pricing-row">
+                  <span class="old-price">₹80</span>
+                  <span class="new-glow-price">₹65 Only</span>
+                </div>
+              </div>
             </div>
 
-        
-
-
+            <!-- Slide 2 -->
+            <div class="glass-card offer-banner-card">
+              <div class="offer-image-slot" onclick="openMenuModal('IMG_20260713_153103.png', 'Second Combo', '₹99', 'Non-Veg')">
+                <img src="IMG_20260713_153103.png" alt="Second Deal" onerror="this.style.display='none';">
+                <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
+              </div>
+              <div class="offer-details-slot">
+                <span class="offer-tag-badge">HOT DEAL</span>
+                <h3>Second Combo Deal</h3>
+                <p>The second combo test run.</p>
+                <div class="offer-pricing-row">
+                  <span class="old-price">₹120</span>
+                  <span class="new-glow-price">₹99 Only</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <div class="glass-card instruction-card">
           <h3>Welcome to Comfort</h3>
@@ -207,22 +195,19 @@ T&C does not collect or store your personal data.This website is for information
         <div class="menu-responsive-grid compact-grid">
           
           <div class="glass-card menu-box item-has-image compact-box">
-    <!-- Updated line below: Added onclick to trigger the popup -->
-    <div class="menu-item-image-frame compact-frame" 
-         onclick="openMenuModal('1783742714672.png', 'Premium Tea', '₹10', 'Veg')">
-        <img src="1783742714672.png" alt="Premium Tea" onerror="this.style.display='none';">
-        <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
-    </div>
-    
-    <div class="menu-item-info-frame compact-info">
-        <div class="menu-title-row">
-            <h4>Premium Tea</h4>
-            <span class="price-gold text-small-price">₹10</span>
-        </div>
-        <p class="menu-item-sub text-small-desc">Hot & Refreshing premium milk blends brewed freshly on order.</p>
-    </div>
-</div>
-
+            <div class="menu-item-image-frame compact-frame" 
+                 onclick="openMenuModal('1783742714672.png', 'Premium Tea', '₹10', 'Veg')">
+                <img src="1783742714672.png" alt="Premium Tea" onerror="this.style.display='none';">
+                <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
+            </div>
+            <div class="menu-item-info-frame compact-info">
+                <div class="menu-title-row">
+                    <h4>Premium Tea</h4>
+                    <span class="price-gold text-small-price">₹10</span>
+                </div>
+                <p class="menu-item-sub text-small-desc">Hot & Refreshing premium milk blends brewed freshly on order.</p>
+            </div>
+          </div>
 
           <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame"
@@ -290,15 +275,14 @@ T&C does not collect or store your personal data.This website is for information
                   <div class="p-price"><span>Classic:</span> <strong>₹15</strong></div>
                 </div>
                 <div class="portion-column">
-                  <span class="p-title">2 Pcs</small></span>
+                  <span class="p-title">2 Pcs</span>
                   <div class="p-price"><span>Classic:</span> <strong>₹25</strong></div>
                 </div>
               </div>
             </div>
           </div>
-  
 
-        <div class="glass-card menu-box item-has-image compact-box">
+          <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame"
               onclick="openMenuModal('1783742526658.png', 'Roll', '₹30 & ₹40', 'V & N.Veg')">
               <img src="1783742526658.png" alt="Roll" onerror="this.style.display='none';">
@@ -323,7 +307,7 @@ T&C does not collect or store your personal data.This website is for information
             </div>
           </div>
 
-        <div class="glass-card menu-box item-has-image compact-box">
+          <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame"
               onclick="openMenuModal('1783787921362.png', 'Bread Egg Omelet', '₹30', 'Veg')">
               <img src="1783787921362.png" alt="Roll" onerror="this.style.display='none';">
@@ -348,7 +332,7 @@ T&C does not collect or store your personal data.This website is for information
             </div>
           </div>
           
-       <div class="glass-card menu-box item-has-image compact-box">
+          <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame"
               onclick="openMenuModal('1783743105336.png', 'Puff', '₹15/₹20/₹25', 'Veg & N.Veg')">
               <img src="1783743105336.png" alt="Roll" onerror="this.style.display='none';">
@@ -375,8 +359,7 @@ T&C does not collect or store your personal data.This website is for information
             </div>
           </div>
 
-        
-       <div class="glass-card menu-box item-has-image compact-box">
+          <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame"
               onclick="openMenuModal('1783788723316.png', 'Noodles', '₹45', 'Veg')">
               <img src="1783788723316.png" alt="Roll" onerror="this.style.display='none';">
@@ -395,10 +378,9 @@ T&C does not collect or store your personal data.This website is for information
                 </div>
               </div>
             </div>
-        </div>
+          </div>
 
-
-      <div class="glass-card menu-box item-has-image compact-box">
+          <div class="glass-card menu-box item-has-image compact-box">
             <div class="menu-item-image-frame compact-frame"
               onclick="openMenuModal('1783743408636.png', 'Lollipop', '₹40/₹60', 'Non Veg')">
               <img src="1783743408636.png" alt="Roll" onerror="this.style.display='none';">
@@ -421,8 +403,8 @@ T&C does not collect or store your personal data.This website is for information
                 </div>
               </div>
             </div>
+          </div>
         </div>
-          
       </section>
 
       <section id="services-view" class="app-section">
@@ -464,151 +446,139 @@ T&C does not collect or store your personal data.This website is for information
           </div>
         </div>
         
+        <!-- News Card -->
+        <div class="news-main-container">
+          <div class="title-left">
+            <span id="live-indicator" class="live-dot" style="display: none;"></span>
+            <h3 id="current-channel-title">Headlines</h3>
+            <!-- Segmented Controls -->
+            <div class="view-selector">
+              <button id="btn-text" class="active-mode" onclick="setMode('text', this)">Headlines</button>
+              <button id="btn-video" onclick="setMode('video', this)">News</button>
+              <button id="btn-live" onclick="setMode('live', this)">T&C</button>
+              <button id="btn-wildlife" onclick="setMode('wildlife', this)">Wild</button>
+              <button id="btn-sports" onclick="setMode('sports', this)">Sports</button>
+              <button id="btn-music" onclick="setMode('music', this)">Music</button>
+              <button id="btn-nasa" onclick="setMode('nasa', this)">NASA</button>
+              <button id="btn-airport" onclick="setMode('airport', this)">Airside</button>
+              <button id="btn-hindu" onclick="setMode('hindu', this)">Bhagavat_Geetha</button>
+              <button id="btn-muslim" onclick="setMode('muslim', this)">Khuran</button>
+              <button id="btn-christian" onclick="setMode('christian', this)">Bibul</button>
+              <button id="btn-law" onclick="setMode('law', this)">Constitution</button>
+              <button id="btn-file" onclick="setMode('file', this)">Media</button>    
+            </div>
+          </div>
 
-<!---News Card-->
-<div class="news-main-container">
-    <div class="title-left">
-        <span id="live-indicator" class="live-dot" style="display: none;"></span>
-        <h3 id="current-channel-title">Headlines</h3>
-        <!-- Segmented Controls -->
-        <div class="view-selector">
-            <!-- Note the added 'active-mode' class to Text by default -->
-            <button id="btn-text" class="active-mode" onclick="setMode('text', this)">Headlines</button>
-            <button id="btn-video" onclick="setMode('video', this)">News</button>
-            <button id="btn-live" onclick="setMode('live', this)">T&C</button>
-            <button id="btn-wildlife" onclick="setMode('wildlife', this)">Wild</button>
-            <button id="btn-sports" onclick="setMode('sports', this)">Sports</button>
-            <button id="btn-music" onclick="setMode('music', this)">Music</button>
-            <button id="btn-nasa" onclick="setMode('nasa', this)">NASA</button>
-            <button id="btn-airport" onclick="setMode('airport', this)">Airside</button>
-            <button id="btn-hindu" onclick="setMode('hindu', this)">Bhagavat_Geetha</button>
-            <button id="btn-muslim" onclick="setMode('muslim', this)">Khuran</button>
-            <button id="btn-christian" onclick="setMode('christian', this)">Bibul</button>
-            <button id="btn-law" onclick="setMode('law', this)">Constitution</button>
-            <button id="btn-file" onclick="setMode('file', this)">Media</button>    
-        </div>
-    </div>
-
-    <div id="content-area">
-        <!-- Text View (With Refresh) -->
-        <div id="text-view" class="view-mode">
-            <div style="text-align: right; margin-bottom: 5px;">
+          <div id="content-area">
+            <!-- Text View (With Refresh) -->
+            <div id="text-view" class="view-mode">
+              <div style="text-align: right; margin-bottom: 5px;">
                 <button id="refresh-btn" onclick="fetchNews()">
-                    <i id="refresh-icon" class="fa-solid fa-sync"></i> Refresh
+                  <i id="refresh-icon" class="fa-solid fa-sync"></i> Refresh
                 </button>
+              </div>
+              <div id="news-container" class="news-list">Please refresh...</div>
             </div>
-            <div id="news-container" class="news-list">Please refresh...</div>
-        </div>
 
-        <!-- Innovative Audio Ticker Bar (Hidden by default, controlled via JS) -->
-        <div id="headphones-ticker" class="audio-ticker-bar" style="display: none;">
-            <span class="ticker-icon">🎧</span>
-            <div class="ticker-text-wrap">
-                <p class="ticker-text">Audio muted🔇 please plug-in your headphones for best experience and less noise pollution. Thank you for your cooperation by T&C.   •Tap to close• </p>
+            <!-- Innovative Audio Ticker Bar -->
+            <div id="headphones-ticker" class="audio-ticker-bar" style="display: none;">
+              <span class="ticker-icon">🎧</span>
+              <div class="ticker-text-wrap">
+                <p class="ticker-text">Audio muted🔇 please plug-in your headphones for best experience and less noise pollution. Thank you for your cooperation by T&C. •Tap to close• </p>
+              </div>
             </div>
-        </div>
 
-        <!-- Video View -->
-        <div id="video-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <!-- Video View -->
+            <div id="video-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="news-video-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <source id="video-source" src="" type="video/mp4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></source>
+              </div>
             </div>
-        </div>
 
-        <!-- T&C Live View -->
-        <div id="live-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <!-- T&C Live View -->
+            <div id="live-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="tc-live-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
-      
-        <!-- Wildlife Live Section -->
-        <div id="wildlife-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+          
+            <!-- Wildlife Live Section -->
+            <div id="wildlife-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="wildlife-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
-        
-        <!-- Sports Live Section -->
-        <div id="sports-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            
+            <!-- Sports Live Section -->
+            <div id="sports-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="sports-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
 
-        <div id="music-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <div id="music-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="music-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
-      
-        <div id="nasa-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+          
+            <div id="nasa-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="nasa-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
 
-        <div id="airport-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <div id="airport-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="airport-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
 
-        <div id="hindu-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <div id="hindu-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="hindu-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
 
-        <div id="muslim-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <div id="muslim-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="muslim-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
 
-        <div id="christian-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <div id="christian-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="christian-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
-        </div>
 
-        <div id="law-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
+            <div id="law-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
                 <iframe id="law-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
             </div>
+
+            <div id="file-view" class="view-mode" style="display: none;">
+              <div class="video-wrapper">
+                <video id="file-video-element" controls style="width:150px; height:150px;"></video>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div id="file-view" class="view-mode" style="display: none;">
-            <div class="video-wrapper">
-                <source id="video-source" src="" type="video/mp4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></source>
-            </div>
+        <div class="game-card">
+          <div class="section-header">
+            <span class="live-dot" style="background-color: #34c759;"></span>
+            <h3>Fun</h3>
+          </div>
+          <div class="game-banner">
+            <p style="color: #aaa; margin-bottom: 12px; font-size: 0.9rem;">Tap below to launch the game:</p>
+            <a href="https://yandex.com/games/" class="play-now-btn">Play Game 🎲</a>
+          </div>
         </div>
-    </div>
-</div>
+      </section>
 
-         
-
-<div class="game-card">
-  <div class="section-header">
-    <span class="live-dot" style="background-color: #34c759;"></span>
-    <h3>Fun</h3>
-  </div>
-  
-  <div class="game-banner">
-    <p style="color: #aaa; margin-bottom: 12px; font-size: 0.9rem;">Tap below to launch the game:</p>
-    <a href="https://yandex.com/games/" class="play-now-btn">Play Game 🎲</a>
-  </div>
-</div>
-
-</section>
-<!---https://youtu.be/-aTWDnQttks?si=F63moS-BX4ah__8E--->  
-<!---https://youtu.be/2i-dnNepoTU?si=ptf3Zpk27mrtoBJ0--->
-
-
-      
       <section id="chat-view" class="app-section">
-     <!---  <h3 class="section-title"><i class="fa-solid fa-robot gold-text">AI ASSISTANT</i></h3>--->
         <div class="glass-card ai-terminal-box">
           <div class="ai-status"><span class="pulse-dot"></span> AI (Coming Soon)</div>
           <div class="chatbot-history" id="chat-log-box">
@@ -622,107 +592,54 @@ T&C does not collect or store your personal data.This website is for information
           </div>
           <!-- Data Privacy Ribbon -->
           <div class="privacy-notice">
-           <span class="shield-icon">🛡</span>
-           <span class="privacy-text">
-           <strong>Data Privacy:</strong> We recommend not to share personal info in chat/website. T&C Customer Data Privacy Policy.
-            <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Read me</a>
-         </span>
+            <span class="shield-icon">🛡</span>
+            <span class="privacy-text">
+              <strong>Data Privacy:</strong> We recommend not to share personal info in chat/website. T&C Customer Data Privacy Policy.
+              <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Read me</a>
+            </span>
           </div>
           <div class="chat-input-bar">
             <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)">
             <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
           </div>
         </div>
+      </section>
+
+      <section id="map-view" class="app-section">
+        <h3>YOU ARE HERE MAP</h3>
         
-</section>
-
-
-<section id="map-view" class="app-section">
-  <h3>YOU ARE HERE MAP</h3>
-  
-  <!-- Map Container Wrapper with relative positioning -->
-  <div class="map-container-wrapper" style="position: relative;">
-    <!-- Map Element -->
-    <div id="map"></div>
-    
-    <!-- Compact Side Ticker Bar inside the map
-    <div class="map-side-ticker">
-      <span class="ticker-icon">🌎</span>
-      <div class="ticker-text-wrap">
-        <p class="ticker-text">Users are advised by T&C: You are here map is customized by T&C only for its customers internal purposes, does not support for rerouting/navigation.</p>
-      </div>
-    </div>
-  </div>
-  --->
-  
-  <!-- Search Bar -->
-  <div class="map-search-container">
-    <input type="text" id="destination-input" placeholder="Search destination (e.g., Lb nagar)...">
-    <button onclick="searchDestination()">Search</button>
-  </div>
-
-  <!-- Quick Amenity Chips -->
-  <div class="amenities-container">
-    <button class="amenity-chip" onclick="searchAmenity('hospital')">🏥 Hospital (Dial: 108)</button>
-    <button class="amenity-chip" onclick="searchAmenity('police station')">👮 Police (Dial: 100)</button>
-    <button class="amenity-chip" onclick="searchAmenity('fire station')">🔥 Fire Station (Dial: 101)</button>
-    <button class="amenity-chip" onclick="searchAmenity('metro station')">🚇 Metro</button>
-    <button class="amenity-chip" onclick="searchAmenity('bus station')">🚌 Bus Stop</button>
-    <button class="amenity-chip" onclick="searchAmenity('atm')">ATM's 24*7</button>
-    <button class="amenity-chip" onclick="searchAmenity('gas station')">⛽ Fule Bunk</button>
-  </div>
-
-  <!-- Modern Route Results Card -->
-  <div id="route-info" class="modern-route-card">
-    <div class="card-placeholder">
-      <span class="pulse-icon">📍</span>
-      <p>Search a destination or tap an amenity tile above.</p>
-    </div>
-  </div>
-</section>
-
-
-
-
-      
-   <!---   <section id="map-view" class="app-section">
-        <h3 class="section-title"><i class="fa-solid fa-map-location-dot gold-text"></i> You Are Here (Coming Soon)</h3>
+        <!-- Map Container Wrapper with relative positioning -->
+        <div class="map-container-wrapper" style="position: relative;">
+          <!-- Map Element -->
+          <div id="map"></div>
+        </div>
         
-        <div class="visual-map-container luxury-map-height">
-          <iframe 
-            id="live-interactive-map"
-            class="live-iframe-map"
-            src="https://maps.google.com/maps?q=New+Modern+Mission&t=&z=16&ie=UTF8&iwloc=&output=embed" 
-            allowfullscreen="" 
-            loading="lazy">
-          </iframe>
+        <!-- Search Bar -->
+        <div class="map-search-container">
+          <input type="text" id="destination-input" placeholder="Search destination (e.g., Lb nagar)...">
+          <button onclick="searchDestination()">Search</button>
         </div>
 
-        <div class="map-search-block">
-          <div class="search-flex-group">
-            <div class="destination-input-wrapper">
-              <i class="fa-solid fa-location-pin destination-icon"></i>
-              <input type="text" id="map-custom-destination" placeholder="Search destination (e.g., Charminar, Gachibowli)..." onkeypress="handleMapSearchKey(event)">
-              <button class="map-search-trigger-btn" onclick="launchInAppSearch()"><i class="fa-solid fa-location-arrow"></i></button>
-            </div>
+        <!-- Quick Amenity Chips -->
+        <div class="amenities-container">
+          <button class="amenity-chip" onclick="searchAmenity('hospital')">🏥 Hospital (Dial: 108)</button>
+          <button class="amenity-chip" onclick="searchAmenity('police station')">👮 Police (Dial: 100)</button>
+          <button class="amenity-chip" onclick="searchAmenity('fire station')">🔥 Fire Station (Dial: 101)</button>
+          <button class="amenity-chip" onclick="searchAmenity('metro station')">🚇 Metro</button>
+          <button class="amenity-chip" onclick="searchAmenity('bus station')">🚌 Bus Stop</button>
+          <button class="amenity-chip" onclick="searchAmenity('atm')">ATM's 24*7</button>
+          <button class="amenity-chip" onclick="searchAmenity('gas station')">⛽ Fule Bunk</button>
+        </div>
+
+        <!-- Modern Route Results Card -->
+        <div id="route-info" class="modern-route-card">
+          <div class="card-placeholder">
+            <span class="pulse-icon">📍</span>
+            <p>Search a destination or tap an amenity tile above.</p>
           </div>
         </div>
-
-        <div class="map-filter-grid">
-          <button class="filter-chip active" onclick="updateFreeMap('amenities')"><i class="fa-solid fa-location-dot"></i> Stall Hub</button>
-          <button class="filter-chip" onclick="updateFreeMap('hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
-          <button class="filter-chip" onclick="updateFreeMap('police+station')"><i class="fa-solid fa-shield"></i> Police</button>
-          <button class="filter-chip" onclick="updateFreeMap('fire+station')"><i class="fa-solid fa-fire-extinguisher"></i> Fire</button>
-          <button class="filter-chip" onclick="updateFreeMap('bus+stop')"><i class="fa-solid fa-bus"></i> Bus Stop</button>
-          <button class="filter-chip" onclick="updateFreeMap('courier+service')"><i class="fa-solid fa-box"></i> Courier</button>
-          <button class="filter-chip" onclick="updateFreeMap('temple')"><i class="fa-solid fa-gopuram"></i> Temple</button>
-          <button class="filter-chip" onclick="updateFreeMap('shopping+mall')"><i class="fa-solid fa-bag-shopping"></i> Malls</button>
-          <button class="filter-chip" onclick="updateFreeMap('cab+pickup+or+taxi+stand')"><i class="fa-solid fa-taxi"></i> Cab Points</button>
-        </div>
       </section>
---->
 
-      
       <section id="cert-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
         <div class="glass-card cert-container">
@@ -779,25 +696,25 @@ T&C does not collect or store your personal data.This website is for information
         </div>
       </section>
   
-<section id="owner-view" class="app-section">
+      <section id="owner-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-user-tie gold-text"></i> OWNER BIO</h3>
-  <!-- Founder Section -->
-<div class="glass-card">
-  <div class="owner-header">
-    <div class="owner-avatar" style="overflow: hidden; padding: 0;">
-      <img src="IMG_20260709_120123.png" alt="Founder" style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-    <div>
-      <div class="owner-title-label">FOUNDER & OWNER</div>
-      <div style="font-weight: 600;">Murali Manohar Nidadavolu</div>
-    </div>
-  </div>
-  <p class="owner-bio-p">
-    Dedicated to serving quality and comfort. Bringing tradition and modern safety standards together for every guest at our stall.
-  </p>
-</div>        
-  <!-- Owner Section -->
-  <div class="glass-card owner-box">
+        <!-- Founder Section -->
+        <div class="glass-card">
+          <div class="owner-header">
+            <div class="owner-avatar" style="overflow: hidden; padding: 0;">
+              <img src="IMG_20260709_120123.png" alt="Founder" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div>
+              <div class="owner-title-label">FOUNDER & OWNER</div>
+              <div style="font-weight: 600;">Murali Manohar Nidadavolu</div>
+            </div>
+          </div>
+          <p class="owner-bio-p">
+            Dedicated to serving quality and comfort. Bringing tradition and modern safety standards together for every guest at our stall.
+          </p>
+        </div>        
+        <!-- Owner Section -->
+        <div class="glass-card owner-box">
           <div class="owner-header">
             <div class="owner-avatar"><i class="fa-solid fa-user-tie"></i></div>
             <div>
@@ -811,361 +728,221 @@ T&C does not collect or store your personal data.This website is for information
             <button class="btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
           </div>
           <div id="upi-display" class="glass-card hidden upi-reveal-card">
-  <p>Scan to pay:</p>
-  <!-- Replace 'your-qr-image.png' with your actual file path -->
-  <img src="IMG_20260709_160545.jpg" alt="UPI QR Code" style="width:150px; height:150px; margin: 10px 0;">
-  <p>UPI ID:</p>
-  <code>muralimanohar.in-3@okaxis</code>
-</div>
-  </div>
-
-<!-- R&D Section Card -->
-<details class="rd-card-interactive">
-    <!-- Everything inside summary is always visible and clickable -->
-    <summary class="rd-summary">
-        <div class="rd-header-content">
-            <span class="role"></span>
-            <h3>Research & Development</h3>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Members: The Founder & AI</p>
-        </div>
-    </summary>
-    <!-- Everything below this appears only when clicked -->
-    <div class="rd-details-content">
-        <div class="scroll-box">
-            <p class="description">
-                Our R&D is dedicated to pioneering a clean, smart, and deeply helpful premium service experience. By integrating advanced real-time monitoring and automation, we have successfully implemented systems that manage traffic flow by resolving parking obstructions, ensure a comfortable atmosphere through automated policy reminders like no-smoking prompts, and provide proactive guest assistance such as notifying customers about forgotten personal belongings. This collaborative effort between human vision and AI precision ensures that every guest interaction at T&C is seamless, secure, and technologically enhanced.
-            </p>
-        </div>
-    </div>
-</details>
-
-<!--Suppliers Section Card -->
-<details class="rd-card-interactive">
-    <!-- Everything inside summary is always visible and clickable -->
-    <summary class="rd-summary">
-        <div class="rd-header-content">
-            <span class="role"></span>
-            <h3>Our Suppliers</h3>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Enclosed minimal details</p>
-        </div>
-    </summary>
-    <!-- Everything below this appears only when clicked -->
-    <div class="rd-details-content">
-        <div class="scroll-box">
-            <ul class="description-list">
-    <li><strong>GreenLeaf Organics:</strong> Supplies fresh, pesticide-free seasonal vegetables and herbs.</li>
-    <li><strong>DairyBest Farms:</strong> Provides farm-fresh, hormone-free milk, cream, and artisanal butter.</li>
-    <li><strong>Heritage Grain Co.:</strong> Supplies premium, stone-ground whole wheat and multi-grain flour blends.</li>
-    <li><strong>EcoPack Solutions:</strong> Supplies 100% compostable and biodegradable take-out containers and cutlery.</li>
-    <li><strong>Golden Grain Mills:</strong> Provides premium-quality, unadulterated refined flour and specialized organic grains.</li>
-    </ul>
-    </div>
-    </div>
-</details>
-
-<!--Staff section-->
-<details class="rd-card-interactive">
-    <summary class="rd-summary">
-        <div class="card-wrapper">
-            <div class="text-content">
-                <h3>Service Staff</h3>
-                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Members, Identity & Credit</p>
-            </div>
-        </div>
-    </summary>
-    
-    <div class="rd-details-content">
-        <ul class="description-list">
-            <li><strong>Chief: Mr. Gamma </strong> in chief coat "Certified in first-aid"</li>
-            <li><strong>Helper: Mr. Alpha </strong> in blue top "Certified in first-aid"</li>
-            <li><strong>House Keeping: Ms. Beta </strong> in green top</li>
-        </ul>
-    </div>
-</details>
-  
-<!--About section-->
-<details class="rd-card-interactive">
-    <summary class="rd-summary">
-        <div class="card-wrapper">
-            <div class="text-content">
-                <h3>About</h3>
-                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Website & Credit</p>
-            </div>
-            <!-- You can add a small icon or logo here if desired -->
-        </div>
-    </summary>
-    
-    <div class="rd-details-content">
-        <p class="description" style="margin-bottom: 15px;">
-            This platform is the digital interface for <strong>Tasty & Comfort</strong>, designed to bridge the gap between traditional service values and modern technological convenience.
-        </p>
-        <p class="description">
-            <strong>Built & Developed by:</strong> Murali Manohar Nidadavolu<br>
-            <strong>Version:</strong> 4.6.9 (2026)
-        </p>
-    </div>
-</details>
-
-</section>
-    </main>
-
- <footer class="bottom-mobile-nav">
-  <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
-  <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
-  <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i><span>Broadcast</span></div>
-  <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>AI Chat</span></div>
-  <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
-  <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Cert</span></div>
-  <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>About</span></div>
- </footer>
-
-  </div>
-
-  
-<div id="announcement-modal" class="modal hidden">
-  <div class="glass-card">
-    <audio id="announcement-sound" src="arunangshubanerjee-airbus-cabin-pa-beep-tone-passenger-announcement-chime-358248.mp3"></audio>
-    <h3 style="margin-top: 0; color: #dc3545;">Announcement</h3>
-    <p id="announcement-text" style="white-space: pre-wrap;"></p>
-    <button onclick="closeAnnouncement()">OK</button>
-  </div>
-</div>
-
-<!--- 
-Smart Headphones Reminder Modal
-<div id="smart-headphones-popup" class="smart-headphones-overlay" style="display:none;">
-  <div class="smart-headphones-card">
-    <div class="smart-headphones-icon">🎧</div>
-    <div class="smart-headphones-text">
-      <h4>Audio Muted🔇</h4>
-      <p>Plug-In your headphones for better experience and less noise pollution.</p>
-    </div>
-    <div class="smart-headphones-actions">
-      <button onclick="dismissHeadphonesNotice(true)" class="smart-btn-gotit">Got it</button>
-      <button onclick="dismissHeadphonesNotice(false)" class="smart-btn-close">✕</button>
-    </div>
-  </div>
-</div>
-
-<style>
-  .smart-headphones-overlay {
-    position: fixed;
-    bottom: 360px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 99999;
-    width: 90%;
-    max-width: 380px;
-    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .smart-headphones-card {
-    background: rgba(22, 27, 34, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    color: #e6edf3;
-  }
-
-  .smart-headphones-icon {
-    font-size: 1.8rem;
-    background: rgba(255, 215, 0, 0.1);
-    padding: 10px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .smart-headphones-text h4 {
-    margin: 0 0 4px 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #ffd700;
-  }
-
-  .smart-headphones-text p {
-    margin: 0;
-    font-size: 0.8rem;
-    color: #8b949e;
-    line-height: 1.3;
-  }
-
-  .smart-headphones-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-end;
-  }
-
-  .smart-btn-gotit {
-    background: #ffd700;
-    color: #0d1117;
-    border: none;
-    padding: 6px 12px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border-radius: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: transform 0.2s;
-  }
-
-  .smart-btn-gotit:active {
-    transform: scale(0.95);
-  }
-
-  .smart-btn-close {
-    background: transparent;
-    border: none;
-    color: #8b949e;
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 2px;
-  }
-
-  @keyframes slideUpFade {
-    from {
-      opacity: 0;
-      transform: translate(-50%, 30px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-  }
-</style>
---->
-
-  
-<dialog id="menuModal" class="combo-modal" onclick="if(event.target == this) this.close()">
-  <div class="modal-content">
-    <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
-    <img src="" alt="Menu Item" style="width:100%; border-radius:10px;">
-    <h3 style="margin: 15px 0; color: #fff;"></h3>
-
-    <div class="modal-tiles" style="display: flex; gap: 10px;">
-      <div class="tile price-tile" style="background: #2a2e3d; padding: 10px; border-radius: 8px; flex: 1; text-align: center; color: white;"></div>
-      <div class="tile type-tile" style="background: #2a2e3d; padding: 10px; border-radius: 8px; flex: 1; text-align: center; color: white;"></div>
-    </div>
-  </div>
-</dialog>
-
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'en',
-      includedLanguages: 'en,hi,te',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
-  }
-</script>
-
-<script>
-  // Watch the map container and inject the ticker the exact second Leaflet creates the attribution box
-const mapElement = document.getElementById('map');
-
-if (mapElement) {
-  const attributionObserver = new MutationObserver((mutations, observer) => {
-    const attributionControl = document.querySelector('.leaflet-control-attribution');
-    
-    if (attributionControl && !document.querySelector('.map-side-ticker')) {
-      // Save existing attribution text/links safely
-      const existingContent = attributionControl.innerHTML.trim();
-      
-      const combinedHtml = `
-        <div class="map-side-ticker">
-          <span class="ticker-icon">🌎</span>
-          <div class="ticker-text-wrap">
-            <span class="ticker-text">Users are advised by T&C: You are here map is developed by T&C only for geographical knowledge of area/destination/locations. It does not support for rerouting/navigation.</span>
+            <p>Scan to pay:</p>
+            <img src="IMG_20260709_160545.jpg" alt="UPI QR Code" style="width:150px; height:150px; margin: 10px 0;">
+            <p>UPI ID:</p>
+            <code>muralimanohar.in-3@okaxis</code>
           </div>
         </div>
-        <span class="attribution-links">${existingContent}</span>
-      `;
-      
-      attributionControl.innerHTML = combinedHtml;
-      
-      // Stop observing once successfully injected
-      observer.disconnect();
-    }
-  });
 
-  attributionObserver.observe(mapElement, {
-    childList: true,
-    subtree: true
-  });
-}
+        <!-- R&D Section Card -->
+        <details class="rd-card-interactive">
+          <summary class="rd-summary">
+            <div class="rd-header-content">
+              <span class="role"></span>
+              <h3>Research & Development</h3>
+              <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Members: The Founder & AI</p>
+            </div>
+          </summary>
+          <div class="rd-details-content">
+            <div class="scroll-box">
+              <p class="description">
+                Our R&D is dedicated to pioneering a clean, smart, and deeply helpful premium service experience. By integrating advanced real-time monitoring and automation, we have successfully implemented systems that manage traffic flow by resolving parking obstructions, ensure a comfortable atmosphere through automated policy reminders like no-smoking prompts, and provide proactive guest assistance such as notifying customers about forgotten personal belongings. This collaborative effort between human vision and AI precision ensures that every guest interaction at T&C is seamless, secure, and technologically enhanced.
+              </p>
+            </div>
+          </div>
+        </details>
 
+        <!-- Suppliers Section Card -->
+        <details class="rd-card-interactive">
+          <summary class="rd-summary">
+            <div class="rd-header-content">
+              <span class="role"></span>
+              <h3>Our Suppliers</h3>
+              <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Enclosed minimal details</p>
+            </div>
+          </summary>
+          <div class="rd-details-content">
+            <div class="scroll-box">
+              <ul class="description-list">
+                <li><strong>GreenLeaf Organics:</strong> Supplies fresh, pesticide-free seasonal vegetables and herbs.</li>
+                <li><strong>DairyBest Farms:</strong> Provides farm-fresh, hormone-free milk, cream, and artisanal butter.</li>
+                <li><strong>Heritage Grain Co.:</strong> Supplies premium, stone-ground whole wheat and multi-grain flour blends.</li>
+                <li><strong>EcoPack Solutions:</strong> Supplies 100% compostable and biodegradable take-out containers and cutlery.</li>
+                <li><strong>Golden Grain Mills:</strong> Provides premium-quality, unadulterated refined flour and specialized organic grains.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
 
+        <!-- Staff section -->
+        <details class="rd-card-interactive">
+          <summary class="rd-summary">
+            <div class="card-wrapper">
+              <div class="text-content">
+                <h3>Service Staff</h3>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Members, Identity & Credit</p>
+              </div>
+            </div>
+          </summary>
+          <div class="rd-details-content">
+            <ul class="description-list">
+              <li><strong>Chief: Mr. Gamma </strong> in chief coat "Certified in first-aid"</li>
+              <li><strong>Helper: Mr. Alpha </strong> in blue top "Certified in first-aid"</li>
+              <li><strong>House Keeping: Ms. Beta </strong> in green top</li>
+            </ul>
+          </div>
+        </details>
+          
+        <!-- About section -->
+        <details class="rd-card-interactive">
+          <summary class="rd-summary">
+            <div class="card-wrapper">
+              <div class="text-content">
+                <h3>About</h3>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #ff9800;">Website & Credit</p>
+              </div>
+            </div>
+          </summary>
+          <div class="rd-details-content">
+            <p class="description" style="margin-bottom: 15px;">
+              This platform is the digital interface for <strong>Tasty & Comfort</strong>, designed to bridge the gap between traditional service values and modern technological convenience.
+            </p>
+            <p class="description">
+              <strong>Built & Developed by:</strong> Murali Manohar Nidadavolu<br>
+              <strong>Version:</strong> 4.6.9 (2026)
+            </p>
+          </div>
+        </details>
+      </section>
+    </main>
 
-</script>
+    <footer class="bottom-mobile-nav">
+      <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
+      <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
+      <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-heart-pulse"></i><span>Broadcast</span></div>
+      <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>AI Chat</span></div>
+      <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
+      <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Cert</span></div>
+      <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>About</span></div>
+    </footer>
+  </div>
 
-<script>
-   window.addEventListener('DOMContentLoaded', () => {
-  const tickerBar = document.getElementById('headphones-ticker');
+  <div id="announcement-modal" class="modal hidden">
+    <div class="glass-card">
+      <audio id="announcement-sound" src="arunangshubanerjee-airbus-cabin-pa-beep-tone-passenger-announcement-chime-358248.mp3"></audio>
+      <h3 style="margin-top: 0; color: #dc3545;">Announcement</h3>
+      <p id="announcement-text" style="white-space: pre-wrap;"></p>
+      <button onclick="closeAnnouncement()">OK</button>
+    </div>
+  </div>
   
-  function checkHeadphonesTicker() {
-    if (!tickerBar) return;
-    
-    // Find if any video/media view is currently visible
-    const videoViews = ['video-view', 'live-view', 'wildlife-view', 'sports-view', 'music-view', 'nasa-view', 'airport-view', 'hindu-view', 'muslim-view', 'christian-view', 'law-view', 'file-view'];
-    const isActiveVideoView = videoViews.some(id => {
-      const el = document.getElementById(id);
-      return el && el.style.display !== 'none';
-    });
+  <dialog id="menuModal" class="combo-modal" onclick="if(event.target == this) this.close()">
+    <div class="modal-content">
+      <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
+      <img src="" alt="Menu Item" style="width:100%; border-radius:10px;">
+      <h3 style="margin: 15px 0; color: #fff;"></h3>
 
-    // Show ticker only if a video view is active AND it hasn't been manually dismissed/unmuted
-    if (isActiveVideoView && !tickerBar.dataset.unmuted) {
-      tickerBar.style.display = 'flex';
-    } else {
-      tickerBar.style.display = 'none';
+      <div class="modal-tiles" style="display: flex; gap: 10px;">
+        <div class="tile price-tile" style="background: #2a2e3d; padding: 10px; border-radius: 8px; flex: 1; text-align: center; color: white;"></div>
+        <div class="tile type-tile" style="background: #2a2e3d; padding: 10px; border-radius: 8px; flex: 1; text-align: center; color: white;"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi,te',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
     }
-  }
+  </script>
 
-  // Make the ticker clickable so tapping it unmunts/dismisses it
-  if (tickerBar) {
-    tickerBar.style.cursor = 'pointer';
-    tickerBar.title = "Click to dismiss / Audio unmuted";
-    tickerBar.addEventListener('click', () => {
-      // Mark as unmuted/dismissed and hide immediately
-      tickerBar.dataset.unmuted = 'true';
-      tickerBar.style.display = 'none';
-    });
-  }
+  <script>
+    // Watch the map container and inject the ticker the exact second Leaflet creates the attribution box
+    const mapElement = document.getElementById('map');
 
-  // Reset the dismissal state whenever the user switches channels/tabs
-  const viewButtons = document.querySelectorAll('.view-selector button');
-  viewButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (tickerBar) {
-        delete tickerBar.dataset.unmuted; // Reset so ticker can show on the next video if needed
+    if (mapElement) {
+      const attributionObserver = new MutationObserver((mutations, observer) => {
+        const attributionControl = document.querySelector('.leaflet-control-attribution');
+        
+        if (attributionControl && !document.querySelector('.map-side-ticker')) {
+          const existingContent = attributionControl.innerHTML.trim();
+          
+          const combinedHtml = `
+            <div class="map-side-ticker">
+              <span class="ticker-icon">🌎</span>
+              <div class="ticker-text-wrap">
+                <span class="ticker-text">Users are advised by T&C: You are here map is developed by T&C only for geographical knowledge of area/destination/locations. It does not support for rerouting/navigation.</span>
+              </div>
+            </div>
+            <span class="attribution-links">${existingContent}</span>
+          `;
+          
+          attributionControl.innerHTML = combinedHtml;
+          observer.disconnect();
+        }
+      });
+
+      attributionObserver.observe(mapElement, {
+        childList: true,
+        subtree: true
+      });
+    }
+  </script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const tickerBar = document.getElementById('headphones-ticker');
+      
+      function checkHeadphonesTicker() {
+        if (!tickerBar) return;
+        
+        const videoViews = ['video-view', 'live-view', 'wildlife-view', 'sports-view', 'music-view', 'nasa-view', 'airport-view', 'hindu-view', 'muslim-view', 'christian-view', 'law-view', 'file-view'];
+        const isActiveVideoView = videoViews.some(id => {
+          const el = document.getElementById(id);
+          return el && el.style.display !== 'none';
+        });
+
+        if (isActiveVideoView && !tickerBar.dataset.unmuted) {
+          tickerBar.style.display = 'flex';
+        } else {
+          tickerBar.style.display = 'none';
+        }
       }
-      setTimeout(checkHeadphonesTicker, 50);
+
+      if (tickerBar) {
+        tickerBar.style.cursor = 'pointer';
+        tickerBar.title = "Click to dismiss / Audio unmuted";
+        tickerBar.addEventListener('click', () => {
+          tickerBar.dataset.unmuted = 'true';
+          tickerBar.style.display = 'none';
+        });
+      }
+
+      const viewButtons = document.querySelectorAll('.view-selector button');
+      viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (tickerBar) {
+            delete tickerBar.dataset.unmuted;
+          }
+          setTimeout(checkHeadphonesTicker, 50);
+        });
+      });
+
+      checkHeadphonesTicker();
     });
-  });
+  </script>
+    
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  // Initial check on load
-  checkHeadphonesTicker();
-});
-
-
-</script>
-  
-  
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-</script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
-<script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>
