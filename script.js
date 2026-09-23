@@ -413,7 +413,7 @@ function setMode(mode, element) {
             dot.style.display = "inline-block"; 
             // Fixed typo here to properly target views.music instead of views.sports
             if (views.music) views.music.style.display = 'block';
-            players.music.src = "https://www.youtube.com/embed/-aTWDnQttks?autoplay=1&mute=1";
+            players.music.src = "https://www.youtube.com/embed/-yHCeSZ-Nik?autoplay=1&mute=1";
         }
         else if (mode === 'nasa') {
             title.innerText = "NASA";
@@ -470,9 +470,9 @@ function setMode(mode, element) {
 // https://www.youtube.com/live/e1FIApIafWE?si=ZtVRb0WntF9uYHZx
 // https://youtu.be/-aTWDnQttks?si=SBTx1z6N_MK20dUw
 // https://www.youtube.com/live/Gupg41GJlpo?si=tscBaxRnGJ5t4FPL
-//https://www.youtube.com/live/_jnDy56dehA?si=aTz02-wbLsCzXPDJ
-//https://www.youtube.com/live/II_m28Bm-iM?si=h5Z4hs2eCcPga8F2
-
+//News https://www.youtube.com/live/_jnDy56dehA?si=aTz02-wbLsCzXPDJ
+//News https://www.youtube.com/live/II_m28Bm-iM?si=h5Z4hs2eCcPga8F2
+//Music https://youtu.be/-yHCeSZ-Nik?si=szr11nVDBTFAZN8J
 
 
 // Selector bar of videos
