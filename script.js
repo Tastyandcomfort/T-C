@@ -911,30 +911,5 @@ function dismissHeadphonesNotice(rememberChoice) {
 
 
 
-const themeToggleBtn = document.getElementById('theme-toggle');
-const body = document.body;
-
-// Check for saved user preference on load
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'light') {
-  body.classList.add('light-mode');
-  themeToggleBtn.textContent = '☀️';
-} else {
-  themeToggleBtn.textContent = '🌙';
-}
-
-// Toggle theme on click
-themeToggleBtn.addEventListener('click', () => {
-  body.classList.toggle('light-mode');
-  
-  if (body.classList.contains('light-mode')) {
-    localStorage.setItem('theme', 'light');
-    themeToggleBtn.textContent = '☀️';
-  } else {
-    localStorage.setItem('theme', 'dark');
-    themeToggleBtn.textContent = '🌙';
-  }
-});
-
 
 
