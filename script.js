@@ -455,7 +455,7 @@ function setMode(mode, element) {
             title.innerText = "Media";
             dot.style.display = "inline-block";
             views.video.style.display = 'block';
-            players.news.src = "sample.mp4";
+            players.news.src = "Audi RS5.jpg";
         }
     }
 }
