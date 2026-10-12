@@ -1,6 +1,6 @@
 
 
-.emergency{border-color:rgba(255,89,104,.18)}
+.emergency{border-color:var(--gold-gradient);}
 .emergency-grid{display:grid;
 grid-template-columns:1fr 1fr;gap:7px;
 margin-top:11px}
@@ -9,7 +9,7 @@ grid-template-columns:auto 1fr;
 column-gap:7px;
 text-decoration:none;
 color:white;
-background:var(--gold-gradient);/*#281a20;*/
+background:#281a20;
 padding:10px;border-radius:11px}
 .emergency-grid small{grid-column:3;
 color:#ffb7bf}
