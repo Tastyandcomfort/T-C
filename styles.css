@@ -1,5 +1,5 @@
 
-
+/*
 .emergency{border-color:rgba(255,89,104,.18)}
 .emergency-grid{display:grid;
 grid-template-columns:1fr 1fr;
@@ -17,7 +17,7 @@ color:#ffb7bf}
 .emergency-grid a:nth-child(2){background:#182c27}
 .emergency-grid a:nth-child(3){background:#302319}
 .emergency-grid a:nth-child(4){background:#192b40}
-
+*/
 
 
 :root {
