@@ -11,7 +11,7 @@ text-decoration:none;
 color:white;
 background:#281a20;
 padding:10px;border-radius:11px}
-.emergency-grid small{grid-column:3;
+.emergency-grid small{grid-column:2;
 color:#ffb7bf}
 .emergency-grid a:nth-child(2){background:#182c27}
 .emergency-grid a:nth-child(3){background:#302319}
