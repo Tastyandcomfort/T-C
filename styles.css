@@ -2,7 +2,6 @@
 .emergency{border-color:rgba(255,89,104,.18)}.emergency-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.emergency-grid a{display:grid;grid-template-columns:auto 1fr;column-gap:7px;text-decoration:none;color:white;background:#281a20;padding:10px;border-radius:11px}.emergency-grid small{grid-column:2;color:#ffb7bf}.emergency-grid a:nth-child(2){background:#182c27}.emergency-grid a:nth-child(3){background:#302319}.emergency-grid a:nth-child(4){background:#192b40}
 
 
-
 /*
 .emergency{border-color:rgba(255,89,104,.18)}
 .emergency-grid{display:grid;
