@@ -1,6 +1,6 @@
 
 
-.emergency{border-color:var(--gold-gradient);}
+.emergency{border-color:var(--gold-gradient);
 .emergency-grid{display:grid;
 grid-template-columns:1fr 1fr;gap:7px;
 margin-top:11px}
