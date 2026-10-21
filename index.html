@@ -876,10 +876,10 @@ T&C does not collect or store your personal data.This website is for information
 </section>
 
 
-<!-- START: T&C Clean Tabbed Public Intelligence Hub -->
+<!-- START: T&C Dynamic Multi-City & National Intelligence Hub -->
 <section id="tcTabbedDashboard" style="max-width: 950px; margin: 30px auto; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; border-radius: 16px; border: 1px solid #334155; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
   
-  <!-- Header -->
+  <!-- Header & City Selector -->
   <div style="border-bottom: 1px solid #334155; padding-bottom: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
     <div>
       <h2 style="margin: 0; color: #f59e0b; font-size: 1.35rem; display: flex; align-items: center; gap: 8px;">
@@ -890,16 +890,16 @@ T&C does not collect or store your personal data.This website is for information
       </p>
     </div>
 
-    <!-- City Selector Dropdown -->
+    <!-- City Selector Dropdown (Drives Assets & Govt Portals) -->
     <div style="display: flex; align-items: center; gap: 8px;">
       <label style="font-size: 0.8rem; color: #cbd5e1; font-weight: bold;">Select Metro City:</label>
       <select id="tcCitySelect" onchange="tcUpdateCityData()" style="background: #1e293b; color: #f59e0b; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">
-        <option value="hyderabad">Hyderabad</option>
-        <option value="mumbai">Mumbai</option>
+        <option value="hyderabad">Hyderabad (Telangana)</option>
+        <option value="mumbai">Mumbai (Maharashtra)</option>
         <option value="delhi">Delhi (NCR)</option>
-        <option value="bengaluru">Bengaluru</option>
-        <option value="chennai">Chennai</option>
-        <option value="kolkata">Kolkata</option>
+        <option value="bengaluru">Bengaluru (Karnataka)</option>
+        <option value="chennai">Chennai (Tamil Nadu)</option>
+        <option value="kolkata">Kolkata (West Bengal)</option>
       </select>
     </div>
   </div>
@@ -910,10 +910,10 @@ T&C does not collect or store your personal data.This website is for information
       🛒 1. Daily Food & DMart
     </button>
     <button id="btnTab2" onclick="tcSwitchTab('tab2')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">
-      📈 2. Fuel, Gold & Assets
+      📈 2. Fuel, Gold (24K/22K) & Assets
     </button>
     <button id="btnTab3" onclick="tcSwitchTab('tab3')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">
-      🏛️ 3. Govt Schemes & Jobs
+      🏛️ 3. State Govt Portals & Jobs
     </button>
     <button id="btnTab4" onclick="tcSwitchTab('tab4')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">
       🌍 4. World & Climate
@@ -965,7 +965,7 @@ T&C does not collect or store your personal data.This website is for information
     </div>
   </div>
 
-  <!-- TAB 2: FUEL, GOLD & ASSETS (CITY DRIVEN) -->
+  <!-- TAB 2: FUEL, GOLD (24K & 22K) & ASSETS -->
   <div id="tab2" class="tcTabContent" style="display: none;">
     <div style="background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #475569;">
       <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
@@ -978,57 +978,41 @@ T&C does not collect or store your personal data.This website is for information
         <!-- Fuel Card -->
         <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #ef4444;">
           <div style="font-size: 0.78rem; color: #94a3b8;">⛽ Fuel Rates (Today)</div>
-          <div id="tcCityFuel" style="font-size: 1.05rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">Petrol: ₹116.15/L | Diesel: ₹103.82/L</div>
-          <div id="tcCityFuelForecast" style="font-size: 0.75rem; color: #fca5a5;">🔮 <strong>Future Shift:</strong> Expected +₹0.80/L change over next 2 weeks.</div>
+          <div id="tcCityFuel" style="font-size: 1.05rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">Petrol: ₹116.15/L | Diesel: ₹104.23/L</div>
+          <div id="tcCityFuelForecast" style="font-size: 0.75rem; color: #fca5a5;">🔮 <strong>Future Shift:</strong> Global Middle East routing friction to hold baseline pump pricing steady.</div>
         </div>
 
-        <!-- Gold & Silver Card -->
+        <!-- Gold 24K, 22K & Silver Card -->
         <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #f59e0b;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">🪙 Gold & Silver Rates (Today)</div>
-          <div id="tcCityGold" style="font-size: 1.05rem; font-weight: bold; color: #f59e0b; margin: 4px 0;">22K: ₹1,33,890/10g | Silver: ₹1,820/10g</div>
-          <div id="tcCityGoldForecast" style="font-size: 0.75rem; color: #fef08a;">🔮 <strong>Future Shift:</strong> High global central bank demand keeping rates near peak levels.</div>
+          <div style="font-size: 0.78rem; color: #94a3b8;">🪙 Precious Metals (Per 10g Gold / 10g Silver)</div>
+          <div id="tcCityGold" style="font-size: 0.95rem; font-weight: bold; color: #f59e0b; margin: 4px 0;">24K: ₹1,46,080 | 22K: ₹1,33,910 | Silver: ₹1,820</div>
+          <div id="tcCityGoldForecast" style="font-size: 0.75rem; color: #fef08a;">🔮 <strong>Future Shift:</strong> Central bank reserve accumulation supporting high valuation floors.</div>
         </div>
 
         <!-- Real Estate / Land Card -->
         <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #10b981;">
           <div style="font-size: 0.78rem; color: #94a3b8;">🏡 Land & Open Plots Trend</div>
-          <div id="tcCityLand" style="font-size: 0.95rem; font-weight: bold; color: #10b981; margin: 4px 0;">Outer Ring Road Corridors</div>
-          <div id="tcCityLandForecast" style="font-size: 0.75rem; color: #a7f3d0;">🔮 <strong>1-Year Forecast:</strong> +12% value appreciation expected in suburban expansion belts.</div>
+          <div id="tcCityLand" style="font-size: 0.95rem; font-weight: bold; color: #10b981; margin: 4px 0;">Suburban Expansion Corridors</div>
+          <div id="tcCityLandForecast" style="font-size: 0.75rem; color: #a7f3d0;">🔮 <strong>1-Year Forecast:</strong> +10% to +14% appreciation projected around regional transit hubs.</div>
         </div>
 
-        <!-- EV Cars & Bikes -->
+        <!-- EV & Electronics -->
         <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #a855f7;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">⚡ EV Adoption & Savings</div>
-          <div style="font-size: 0.95rem; font-weight: bold; color: #a855f7; margin: 4px 0;">2W: ₹75k–₹1.3L | Cars: ₹8L+</div>
-          <div style="font-size: 0.75rem; color: #e9d5ff;">🔮 <strong>Future Shift:</strong> Save ~₹3,200/month compared to petrol vehicles as charging stations double.</div>
-        </div>
-
-        <!-- Electronics -->
-        <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #06b6d4;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">💻 Electronics & Laptops</div>
-          <div style="font-size: 0.95rem; font-weight: bold; color: #06b6d4; margin: 4px 0;">Laptops & Hardware: Stable</div>
-          <div style="font-size: 0.75rem; color: #cff4fc;">🔮 <strong>Future Shift:</strong> AI-powered processor chips driving laptop updates; fest exchange offers active.</div>
+          <div style="font-size: 0.78rem; color: #a855f7;">⚡ EV & 💻 Electronics</div>
+          <div style="font-size: 0.95rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">EV 2W: ₹75k+ | Laptops: Stable</div>
+          <div style="font-size: 0.75rem; color: #e9d5ff;">🔮 <strong>Future Shift:</strong> Battery chemistry tech evolution lowering baseline entry cost by ~5%.</div>
         </div>
 
       </div>
     </div>
   </div>
 
-  <!-- TAB 3: GOVT SCHEMES & JOBS -->
+  <!-- TAB 3: STATE GOV SCHEMES & JOBS -->
   <div id="tab3" class="tcTabContent" style="display: none;">
     <div style="background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #475569; margin-bottom: 16px;">
-      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem;">🏛️ Government Portals & Releases</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
-        <div style="background: #0f172a; padding: 12px; border-radius: 8px;">
-          <div style="font-weight: bold; color: #60a5fa; font-size: 0.9rem;">🏠 Indiramma Indlu Housing</div>
-          <p style="margin: 4px 0 8px 0; font-size: 0.78rem; color: #cbd5e1;">₹5 lakh home construction aid for low-income families.</p>
-          <a href="https://prajapalana.telangana.gov.in" target="_blank" style="color: #38bdf8; font-size: 0.78rem; font-weight: bold; text-decoration: none;">🔗 Open Praja Palana Portal →</a>
-        </div>
-        <div style="background: #0f172a; padding: 12px; border-radius: 8px;">
-          <div style="font-weight: bold; color: #fbbf24; font-size: 0.9rem;">📋 State Job Recruitment</div>
-          <p style="margin: 4px 0 8px 0; font-size: 0.78rem; color: #cbd5e1;">Group services & municipal staff recruitment drives active.</p>
-          <a href="https://tspsc.gov.in" target="_blank" style="color: #38bdf8; font-size: 0.78rem; font-weight: bold; text-decoration: none;">🔗 Check TSPSC Openings →</a>
-        </div>
+      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem;">🏛️ Official Government Portals & Releases (<span id="tcGovTitle">Telangana</span>)</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;" id="tcGovPortalsContainer">
+        <!-- Dynamically injected based on city selection -->
       </div>
     </div>
 
@@ -1061,11 +1045,11 @@ T&C does not collect or store your personal data.This website is for information
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
         <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #f59e0b;">
           <div style="font-weight: bold; color: #fbbf24; font-size: 0.9rem;">🚢 Shipping Route Detours</div>
-          <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #cbd5e1;">Red Sea conflict detours add 10-14 freight days, inflating imported cooking oil & tech prices.</p>
+          <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #cbd5e1;">Red Sea conflict maritime detours add 10-14 freight days, inflating imported cooking oil & tech logistics expenses.</p>
         </div>
         <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981;">
-          <div style="font-weight: bold; color: #34d399; font-size: 0.9rem;">🌦️ Weather & Agriculture</div>
-          <p id="tcWeatherDisplay" style="margin: 4px 0 0 0; font-size: 0.8rem; color: #cbd5e1;">Fetching live weather data...</p>
+          <div style="font-weight: bold; color: #34d399; font-size: 0.9rem;">🌦️ Regional Weather & Agriculture</div>
+          <p id="tcWeatherDisplay" style="margin: 4px 0 0 0; font-size: 0.8rem; color: #cbd5e1;">Syncing regional weather...</p>
         </div>
       </div>
     </div>
@@ -1073,67 +1057,97 @@ T&C does not collect or store your personal data.This website is for information
 
 </section>
 
-<!-- Embedded Multi-City Engine Script -->
+<!-- Embedded Intelligent Multi-City & State Script -->
 <script>
-// Multi-City Asset Database
+// Multi-City Asset & State Government Portal Database
 const tcCityDatabase = {
   hyderabad: {
     name: "Hyderabad",
-    fuel: "Petrol: ₹116.15/L | Diesel: ₹103.82/L",
-    gold: "22K: ₹1,33,890/10g | Silver: ₹1,820/10g",
-    land: "ORR & Kompally Suburban Belts",
-    fuelFC: "🔮 Expected +₹0.80/L shift over next 2 weeks.",
-    goldFC: "🔮 High central bank buying keeping prices near peak.",
-    landFC: "🔮 +12% appreciation projected along Metro Phase 2 corridors."
+    stateTitle: "Telangana State",
+    fuel: "Petrol: ₹116.15/L | Diesel: ₹104.23/L",
+    gold: "24K: ₹1,46,080 | 22K: ₹1,33,910 | Silver: ₹1,820 /10g",
+    land: "ORR & Kompally Suburban Corridors",
+    fuelFC: "🔮 Crude transport detours holding retail fuel band steady.",
+    goldFC: "🔮 High retail safe-haven demand keeping bullion rates elevated.",
+    landFC: "🔮 +12% value appreciation expected near Metro Phase 2 expansions.",
+    portals: [
+      { title: "🏠 Indiramma Indlu Housing", desc: "₹5 lakh state financial assistance for eligible home construction.", link: "https://prajapalana.telangana.gov.in", label: "Open Praja Palana Portal" },
+      { title: "📋 TSPSC Job Notifications", desc: "Active state group services and departmental recruitments.", link: "https://tspsc.gov.in", label: "Check TSPSC Openings" }
+    ]
   },
   mumbai: {
     name: "Mumbai",
+    stateTitle: "Maharashtra State",
     fuel: "Petrol: ₹111.21/L | Diesel: ₹97.83/L",
-    gold: "22K: ₹1,33,890/10g | Silver: ₹1,815/10g",
-    land: "Navi Mumbai & Thane Extensions",
-    fuelFC: "🔮 Crude transport detours affecting state fuel taxes.",
-    goldFC: "🔮 Retail festival jewelry buying surging across western hubs.",
-    landFC: "🔮 Suburban growth high near MTHL sea-link connection areas."
+    gold: "24K: ₹1,46,144 | 22K: ₹1,33,868 | Silver: ₹1,815 /10g",
+    land: "Navi Mumbai & Thane Extension Belts",
+    fuelFC: "🔮 State local tax structures maintaining lower base than southern hubs.",
+    goldFC: "🔮 Zaveri Bazaar seasonal trade pushing local liquidity demand.",
+    landFC: "🔮 MTHL sea-link impact driving steady peripheral growth.",
+    portals: [
+      { title: "🏠 MHADA Housing Schemes", desc: "Affordable housing lottery and allotment updates.", link: "https://housing.mhada.gov.in", label: "Open MHADA Portal" },
+      { title: "📋 MPSC & State Careers", desc: "Maharashtra public service commission job notifications.", link: "https://mpsc.gov.in", label: "Check MPSC Openings" }
+    ]
   },
   delhi: {
     name: "Delhi (NCR)",
+    stateTitle: "Delhi NCR / Central",
     fuel: "Petrol: ₹102.12/L | Diesel: ₹95.20/L",
-    gold: "22K: ₹1,34,040/10g | Silver: ₹1,830/10g",
+    gold: "24K: ₹1,45,998 | 22K: ₹1,33,734 | Silver: ₹1,830 /10g",
     land: "Noida Extension & Dwarka Expressway",
-    fuelFC: "🔮 Excise duty policy keeps Delhi rates lowest among metros.",
-    goldFC: "🔮 Bullion demand elevated due to north Indian wedding season.",
-    landFC: "🔮 Dwarka expressway sector plots seeing steady appreciation."
+    fuelFC: "🔮 Uniform state distribution keeping NCR fuel rates optimized.",
+    goldFC: "🔮 North Indian wedding season locking heavy physical gold demand.",
+    landFC: "🔮 Expressway expansion boosting commercial plot valuations.",
+    portals: [
+      { title: "🏠 DUSIB Shelter & Housing", desc: "Delhi Urban Shelter Improvement Board welfare releases.", link: "https://delhishelterboard.in", label: "Open DUSIB Portal" },
+      { title: "📋 DSSSB Recruitment Portal", desc: "Delhi Subordinate Services Selection Board job notices.", link: "https://dsssb.delhi.gov.in", label: "Check DSSSB Openings" }
+    ]
   },
   bengaluru: {
     name: "Bengaluru",
+    stateTitle: "Karnataka State",
     fuel: "Petrol: ₹111.68/L | Diesel: ₹98.78/L",
-    gold: "22K: ₹1,33,890/10g | Silver: ₹1,810/10g",
-    land: "North Bengaluru (Near Airport Corridor)",
-    fuelFC: "🔮 State transport levies maintaining steady pump prices.",
-    goldFC: "🔮 Stable demand across IT workforce investment portfolios.",
-    landFC: "🔮 Devanahalli airport belt open plot values trending up."
+    gold: "24K: ₹1,46,080 | 22K: ₹1,33,734 | Silver: ₹1,810 /10g",
+    land: "North Bengaluru Airport Corridor",
+    fuelFC: "🔮 State petroleum cess adjustments stabilizing local pump prices.",
+    goldFC: "🔮 Steady tech-park investor accumulation supporting high demand.",
+    landFC: "🔮 Devanahalli aerospace & IT corridor driving plots up.",
+    portals: [
+      { title: "🏠 Rajiv Gandhi Housing Corp", desc: "Karnataka state housing scheme allocations and tracking.", link: "https://ashraya.karnataka.gov.in", label: "Open Ashraya Portal" },
+      { title: "📋 KPSC Career Portals", desc: "Karnataka Public Service Commission job listings.", link: "https://kpsc.kar.nic.in", label: "Check KPSC Openings" }
+    ]
   },
   chennai: {
     name: "Chennai",
+    stateTitle: "Tamil Nadu State",
     fuel: "Petrol: ₹107.76/L | Diesel: ₹99.55/L",
-    gold: "22K: ₹1,34,890/10g | Silver: ₹1,850/10g",
-    land: "OMR & Sriperumbudur Industrial Belts",
-    fuelFC: "🔮 Port logistics keeping coastal crude transport stable.",
-    goldFC: "🔮 High demand driving regional south Indian gold premiums.",
-    landFC: "🔮 Peripheral industrial corridors seeing plot demand gains."
+    gold: "24K: ₹1,47,312 | 22K: ₹1,34,938 | Silver: ₹1,850 /10g",
+    land: "OMR & Sriperumbudur Corridors",
+    fuelFC: "🔮 Coastal freight management keeping refinery margins stable.",
+    goldFC: "🔮 Traditional south retail buying preserving strong price baselines.",
+    landFC: "🔮 Industrial corridor expansion boosting land asset values.",
+    portals: [
+      { title: "🏠 TNHB Housing Schemes", desc: "Tamil Nadu Housing Board allotment and urban plots.", link: "https://tnhb.tn.gov.in", label: "Open TNHB Portal" },
+      { title: "📋 TNPSC Government Jobs", desc: "Tamil Nadu Public Service Commission recruitments.", link: "https://www.tnpsc.gov.in", label: "Check TNPSC Openings" }
+    ]
   },
   kolkata: {
     name: "Kolkata",
+    stateTitle: "West Bengal State",
     fuel: "Petrol: ₹113.51/L | Diesel: ₹99.82/L",
-    gold: "22K: ₹1,33,890/10g | Silver: ₹1,820/10g",
-    land: "New Town & Rajarhat Extensions",
-    fuelFC: "🔮 Eastern freight corridor costs keeping rates elevated.",
-    goldFC: "🔮 Traditional festive buying supporting local bullion rates.",
-    landFC: "🔮 New Town IT & residential sector demand remaining steady."
+    gold: "24K: ₹1,47,166 | 22K: ₹1,34,804 | Silver: ₹1,820 /10g",
+    land: "New Town & Rajarhat Hubs",
+    fuelFC: "🔮 Eastern distribution costs holding retail values level.",
+    goldFC: "🔮 Regional cultural purchasing maintaining stable bullion turnover.",
+    landFC: "🔮 IT sector expansion sustaining New Town plot demand.",
+    portals: [
+      { title: "🏠 WBHIDCO Housing & Land", desc: "West Bengal housing infrastructure development updates.", link: "https://wbhidco.ltd", label: "Open HIDCO Portal" },
+      { title: "📋 WBPSC Job Portals", desc: "West Bengal Public Service Commission notifications.", link: "https://psc.wb.gov.in", label: "Check WBPSC Openings" }
+    ]
   }
 };
 
-// Update City Function
+// Update City Data & Dynamic Government Portals
 function tcUpdateCityData() {
   const cityKey = document.getElementById('tcCitySelect').value;
   const data = tcCityDatabase[cityKey];
@@ -1147,6 +1161,20 @@ function tcUpdateCityData() {
 
   document.getElementById('tcCityLand').innerText = data.land;
   document.getElementById('tcCityLandForecast').innerText = data.landFC;
+
+  // Dynamic State Government Section Update
+  document.getElementById('tcGovTitle').innerText = data.stateTitle;
+  let portalsHTML = '';
+  data.portals.forEach(p => {
+    portalsHTML += `
+      <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+        <div style="font-weight: bold; color: #60a5fa; font-size: 0.9rem;">${p.title}</div>
+        <p style="margin: 4px 0 8px 0; font-size: 0.78rem; color: #cbd5e1;">${p.desc}</p>
+        <a href="${p.link}" target="_blank" style="color: #38bdf8; font-size: 0.78rem; font-weight: bold; text-decoration: none;">🔗 ${p.label} →</a>
+      </div>
+    `;
+  });
+  document.getElementById('tcGovPortalsContainer').innerHTML = portalsHTML;
 }
 
 // Tab Switch Function
@@ -1157,7 +1185,6 @@ function tcSwitchTab(tabId) {
   }
   document.getElementById(tabId).style.display = 'block';
 
-  // Button styling update
   const btnIds = ['btnTab1', 'btnTab2', 'btnTab3', 'btnTab4'];
   btnIds.forEach((id, idx) => {
     const btn = document.getElementById(id);
@@ -1173,7 +1200,7 @@ function tcSwitchTab(tabId) {
   });
 }
 
-// Staples Store
+// Staples Store Calculator
 const tcPriceData = {
   rice: { dmart: 60, local: 65, future: 75, unit: "/ kg", insight: "⚠️ <strong>Rice Price Alert:</strong> Mandi supply constraints will push local vendor rates up tomorrow. Buy at DMart rates today!" },
   oil: { dmart: 155, local: 170, future: 185, unit: "/ L", insight: "⚠️ <strong>Cooking Oil Warning:</strong> Shipping route delays taking effect this week. Stock up on monthly household needs." },
@@ -1212,10 +1239,10 @@ async function tcFetchLiveWeather() {
     const data = await res.json();
     document.getElementById('tcWeatherDisplay').innerHTML = `
       <strong>Live Temp:</strong> ${data.current_weather.temperature}°C | <strong>Wind:</strong> ${data.current_weather.windspeed} km/h<br>
-      <em>Advice: Cover grain/paddy bags in open mandis to prevent weather damage.</em>
+      <em>Advice: Cover grain/paddy bags in open mandis to prevent unseasonal humidity damage.</em>
     `;
   } catch (err) {
-    document.getElementById('tcWeatherDisplay').innerText = "Live weather synced.";
+    document.getElementById('tcWeatherDisplay').innerText = "Regional weather feed active.";
   }
 }
 
@@ -1228,9 +1255,7 @@ window.addEventListener('DOMContentLoaded', () => {
   tcFetchLiveWeather();
 });
 </script>
-<!-- END: T&C Clean Tabbed Public Intelligence Hub -->
-
-
+<!-- END: T&C Dynamic Multi-City & National Intelligence Hub -->
 
 
       
