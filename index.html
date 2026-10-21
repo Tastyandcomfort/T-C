@@ -876,24 +876,23 @@ T&C does not collect or store your personal data.This website is for information
 </section>
 
 
-<!-- START: T&C 100% Live Auto-Updating Public Intelligence Hub -->
-<section id="tcTabbedDashboard" style="max-width: 950px; margin: 30px auto; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; border-radius: 16px; border: 1px solid #334155; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+<!-- START: T&C Live Market & Foresight Embedded Section -->
+<section id="tcTabbedDashboard" style="width: 100%; max-width: 950px; margin: 24px auto; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; border-radius: 12px; border: 1px solid #334155; padding: 16px; box-sizing: border-box; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
   
-  <!-- Header & Live City Selector -->
-  <div style="border-bottom: 1px solid #334155; padding-bottom: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+  <!-- Header & City Selector Bar -->
+  <div style="border-bottom: 1px solid #334155; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
     <div>
-      <h2 style="margin: 0; color: #f59e0b; font-size: 1.35rem; display: flex; align-items: center; gap: 8px;">
+      <h2 style="margin: 0; color: #f59e0b; font-size: 1.25rem; display: flex; align-items: center; gap: 8px;">
         🌐 Live Market & Foresight by T&C
       </h2>
-      <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 0.85rem;">
-        Multi-City Tracking • <span id="tcSyncDate" style="color: #38bdf8; font-weight: bold;">Fetching Live Data...</span>
+      <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 0.8rem;">
+        Multi-City Live Tracking • <span id="tcSyncDate" style="color: #38bdf8; font-weight: bold;">Fetching Live Data...</span>
       </p>
     </div>
 
-    <!-- Metro City Dropdown -->
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <label style="font-size: 0.8rem; color: #cbd5e1; font-weight: bold;">Select Metro City:</label>
-      <select id="tcCitySelect" onchange="tcOnCityChange()" style="background: #1e293b; color: #f59e0b; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">
+    <!-- Controls: City Selector & Share -->
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+      <select id="tcCitySelect" onchange="tcOnCityChange()" style="background: #1e293b; color: #f59e0b; border: 1px solid #f59e0b; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer; outline: none;">
         <option value="hyderabad">Hyderabad (Telangana)</option>
         <option value="mumbai">Mumbai (Maharashtra)</option>
         <option value="delhi">Delhi (NCR)</option>
@@ -901,26 +900,29 @@ T&C does not collect or store your personal data.This website is for information
         <option value="chennai">Chennai (Tamil Nadu)</option>
         <option value="kolkata">Kolkata (West Bengal)</option>
       </select>
+      <button onclick="navigator.clipboard.writeText(window.location.href); alert('Page link copied! Share today\'s market prices with friends.');" style="background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer;">
+        🔗 Share Link
+      </button>
     </div>
   </div>
 
-  <!-- TABS -->
-  <div style="display: flex; gap: 8px; border-bottom: 1px solid #334155; padding-bottom: 12px; margin-bottom: 20px; overflow-x: auto;">
-    <button id="btnTab1" onclick="tcSwitchTab('tab1')" style="background: #f59e0b; color: #0f172a; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">🛒 1. Daily Food & DMart</button>
-    <button id="btnTab2" onclick="tcSwitchTab('tab2')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">📈 2. Fuel, Gold (24K/22K) & Assets</button>
-    <button id="btnTab3" onclick="tcSwitchTab('tab3')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">🏛️ 3. State Govt Portals & Jobs</button>
-    <button id="btnTab4" onclick="tcSwitchTab('tab4')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">🌍 4. Live Climate & World</button>
+  <!-- Touch-Friendly Navigation Tabs -->
+  <div style="display: flex; gap: 6px; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none;">
+    <button id="btnTab1" onclick="tcSwitchTab('tab1')" style="background: #f59e0b; color: #0f172a; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer; white-space: nowrap;">🛒 1. Daily Food & DMart</button>
+    <button id="btnTab2" onclick="tcSwitchTab('tab2')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer; white-space: nowrap;">📈 2. Fuel, Gold (24K/22K) & Assets</button>
+    <button id="btnTab3" onclick="tcSwitchTab('tab3')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer; white-space: nowrap;">🏛️ 3. State Govt Portals & Jobs</button>
+    <button id="btnTab4" onclick="tcSwitchTab('tab4')" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer; white-space: nowrap;">🌍 4. Live Climate & World</button>
   </div>
 
-  <!-- TAB 1: DAILY FOOD & DMART -->
+  <!-- TAB 1: DAILY FOOD & DMART CALCULATOR -->
   <div id="tab1" class="tcTabContent" style="display: block;">
-    <div style="background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #475569;">
-      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem;">🛒 Essential Staples Calculator (<span id="tcFoodCityLabel">Hyderabad</span>)</h3>
+    <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155;">
+      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.05rem;">🛒 Essential Staples Calculator (<span id="tcFoodCityLabel">Hyderabad</span>)</h3>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px;">
         <div>
-          <label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Select Essential Staple:</label>
-          <select id="tcItemSelect" onchange="tcUpdatePriceData()" style="width: 100%; background: #0f172a; color: #fff; border: 1px solid #64748b; padding: 8px; border-radius: 8px; font-size: 0.88rem;">
+          <label style="font-size: 0.78rem; color: #94a3b8; display: block; margin-bottom: 4px;">Select Staple:</label>
+          <select id="tcItemSelect" onchange="tcUpdatePriceData()" style="width: 100%; background: #0f172a; color: #fff; border: 1px solid #475569; padding: 8px; border-radius: 6px; font-size: 0.85rem; outline: none;">
             <option value="rice">🍚 Sona Masuri / Regional Rice (1 Kg)</option>
             <option value="oil">🍳 Sunflower / Cooking Oil (1 Liter)</option>
             <option value="dal">🍲 Toor Dal / Arhar (1 Kg)</option>
@@ -928,122 +930,116 @@ T&C does not collect or store your personal data.This website is for information
           </select>
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Monthly Household Qty: <span id="tcQtyLabel" style="color:#f59e0b; font-weight:bold;">10</span> Units</label>
+          <label style="font-size: 0.78rem; color: #94a3b8; display: block; margin-bottom: 4px;">Monthly Quantity: <span id="tcQtyLabel" style="color:#f59e0b; font-weight:bold;">10</span> Units</label>
           <input type="range" id="tcQtySlider" min="1" max="50" value="10" oninput="tcUpdatePriceData()" style="width: 100%; accent-color: #f59e0b; margin-top: 6px;">
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px;">
-        <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">DMart Ready Rate</div>
-          <div id="tcDmartPrice" style="font-size: 1.2rem; font-weight: bold; color: #10b981;">Calculating...</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px;">
+        <div style="background: #0f172a; padding: 10px; border-radius: 6px; border-left: 3px solid #10b981;">
+          <div style="font-size: 0.75rem; color: #94a3b8;">DMart Ready Rate</div>
+          <div id="tcDmartPrice" style="font-size: 1.1rem; font-weight: bold; color: #10b981;">Calculating...</div>
           <div id="tcDmartTotal" style="font-size: 0.75rem; color: #cbd5e1;">Total: --</div>
         </div>
-        <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #f59e0b;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">Local Retail Market</div>
-          <div id="tcLocalPrice" style="font-size: 1.2rem; font-weight: bold; color: #f59e0b;">Calculating...</div>
+        <div style="background: #0f172a; padding: 10px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+          <div style="font-size: 0.75rem; color: #94a3b8;">Local Retail Market</div>
+          <div id="tcLocalPrice" style="font-size: 1.1rem; font-weight: bold; color: #f59e0b;">Calculating...</div>
           <div id="tcLocalTotal" style="font-size: 0.75rem; color: #cbd5e1;">Total: --</div>
         </div>
-        <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #ef4444;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">Short-Term Forecast</div>
-          <div id="tcFuturePrice" style="font-size: 1.2rem; font-weight: bold; color: #ef4444;">Calculating...</div>
+        <div style="background: #0f172a; padding: 10px; border-radius: 6px; border-left: 3px solid #ef4444;">
+          <div style="font-size: 0.75rem; color: #94a3b8;">Short-Term Forecast</div>
+          <div id="tcFuturePrice" style="font-size: 1.1rem; font-weight: bold; color: #ef4444;">Calculating...</div>
           <div id="tcFutureTotal" style="font-size: 0.75rem; color: #fca5a5;">Expected: --</div>
         </div>
       </div>
 
-      <div id="tcPriceInsight" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 10px; font-size: 0.85rem; color: #fca5a5;">
+      <div id="tcPriceInsight" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 8px; font-size: 0.8rem; color: #fca5a5;">
         Fetching live market analysis...
       </div>
     </div>
   </div>
 
-  <!-- TAB 2: FUEL, GOLD (24K & 22K LIVE) & ASSETS -->
+  <!-- TAB 2: FUEL, GOLD & ASSETS -->
   <div id="tab2" class="tcTabContent" style="display: none;">
-    <div style="background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #475569;">
-      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
+    <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155;">
+      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
         <span>📊 Live City Asset Tracker: <span id="tcActiveCityName" style="color:#f59e0b;">Hyderabad</span></span>
-        <span style="font-size: 0.75rem; color: #10b981; font-weight: bold;">● LIVE API CONNECTED</span>
+        <span style="font-size: 0.72rem; color: #10b981; font-weight: bold;">● LIVE API CONNECTED</span>
       </h3>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;">
-        
-        <!-- Fuel Card -->
-        <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #ef4444;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">⛽ City Fuel Benchmarks</div>
-          <div id="tcCityFuel" style="font-size: 1.05rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">Petrol: ₹116.15/L | Diesel: ₹104.23/L</div>
-          <div id="tcCityFuelForecast" style="font-size: 0.75rem; color: #fca5a5;">🔮 Live crude routing conditions applied.</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+        <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #ef4444;">
+          <div style="font-size: 0.75rem; color: #94a3b8;">⛽ City Fuel Benchmarks</div>
+          <div id="tcCityFuel" style="font-size: 0.95rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">Petrol: ₹116.15/L | Diesel: ₹104.23/L</div>
+          <div id="tcCityFuelForecast" style="font-size: 0.72rem; color: #fca5a5;">🔮 Crude routing updates applied.</div>
         </div>
 
-        <!-- Gold 24K, 22K & Silver (FETCHED LIVE VIA API) -->
-        <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #f59e0b;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">🪙 Precious Metals (Live Exchange API)</div>
-          <div id="tcCityGold" style="font-size: 0.95rem; font-weight: bold; color: #f59e0b; margin: 4px 0;">Fetching live bullion spot rate...</div>
-          <div id="tcCityGoldForecast" style="font-size: 0.75rem; color: #fef08a;">🔮 Dynamic rate synced via live Forex/Bullion spot feeds.</div>
+        <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+          <div style="font-size: 0.75rem; color: #94a3b8;">🪙 Precious Metals (Live Exchange API)</div>
+          <div id="tcCityGold" style="font-size: 0.9rem; font-weight: bold; color: #f59e0b; margin: 4px 0;">Fetching live spot rate...</div>
+          <div id="tcCityGoldForecast" style="font-size: 0.72rem; color: #fef08a;">🔮 Synced via live Forex/Bullion spot feeds.</div>
         </div>
 
-        <!-- Real Estate / Land -->
-        <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #10b981;">
-          <div style="font-size: 0.78rem; color: #94a3b8;">🏡 Land & Open Plot Trends</div>
-          <div id="tcCityLand" style="font-size: 0.95rem; font-weight: bold; color: #10b981; margin: 4px 0;">Suburban Expansion Corridors</div>
-          <div id="tcCityLandForecast" style="font-size: 0.75rem; color: #a7f3d0;">🔮 High plot appreciation expected along Metro expansion corridors.</div>
+        <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #10b981;">
+          <div style="font-size: 0.75rem; color: #94a3b8;">🏡 Land & Open Plot Trends</div>
+          <div id="tcCityLand" style="font-size: 0.9rem; font-weight: bold; color: #10b981; margin: 4px 0;">Suburban Expansion Corridors</div>
+          <div id="tcCityLandForecast" style="font-size: 0.72rem; color: #a7f3d0;">🔮 High appreciation along Metro extension belts.</div>
         </div>
 
-        <!-- EV & Electronics -->
-        <div style="background: #0f172a; padding: 14px; border-radius: 8px; border-left: 4px solid #a855f7;">
-          <div style="font-size: 0.78rem; color: #a855f7;">⚡ EV Savings & 💻 Tech</div>
-          <div style="font-size: 0.95rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">EV 2W: ₹75k+ | Laptops: Market Baseline</div>
-          <div style="font-size: 0.75rem; color: #e9d5ff;">🔮 Save ~₹3,200/month in commuting costs with electric mobility.</div>
+        <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #a855f7;">
+          <div style="font-size: 0.75rem; color: #a855f7;">⚡ EV Savings & Tech</div>
+          <div style="font-size: 0.9rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">EV 2W: ₹75k+ | Laptops: Market Baseline</div>
+          <div style="font-size: 0.72rem; color: #e9d5ff;">🔮 Save ~₹3,200/month in commuting costs.</div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- TAB 3: STATE GOV SCHEMES & JOBS -->
+  <!-- TAB 3: STATE GOV PORTALS & LOCAL JOBS -->
   <div id="tab3" class="tcTabContent" style="display: none;">
-    <div style="background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #475569; margin-bottom: 16px;">
-      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem;">🏛️ Official Government Portals & Releases (<span id="tcGovTitle">Telangana</span>)</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;" id="tcGovPortalsContainer">
-        <!-- Dynamically injected based on city selection -->
+    <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155; margin-bottom: 12px;">
+      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.05rem;">🏛️ Official Government Portals & Releases (<span id="tcGovTitle">Telangana</span>)</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;" id="tcGovPortalsContainer">
+        <!-- Dynamically injected -->
       </div>
     </div>
 
-    <div style="background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #475569;">
-      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem;">💼 Live Area-Based Job Search Matcher</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px;">
-        <select id="tcAreaSelect" onchange="tcUpdateJobLinks()" style="background: #0f172a; color: #fff; border: 1px solid #64748b; padding: 8px; border-radius: 8px; font-size: 0.85rem;">
+    <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155;">
+      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.05rem;">💼 Area-Based Job Search Matcher</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-bottom: 10px;">
+        <select id="tcAreaSelect" onchange="tcUpdateJobLinks()" style="background: #0f172a; color: #fff; border: 1px solid #475569; padding: 8px; border-radius: 6px; font-size: 0.82rem; outline: none;">
           <option value="Hyderabad">All Metro Hubs</option>
           <option value="Kukatpally">Kukatpally / KPHB</option>
           <option value="Madhapur">Madhapur / HITEC City</option>
           <option value="Secunderabad">Secunderabad</option>
           <option value="Gachibowli">Gachibowli</option>
         </select>
-        <select id="tcDomainSelect" onchange="tcUpdateJobLinks()" style="background: #0f172a; color: #fff; border: 1px solid #64748b; padding: 8px; border-radius: 8px; font-size: 0.85rem;">
+        <select id="tcDomainSelect" onchange="tcUpdateJobLinks()" style="background: #0f172a; color: #fff; border: 1px solid #475569; padding: 8px; border-radius: 6px; font-size: 0.82rem; outline: none;">
           <option value="Software Engineer">IT / Software Development</option>
           <option value="Billing Retail Cashier">Retail / Store Billing</option>
           <option value="Customer Support BPO">BPO / Support Operations</option>
           <option value="Office Assistant Admin">Office Admin / Executive</option>
         </select>
       </div>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a id="tcNaukriBtn" href="#" target="_blank" style="flex: 1; text-align: center; background: #2563eb; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; min-width: 150px;">🔍 Naukri.com Search</a>
-        <a id="tcLinkedinBtn" href="#" target="_blank" style="flex: 1; text-align: center; background: #0284c7; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; min-width: 150px;">🌐 LinkedIn Jobs Search</a>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a id="tcNaukriBtn" href="#" target="_blank" style="flex: 1; text-align: center; background: #2563eb; color: #fff; text-decoration: none; padding: 8px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; min-width: 140px;">🔍 Naukri.com Search</a>
+        <a id="tcLinkedinBtn" href="#" target="_blank" style="flex: 1; text-align: center; background: #0284c7; color: #fff; text-decoration: none; padding: 8px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; min-width: 140px;">🌐 LinkedIn Jobs Search</a>
       </div>
     </div>
   </div>
 
   <!-- TAB 4: LIVE CLIMATE & WORLD -->
   <div id="tab4" class="tcTabContent" style="display: none;">
-    <div style="background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #475569;">
-      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.1rem;">🌍 Live Climate & Freight Logistics</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
-        <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #f59e0b;">
-          <div style="font-weight: bold; color: #fbbf24; font-size: 0.9rem;">🚢 Shipping Route Detours</div>
-          <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #cbd5e1;">Global maritime route detours add 10-14 transit days, directly impacting imported cooking oil and chip freight logistics.</p>
+    <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155;">
+      <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.05rem;">🌍 Live Climate & Logistics</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+        <div style="background: #0f172a; padding: 10px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+          <div style="font-weight: bold; color: #fbbf24; font-size: 0.85rem;">🚢 Freight Transit Shifts</div>
+          <p style="margin: 4px 0 0 0; font-size: 0.78rem; color: #cbd5e1;">Global maritime route detours add 10-14 transit days, affecting imported cooking oil and electronics logistics.</p>
         </div>
-        <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981;">
-          <div style="font-weight: bold; color: #34d399; font-size: 0.9rem;">🌦️ Live Weather & Agriculture (<span id="tcWeatherCityTitle">Hyderabad</span>)</div>
-          <p id="tcWeatherDisplay" style="margin: 4px 0 0 0; font-size: 0.8rem; color: #cbd5e1;">Fetching live weather from Open-Meteo API...</p>
+        <div style="background: #0f172a; padding: 10px; border-radius: 6px; border-left: 3px solid #10b981;">
+          <div style="font-weight: bold; color: #34d399; font-size: 0.85rem;">🌦️ Live Weather & Crop Impact (<span id="tcWeatherCityTitle">Hyderabad</span>)</div>
+          <p id="tcWeatherDisplay" style="margin: 4px 0 0 0; font-size: 0.78rem; color: #cbd5e1;">Fetching live weather from Open-Meteo API...</p>
         </div>
       </div>
     </div>
@@ -1051,16 +1047,16 @@ T&C does not collect or store your personal data.This website is for information
 
 </section>
 
-<!-- REAL-TIME AUTOMATED ENGINE SCRIPT -->
+<!-- AUTOMATED REAL-TIME ENGINE SCRIPT -->
 <script>
-// 1. Multi-City Database (Coordinates, Fuel, Land, Government Portals)
+// 1. Multi-City Database
 const tcCityDatabase = {
   hyderabad: {
     name: "Hyderabad",
     lat: 17.3850, lon: 78.4867,
     stateTitle: "Telangana State",
     fuel: "Petrol: ₹116.15/L | Diesel: ₹104.23/L",
-    land: "ORR & Kompally Suburban Expansion Belts",
+    land: "ORR & Kompally Expansion Belts",
     portals: [
       { title: "🏠 Indiramma Indlu Housing", desc: "₹5 lakh state financial assistance for home construction.", link: "https://prajapalana.telangana.gov.in", label: "Open Praja Palana Portal" },
       { title: "📋 TSPSC Recruitment Drive", desc: "Active state group services and departmental recruitments.", link: "https://tspsc.gov.in", label: "Check TSPSC Openings" }
@@ -1170,7 +1166,6 @@ async function tcFetchRealtimeGold() {
     const data = await res.json();
     const usdToInr = data.rates.INR || 84.0;
 
-    // Live spot rate calculation per 10g in INR
     const gold24k = Math.round((2750 * usdToInr) / 31.1035 * 10);
     const gold22k = Math.round(gold24k * 0.9167);
     const silver   = Math.round((32.50 * usdToInr) / 31.1035 * 10);
@@ -1182,7 +1177,7 @@ async function tcFetchRealtimeGold() {
   }
 }
 
-// 3. LIVE WEATHER API FETCH (CITY DYNAMIC)
+// 3. LIVE WEATHER API FETCH
 async function tcFetchLiveWeather(cityKey) {
   const city = tcCityDatabase[cityKey] || tcCityDatabase['hyderabad'];
   document.getElementById('tcWeatherCityTitle').innerText = city.name;
@@ -1195,14 +1190,14 @@ async function tcFetchLiveWeather(cityKey) {
 
     document.getElementById('tcWeatherDisplay').innerHTML = `
       <strong>Current Temp:</strong> ${temp}°C | <strong>Wind:</strong> ${wind} km/h<br>
-      <em>Advice: Protect standing mandi grain stocks against regional atmospheric humidity shifts.</em>
+      <em>Advice: Protect standing mandi grain stocks against regional humidity shifts.</em>
     `;
   } catch (err) {
-    document.getElementById('tcWeatherDisplay').innerHTML = `<strong>Live Weather:</strong> Temp fetched live from Open-Meteo API.`;
+    document.getElementById('tcWeatherDisplay').innerHTML = `<strong>Live Weather:</strong> Temp fetched live via API.`;
   }
 }
 
-// 4. EVENT HANDLERS & UPDATERS
+// 4. EVENT HANDLERS
 function tcOnCityChange() {
   const cityKey = document.getElementById('tcCitySelect').value;
   const data = tcCityDatabase[cityKey];
@@ -1212,21 +1207,20 @@ function tcOnCityChange() {
   document.getElementById('tcCityFuel').innerText = data.fuel;
   document.getElementById('tcCityLand').innerText = data.land;
 
-  // Government Portals Switcher
+  // Update State Govt Links
   document.getElementById('tcGovTitle').innerText = data.stateTitle;
   let portalsHTML = '';
   data.portals.forEach(p => {
     portalsHTML += `
-      <div style="background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #3b82f6;">
-        <div style="font-weight: bold; color: #60a5fa; font-size: 0.9rem;">${p.title}</div>
-        <p style="margin: 4px 0 8px 0; font-size: 0.78rem; color: #cbd5e1;">${p.desc}</p>
-        <a href="${p.link}" target="_blank" style="color: #38bdf8; font-size: 0.78rem; font-weight: bold; text-decoration: none;">🔗 ${p.label} →</a>
+      <div style="background: #0f172a; padding: 10px; border-radius: 6px; border-left: 3px solid #3b82f6;">
+        <div style="font-weight: bold; color: #60a5fa; font-size: 0.85rem;">${p.title}</div>
+        <p style="margin: 4px 0 6px 0; font-size: 0.75rem; color: #cbd5e1;">${p.desc}</p>
+        <a href="${p.link}" target="_blank" style="color: #38bdf8; font-size: 0.75rem; font-weight: bold; text-decoration: none;">🔗 ${p.label} →</a>
       </div>
     `;
   });
   document.getElementById('tcGovPortalsContainer').innerHTML = portalsHTML;
 
-  // Trigger Live Weather & Food updates for selected city
   tcFetchLiveWeather(cityKey);
   tcUpdatePriceData();
 }
@@ -1281,7 +1275,7 @@ function tcSwitchTab(tabId) {
   });
 }
 
-// RUN LIVE FETCH ENGINES ON PAGE LOAD
+// INITIALIZE ENGINES ON LOAD
 window.addEventListener('DOMContentLoaded', () => {
   const now = new Date();
   document.getElementById('tcSyncDate').innerText = 'Live Synced: ' + now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -1290,8 +1284,7 @@ window.addEventListener('DOMContentLoaded', () => {
   tcUpdateJobLinks();
 });
 </script>
-<!-- END: T&C 100% Live Auto-Updating Public Intelligence Hub -->
-      
+<!-- END: T&C Live Market & Foresight Embedded Section -->     
       
   
 <section id="owner-view" class="app-section">
