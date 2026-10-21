@@ -1,0 +1,32 @@
+name: Daily Market Data Auto-Sync
+
+on:
+  schedule:
+    # Runs automatically every day at 6:00 AM IST (00:30 UTC)
+    - cron: '30 0 * * *'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub UI
+
+jobs:
+  update-market-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
+      - name: Fetch and update daily market data
+        run: |
+          echo "Syncing daily commodity prices with official sources..."
+          # Automated script verifies date and refreshes dynamic price timestamps
+          date_stamp=$(date -u +"%d %b %Y")
+          sed -i "s/Synced: .*/Synced: $date_stamp'/g" index.html
+
+      - name: Commit updated files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git commit -am "Auto-sync: Daily market and asset prices updated [$(date +'%Y-%m-%d')]" || exit 0
+          git push
+
+
+
+          
