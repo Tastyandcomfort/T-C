@@ -1285,8 +1285,10 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <!-- END: T&C Live Market & Foresight Embedded Section -->     
+    </section>
+    </section>
+    </section>
       
-  
 <section id="owner-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-user-tie gold-text"></i> OWNER BIO</h3>
   <!-- Founder Section -->
@@ -1676,55 +1678,6 @@ if (mapElement) {
   }
 </script>
 <script src="script.js"></script>
-
-
-
-
-
-
-
-// REAL-TIME AUTO-UPDATE ENGINE FOR GOLD (24K/22K) & COMMODITIES
-async function tcFetchRealtimeGoldAndMetals() {
-  try {
-    // 1. Fetch live USD to INR exchange rate from free rate server
-    const rateResponse = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-    const rateData = await rateResponse.json();
-    const usdToInr = rateData.rates.INR || 84.0;
-
-    // 2. Calculate live benchmark spot prices for Indian metro markets
-    // Baseline international spot per gram converted to 10g INR equivalent
-    const gold24kPer10g = Math.round((2750 * usdToInr) / 31.1035 * 10); // 24K 99.9% Purity
-    const gold22kPer10g = Math.round(gold24kPer10g * 0.9167);          // 22K 91.6% Purity
-    const silverPer10g  = Math.round((32.50 * usdToInr) / 31.1035 * 10); // Silver Benchmark
-
-    // 3. Update the Asset Tracker card dynamically on the page
-    const formatted24K = gold24kPer10g.toLocaleString('en-IN');
-    const formatted22K = gold22kPer10g.toLocaleString('en-IN');
-    const formattedSilver = silverPer10g.toLocaleString('en-IN');
-
-    document.getElementById('tcCityGold').innerHTML = 
-      `24K: ₹${formatted24K} | 22K: ₹${formatted22K} | Silver: ₹${formattedSilver} /10g`;
-
-  } catch (error) {
-    console.log('Using live fallback market rates:', error);
-  }
-}
-
-// Trigger live metal updates when the user visits the website
-window.addEventListener('DOMContentLoaded', () => {
-  tcFetchRealtimeGoldAndMetals();
-});
-
-
-
-
-
-  
-
-
-  
-
-
   
 </body>
 </html>
