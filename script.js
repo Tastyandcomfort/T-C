@@ -287,76 +287,73 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-// Text, News & T&C live - Direct Reliable Multi-Source News Engine
+// Text, News & T&C live - Direct JSON News Fetcher
 async function fetchNews() {
     const container = document.getElementById('news-container');
     if (!container) return; // Safety check
     
-    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Loading live headlines...</p>";
+    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Loading latest updates...</p>";
 
-    // Direct, highly reliable open news RSS streams
-    const sources = [
-        { name: "Telangana", color: "#ff9f43", url: 'https://www.thehindu.com/news/national/telangana/feeder/default.rss' },
-        { name: "India",     color: "#00d4ff", url: 'https://indianexpress.com/section/india/feed/' },
-        { name: "World",     color: "#2ecc71", url: 'https://indianexpress.com/section/world/feed/' }
-    ];
+    try {
+        // Fetching from a reliable open data API endpoint
+        const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.duckduckgo.com/?q=Hyderabad+Telangana+news&format=json'));
+        const data = await response.json();
+        
+        let html = '';
+        
+        if (data && data.RelatedTopics && data.RelatedTopics.length > 0) {
+            let topics = data.RelatedTopics.filter(t => t.Text && t.FirstURL).slice(0, 3);
+            
+            const categories = [
+                { name: "Telangana", color: "#ff9f43" },
+                { name: "India", color: "#00d4ff" },
+                { name: "World", color: "#2ecc71" }
+            ];
 
-    let html = '';
-
-    for (let src of sources) {
-        try {
-            // High-performance CORS proxy for XML feed parsing
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(src.url)}`;
-            const response = await fetch(proxyUrl);
-            const xmlText = await response.text();
-
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-            const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 2);
-
-            items.forEach(item => {
-                const title = item.querySelector("title")?.textContent || "";
-                let link = item.querySelector("link")?.textContent || src.url;
+            topics.forEach((topic, index) => {
+                let cat = categories[index] || categories[2];
                 
-                // Extract clean text if CDATA or HTML tags are present
-                const cleanTitle = title.replace(/<!\[CDATA\[\vert{}\]\]>/g, '').trim();
+                // Clean up text display
+                let headline = topic.Text.split(' - ')[0] || topic.Text;
 
-                if (cleanTitle) {
-                    html += `
-                        <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                <span style="background:${src.color}22; color:${src.color}; border: 1px solid ${src.color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
-                                    [${src.name}]
-                                </span>
-                                <a href="${link}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
-                                    View Article ↗
-                                </a>
-                            </div>
-                            <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
-                                ${cleanTitle}
-                            </div>
+                html += `
+                    <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="background:${cat.color}22; color:${cat.color}; border: 1px solid ${cat.color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
+                                [${cat.name}]
+                            </span>
+                            <a href="${topic.FirstURL}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
+                                Read Source ↗
+                            </a>
                         </div>
-                    `;
-                }
+                        <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
+                            ${headline}
+                        </div>
+                    </div>
+                `;
             });
-        } catch (err) {
-            console.warn(`Feed error for ${src.name}:`, err);
         }
-    }
 
-    if (html !== '') {
-        container.innerHTML = html;
-    } else {
+        if (html !== '') {
+            container.innerHTML = html;
+        } else {
+            throw new Error("No topics rendered");
+        }
+
+    } catch (e) {
+        // Fallback view with direct portal buttons if the network blocks the query
         container.innerHTML = `
             <div style="padding: 12px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
-                <p style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">Sorry! busy route</p>
-                <button onclick="fetchNews()" style="background: #38bdf8; color: #0f172a; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">
-                    🔄 Tap to Reload Headlines
-                </button>
+                <p style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">⚠️ Live-Feed stream dropped</p>
+                <div style="display: flex; justify-content: center; gap: 8px; margin-top: 8px;">
+                    <a href="https://news.google.com/search?q=Telangana" target="_blank" style="color: #38bdf8; text-decoration: none; font-size: 0.75rem; background: #1e293b; padding: 6px 10px; border-radius: 4px; border: 1px solid #334155;">Telangana News ↗</a>
+                    <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-size: 0.75rem; background: #1e293b; padding: 6px 10px; border-radius: 4px; border: 1px solid #334155;">Google News ↗</a>
+                </div>
             </div>
         `;
     }
 }
+
 
 // 2nd half
 function setMode(mode, element) {
