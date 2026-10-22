@@ -60,7 +60,32 @@
       position: relative;
       z-index: 10;
     }
+    /* ===================================================
+       LIGHT / DARK THEME SYSTEM STYLES
+       =================================================== */
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
+
+    body.light-theme {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
   </style>
+  
 </head>
 <body>
 
@@ -109,7 +134,14 @@ T&C does not collect or store your personal data. This website is for informatio
           -->
         </div>
       </div>
-        
+
+<button id="theme-toggle-btn" onclick="toggleTheme()" style="background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+    <span id="theme-icon">🌙</span>
+    <span id="theme-text">Dark</span>
+  </button>
+      
+
+      
       <!-- Desktop Weather -->
       <div class="sidebar-weather">
         <img id="desktop-icon" src="" alt="Weather Icon">
