@@ -287,94 +287,68 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-//Text, News & T&C live - Clean Live-Only Fetcher
+// Text, News & T&C live - Direct DOM Parser
 async function fetchNews() {
     const container = document.getElementById('news-container');
-    if (!container) return; // Safety check
+    if (!container) return;
     
-    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Fetching live headlines...</p>";
-    
-    const feeds = [
-        { name: "Telangana", color: "#ff9f43", url: 'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN' },
-        { name: "India",     color: "#00d4ff", url: 'https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN' },
-        { name: "World",     color: "#2ecc71", url: 'https://news.google.com/rss?hl=en-IN&gl=IN' }
-    ];
+    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Loading live headlines...</p>";
 
-    let html = '';
+    // Using a reliable CORS proxy endpoint to read headline text directly into the page
+    const feedUrl = 'https://news.google.com/rss/search?q=Telangana+India+Market&hl=en-IN&gl=IN';
+    const proxyApi = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
 
-    for (let feed of feeds) {
-        let items = [];
+    try {
+        const response = await fetch(proxyApi);
+        const xmlText = await response.text();
+        
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 5);
 
-        // Try Method 1: rss2json
-        try {
-            const api1 = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`;
-            const res1 = await fetch(api1);
-            const data1 = await res1.json();
-            if (data1 && data1.status === 'ok' && data1.items && data1.items.length > 0) {
-                items = data1.items.slice(0, 2).map(i => ({
-                    title: i.title,
-                    link: i.link,
-                    source: i.author || "Google News"
-                }));
-            }
-        } catch (err) {}
-
-        // Try Method 2: AllOrigins Proxy Backup
         if (items.length === 0) {
-            try {
-                const api2 = `https://api.allorigins.win/raw?url=${encodeURIComponent(feed.url)}`;
-                const res2 = await fetch(api2);
-                const xmlText = await res2.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-                const xmlItems = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 2);
-
-                items = xmlItems.map(item => {
-                    const title = item.querySelector("title")?.textContent || "";
-                    const link = item.querySelector("link")?.textContent || feed.url;
-                    return { title, link, source: "Google News" };
-                }).filter(i => i.title.length > 0);
-            } catch (err) {}
+            throw new Error("No items found");
         }
 
-        // Render real items if successfully fetched
-        if (items.length > 0) {
-            items.forEach(item => {
-                html += `
-                    <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="background:${feed.color}22; color:${feed.color}; border: 1px solid ${feed.color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
-                                [${feed.name}]
-                            </span>
-                            <a href="${item.link}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
-                                ${item.source} ↗
-                            </a>
-                        </div>
-                        <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
-                            ${item.title}
-                        </div>
+        let html = '';
+        items.forEach((item, index) => {
+            const title = item.querySelector("title")?.textContent || "News Update";
+            const link = item.querySelector("link")?.textContent || "https://news.google.com";
+            
+            // Assign category styling dynamically
+            let cat = index < 2 ? "Telangana" : (index < 4 ? "India" : "World");
+            let color = cat === 'Telangana' ? '#ff9f43' : (cat === 'India' ? '#00d4ff' : '#2ecc71');
+
+            html += `
+                <div class="news-item" style="padding: 12px 0; border-bottom: 1px solid #334155;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="background:${color}22; color:${color}; border: 1px solid ${color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
+                            [${cat}]
+                        </span>
+                        <a href="${link}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
+                            Read Source ↗
+                        </a>
                     </div>
-                `;
-            });
-        }
-    }
+                    <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
+                        ${title}
+                    </div>
+                </div>
+            `;
+        });
 
-    // If network/proxy completely blocks the fetch, show a clear refresh prompt instead of fake news
-    if (html === '') {
-        html = `
-            <div style="padding: 15px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
-                <p style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">Sorry! Live connection dropped</p>
-                <p style="margin: 0 0 10px 0; color: #94a3b8; font-size: 0.78rem;">Please visit.</p>
+        container.innerHTML = html;
+
+    } catch (err) {
+        container.innerHTML = `
+            <div style="padding: 12px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
+                <p style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">⚠️ Live Feed Updating</p>
                 <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold; background: #1e293b; padding: 6px 12px; border-radius: 6px; display: inline-block; border: 1px solid #334155;">
-                    Google news by T&C ↗
+                    Live News ↗
                 </a>
             </div>
         `;
     }
-
-    container.innerHTML = html;
 }
-
 
 
 // 2nd half
