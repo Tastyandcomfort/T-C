@@ -1,4 +1,46 @@
 
+// ===================================================
+// LIGHT / DARK THEME MANAGER ENGINE
+// ===================================================
+
+function toggleTheme() {
+  const body = document.body;
+  const themeIcon = document.getElementById('theme-icon');
+  const themeText = document.getElementById('theme-text');
+
+  // Toggle light-theme class
+  body.classList.toggle('light-theme');
+
+  // Check if Light Mode is active
+  const isLight = body.classList.contains('light-theme');
+
+  // Update button text and icon
+  if (themeIcon) themeIcon.innerText = isLight ? '☀️' : '🌙';
+  if (themeText) themeText.innerText = isLight ? 'Light' : 'Dark';
+
+  // Save selection in browser memory
+  localStorage.setItem('tc_theme', isLight ? 'light' : 'dark');
+}
+
+// Automatically load saved theme on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('tc_theme');
+  const themeIcon = document.getElementById('theme-icon');
+  const themeText = document.getElementById('theme-text');
+
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-theme');
+    if (themeIcon) themeIcon.innerText = '☀️';
+    if (themeText) themeText.innerText = 'Light';
+  }
+});
+
+
+
+
+
+
+
 
 // ===================================================
 // SECTION VIEW MANAGER ENGINE
