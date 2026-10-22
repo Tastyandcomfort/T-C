@@ -287,14 +287,13 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-//Text, News & T&C live
+// Text, News & T&C live
 async function fetchNews() {
     const container = document.getElementById('news-container');
     if (!container) return; // Safety check
     
-    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Loading latest news...</p>";
+    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Loading latest headlines...</p>";
     
-    // Define specific feeds mapped directly to their category and color
     const feeds = [
         { name: "Telangana", color: "#ff9f43", url: 'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN' },
         { name: "India",     color: "#00d4ff", url: 'https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN' },
@@ -304,21 +303,34 @@ async function fetchNews() {
     try {
         let html = '';
 
-        // Fetch each category feed individually
         for (let feed of feeds) {
             let api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`;
             let response = await fetch(api);
             let data = await response.json();
             
             if (data && data.status === 'ok' && data.items && data.items.length > 0) {
-                // Take top 2 items for each category
+                // Fetch top 2 stories per category
                 let topItems = data.items.slice(0, 2);
                 
                 topItems.forEach(item => {
-                    html += `<div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                                <span class="label" style="background:${feed.color}33; color:${feed.color}; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">[${feed.name}]</span>
-                                <a href="${item.link}" target="_blank" rel="noopener" style="text-decoration: none; font-size: 0.88rem; color: #f8fafc; margin-left: 8px; line-height: 1.4;">${item.title}</a>
-                           </div>`;
+                    // Extract source publisher name or default to Source
+                    let publisher = item.author || "News Source";
+
+                    html += `
+                        <div class="news-item" style="padding: 12px 0; border-bottom: 1px solid #334155;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="background:${feed.color}22; color:${feed.color}; border: 1px solid ${feed.color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
+                                    [${feed.name}]
+                                </span>
+                                <a href="${item.link}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
+                                    Visit ${publisher} ↗
+                                </a>
+                            </div>
+                            <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
+                                ${item.title}
+                            </div>
+                        </div>
+                    `;
                 });
             }
         }
@@ -331,14 +343,13 @@ async function fetchNews() {
         
     } catch (e) {
         container.innerHTML = `
-            <div style="padding: 10px; color: #cbd5e1; font-size: 0.85rem;">
-                <p style="margin: 0 0 6px 0; color: #f59e0b;">⚠️ Live feed temporarily unavailable.</p>
-                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">🔗 Click to open Google News directly →</a>
+            <div style="padding: 12px; color: #cbd5e1; font-size: 0.85rem; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 6px;">
+                <p style="margin: 0 0 6px 0; color: #fca5a5; font-weight: bold;">⚠️ RSS Feed Connection Dropped</p>
+                <p style="margin: 0; font-size: 0.8rem; color: #94a3b8;">Unable to fetch real-time news headlines at the moment. Please tap refresh or check your connection.</p>
             </div>
         `;
     }
 }
-
 
 // 2nd half
 function setMode(mode, element) {
