@@ -796,45 +796,97 @@ T&C does not collect or store your personal data. This website is for informatio
             </div>
           </div>
 
-          <!-- TAB 2: FUEL, GOLD & ASSETS -->
-          <div id="tab2" class="tcTabContent" style="display: none;">
-            <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155;">
-              <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-                <span>📊 Live City Asset Tracker: <span id="tcActiveCityName" style="color:#f59e0b;">Hyderabad</span></span>
-                <span style="font-size: 0.72rem; color: #10b981; font-weight: bold;">● T&C Analysis </span>
-              </h3>
+<!-- TAB 2: FUEL, GOLD & REAL-WORLD ASSET & TECH DYNAMICS -->
+<div id="tab2" class="tcTabContent" style="display: none;">
+  <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155;">
+    
+    <!-- Title Bar -->
+    <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+      <span>📊 Live City Asset & Tech Tracker: <span id="tcActiveCityName" style="color:#f59e0b;">Hyderabad</span></span>
+      <span style="font-size: 0.72rem; color: #10b981; font-weight: bold; background: #0f172a; padding: 4px 8px; border-radius: 4px; border: 1px solid #10b981;">● REAL-WORLD DYNAMICS SYNCED</span>
+    </h3>
 
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
-                <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #ef4444;">
-                  <div style="font-size: 0.75rem; color: #94a3b8;">⛽ City Fuel Benchmarks</div>
-                  <div id="tcCityFuel" style="font-size: 0.95rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">Petrol: ₹116.15/L | Diesel: ₹104.23/L</div>
-                  <div id="tcCityFuelForecast" style="font-size: 0.72rem; color: #fca5a5;"> Crude routing updates applied.</div>
-                </div>
+    <!-- Fuel & Gold Top Benchmarks -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 14px;">
+      <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #ef4444;">
+        <div style="font-size: 0.75rem; color: #94a3b8;">⛽ City Fuel Benchmarks</div>
+        <div id="tcCityFuel" style="font-size: 0.95rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">Petrol: ₹116.15/L | Diesel: ₹104.23/L</div>
+        <div id="tcCityFuelForecast" style="font-size: 0.72rem; color: #fca5a5;">🔮 Driven by international crude import costs & local VAT.</div>
+      </div>
 
-                <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
-                  <div style="font-size: 0.75rem; color: #94a3b8;">🪙 Precious Metals (Forex/Bullion Feeds)</div>
-                  <div id="tcCityGold" style="font-size: 0.9rem; font-weight: bold; color: #f59e0b; margin: 4px 0;">Fetching live spot rate...</div>
-                  <div id="tcCityGoldForecast" style="font-size: 0.72rem; color: #fef08a;"> Synced via live Forex/Bullion spot feeds.</div>
-                </div>
+      <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+        <div style="font-size: 0.75rem; color: #94a3b8;">🪙 Precious Metals (Live Exchange API)</div>
+        <div id="tcCityGold" style="font-size: 0.9rem; font-weight: bold; color: #f59e0b; margin: 4px 0;">Fetching live spot rate...</div>
+        <div id="tcCityGoldForecast" style="font-size: 0.72rem; color: #fef08a;">🔮 Synced via international spot exchange & import duties.</div>
+      </div>
+    </div>
 
-                <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #10b981;">
-                  <div style="font-size: 0.75rem; color: #94a3b8;">🏡 Land & Open Plot Trends</div>
-                  <div id="tcCityLand" style="font-size: 0.9rem; font-weight: bold; color: #10b981; margin: 4px 0;">Suburban Expansion Corridors</div>
-                  <div id="tcCityLandForecast" style="font-size: 0.72rem; color: #a7f3d0;"> High appreciation along Metro extension belts.</div>
-                </div>
-
-                <div style="background: #0f172a; padding: 12px; border-radius: 6px; border-left: 3px solid #a855f7;">
-                  <div style="font-size: 0.75rem; color: #a855f7;">⚡ EV Savings & Tech</div>
-                  <div style="font-size: 0.9rem; font-weight: bold; color: #f8fafc; margin: 4px 0;">EV 2W: ₹75k+ | Laptops: Market Baseline</div>
-                  <div style="font-size: 0.72rem; color: #e9d5ff;"> Save ~₹3,200/month in commuting costs.</div>
-                </div>
-              </div>
-              
-  <div style="margin-top: 10px; padding: 8px 12px; background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 0.75rem; color: #cbd5e1;">
-  <strong>ℹ️ Disclaimer by T&C :</strong> Rates shown (Gold, Silver, Fuel & Crop APMC benchmarks) are derived from daily official Indian retail market averages, public OMC releases, and government spot feeds for public awareness and foresight purposes. Exact retail prices may vary slightly based on local taxes, daily local jeweller associations, or individual APMC auction batches.
-</div>
-            </div>
+    <!-- DETAILED REAL-WORLD DRIVER PANELS -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 12px;">
+      
+      <!-- EV Two-Wheeler & Auto Market Realities -->
+      <div style="background: #0f172a; border: 1px solid #334155; padding: 14px; border-radius: 8px;">
+        <h4 style="margin: 0 0 10px 0; color: #10b981; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+          🛵 EV Two-Wheelers & Auto Market Realities
+        </h4>
+        
+        <div style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #334155; padding-bottom: 4px; margin-bottom: 6px;">
+            <span>Entry-Level / City Commute (EV):</span>
+            <strong style="color: #38bdf8;">₹75,000 - ₹95,000</strong>
           </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #334155; padding-bottom: 4px; margin-bottom: 6px;">
+            <span>Mid-Range (TVS iQube / Ather):</span>
+            <strong style="color: #38bdf8;">₹1,12,000 - ₹1,35,000</strong>
+          </div>
+
+          <!-- Real World Driver Note -->
+          <div style="background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981; padding: 8px; border-radius: 4px; margin-top: 8px;">
+            <div style="font-weight: bold; color: #34d399; font-size: 0.78rem;">🏛️ Government Policy & Cost Impact:</div>
+            <p style="margin: 4px 0 0 0; font-size: 0.75rem; color: #e2e8f0; line-height: 1.4;">
+              <strong>EVs (5% GST, Zero Cess):</strong> Mainstream electric vehicles benefit from a low 5% GST bracket, saving buyers lakhs compared to petrol cars taxed up to 43%. 
+              <br><br>
+              <strong>Petrol/Diesel Autos:</strong> Face continuous input cost pressures on steel and raw materials, with periodic 1%–3% manufacturer price corrections.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Laptops & Tech Hardware Realities -->
+      <div style="background: #0f172a; border: 1px solid #334155; padding: 14px; border-radius: 8px;">
+        <h4 style="margin: 0 0 10px 0; color: #a855f7; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+          💻 Laptop & Storage Shortage Dynamics
+        </h4>
+
+        <div style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #334155; padding-bottom: 4px; margin-bottom: 6px;">
+            <span>512GB NVMe / SATA SSD:</span>
+            <strong style="color: #f59e0b;">₹3,800 - ₹6,000</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #334155; padding-bottom: 4px; margin-bottom: 6px;">
+            <span>Refurbished Business Laptops (i5/16GB):</span>
+            <strong style="color: #f59e0b;">₹28,000 - ₹36,000</strong>
+          </div>
+
+          <!-- Real World Driver Note -->
+          <div style="background: rgba(168, 85, 247, 0.1); border-left: 3px solid #a855f7; padding: 8px; border-radius: 4px; margin-top: 8px;">
+            <div style="font-weight: bold; color: #e9d5ff; font-size: 0.78rem;">⚡ Global Component Crunch Impact:</div>
+            <p style="margin: 4px 0 0 0; font-size: 0.75rem; color: #e2e8f0; line-height: 1.4;">
+              <strong>Memory Shortage:</strong> Massive global enterprise data center demand for AI infrastructure has redirected chip fabrication lines away from consumer electronics. This has driven a sharp upward trend in RAM and NAND flash (SSD) component costs, compounded by import duties and rupee exchange rates.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Consumer Disclaimer Note -->
+    <div style="margin-top: 10px; padding: 8px 12px; background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 0.75rem; color: #cbd5e1;">
+      <strong>ℹ️ Market Dynamics & Tax Note:</strong> Rates and trends incorporate official government tax structures (such as 5% EV GST slabs) and global electronic component market adjustments.
+    </div>
+
+  </div>
+</div>
 
           <!-- TAB 3: STATE GOV PORTALS & LOCAL JOBS -->
           <div id="tab3" class="tcTabContent" style="display: none;">
