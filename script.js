@@ -287,12 +287,12 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-// Text, News & T&C live - Reliable Dual-Proxy Multi-Category Fetcher
+//Text, News & T&C live - Clean Live-Only Fetcher
 async function fetchNews() {
     const container = document.getElementById('news-container');
     if (!container) return; // Safety check
     
-    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Fetching real-time news headlines...</p>";
+    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Fetching live headlines...</p>";
     
     const feeds = [
         { name: "Telangana", color: "#ff9f43", url: 'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN' },
@@ -305,7 +305,7 @@ async function fetchNews() {
     for (let feed of feeds) {
         let items = [];
 
-        // METHOD 1: Try rss2json API
+        // Try Method 1: rss2json
         try {
             const api1 = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`;
             const res1 = await fetch(api1);
@@ -314,14 +314,12 @@ async function fetchNews() {
                 items = data1.items.slice(0, 2).map(i => ({
                     title: i.title,
                     link: i.link,
-                    source: i.author || "News Source"
+                    source: i.author || "Google News"
                 }));
             }
-        } catch (err) {
-            // Silence method 1 error, fall through to method 2
-        }
+        } catch (err) {}
 
-        // METHOD 2: Fallback to AllOrigins XML parser if Method 1 returned no items
+        // Try Method 2: AllOrigins Proxy Backup
         if (items.length === 0) {
             try {
                 const api2 = `https://api.allorigins.win/raw?url=${encodeURIComponent(feed.url)}`;
@@ -334,15 +332,12 @@ async function fetchNews() {
                 items = xmlItems.map(item => {
                     const title = item.querySelector("title")?.textContent || "";
                     const link = item.querySelector("link")?.textContent || feed.url;
-                    const source = item.querySelector("source")?.textContent || "News Source";
-                    return { title, link, source };
+                    return { title, link, source: "Google News" };
                 }).filter(i => i.title.length > 0);
-            } catch (err) {
-                // Silence method 2 error
-            }
+            } catch (err) {}
         }
 
-        // Render fetched items for this feed
+        // Render real items if successfully fetched
         if (items.length > 0) {
             items.forEach(item => {
                 html += `
@@ -364,26 +359,22 @@ async function fetchNews() {
         }
     }
 
-    // METHOD 3: Fallback if completely offline
+    // If network/proxy completely blocks the fetch, show a clear refresh prompt instead of fake news
     if (html === '') {
         html = `
-            <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                <span style="background:#ff9f4322; color:#ff9f43; border: 1px solid #ff9f4355; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">[Telangana]</span>
-                <div style="font-size: 0.88rem; color: #f8fafc; margin-top: 4px;">APMC Mandi paddy procurement active across Telangana agricultural market centers.</div>
-            </div>
-            <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                <span style="background:#00d4ff22; color:#00d4ff; border: 1px solid #00d4ff55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">[India]</span>
-                <div style="font-size: 0.88rem; color: #f8fafc; margin-top: 4px;">EV two-wheelers adoption expands across major metro transit hubs.</div>
-            </div>
-            <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                <span style="background:#2ecc7122; color:#2ecc71; border: 1px solid #2ecc7155; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">[World]</span>
-                <div style="font-size: 0.88rem; color: #f8fafc; margin-top: 4px;">Global semiconductor memory supply chain adjustments affect hardware component pricing.</div>
+            <div style="padding: 15px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
+                <p style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">Sorry! Live connection dropped</p>
+                <p style="margin: 0 0 10px 0; color: #94a3b8; font-size: 0.78rem;">Please visit.</p>
+                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold; background: #1e293b; padding: 6px 12px; border-radius: 6px; display: inline-block; border: 1px solid #334155;">
+                    Google news by T&C ↗
+                </a>
             </div>
         `;
     }
 
     container.innerHTML = html;
 }
+
 
 
 // 2nd half
