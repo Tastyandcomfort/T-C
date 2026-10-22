@@ -333,8 +333,8 @@ async function fetchNews() {
         // Clean fallback showing direct links if rss2json blocks requests
         container.innerHTML = `
             <div style="padding: 10px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
-                <p style="margin: 0 0 6px 0; color: #f59e0b;">Sorry try again..!</p>
-                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">Open Google News Portal ↗</a>
+                <p style="margin: 0 0 6px 0; color: #f59e0b;">Sorry, News feed is currently upgrading.</p>
+                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">For now, please visit Google-News ↗</a>
             </div>
         `;
     }
