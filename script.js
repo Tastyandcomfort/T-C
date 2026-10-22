@@ -292,7 +292,7 @@ async function fetchNews() {
     const container = document.getElementById('news-container');
     if (!container) return; // Safety check
     
-    container.innerHTML = "<p>Loading...</p>";
+    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Loading latest news...</p>";
     
     const urls = [
         'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN',
@@ -303,12 +303,18 @@ async function fetchNews() {
     try {
         let allNews = [];
         for (let url of urls) {
+            // Using a reliable public CORS proxy to bypass browser restrictions
             let api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
             let response = await fetch(api);
             let data = await response.json();
-            if (data.items) {
+            
+            if (data && data.status === 'ok' && data.items) {
                 allNews = allNews.concat(data.items.slice(0, 2));
             }
+        }
+
+        if (allNews.length === 0) {
+            throw new Error("No news items found");
         }
 
         let html = '';
@@ -316,17 +322,23 @@ async function fetchNews() {
             let type = index < 2 ? "Telangana" : (index < 4 ? "India" : "World");
             let color = type === 'Telangana' ? '#ff9f43' : (type === 'India' ? '#00d4ff' : '#2ecc71');
             
-            html += `<div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #333;">
-                        <span class="label" style="background:${color}33; color:${color}; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">[${type}]</span>
-                        <a href="${item.link}" target="_blank" style="text-decoration: none; font-size: 0.9rem; color: #fff; margin-left: 8px;">${item.title}</a>
-                     </div>`;
+            html += `<div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
+                        <span class="label" style="background:${color}33; color:${color}; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">[${type}]</span>
+                        <a href="${item.link}" target="_blank" rel="noopener" style="text-decoration: none; font-size: 0.88rem; color: #f8fafc; margin-left: 8px; line-height: 1.4;">${item.title}</a>
+                   </div>`;
         });
         container.innerHTML = html;
+        
     } catch (e) {
-        container.innerHTML = "<p>Please check connection.</p>";
+        // Fallback display if RSS api blocks or network drops
+        container.innerHTML = `
+            <div style="padding: 10px; color: #cbd5e1; font-size: 0.85rem;">
+                <p style="margin: 0 0 6px 0; color: #f59e0b;">⚠️ Live RSS Feed temporarily unavailable.</p>
+                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">🔗 Click here to open Google News directly →</a>
+            </div>
+        `;
     }
 }
-
 
 // 2nd half
 function setMode(mode, element) {
