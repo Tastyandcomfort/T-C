@@ -60,30 +60,40 @@
       position: relative;
       z-index: 10;
     }
-    /* ===================================================
-       LIGHT / DARK THEME SYSTEM STYLES
-       =================================================== */
-    :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --text-color: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
-    }
+/* ===================================================
+     LIGHT / DARK THEME GLOBAL SYSTEM
+     ================================================   */
+  :root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --input-bg: #1a1a1a;
+  }
 
-    body.light-theme {
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-color: #0f172a;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-    }
+  body.light-theme {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --input-bg: #f1f5f9;
+  }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Force all main cards, containers, and sections to respect themes */
+  .app-section, .card, .news-item, .modal, div[style*="background"] {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+  }
+  
   </style>
   
 </head>
