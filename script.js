@@ -287,70 +287,59 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-// Text, News & T&C live - Direct Headline Parser
+//Text, News & T&C live (Updated robust version)
 async function fetchNews() {
     const container = document.getElementById('news-container');
     if (!container) return; // Safety check
     
-    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Fetching live headlines...</p>";
-
-    // Direct RSS endpoints
-    const categories = [
-        { name: "Telangana", color: "#ff9f43", feed: "https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN" },
-        { name: "India",     color: "#00d4ff", feed: "https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN" },
-        { name: "World",     color: "#2ecc71", feed: "https://news.google.com/rss?hl=en-IN&gl=IN" }
+    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem;'>Loading live headlines...</p>";
+    
+    const urls = [
+        'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN',
+        'https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN',
+        'https://news.google.com/rss?hl=en-IN&gl=IN'
     ];
 
-    let html = '';
-
-    for (let cat of categories) {
-        try {
-            // Raw CORS proxy to get unmodified XML
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(cat.feed)}`;
-            const response = await fetch(proxyUrl);
-            const xmlText = await response.text();
-
-            // Native XML Parsing in browser
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-            const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 2);
-
-            items.forEach(item => {
-                const title = item.querySelector("title")?.textContent || "";
-                const link = item.querySelector("link")?.textContent || cat.feed;
-
-                // Clean headline text (remove CDATA tags if present)
-                const cleanHeadline = title.replace(/<!\[CDATA\[\vert{}\]\]>/g, '').trim();
-
-                if (cleanHeadline) {
-                    html += `
-                        <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                <span style="background:${cat.color}22; color:${cat.color}; border: 1px solid ${cat.color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
-                                    [${cat.name}]
-                                </span>
-                                <a href="${link}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
-                                    Source ↗
-                                </a>
-                            </div>
-                            <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
-                                ${cleanHeadline}
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-        } catch (err) {
-            console.error(`Failed to fetch ${cat.name} news:`, err);
+    try {
+        let allNews = [];
+        for (let url of urls) {
+            let api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+            let response = await fetch(api);
+            let data = await response.json();
+            
+            // Added check for data.status === 'ok' to prevent silent fails
+            if (data && data.status === 'ok' && data.items) {
+                allNews = allNews.concat(data.items.slice(0, 2));
+            }
         }
-    }
 
-    if (html !== '') {
+        if (allNews.length === 0) {
+            throw new Error("No items returned from RSS");
+        }
+
+        let html = '';
+        allNews.forEach((item, index) => {
+            let type = index < 2 ? "Telangana" : (index < 4 ? "India" : "World");
+            let color = type === 'Telangana' ? '#ff9f43' : (type === 'India' ? '#00d4ff' : '#2ecc71');
+            
+            html += `<div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
+                        <span class="label" style="background:${color}33; color:${color}; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">[${type}]</span>
+                        <a href="${item.link}" target="_blank" rel="noopener" style="text-decoration: none; font-size: 0.88rem; color: #f8fafc; margin-left: 8px;">${item.title}</a>
+                     </div>`;
+        });
         container.innerHTML = html;
-    } else {
-        container.innerHTML = `<p style='color: #ef4444; font-size: 0.85rem; padding: 10px;'>Unable to load headlines right now. Tap refresh to retry.</p>`;
+        
+    } catch (e) {
+        // Clean fallback showing direct links if rss2json blocks requests
+        container.innerHTML = `
+            <div style="padding: 10px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
+                <p style="margin: 0 0 6px 0; color: #f59e0b;">Sorry try again..!</p>
+                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">Open Google News Portal ↗</a>
+            </div>
+        `;
     }
 }
+
 
 
 // 2nd half
