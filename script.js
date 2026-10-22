@@ -287,69 +287,76 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-// Text, News & T&C live - Direct DOM Parser
+// Text, News & T&C live - Direct Reliable Multi-Source News Engine
 async function fetchNews() {
     const container = document.getElementById('news-container');
-    if (!container) return;
+    if (!container) return; // Safety check
     
     container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem; padding: 10px;'>Loading live headlines...</p>";
 
-    // Using a reliable CORS proxy endpoint to read headline text directly into the page
-    const feedUrl = 'https://news.google.com/rss/search?q=Telangana+India+Market&hl=en-IN&gl=IN';
-    const proxyApi = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
+    // Direct, highly reliable open news RSS streams
+    const sources = [
+        { name: "Telangana", color: "#ff9f43", url: 'https://www.thehindu.com/news/national/telangana/feeder/default.rss' },
+        { name: "India",     color: "#00d4ff", url: 'https://indianexpress.com/section/india/feed/' },
+        { name: "World",     color: "#2ecc71", url: 'https://indianexpress.com/section/world/feed/' }
+    ];
 
-    try {
-        const response = await fetch(proxyApi);
-        const xmlText = await response.text();
-        
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-        const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 5);
+    let html = '';
 
-        if (items.length === 0) {
-            throw new Error("No items found");
+    for (let src of sources) {
+        try {
+            // High-performance CORS proxy for XML feed parsing
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(src.url)}`;
+            const response = await fetch(proxyUrl);
+            const xmlText = await response.text();
+
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+            const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 2);
+
+            items.forEach(item => {
+                const title = item.querySelector("title")?.textContent || "";
+                let link = item.querySelector("link")?.textContent || src.url;
+                
+                // Extract clean text if CDATA or HTML tags are present
+                const cleanTitle = title.replace(/<!\[CDATA\[\vert{}\]\]>/g, '').trim();
+
+                if (cleanTitle) {
+                    html += `
+                        <div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="background:${src.color}22; color:${src.color}; border: 1px solid ${src.color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
+                                    [${src.name}]
+                                </span>
+                                <a href="${link}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
+                                    View Article ↗
+                                </a>
+                            </div>
+                            <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
+                                ${cleanTitle}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        } catch (err) {
+            console.warn(`Feed error for ${src.name}:`, err);
         }
+    }
 
-        let html = '';
-        items.forEach((item, index) => {
-            const title = item.querySelector("title")?.textContent || "News Update";
-            const link = item.querySelector("link")?.textContent || "https://news.google.com";
-            
-            // Assign category styling dynamically
-            let cat = index < 2 ? "Telangana" : (index < 4 ? "India" : "World");
-            let color = cat === 'Telangana' ? '#ff9f43' : (cat === 'India' ? '#00d4ff' : '#2ecc71');
-
-            html += `
-                <div class="news-item" style="padding: 12px 0; border-bottom: 1px solid #334155;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                        <span style="background:${color}22; color:${color}; border: 1px solid ${color}55; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">
-                            [${cat}]
-                        </span>
-                        <a href="${link}" target="_blank" rel="noopener" style="color: #38bdf8; font-size: 0.72rem; text-decoration: none; font-weight: bold;">
-                            Read Source ↗
-                        </a>
-                    </div>
-                    <div style="font-size: 0.88rem; color: #f8fafc; line-height: 1.4; font-weight: 500;">
-                        ${title}
-                    </div>
-                </div>
-            `;
-        });
-
+    if (html !== '') {
         container.innerHTML = html;
-
-    } catch (err) {
+    } else {
         container.innerHTML = `
             <div style="padding: 12px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
-                <p style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">⚠️ Live Feed Updating</p>
-                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold; background: #1e293b; padding: 6px 12px; border-radius: 6px; display: inline-block; border: 1px solid #334155;">
-                    Live News ↗
-                </a>
+                <p style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">Sorry! busy route</p>
+                <button onclick="fetchNews()" style="background: #38bdf8; color: #0f172a; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                    🔄 Tap to Reload Headlines
+                </button>
             </div>
         `;
     }
 }
-
 
 // 2nd half
 function setMode(mode, element) {
