@@ -100,6 +100,7 @@ T&C does not collect or store your personal data. This website is for informatio
         <div class="side-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i>AI Chat</div>
         <div class="side-item" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>You are here map</span></div>
         <div class="side-item" onclick="switchView('lala-view', this)"><i class="fa-solid fa-chart-line"></i><span>Analysis</span></div>
+        <div class="side-item" onclick="switchView('intel-view', this)"><i class="fa-solid fa-brain"></i><span>T&C Intelligence</span></div>
         <div class="side-item" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Certification</span></div>
         <div class="side-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>About</span></div>
         </nav>
@@ -646,6 +647,38 @@ T&C does not collect or store your personal data. This website is for informatio
         </div>
       </section>
 
+
+<!-- T&C INTELLIGENCE COMMAND CENTER VIEW -->
+<section id="intel-view" class="app-section" style="display: none;">
+  <div class="glass-card" style="width: 100%; max-width: 950px; margin: 0 auto; background: #0f172a; color: #f8fafc; border-radius: 12px; border: 1px solid #334155; padding: 16px; box-sizing: border-box;">
+
+    <!-- Header Bar -->
+    <div style="border-bottom: 1px solid #334155; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h3 class="section-title"><i class="fa-solid fa-brain" style="color: #f59e0b;"></i> T&C Command Center</h3>
+        <h2 style="margin: 0; color: #f59e0b; font-size: 1.25rem;">Global Intelligence & Risk Desk</h2>
+        <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 0.8rem;">
+          Real-Time OSINT • Supply Chain Disruption & Market Foresight
+        </p>
+      </div>
+      <span style="font-size: 0.72rem; color: #10b981; font-weight: bold; background: #1e293b; padding: 6px 10px; border-radius: 6px; border: 1px solid #10b981;">
+        ● LIVE TELEMETRY ACTIVE
+      </span>
+    </div>
+
+    <!-- Dynamic Modular Intelligence Container -->
+    <div id="intel-dynamic-content">
+      <div style="color: #ffd700; padding: 15px; font-size: 0.85rem; text-align: center;">
+        <i class="fa-solid fa-spinner fa-spin"></i> Syncing live global intelligence telemetry...
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+      
       <!-- CERTIFICATION VIEW -->
       <section id="cert-view" class="app-section">
         <h3 class="section-title"><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
@@ -1167,6 +1200,7 @@ T&C does not collect or store your personal data. This website is for informatio
       <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>AI Chat</span></div>
       <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
       <div class="nav-btn" onclick="switchView('lala-view', this)"><i class="fa-solid fa-chart-line"></i><span>Analysis</span></div>
+      <div class="nav-btn" onclick="switchView('intel-view', this)"><i class="fa-solid fa-brain"></i><span>Intel</span></div>
       <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Certification</span></div>
       <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>About</span></div>
       </footer>
