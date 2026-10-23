@@ -119,13 +119,13 @@ async function loadTandCIntelligenceHub() {
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
       <div style="display: flex; gap: 6px; flex-wrap: wrap; width: 100%; max-width: 680px;">
         <button onclick="switchCategory('locality')" id="cat-btn-locality" style="flex: 1; background: #f59e0b; color: #0f172a; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; white-space: nowrap;">
-          📍 1. Locality & Weather Map
+           Locality & Weather Map
         </button>
         <button onclick="switchCategory('world_ai')" id="cat-btn-world_ai" style="flex: 1; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; white-space: nowrap;">
-          🌐 2. World Monitoring AI
+           World Monitoring AI
         </button>
         <button onclick="switchCategory('prediction_ai')" id="cat-btn-prediction_ai" style="flex: 1; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; white-space: nowrap;">
-          🔮 3. Prediction AI (India)
+           AI Analysis (India)
         </button>
       </div>
     </div>
@@ -179,7 +179,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-chart-line"></i> India Market & Economic Predictions</h4>
+          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-chart-line"></i> India Market & Economic Analysis</h4>
           <button onclick="fetchLivePredictionData()" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh</button>
         </div>
         <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -228,7 +228,7 @@ function initOsintLeafletMap() {
 
   // 100% Free OpenStreetMap with Clean Dark Mode Filter (No API key required)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
+    attribution: '&copy; T&C from New Modern Mission',
     maxZoom: 19,
     className: 'dark-osm-tiles'
   }).addTo(osintMap);
@@ -392,7 +392,7 @@ async function fetchLivePredictionData() {
           <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">📈 BULLISH TRAJECTORY</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> Institutional research targets Nifty towards 28,500 over upcoming sessions on strong domestic capital inflow.
+          <strong>Summary:</strong> Institutional research targets Nifty towards 28,500 over upcoming sessions on strong domestic capital inflow.
         </p>
         <a href="https://www.nseindia.com" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (NSE India) ↗</a>
       </div>
@@ -404,7 +404,7 @@ async function fetchLivePredictionData() {
           <span style="color: #ef4444; font-weight: bold; font-size: 0.7rem;">${fuelIndicator}</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> USD/INR rate at ₹${inrRate}. Retail prices buffered by state oil reserves with minor upward pressure if import crude remains elevated.
+          <strong>Summary:</strong> USD/INR rate at ₹${inrRate}. Retail prices buffered by state oil reserves with minor upward pressure if import crude remains elevated.
         </p>
         <a href="https://mopng.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Ministry of Petroleum) ↗</a>
       </div>
@@ -416,7 +416,7 @@ async function fetchLivePredictionData() {
           <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🚀 HIGHER TENDENCY</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> Global central bank accumulation and currency hedging keep domestic gold pricing floor elevated.
+          <strong>Summary:</strong> Global central bank accumulation and currency hedging keep domestic gold pricing floor elevated.
         </p>
         <a href="https://www.gold.org" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (World Gold Council) ↗</a>
       </div>
@@ -428,7 +428,7 @@ async function fetchLivePredictionData() {
           <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">⚖️ STEADY MSP FLOOR</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> Paddy MSP floor at ₹2,441–₹2,461/qtl and Wheat MSP at ₹2,610/qtl ensuring stable mandi pricing support.
+          <strong>Summary:</strong> Paddy MSP floor at ₹2,441–₹2,461/qtl and Wheat MSP at ₹2,610/qtl ensuring stable mandi pricing support.
         </p>
         <a href="https://agricoop.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Agri Ministry) ↗</a>
       </div>
