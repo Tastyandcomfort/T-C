@@ -289,65 +289,45 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-// Your active Vercel API endpoint
-const VERCEL_NEWS_API = "https://news-lemon-two.vercel.app/api/news";
+// T&C Live Vercel Proxy Feed Engine (Connects directly to your existing #news-container)
+let currentScope = 'local';
 
-async function fetchLiveNews(scope = 'local') {
+async function fetchNews() {
   const container = document.getElementById('news-container');
   if (!container) return;
-
-  container.innerHTML = `
-    <div style="color: #38bdf8; padding: 14px; text-align: center; font-size: 0.9rem;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Fetching live ${scope.toUpperCase()} headlines...
-    </div>
-  `;
+  
+  container.innerHTML = `<div style="color: #ffd700; padding: 10px; font-size: 0.85rem;">Loading live headlines...</div>`;
 
   try {
-    // Fetch directly from your Vercel proxy endpoint
-    const response = await fetch(`${VERCEL_NEWS_API}?scope=${scope}`);
-    if (!response.ok) throw new Error("Vercel proxy unreachable");
+    const res = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=${currentScope}`);
+    const xmlText = await res.text();
+    const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+    const items = xml.querySelectorAll("item");
 
-    const xmlText = await response.text();
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-    const items = xmlDoc.querySelectorAll("item");
-
-    if (!items || items.length === 0) throw new Error("No news items found");
+    if (!items || items.length === 0) throw new Error("No items");
 
     let html = '';
     Array.from(items).slice(0, 8).forEach(item => {
-      const title = item.querySelector("title")?.textContent || "Headline";
+      const title = item.querySelector("title")?.textContent || "";
       const link = item.querySelector("link")?.textContent || "#";
-      const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
-      const pubDate = pubDateRaw 
-        ? new Date(pubDateRaw).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) 
-        : "Live";
-
       html += `
-        <div class="news-item" style="background: #1e293b; border: 1px solid #334155; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px;">
-          <div style="font-size: 0.72rem; color: #f59e0b; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between;">
-            <span>GOOGLE NEWS</span>
-            <span style="color: #38bdf8;">${pubDate}</span>
-          </div>
-          <a href="${link}" target="_blank" rel="noopener" style="color: #f8fafc; font-weight: 600; text-decoration: none; font-size: 0.88rem; display: block; line-height: 1.4;">
-            ${title}
+        <div class="news-item" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <a href="${link}" target="_blank" rel="noopener" style="color: #ffffff; text-decoration: none; font-size: 0.85rem; display: block; line-height: 1.4;">
+            • ${title}
           </a>
         </div>
       `;
     });
-
     container.innerHTML = html;
-
-  } catch (err) {
-    console.error("News Feed Error:", err);
-    container.innerHTML = `
-      <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; padding: 12px; border-radius: 8px; color: #fca5a5; font-size: 0.85rem;">
-        Sorry, T&C News feed is temporarily offline. <a href="https://news.google.com" target="_blank" style="color: #38bdf8; font-weight: bold;">Open Google News directly →</a>
-      </div>
-    `;
+  } catch (e) {
+    container.innerHTML = `<div style="color: #ff5968; padding: 10px; font-size: 0.85rem;">Unable to load live feed. Click Refresh.</div>`;
   }
 }
 
+// Automatically load headlines when the page opens
+window.addEventListener('load', () => {
+  fetchNews();
+});
 
 
 
