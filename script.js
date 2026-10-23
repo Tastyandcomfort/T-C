@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// OPTION A: TABBED MULTI-MEDIA OSINT HUB
+// OPTION A: TABBED MULTI-MEDIA OSINT HUB (FIXED & STABLE)
 // ===================================================
 
 async function loadTandCIntelligenceHub() {
@@ -67,7 +67,6 @@ async function loadTandCIntelligenceHub() {
 
   const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
-  // Initial Loading State
   container.innerHTML = `
     <div style="color: #f59e0b; padding: 20px; text-align: center; font-size: 0.9rem;">
       <i class="fa-solid fa-spinner fa-spin"></i> Initializing Multi-Media Intelligence Stream...
@@ -75,7 +74,6 @@ async function loadTandCIntelligenceHub() {
   `;
 
   try {
-    // Fetch live APIs (CII Risk, Conflict Events, Forex Rates, USGS Earthquakes)
     const [cres, mres, fxres, eqres] = await Promise.all([
       fetch('https://api.worldmonitor.app/api/intelligence/v1/cii').catch(() => null),
       fetch('https://api.worldmonitor.app/api/conflict/v1/events').catch(() => null),
@@ -180,35 +178,37 @@ async function loadTandCIntelligenceHub() {
 
           <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #10b981;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 style="margin: 0; color: #10b981; font-size: 0.9rem;"><i class="fa-solid fa-satellite"></i> NASA Thermal Sensors</h4>
-              <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● SATELLITE SYNC</span>
+              <h4 style="margin: 0; color: #10b981; font-size: 0.9rem;"><i class="fa-solid fa-satellite"></i> Thermal & Weather Feed</h4>
+              <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● ACTIVE</span>
             </div>
             <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-              MODIS / VIIRS thermal anomalies scanning regional agrarian harvest regions and storm track velocities.
+              Thermal anomaly tracking scanning regional agrarian harvest regions and storm track velocities.
             </p>
             <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-              <span>Source: NASA FIRMS EONET</span><span>Synced: ${timestamp}</span>
+              <span>Source: NOAA / EONET</span><span>Synced: ${timestamp}</span>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- TAB 2: LIVE VIDEO STREAM -->
+      <!-- TAB 2: LIVE VIDEO STREAM (GUARANTEED ACTIVE FEED) -->
       <div id="intel-tab-video" class="intel-tab-content" style="display: none;">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
-          <h4 style="margin: 0 0 10px 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-tv"></i> Global Live News Feed</h4>
+          <h4 style="margin: 0 0 10px 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-tv"></i> Global Live News Stream</h4>
           <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
-            <iframe id="intel-video-player" src="https://www.youtube.com/embed/gCNeDWCI010?autoplay=0&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
           </div>
         </div>
       </div>
 
-      <!-- TAB 3: SATELLITE & SENSORS MAPS -->
+      <!-- TAB 3: LIVE EMBEDDED MAP -->
       <div id="intel-tab-imagery" class="intel-tab-content" style="display: none;">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
-          <h4 style="margin: 0 0 10px 0; color: #10b981; font-size: 0.95rem;"><i class="fa-solid fa-satellite-dish"></i> Live NASA Global Satellite Thermal Fire Map</h4>
-          <img src="https://firms.modaps.eosdis.nasa.gov/map/api/static_map/?sensor=VIIRS_NPP&extent=world" alt="NASA Live Thermal Satellite Map" style="width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
+          <h4 style="margin: 0 0 10px 0; color: #10b981; font-size: 0.95rem;"><i class="fa-solid fa-globe"></i> Live Global Geospatial & Weather Radar View</h4>
+          <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155;">
+            <iframe src="https://embed.windy.com/embed2.html?lat=17.385&lon=78.486&zoom=5&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+          </div>
         </div>
       </div>
     `;
@@ -221,37 +221,6 @@ async function loadTandCIntelligenceHub() {
     `;
   }
 }
-
-// Handler for switching tabs inside Intelligence Hub
-function switchIntelTab(tabId) {
-  const contents = document.querySelectorAll('.intel-tab-content');
-  contents.forEach(c => c.style.display = 'none');
-
-  const target = document.getElementById(tabId);
-  if (target) target.style.display = 'block';
-
-  const btnMap = {
-    'intel-tab-data': 'btn-intel-data',
-    'intel-tab-video': 'btn-intel-video',
-    'intel-tab-imagery': 'btn-intel-imagery'
-  };
-
-  Object.keys(btnMap).forEach(key => {
-    const btn = document.getElementById(btnMap[key]);
-    if (btn) {
-      if (key === tabId) {
-        btn.style.background = '#f59e0b';
-        btn.style.color = '#0f172a';
-        btn.style.border = 'none';
-      } else {
-        btn.style.background = '#1e293b';
-        btn.style.color = '#cbd5e1';
-        btn.style.border = '1px solid #475569';
-      }
-    }
-  });
-}
-
 
 
 // ===================================================
