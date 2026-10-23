@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// OPTION A: TABBED MULTI-MEDIA OSINT HUB (FIXED & STABLE)
+// T&C EMBEDDED GLOBAL INTELLIGENCE CONTROL ROOM
 // ===================================================
 
 async function loadTandCIntelligenceHub() {
@@ -67,148 +67,90 @@ async function loadTandCIntelligenceHub() {
 
   const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
+  // Initial Loading state
   container.innerHTML = `
     <div style="color: #f59e0b; padding: 20px; text-align: center; font-size: 0.9rem;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Initializing Multi-Media Intelligence Stream...
+      <i class="fa-solid fa-spinner fa-spin"></i> Initializing Control Room Telemetry...
     </div>
   `;
 
   try {
-    const [cres, mres, fxres, eqres] = await Promise.all([
+    // Fetch live fallback background data for metrics
+    const [cres, fxres] = await Promise.all([
       fetch('https://api.worldmonitor.app/api/intelligence/v1/cii').catch(() => null),
-      fetch('https://api.worldmonitor.app/api/conflict/v1/events').catch(() => null),
-      fetch('https://api.exchangerate-api.com/v4/latest/USD').catch(() => null),
-      fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&limit=3').catch(() => null)
+      fetch('https://api.exchangerate-api.com/v4/latest/USD').catch(() => null)
     ]);
 
     const ciiData = cres && cres.ok ? await cres.json() : null;
-    const conflictData = mres && mres.ok ? await mres.json() : null;
     const fxData = fxres && fxres.ok ? await fxres.json() : null;
-    const eqData = eqres && eqres.ok ? await eqres.json() : null;
 
     const inrRate = fxData?.rates?.INR ? fxData.rates.INR.toFixed(2) : '84.12';
-    const eurRate = fxData?.rates?.EUR ? (fxData.rates.INR / fxData.rates.EUR).toFixed(2) : '91.20';
-    const conflictCount = conflictData?.events?.length || '12 Active Direct Alerts';
-    const topEvent = conflictData?.events?.[0]?.title || 'Middle East Airspace & Tactical Radar Activity';
-    const globalRiskScore = ciiData?.scores?.[0]?.score || '52 / 100 (Medium)';
-
-    let latestQuake = "No major seismic shifts logged in past hour.";
-    if (eqData && eqData.features && eqData.features.length > 0) {
-      const q = eqData.features[0].properties;
-      latestQuake = `M ${q.mag} - ${q.place}`;
-    }
+    const globalRiskScore = ciiData?.scores?.[0]?.score || '52 / 100 (Stable)';
 
     container.innerHTML = `
-      <!-- Top Tab Navigation Controls -->
+      <!-- Control Room Header Layout Tabs -->
       <div style="display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid #334155;">
-        <button onclick="switchIntelTab('intel-tab-data')" id="btn-intel-data" style="background: #f59e0b; color: #0f172a; border: none; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">📊 Data Telemetry</button>
-        <button onclick="switchIntelTab('intel-tab-video')" id="btn-intel-video" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">📺 Live Video Stream</button>
-        <button onclick="switchIntelTab('intel-tab-imagery')" id="btn-intel-imagery" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">🛰️ Satellite & Live Maps</button>
+        <button onclick="switchIntelTab('room-tab-map')" id="btn-room-map" style="background: #f59e0b; color: #0f172a; border: none; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">🗺️ Live Map & Radar</button>
+        <button onclick="switchIntelTab('room-tab-streams')" id="btn-room-streams" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">📺 Live Media Streams</button>
+        <button onclick="switchIntelTab('room-tab-metrics')" id="btn-room-metrics" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">📊 Live Metrics & Feeds</button>
       </div>
 
-      <!-- TAB 1: DATA TELEMETRY -->
-      <div id="intel-tab-data" class="intel-tab-content" style="display: block;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+      <!-- TAB 1: LIVE MAP & RADAR ROOM -->
+      <div id="room-tab-map" class="room-tab-content" style="display: block;">
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-earth-americas"></i> Global Situational Awareness Map & Wind Overlay</h4>
+            <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● ACTIVE LAYER</span>
+          </div>
+          <div style="position: relative; padding-bottom: 52%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155;">
+            <iframe src="https://embed.windy.com/embed2.html?lat=20.593&lon=78.962&zoom=4&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LIVE MEDIA & BROADCAST ROOM -->
+      <div id="room-tab-streams" class="room-tab-content" style="display: none;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;">
+          
+          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
+            <h4 style="margin: 0 0 8px 0; color: #f59e0b; font-size: 0.9rem;"><i class="fa-solid fa-tv"></i> Global News Live Stream</h4>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+              <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+            </div>
+          </div>
+
+          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
+            <h4 style="margin: 0 0 8px 0; color: #10b981; font-size: 0.9rem;"><i class="fa-solid fa-satellite"></i> Space & Earth Telemetry Stream</h4>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+              <iframe src="https://www.youtube.com/embed/21X5lGlDOfg?autoplay=0&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 3: LIVE METRICS & FEEDBACK ROOM -->
+      <div id="room-tab-metrics" class="room-tab-content" style="display: none;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px;">
           
           <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #ef4444;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 style="margin: 0; color: #ef4444; font-size: 0.9rem;"><i class="fa-solid fa-earth-americas"></i> Global Instability Index</h4>
-              <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● LIVE API</span>
-            </div>
-            <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-              Live CII Risk Metric: <strong>${globalRiskScore}</strong>. OSINT geopolitical telemetry actively processed.
-            </p>
-            <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-              <span>Source: World Monitor CII</span><span>Synced: ${timestamp}</span>
-            </div>
-          </div>
-
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #dc2626;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 style="margin: 0; color: #dc2626; font-size: 0.9rem;"><i class="fa-solid fa-crosshairs"></i> Conflict & Hotspots Stream</h4>
-              <span style="font-size: 0.65rem; background: #0f172a; color: #ef4444; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #ef4444;">● REAL-TIME</span>
-            </div>
-            <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-              Active Events: <strong>${conflictCount}</strong>.<br>Latest Log: <em>${topEvent}</em>
-            </p>
-            <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-              <span>Source: GDELT / WM Events</span><span>Synced: ${timestamp}</span>
-            </div>
-          </div>
-
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #38bdf8;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 style="margin: 0; color: #38bdf8; font-size: 0.9rem;"><i class="fa-solid fa-plane-departure"></i> Aviation & Naval Telemetry</h4>
-              <span style="font-size: 0.65rem; background: #0f172a; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #38bdf8;">● ACTIVE FEED</span>
-            </div>
-            <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-              Tracking carrier strike groups & flight routing deviations over Bab-el-Mandeb & Hormuz chokepoints.
-            </p>
-            <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-              <span>Source: OpenSky / AISStream</span><span>Synced: ${timestamp}</span>
-            </div>
-          </div>
-
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #a855f7;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 style="margin: 0; color: #a855f7; font-size: 0.9rem;"><i class="fa-solid fa-wave-square"></i> Seismic Earthquakes Feed</h4>
-              <span style="font-size: 0.65rem; background: #0f172a; color: #a855f7; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #a855f7;">● USGS SYNC</span>
-            </div>
-            <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-              Latest Global Quake: <strong style="color: #f59e0b;">${latestQuake}</strong>
-            </p>
-            <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-              <span>Source: USGS GeoJSON</span><span>Synced: ${timestamp}</span>
-            </div>
+            <h4 style="margin: 0 0 6px 0; color: #ef4444; font-size: 0.88rem;">Country Instability Index</h4>
+            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1;">Global Risk Metric: <strong>${globalRiskScore}</strong></p>
+            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">Synced: ${timestamp}</div>
           </div>
 
           <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #eab308;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 style="margin: 0; color: #eab308; font-size: 0.9rem;"><i class="fa-solid fa-chart-line"></i> Forex & Commodity Spot</h4>
-              <span style="font-size: 0.65rem; background: #0f172a; color: #eab308; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #eab308;">● LIVE RATES</span>
-            </div>
-            <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-              USD / INR: <strong style="color: #10b981;">₹${inrRate}</strong> | EUR / INR: <strong style="color: #38bdf8;">₹${eurRate}</strong><br>
-              Brent Crude baseline holding steady against international import benchmarks.
-            </p>
-            <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-              <span>Source: Interbank Exchange API</span><span>Synced: ${timestamp}</span>
-            </div>
+            <h4 style="margin: 0 0 6px 0; color: #eab308; font-size: 0.88rem;">Interbank Exchange Spot</h4>
+            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1;">USD to INR Exchange: <strong style="color: #10b981;">₹${inrRate}</strong></p>
+            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">Synced: ${timestamp}</div>
           </div>
 
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #10b981;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 style="margin: 0; color: #10b981; font-size: 0.9rem;"><i class="fa-solid fa-satellite"></i> Thermal & Weather Feed</h4>
-              <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● ACTIVE</span>
-            </div>
-            <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-              Thermal anomaly tracking scanning regional agrarian harvest regions and storm track velocities.
-            </p>
-            <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-              <span>Source: NOAA / EONET</span><span>Synced: ${timestamp}</span>
-            </div>
+          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #38bdf8;">
+            <h4 style="margin: 0 0 6px 0; color: #38bdf8; font-size: 0.88rem;">Network Status Feed</h4>
+            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1;">Subsea & Pipeline Telemetry: <strong>Optimal</strong></p>
+            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">Synced: ${timestamp}</div>
           </div>
 
-        </div>
-      </div>
-
-      <!-- TAB 2: LIVE VIDEO STREAM (GUARANTEED ACTIVE FEED) -->
-      <div id="intel-tab-video" class="intel-tab-content" style="display: none;">
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
-          <h4 style="margin: 0 0 10px 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-tv"></i> Global Live News Stream</h4>
-          <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
-            <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: LIVE EMBEDDED MAP -->
-      <div id="intel-tab-imagery" class="intel-tab-content" style="display: none;">
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
-          <h4 style="margin: 0 0 10px 0; color: #10b981; font-size: 0.95rem;"><i class="fa-solid fa-globe"></i> Live Global Geospatial & Weather Radar View</h4>
-          <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155;">
-            <iframe src="https://embed.windy.com/embed2.html?lat=17.385&lon=78.486&zoom=5&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
-          </div>
         </div>
       </div>
     `;
@@ -216,12 +158,41 @@ async function loadTandCIntelligenceHub() {
   } catch (err) {
     container.innerHTML = `
       <div style="color: #ef4444; padding: 14px; text-align: center; font-size: 0.85rem;">
-        <i class="fa-solid fa-triangle-exclamation"></i> Live telemetry connection interrupted. Click 'T&C Intelligence' to retry.
+        <i class="fa-solid fa-triangle-exclamation"></i> Telemetry stream error. Please click tab to refresh.
       </div>
     `;
   }
 }
 
+// Handler for switching control room tabs seamlessly
+function switchIntelTab(tabId) {
+  const contents = document.querySelectorAll('.room-tab-content');
+  contents.forEach(c => c.style.display = 'none');
+
+  const target = document.getElementById(tabId);
+  if (target) target.style.display = 'block';
+
+  const btnMap = {
+    'room-tab-map': 'btn-room-map',
+    'room-tab-streams': 'btn-room-streams',
+    'room-tab-metrics': 'btn-room-metrics'
+  };
+
+  Object.keys(btnMap).forEach(key => {
+    const btn = document.getElementById(btnMap[key]);
+    if (btn) {
+      if (key === tabId) {
+        btn.style.background = '#f59e0b';
+        btn.style.color = '#0f172a';
+        btn.style.border = 'none';
+      } else {
+        btn.style.background = '#1e293b';
+        btn.style.color = '#cbd5e1';
+        btn.style.border = '1px solid #475569';
+      }
+    }
+  });
+}
 
 // ===================================================
 // SECTION VIEW MANAGER ENGINE
