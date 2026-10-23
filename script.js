@@ -106,6 +106,10 @@ function switchView(viewId, element) {
 
   if (element) element.classList.add('active');
 
+  if (viewId === 'intel-view') {
+    loadTandCIntelligenceHub();
+  }
+  
   // 2. VIDEO CONTROL LOGIC (Moved outside the 'if (element)' block)
   const videoPlayer = document.getElementById('live-video-player');
 if (videoPlayer) {
