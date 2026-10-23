@@ -290,9 +290,9 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 // T&C Live Vercel Proxy Feed Engine (Connects directly to your existing #news-container)
-// Compact Live Vercel Proxy Engine with Date Selector & Future Machine Guard
+// Live Vercel Proxy Engine with Custom Sentence Format & Date Selector
 let currentScope = 'local';
-let selectedNewsDate = new Date().toISOString().split('T')[0]; // Default to today's date (YYYY-MM-DD)
+let selectedNewsDate = new Date().toISOString().split('T')[0]; // Default to today's date
 
 function switchNewsScope(scope) {
   currentScope = scope;
@@ -305,7 +305,7 @@ function handleDateChange(inputElem) {
 
   if (chosenDateStr > todayStr) {
     alert("Sorry I don't have a time machine to help you with the future Hahaha 😄");
-    inputElem.value = selectedNewsDate; // Reset back to previously selected date
+    inputElem.value = selectedNewsDate;
     return;
   }
 
@@ -317,7 +317,7 @@ async function fetchNews() {
   const container = document.getElementById('news-container');
   if (!container) return;
 
-  // Header controls bar with compact category buttons & HTML Date Picker
+  // Header controls bar
   const internalControlsHtml = `
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
       
@@ -334,7 +334,7 @@ async function fetchNews() {
         </button>
       </div>
 
-      <!-- Interactive Date Selector -->
+      <!-- Date Selector -->
       <div style="display: flex; align-items: center; gap: 4px; font-size: 0.72rem; color: #94a3b8; background: #0f172a; padding: 2px 6px; border-radius: 5px; border: 1px solid #334155;">
         <span>📅 Date:</span>
         <input type="date" value="${selectedNewsDate}" onchange="handleDateChange(this)" style="background: transparent; color: #38bdf8; border: none; font-size: 0.72rem; font-weight: bold; outline: none; cursor: pointer;">
@@ -343,7 +343,6 @@ async function fetchNews() {
     </div>
   `;
 
-  // Display loading indicator
   container.innerHTML = `
     ${internalControlsHtml}
     <div style="color: #ffd700; padding: 8px; font-size: 0.8rem;">
@@ -359,7 +358,7 @@ async function fetchNews() {
 
     if (!items || items.length === 0) throw new Error("No items found");
 
-    // Fetch Top 3 World Highlights when viewing local/national news
+    // Top 3 World Highlights Box
     let worldHighlightsHtml = '';
     if (currentScope !== 'world') {
       try {
@@ -390,9 +389,7 @@ async function fetchNews() {
           });
           worldHighlightsHtml += `</div>`;
         }
-      } catch (err) {
-        // Ignore minor highlight fetch hiccups
-      }
+      } catch (err) {}
     }
 
     // Filter items based on selected date
@@ -402,11 +399,11 @@ async function fetchNews() {
         const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
         if (!pubDateRaw) return true;
         const itemDateStr = new Date(pubDateRaw).toISOString().split('T')[0];
-        return itemDateStr <= selectedNewsDate; // Show news on or before chosen date
+        return itemDateStr <= selectedNewsDate;
       });
     }
 
-    // Render compact news items
+    // Render news items in your exact sentence format
     let itemsHtml = '';
     const displayList = filteredItems.length > 0 ? filteredItems.slice(0, 8) : Array.from(items).slice(0, 8);
 
@@ -416,7 +413,7 @@ async function fetchNews() {
       const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
 
       let headline = rawTitle;
-      let sourceName = "GOOGLE NEWS";
+      let sourceName = "Google News";
 
       if (rawTitle.includes(" - ")) {
         const parts = rawTitle.split(" - ");
@@ -424,23 +421,24 @@ async function fetchNews() {
         headline = parts.join(" - ").trim();
       }
 
+      // Format time (e.g. 5:30 AM) and date (e.g. 23 Oct 2026)
       let timeFormatted = "Live";
+      let dateFormatted = "";
       if (pubDateRaw) {
         const dateObj = new Date(pubDateRaw);
         if (!isNaN(dateObj)) {
-          timeFormatted = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+          timeFormatted = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+          dateFormatted = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         }
       }
 
-      // Compact Single-Line Card Layout (Saves Height)
+      // Exact Sentence Layout: "Published by Source at Time on Date." + Headline
       itemsHtml += `
-        <div class="news-item" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 2px solid #f59e0b; padding: 6px 8px; border-radius: 6px; margin-bottom: 5px;">
-          <div style="font-size: 0.68rem; margin-bottom: 2px; display: flex; align-items: center; gap: 6px;">
-            <span style="color: #f59e0b; font-weight: bold;">${sourceName.toUpperCase()}</span>
-            <span style="color: #475569;">•</span>
-            <span style="color: #38bdf8;">${timeFormatted}</span>
+        <div class="news-item" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 2px solid #f59e0b; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px;">
+          <div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 3px;">
+            Published by <strong style="color: #f59e0b;">${sourceName}</strong> at <span style="color: #38bdf8;">${timeFormatted}</span> on <span style="color: #cbd5e1;">${dateFormatted}</span>.
           </div>
-          <a href="${link}" target="_blank" rel="noopener" style="color: #f8fafc; text-decoration: none; font-size: 0.82rem; font-weight: 500; line-height: 1.3; display: block;">
+          <a href="${link}" target="_blank" rel="noopener" style="color: #f8fafc; text-decoration: none; font-size: 0.85rem; font-weight: 500; line-height: 1.35; display: block;">
             ${headline}
           </a>
         </div>
