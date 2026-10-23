@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C FULL OSINT CONTROL ROOM (FIXED VIDEOS & FULL METRICS)
+// T&C WORLD MONITOR WORKSPACE & MAP CONTROL ROOM
 // ===================================================
 
 async function loadTandCIntelligenceHub() {
@@ -69,103 +69,151 @@ async function loadTandCIntelligenceHub() {
 
   container.innerHTML = `
     <div style="color: #f59e0b; padding: 20px; text-align: center; font-size: 0.9rem;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Loading full World Monitor Intelligence telemetry...
+      <i class="fa-solid fa-spinner fa-spin"></i> Initializing World Monitor Workspace & Telemetry...
     </div>
   `;
 
   try {
-    // Fetch live APIs for risk scores, conflict events, and forex rates
-    const [cres, mres, fxres] = await Promise.all([
+    const [cres, fxres] = await Promise.all([
       fetch('https://api.worldmonitor.app/api/intelligence/v1/cii').catch(() => null),
-      fetch('https://api.worldmonitor.app/api/conflict/v1/events').catch(() => null),
       fetch('https://api.exchangerate-api.com/v4/latest/USD').catch(() => null)
     ]);
 
     const ciiData = cres && cres.ok ? await cres.json() : null;
-    const conflictData = mres && mres.ok ? await mres.json() : null;
     const fxData = fxres && fxres.ok ? await fxres.json() : null;
 
     const inrRate = fxData?.rates?.INR ? fxData.rates.INR.toFixed(2) : '84.12';
-    const eurRate = fxData?.rates?.EUR ? (fxData.rates.INR / fxData.rates.EUR).toFixed(2) : '91.20';
     const globalRiskScore = ciiData?.scores?.[0]?.score || '52 / 100 (Moderate Risk)';
-    const topConflict = conflictData?.events?.[0]?.title || 'Active regional airspace and tactical monitoring telemetry.';
 
     container.innerHTML = `
-      <!-- Control Room Header Layout Tabs -->
-      <div style="display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid #334155;">
-        <button onclick="switchIntelTab('room-tab-map')" id="btn-room-map" style="background: #f59e0b; color: #0f172a; border: none; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">🗺️ Live Map & Radar</button>
-        <button onclick="switchIntelTab('room-tab-streams')" id="btn-room-streams" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">📺 Live Media Streams</button>
-        <button onclick="switchIntelTab('room-tab-metrics')" id="btn-room-metrics" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">📊 Full Intel & Feeds</button>
+      <!-- Top Workspace & View Navigation Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+        <div style="display: flex; gap: 6px; overflow-x: auto;">
+          <button onclick="switchWorkspace('map')" id="btn-ws-map" style="background: #f59e0b; color: #0f172a; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">🌍 Global Map & Legends</button>
+          <button onclick="switchWorkspace('workspace')" id="btn-ws-workspace" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">📂 Mission Workspaces</button>
+          <button onclick="switchWorkspace('streams')" id="btn-ws-streams" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">📺 Live Media Streams</button>
+        </div>
+        <span style="font-size: 0.7rem; color: #38bdf8; background: #1e293b; padding: 4px 8px; border: 1px solid #334155; border-radius: 4px;">
+          UTC: ${new Date().toUTCString().slice(17, 25)} UTC[cite: 5]
+        </span>
       </div>
 
-      <!-- TAB 1: LIVE MAP & RADAR ROOM -->
-      <div id="room-tab-map" class="room-tab-content" style="display: block;">
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h4 style="margin: 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-earth-americas"></i> Global Situational Awareness Map & Wind Overlay</h4>
-            <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● ACTIVE LAYER</span>
+      <!-- VIEW 1: GLOBAL SITUATION MAP WITH TIME RANGES & LEGENDS -->
+      <div id="ws-view-map" class="workspace-view" style="display: block;">
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.9rem;"><i class="fa-solid fa-earth-americas"></i> Global Situation Interactive Map & Timeline</h4>
+            <div style="display: flex; gap: 4px;">
+              <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">1h</span>
+              <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">6h</span>
+              <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">24h</span>
+              <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">48h</span>
+              <span style="background: #10b981; color: #0f172a; padding: 2px 6px; font-size: 0.65rem; font-weight: bold; border-radius: 3px;">7d</span>
+              <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">All</span>
+            </div>
           </div>
-          <div style="position: relative; padding-bottom: 52%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155;">
-            <iframe src="https://embed.windy.com/embed2.html?lat=20.593&lon=78.962&zoom=4&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+          
+          <!-- Map Frame -->
+          <div style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155; margin-bottom: 10px;">
+            <iframe src="https://embed.windy.com/embed2.html?lat=20.000&lon=0.000&zoom=2&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+          </div>
+
+          <!-- EXACT MAP LEGENDS BAR -->
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; background: #0f172a; padding: 8px 12px; border-radius: 6px; border: 1px solid #334155; align-items: center; font-size: 0.72rem; color: #cbd5e1;">
+            <strong style="color: #f59e0b;">LEGEND:[cite: 5]</strong>
+            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></span> High Alert[cite: 5]</span>
+            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #f97316; border-radius: 50%;"></span> Elevated[cite: 5]</span>
+            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #eab308; border-radius: 50%;"></span> Monitoring[cite: 5]</span>
+            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #dc2626; border-radius: 50%;"></span> Conflict Zone[cite: 5]</span>
+            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #38bdf8; border-radius: 50%;"></span> Base[cite: 5]</span>
+            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #a855f7; border-radius: 50%;"></span> Nuclear[cite: 5]</span>
           </div>
         </div>
       </div>
 
-      <!-- TAB 2: FIXED LIVE MEDIA & BROADCAST ROOM -->
-      <div id="room-tab-streams" class="room-tab-content" style="display: none;">
+      <!-- VIEW 2: MISSION WORKSPACE SELECTOR BOX -->
+      <div id="ws-view-workspace" class="workspace-view" style="display: none;">
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
+          <h4 style="margin: 0 0 4px 0; color: #f59e0b; font-size: 0.95rem;"><i class="fa-solid fa-layer-group"></i> Choose Workspace[cite: 5]</h4>
+          <p style="margin: 0 0 12px 0; font-size: 0.78rem; color: #94a3b8;">Select a focused intelligence dashboard mode below[cite: 5]:</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+            
+            <div onclick="selectWorkspaceItem('Crisis Desk')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span style="background: #ef4444; color: white; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border-radius: 4px; font-weight: bold;">!</span>
+                <strong style="color: #f8fafc; font-size: 0.85rem;">Crisis Desk[cite: 5]</strong>
+              </div>
+              <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; padding-left: 26px;">Conflict, posture, instability, and live intelligence[cite: 5].</p>
+            </div>
+
+            <div onclick="selectWorkspaceItem('Supply-Chain Risk')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span style="background: #10b981; color: white; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border-radius: 4px; font-weight: bold;">S</span>
+                <strong style="color: #f8fafc; font-size: 0.85rem;">Supply-Chain Risk[cite: 5]</strong>
+              </div>
+              <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; padding-left: 26px;">Routes, chokepoints, country risk, and commodities[cite: 5].</p>
+            </div>
+
+            <div onclick="selectWorkspaceItem('Energy Security')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span style="background: #38bdf8; color: white; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border-radius: 4px; font-weight: bold;">E</span>
+                <strong style="color: #f8fafc; font-size: 0.85rem;">Energy Security[cite: 5]</strong>
+              </div>
+              <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; padding-left: 26px;">Pipelines, storage, tankers, outages, and disruption logs[cite: 5].</p>
+            </div>
+
+            <div onclick="selectWorkspaceItem('News Seeker')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span style="background: #a855f7; color: white; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border-radius: 4px; font-weight: bold;">N</span>
+                <strong style="color: #f8fafc; font-size: 0.85rem;">News Seeker[cite: 5]</strong>
+              </div>
+              <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; padding-left: 26px;">Breaking news, source context, webcams, advisories, and social signals[cite: 5].</p>
+            </div>
+
+            <div onclick="selectWorkspaceItem('Tech / AI Watcher')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span style="background: #eab308; color: #0f172a; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border-radius: 4px; font-weight: bold;">T</span>
+                <strong style="color: #f8fafc; font-size: 0.85rem;">Tech / AI Watcher[cite: 5]</strong>
+              </div>
+              <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; padding-left: 26px;">AI labs, startups, chips, cloud, cyber, and regulation signals[cite: 5].</p>
+            </div>
+
+            <div onclick="selectWorkspaceItem('Country Watcher')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#334155'">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span style="background: #10b981; color: white; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border-radius: 4px; font-weight: bold;">C</span>
+                <strong style="color: #f8fafc; font-size: 0.85rem;">Country Watcher[cite: 5]</strong>
+              </div>
+              <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; padding-left: 26px;">Track countries, instability, sanctions, displacement, and risk views[cite: 5].</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: LIVE STREAMS & TELEMETRY -->
+      <div id="ws-view-streams" class="workspace-view" style="display: none;">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h4 style="margin: 0; color: #f59e0b; font-size: 0.95rem;"><i class="fa-solid fa-tv"></i> Live Global News & Intelligence Channel</h4>
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-tv"></i> Live Global Broadcast Feed</h4>
             <div style="display: flex; gap: 6px;">
               <button onclick="switchIntelVideo('https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1')" style="background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Feed A</button>
               <button onclick="switchIntelVideo('https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1')" style="background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Feed B</button>
             </div>
           </div>
-          <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
-            <iframe id="control-room-video-frame" src="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <div style="position: relative; padding-bottom: 52%; height: 0; overflow: hidden; border-radius: 8px; margin-bottom: 14px;">
+            <iframe id="control-room-video-frame" src="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
           </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: FULL INTEL FINDINGS, AI INSIGHTS & BRIEFS -->
-      <div id="room-tab-metrics" class="room-tab-content" style="display: none;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
-          
-          <!-- Intelligence Finding -->
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #ef4444;">
-            <h4 style="margin: 0 0 6px 0; color: #ef4444; font-size: 0.88rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Intelligence Findings</h4>
-            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">${topConflict}</p>
-            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">Source: GDELT / OSINT Vectors</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+            <div style="background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid #334155;">
+              <strong style="color: #f59e0b; font-size: 0.8rem;">Global Risk Score</strong>
+              <p style="margin: 4px 0 0 0; color: #cbd5e1; font-size: 0.8rem;">${globalRiskScore}</p>
+            </div>
+            <div style="background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid #334155;">
+              <strong style="color: #10b981; font-size: 0.8rem;">USD / INR Rate</strong>
+              <p style="margin: 4px 0 0 0; color: #cbd5e1; font-size: 0.8rem;">₹${inrRate}</p>
+            </div>
           </div>
-
-          <!-- AI Insights -->
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #a855f7;">
-            <h4 style="margin: 0 0 6px 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-brain"></i> AI Insights & Risk Assessment</h4>
-            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">Global Risk Index is measured at <strong>${globalRiskScore}</strong>. Automated logistics baseline monitoring indicates stable supply chain channels.</p>
-            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">Automated OSINT Analytic Engine</div>
-          </div>
-
-          <!-- Intelligence Brief -->
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #38bdf8;">
-            <h4 style="margin: 0 0 6px 0; color: #38bdf8; font-size: 0.88rem;"><i class="fa-solid fa-file-shield"></i> Intelligence Brief</h4>
-            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">Active regional trade routes are operating under standard international regulatory frameworks with normal port clearance velocities.</p>
-            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">Updated: ${timestamp}</div>
-          </div>
-
-          <!-- Forex & Commodity Spot -->
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #eab308;">
-            <h4 style="margin: 0 0 6px 0; color: #eab308; font-size: 0.88rem;"><i class="fa-solid fa-chart-line"></i> Forex & Commodity Spot</h4>
-            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">USD / INR: <strong style="color: #10b981;">₹${inrRate}</strong> | EUR / INR: <strong style="color: #38bdf8;">₹${eurRate}</strong></p>
-            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">Interbank Exchange Rates</div>
-          </div>
-
-          <!-- Cyber & Infrastructure Telemetry -->
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #10b981;">
-            <h4 style="margin: 0 0 6px 0; color: #10b981; font-size: 0.88rem;"><i class="fa-solid fa-shield-halved"></i> Cyber & Infrastructure Status</h4>
-            <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">Subsea communications and regional power grids reporting optimal load distribution with zero critical outages.</p>
-            <div style="margin-top: 8px; font-size: 0.7rem; color: #94a3b8;">IODA / AlienVault Stream</div>
-          </div>
-
         </div>
       </div>
     `;
@@ -173,40 +221,42 @@ async function loadTandCIntelligenceHub() {
   } catch (err) {
     container.innerHTML = `
       <div style="color: #ef4444; padding: 14px; text-align: center; font-size: 0.85rem;">
-        <i class="fa-solid fa-triangle-exclamation"></i> Telemetry connection issue. Please re-open Intelligence view.
+        <i class="fa-solid fa-triangle-exclamation"></i> Error loading workspace telemetry.
       </div>
     `;
   }
 }
 
-// Handlers for switching tabs and live video feeds
-function switchIntelTab(tabId) {
-  const contents = document.querySelectorAll('.room-tab-content');
-  contents.forEach(c => c.style.display = 'none');
+// Workspace & View Controllers
+function switchWorkspace(viewKey) {
+  const views = document.querySelectorAll('.workspace-view');
+  views.forEach(v => v.style.display = 'none');
 
-  const target = document.getElementById(tabId);
+  const target = document.getElementById(`ws-view-${viewKey}`);
   if (target) target.style.display = 'block';
 
-  const btnMap = {
-    'room-tab-map': 'btn-room-map',
-    'room-tab-streams': 'btn-room-streams',
-    'room-tab-metrics': 'btn-room-metrics'
-  };
+  const mapBtn = document.getElementById('btn-ws-map');
+  const wsBtn = document.getElementById('btn-ws-workspace');
+  const strBtn = document.getElementById('btn-ws-streams');
 
-  Object.keys(btnMap).forEach(key => {
-    const btn = document.getElementById(btnMap[key]);
-    if (btn) {
-      if (key === tabId) {
-        btn.style.background = '#f59e0b';
-        btn.style.color = '#0f172a';
-        btn.style.border = 'none';
-      } else {
-        btn.style.background = '#1e293b';
-        btn.style.color = '#cbd5e1';
-        btn.style.border = '1px solid #475569';
-      }
+  [mapBtn, wsBtn, strBtn].forEach(b => {
+    if (b) {
+      b.style.background = '#1e293b';
+      b.style.color = '#cbd5e1';
+      b.style.border = '1px solid #475569';
     }
   });
+
+  const activeBtn = document.getElementById(`btn-ws-${viewKey}`);
+  if (activeBtn) {
+    activeBtn.style.background = '#f59e0b';
+    activeBtn.style.color = '#0f172a';
+    activeBtn.style.border = 'none';
+  }
+}
+
+function selectWorkspaceItem(workspaceName) {
+  switchWorkspace('map');
 }
 
 function switchIntelVideo(videoUrl) {
@@ -215,6 +265,7 @@ function switchIntelVideo(videoUrl) {
     iframe.src = videoUrl;
   }
 }
+
 
 
 // ===================================================
