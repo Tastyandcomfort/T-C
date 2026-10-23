@@ -289,58 +289,65 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 
-//Text, News & T&C live (Updated robust version)
-async function fetchNews() {
-    const container = document.getElementById('news-container');
-    if (!container) return; // Safety check
-    
-    container.innerHTML = "<p style='color: #94a3b8; font-size: 0.85rem;'>Loading live headlines...</p>";
-    
-    const urls = [
-        'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN',
-        'https://news.google.com/rss/headlines/section/country/IN?hl=en-IN&gl=IN',
-        'https://news.google.com/rss?hl=en-IN&gl=IN'
-    ];
+// Your active Vercel API endpoint
+const VERCEL_NEWS_API = "https://news-lemon-two.vercel.app/api/news";
 
-    try {
-        let allNews = [];
-        for (let url of urls) {
-            let api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
-            let response = await fetch(api);
-            let data = await response.json();
-            
-            // Added check for data.status === 'ok' to prevent silent fails
-            if (data && data.status === 'ok' && data.items) {
-                allNews = allNews.concat(data.items.slice(0, 2));
-            }
-        }
+async function fetchLiveNews(scope = 'local') {
+  const container = document.getElementById('news-container');
+  if (!container) return;
 
-        if (allNews.length === 0) {
-            throw new Error("No items returned from RSS");
-        }
+  container.innerHTML = `
+    <div style="color: #38bdf8; padding: 14px; text-align: center; font-size: 0.9rem;">
+      <i class="fa-solid fa-spinner fa-spin"></i> Fetching live ${scope.toUpperCase()} headlines...
+    </div>
+  `;
 
-        let html = '';
-        allNews.forEach((item, index) => {
-            let type = index < 2 ? "Telangana" : (index < 4 ? "India" : "World");
-            let color = type === 'Telangana' ? '#ff9f43' : (type === 'India' ? '#00d4ff' : '#2ecc71');
-            
-            html += `<div class="news-item" style="padding: 10px 0; border-bottom: 1px solid #334155;">
-                        <span class="label" style="background:${color}33; color:${color}; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">[${type}]</span>
-                        <a href="${item.link}" target="_blank" rel="noopener" style="text-decoration: none; font-size: 0.88rem; color: #f8fafc; margin-left: 8px;">${item.title}</a>
-                     </div>`;
-        });
-        container.innerHTML = html;
-        
-    } catch (e) {
-        // Clean fallback showing direct links if rss2json blocks requests
-        container.innerHTML = `
-            <div style="padding: 10px; text-align: center; color: #cbd5e1; font-size: 0.85rem;">
-                <p style="margin: 0 0 6px 0; color: #f59e0b;">Sorry, News feed is currently upgrading.</p>
-                <a href="https://news.google.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">For now, please visit Google-News ↗</a>
-            </div>
-        `;
-    }
+  try {
+    // Fetch directly from your Vercel proxy endpoint
+    const response = await fetch(`${VERCEL_NEWS_API}?scope=${scope}`);
+    if (!response.ok) throw new Error("Vercel proxy unreachable");
+
+    const xmlText = await response.text();
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    const items = xmlDoc.querySelectorAll("item");
+
+    if (!items || items.length === 0) throw new Error("No news items found");
+
+    let html = '';
+    Array.from(items).slice(0, 8).forEach(item => {
+      const title = item.querySelector("title")?.textContent || "Headline";
+      const link = item.querySelector("link")?.textContent || "#";
+      const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
+      const pubDate = pubDateRaw 
+        ? new Date(pubDateRaw).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) 
+        : "Live";
+
+      html += `
+        <div class="news-item" style="background: #1e293b; border: 1px solid #334155; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px;">
+          <div style="font-size: 0.72rem; color: #f59e0b; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between;">
+            <span>GOOGLE NEWS</span>
+            <span style="color: #38bdf8;">${pubDate}</span>
+          </div>
+          <a href="${link}" target="_blank" rel="noopener" style="color: #f8fafc; font-weight: 600; text-decoration: none; font-size: 0.88rem; display: block; line-height: 1.4;">
+            ${title}
+          </a>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+  } catch (err) {
+    console.error("News Feed Error:", err);
+    container.innerHTML = `
+      <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; padding: 12px; border-radius: 8px; color: #fca5a5; font-size: 0.85rem;">
+        Sorry, T&C News feed is temporarily offline. <a href="https://news.google.com" target="_blank" style="color: #38bdf8; font-weight: bold;">Open Google News directly →</a>
+      </div>
+    `;
+  }
 }
+
 
 
 
