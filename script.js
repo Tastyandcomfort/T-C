@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: LIVE ZERO-FALLBACK INTELLIGENCE ENGINE
+// T&C COMMAND CENTER: ZERO-KEY MAPPING & INTELLIGENCE
 // ===================================================
 
 let osintMap = null;
@@ -68,7 +68,6 @@ async function loadTandCIntelligenceHub() {
   const container = document.getElementById('intel-dynamic-content');
   if (!container) return;
 
-  // Responsive Styles & Animations
   if (!document.getElementById('tc-responsive-styles')) {
     const styleEl = document.createElement('style');
     styleEl.id = 'tc-responsive-styles';
@@ -100,13 +99,16 @@ async function loadTandCIntelligenceHub() {
         height: 8px;
         border-radius: 50%;
         background: #10b981;
-        box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
         animation: pulse 1.8s infinite;
       }
       @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
         70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
         100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      }
+      /* Clean Dark Map Tiles Styling */
+      .dark-osm-tiles {
+        filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(200deg) saturate(0.3);
       }
     `;
     document.head.appendChild(styleEl);
@@ -128,7 +130,7 @@ async function loadTandCIntelligenceHub() {
       </div>
     </div>
 
-    <!-- CATEGORY 1: GEOSPATIAL MAP & LIVE WEATHER RADAR -->
+    <!-- CATEGORY 1: GEOSPATIAL MAP & WEATHER RADAR -->
     <div id="intel-view-locality" class="intel-category-view" style="display: block;">
       <div class="intel-grid-container">
         
@@ -138,8 +140,7 @@ async function loadTandCIntelligenceHub() {
             <h4 style="margin: 0; color: #38bdf8; font-size: 0.82rem;"><i class="fa-solid fa-crosshairs"></i> Tap Any Point on Earth</h4>
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
               <button onclick="toggleWeatherLayer('precipitation')" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🌧️ Live Rain & Storms</button>
-              <button onclick="toggleWeatherLayer('temp')" style="background: #0f172a; color: #f59e0b; border: 1px solid #334155; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🌡️ Temp Heatmap</button>
-              <button onclick="toggleWeatherLayer('none')" style="background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">❌ Clear Overlay</button>
+              <button onclick="toggleWeatherLayer('none')" style="background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">❌ Clear Radar</button>
             </div>
           </div>
           <div id="leaflet-osint-map" style="height: 400px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a;"></div>
@@ -158,7 +159,7 @@ async function loadTandCIntelligenceHub() {
       </div>
     </div>
 
-    <!-- CATEGORY 2: WORLD MONITORING AI (INNOVATIVE OSINT MATRIX) -->
+    <!-- CATEGORY 2: WORLD MONITORING AI -->
     <div id="intel-view-world_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -174,7 +175,7 @@ async function loadTandCIntelligenceHub() {
       </div>
     </div>
 
-    <!-- CATEGORY 3: PREDICTION AI (DIRECT ACCURATE SHORT SUMMARIES) -->
+    <!-- CATEGORY 3: PREDICTION AI -->
     <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -212,7 +213,7 @@ function switchCategory(catKey) {
 }
 
 // ---------------------------------------------------
-// CATEGORY 1: MAP ENGINE & HIGH-CONTRAST WEATHER RADAR
+// CATEGORY 1: MAP ENGINE (100% FREE OPENSTREETMAP TILES)
 // ---------------------------------------------------
 function initOsintLeafletMap() {
   const mapElement = document.getElementById('leaflet-osint-map');
@@ -225,10 +226,11 @@ function initOsintLeafletMap() {
 
   osintMap = L.map('leaflet-osint-map').setView([20.5937, 78.9629], 4);
 
-  // Dark Base Layer
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
-    maxZoom: 18
+  // 100% Free OpenStreetMap with Clean Dark Mode Filter (No API key required)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19,
+    className: 'dark-osm-tiles'
   }).addTo(osintMap);
 
   // Auto-Load Live Rain Radar Tile Layer
@@ -256,18 +258,11 @@ function toggleWeatherLayer(type) {
   }
 
   if (type === 'precipitation') {
-    // RainViewer High-Contrast Precipitation & Thunderstorm Radar
+    // RainViewer High-Contrast Precipitation & Storm Radar
     activeWeatherOverlay = L.tileLayer('https://tile.rainviewer.com/v2/radar/nowcast/256/{z}/{x}/{y}/2/1_1.png', {
       opacity: 0.75,
       maxZoom: 18,
       attribution: 'Live Radar &copy; RainViewer'
-    });
-    activeWeatherOverlay.addTo(osintMap);
-  } else if (type === 'temp') {
-    // Temperature Heatmap Tile Overlay
-    activeWeatherOverlay = L.tileLayer('https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=demo', {
-      opacity: 0.6,
-      maxZoom: 18
     });
     activeWeatherOverlay.addTo(osintMap);
   }
@@ -328,7 +323,7 @@ async function fetchLocalityDetails(lat, lng) {
 }
 
 // ---------------------------------------------------
-// CATEGORY 2: INNOVATIVE WORLD MONITORING OSINT MATRIX
+// CATEGORY 2: WORLD MONITORING OSINT MATRIX
 // ---------------------------------------------------
 async function fetchLiveWorldNews() {
   const container = document.getElementById('world-ai-feed-container');
@@ -373,7 +368,7 @@ async function fetchLiveWorldNews() {
 }
 
 // ---------------------------------------------------
-// CATEGORY 3: PREDICTION AI (DIRECT ACCURATE SHORT SUMMARIES)
+// CATEGORY 3: PREDICTION AI
 // ---------------------------------------------------
 async function fetchLivePredictionData() {
   const container = document.getElementById('prediction-ai-container');
