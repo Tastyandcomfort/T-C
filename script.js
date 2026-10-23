@@ -452,13 +452,13 @@ async function fetchNews() {
       itemsHtml = `
         <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 12px; text-align: center; color: #cbd5e1; margin-top: 6px;">
           <div style="font-size: 0.88rem; font-weight: bold; color: #f59e0b; margin-bottom: 6px;">
-            🔍 No live RSS articles found for ${selectedNewsDate}
+            Sorry, no live articles found for ${selectedNewsDate}
           </div>
           <p style="font-size: 0.78rem; color: #94a3b8; margin: 0 0 10px 0; line-height: 1.4;">
-            Google News live RSS feeds only store recent 24–48hr headlines. For researchers seeking historical archives for <strong>${selectedNewsDate}</strong>:
+            T&C can help with recent 24–48hrs headlines only. For researchers seeking historical archives for <strong>${selectedNewsDate}</strong>:
           </p>
           <a href="${searchArchiveUrl}" target="_blank" rel="noopener" style="display: inline-block; background: #f59e0b; color: #0f172a; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; text-decoration: none;">
-            📜 Search ${scopeLabel} Google News Archives for ${selectedNewsDate} →
+            Click here for ${scopeLabel} News for ${selectedNewsDate} →
           </a>
         </div>
       `;
