@@ -56,7 +56,7 @@ const tcIntelCategories = [
 ];
 
 // ===================================================
-// DIRECT WORLD MONITOR LIVE API CONNECTOR (OPTION A)
+// PROXY-POWERED WORLD MONITOR LIVE STREAM ENGINE
 // ===================================================
 
 async function loadTandCIntelligenceHub() {
@@ -65,52 +65,51 @@ async function loadTandCIntelligenceHub() {
 
   container.innerHTML = `
     <div style="color: #ffd700; padding: 20px; font-size: 0.85rem; text-align: center;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Establishing direct stream to World Monitor live API...
+      <i class="fa-solid fa-spinner fa-spin"></i> Connecting to live telemetry relay...
     </div>
   `;
 
   try {
-    // Direct fetch to World Monitor public bootstrap endpoint
-    const wmRes = await fetch('https://www.worldmonitor.app/api/bootstrap');
+    // Fetch directly through your Vercel proxy endpoint
+    const response = await fetch('https://news-lemon-two.vercel.app/api/intel');
     
-    if (!wmRes.ok) {
-      throw new Error(`World Monitor API HTTP Error: ${wmRes.status}`);
+    if (!response.ok) {
+      throw new Error(`Proxy error HTTP ${response.status}`);
     }
 
-    const wmApiData = await wmRes.json();
-    
+    const wmApiData = await response.json();
     const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
     const dateStamp = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
-    // Render direct response details
+    // Render live telemetry grid
     container.innerHTML = `
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
         
-        <!-- Box 1: World Monitor Instability & Country Brief -->
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #ef4444;">
+        <!-- Live Gateway Connected -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #10b981;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h4 style="margin: 0; color: #ef4444; font-size: 0.95rem;"><i class="fa-solid fa-earth-americas"></i> Direct World Monitor Stream</h4>
-            <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● LIVE CONNECTED</span>
+            <h4 style="margin: 0; color: #10b981; font-size: 0.95rem;"><i class="fa-solid fa-satellite-dish"></i> World Monitor Stream</h4>
+            <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">● LIVE RELAYED</span>
           </div>
           <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">
-            Direct telemetry link verified with worldmonitor.app. Fetching real-time global risk scoring and live conflict feed data.
+            Direct telemetry stream established via Vercel proxy relay.
           </p>
           <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-            <span>Source: worldmonitor.app</span><span>Synced: ${timestamp}</span>
+            <span>Relay: Vercel Edge</span><span>Synced: ${timestamp}</span>
           </div>
         </div>
 
-        <!-- Box 2: Direct API Payload Stats -->
+        <!-- Live Payload Details -->
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #38bdf8;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h4 style="margin: 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-network-wired"></i> Live Gateway Status</h4>
-            <span style="font-size: 0.65rem; background: #0f172a; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #38bdf8;">● API ACTIVE</span>
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-network-wired"></i> Telemetry Payload</h4>
+            <span style="font-size: 0.65rem; background: #0f172a; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #38bdf8;">● STREAM ACTIVE</span>
           </div>
           <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">
-            Response verified. Live bootstrap payload size: <strong>${JSON.stringify(wmApiData).length} bytes</strong>.
+            Real-time payload received: <strong>${JSON.stringify(wmApiData).length} bytes</strong> processed.
           </p>
           <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-            <span>Route: /api/bootstrap</span><span>${dateStamp}</span>
+            <span>Route: /api/intel</span><span>${dateStamp}</span>
           </div>
         </div>
 
@@ -118,19 +117,18 @@ async function loadTandCIntelligenceHub() {
     `;
 
   } catch (err) {
-    console.warn("Direct fetch error:", err);
+    console.error("Proxy fetch error:", err);
     container.innerHTML = `
-      <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; padding: 14px; color: #fca5a5; font-size: 0.82rem; text-align: center;">
+      <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; padding: 16px; color: #fca5a5; font-size: 0.82rem; text-align: center;">
         <i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px;"></i>
-        Direct browser request to <code>worldmonitor.app/api/bootstrap</code> was restricted by browser CORS policies.
-        <div style="margin-top: 8px; font-size: 0.75rem; color: #cbd5e1;">
-          To bypass CORS restrictions, we can easily route the request through your Vercel proxy engine (Option B).
-        </div>
+        <strong>Proxy Connection Offline</strong>
+        <p style="margin: 6px 0 0 0; font-size: 0.75rem; color: #cbd5e1;">
+          Deploy <code>api/intel.js</code> to Vercel to activate the live telemetry relay.
+        </p>
       </div>
     `;
   }
 }
-
 
 
 
