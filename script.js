@@ -60,15 +60,14 @@ const tcIntelCategories = [
 // ===================================================
 
 function loadTandCIntelligenceHub() {
-  alert("THE INTELLIGENCE FUNCTION IS RUNNING!");
   const container = document.getElementById('intel-dynamic-content');
-  if (!container) {
-    alert("ERROR: #intel-dynamic-content NOT FOUND!");
-    return;
-  }
-  container.innerHTML = "<h2 style='color: #00ff00; padding: 20px;'>IT WORKED!</h2>";
-}      
-      <!-- Card 1: National Risk Index -->
+  if (!container) return;
+
+  const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const dateStamp = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  container.innerHTML = `
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #ef4444;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <h4 style="margin: 0; color: #ef4444; font-size: 0.95rem;"><i class="fa-solid fa-earth-americas"></i> National Risk Index</h4>
@@ -82,7 +81,6 @@ function loadTandCIntelligenceHub() {
         </div>
       </div>
 
-      <!-- Card 2: Live Gateway Stream -->
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #38bdf8;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <h4 style="margin: 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-satellite-dish"></i> Live Stream Desk</h4>
@@ -95,12 +93,9 @@ function loadTandCIntelligenceHub() {
           <span>Route: Local Engine</span><span>${dateStamp}</span>
         </div>
       </div>
-
     </div>
   `;
 }
-
-
 
 // ===================================================
 // SECTION VIEW MANAGER ENGINE
