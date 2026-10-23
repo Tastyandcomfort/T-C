@@ -290,9 +290,9 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 // T&C Live Vercel Proxy Feed Engine (Connects directly to your existing #news-container)
-// Live Vercel Proxy Engine with Custom Sentence Format & Date Selector
+// Strict Single-Date Filter & Archive Link Engine
 let currentScope = 'local';
-let selectedNewsDate = new Date().toISOString().split('T')[0]; // Default to today's date
+let selectedNewsDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
 function switchNewsScope(scope) {
   currentScope = scope;
@@ -317,7 +317,7 @@ async function fetchNews() {
   const container = document.getElementById('news-container');
   if (!container) return;
 
-  // Header controls bar
+  // Header controls bar with date picker
   const internalControlsHtml = `
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
       
@@ -346,7 +346,7 @@ async function fetchNews() {
   container.innerHTML = `
     ${internalControlsHtml}
     <div style="color: #ffd700; padding: 8px; font-size: 0.8rem;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Syncing ${currentScope.toUpperCase()} headlines...
+      <i class="fa-solid fa-spinner fa-spin"></i> Checking ${currentScope.toUpperCase()} news for ${selectedNewsDate}...
     </div>
   `;
 
@@ -358,7 +358,7 @@ async function fetchNews() {
 
     if (!items || items.length === 0) throw new Error("No items found");
 
-    // Top 3 World Highlights Box
+    // Top 3 World Highlights
     let worldHighlightsHtml = '';
     if (currentScope !== 'world') {
       try {
@@ -392,58 +392,77 @@ async function fetchNews() {
       } catch (err) {}
     }
 
-    // Filter items based on selected date
-    let filteredItems = Array.from(items);
-    if (selectedNewsDate) {
-      filteredItems = filteredItems.filter(item => {
-        const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
-        if (!pubDateRaw) return true;
-        const itemDateStr = new Date(pubDateRaw).toISOString().split('T')[0];
-        return itemDateStr <= selectedNewsDate;
-      });
-    }
-
-    // Render news items in your exact sentence format
-    let itemsHtml = '';
-    const displayList = filteredItems.length > 0 ? filteredItems.slice(0, 8) : Array.from(items).slice(0, 8);
-
-    displayList.forEach(item => {
-      const rawTitle = item.querySelector("title")?.textContent || "";
-      const link = item.querySelector("link")?.textContent || "#";
+    // STRICT DATE FILTERING: Match ONLY the selected date string (YYYY-MM-DD)
+    const exactMatches = Array.from(items).filter(item => {
       const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
+      if (!pubDateRaw) return false;
+      
+      const itemDateObj = new Date(pubDateRaw);
+      if (isNaN(itemDateObj)) return false;
+      
+      // Convert published date to YYYY-MM-DD in local time
+      const itemDateStr = itemDateObj.toISOString().split('T')[0];
+      return itemDateStr === selectedNewsDate;
+    });
 
-      let headline = rawTitle;
-      let sourceName = "Google News";
+    let itemsHtml = '';
 
-      if (rawTitle.includes(" - ")) {
-        const parts = rawTitle.split(" - ");
-        sourceName = parts.pop().trim();
-        headline = parts.join(" - ").trim();
-      }
+    if (exactMatches.length > 0) {
+      // Display strictly matching articles for that exact selected date
+      exactMatches.forEach(item => {
+        const rawTitle = item.querySelector("title")?.textContent || "";
+        const link = item.querySelector("link")?.textContent || "#";
+        const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
 
-      // Format time (e.g. 5:30 AM) and date (e.g. 23 Oct 2026)
-      let timeFormatted = "Live";
-      let dateFormatted = "";
-      if (pubDateRaw) {
-        const dateObj = new Date(pubDateRaw);
-        if (!isNaN(dateObj)) {
-          timeFormatted = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
-          dateFormatted = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        let headline = rawTitle;
+        let sourceName = "Google News";
+
+        if (rawTitle.includes(" - ")) {
+          const parts = rawTitle.split(" - ");
+          sourceName = parts.pop().trim();
+          headline = parts.join(" - ").trim();
         }
-      }
 
-      // Exact Sentence Layout: "Published by Source at Time on Date." + Headline
-      itemsHtml += `
-        <div class="news-item" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 2px solid #f59e0b; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px;">
-          <div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 3px;">
-            Published by <strong style="color: #f59e0b;">${sourceName}</strong> at <span style="color: #38bdf8;">${timeFormatted}</span> on <span style="color: #cbd5e1;">${dateFormatted}</span>.
+        let timeFormatted = "Live";
+        let dateFormatted = "";
+        if (pubDateRaw) {
+          const dateObj = new Date(pubDateRaw);
+          if (!isNaN(dateObj)) {
+            timeFormatted = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+            dateFormatted = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+          }
+        }
+
+        itemsHtml += `
+          <div class="news-item" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 2px solid #f59e0b; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px;">
+            <div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 3px;">
+              Published by <strong style="color: #f59e0b;">${sourceName}</strong> at <span style="color: #38bdf8;">${timeFormatted}</span> on <span style="color: #cbd5e1;">${dateFormatted}</span>.
+            </div>
+            <a href="${link}" target="_blank" rel="noopener" style="color: #f8fafc; text-decoration: none; font-size: 0.85rem; font-weight: 500; line-height: 1.35; display: block;">
+              ${headline}
+            </a>
           </div>
-          <a href="${link}" target="_blank" rel="noopener" style="color: #f8fafc; text-decoration: none; font-size: 0.85rem; font-weight: 500; line-height: 1.35; display: block;">
-            ${headline}
+        `;
+      });
+    } else {
+      // If selected date is older than Google News live RSS buffer, show custom archive helper
+      const scopeLabel = currentScope === 'local' ? 'Telangana' : currentScope === 'india' ? 'India' : 'World';
+      const searchArchiveUrl = `https://www.google.com/search?q=${encodeURIComponent(scopeLabel + ' news ' + selectedNewsDate)}&tbm=nws`;
+
+      itemsHtml = `
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 12px; text-align: center; color: #cbd5e1; margin-top: 6px;">
+          <div style="font-size: 0.88rem; font-weight: bold; color: #f59e0b; margin-bottom: 6px;">
+            🔍 No live RSS articles found for ${selectedNewsDate}
+          </div>
+          <p style="font-size: 0.78rem; color: #94a3b8; margin: 0 0 10px 0; line-height: 1.4;">
+            Google News live RSS feeds only store recent 24–48hr headlines. For researchers seeking historical archives for <strong>${selectedNewsDate}</strong>:
+          </p>
+          <a href="${searchArchiveUrl}" target="_blank" rel="noopener" style="display: inline-block; background: #f59e0b; color: #0f172a; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; text-decoration: none;">
+            📜 Search ${scopeLabel} Google News Archives for ${selectedNewsDate} →
           </a>
         </div>
       `;
-    });
+    }
 
     container.innerHTML = `
       ${internalControlsHtml}
@@ -461,6 +480,7 @@ async function fetchNews() {
 
 // Load on start
 window.addEventListener('load', fetchNews);
+
 
 
 
