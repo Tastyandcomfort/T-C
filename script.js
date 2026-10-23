@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C WORLD MONITOR WORKSPACE & MAP CONTROL ROOM
+// T&C WORLD MONITOR WORKSPACE & FIXED MAP CONTROL ROOM
 // ===================================================
 
 async function loadTandCIntelligenceHub() {
@@ -113,12 +113,12 @@ async function loadTandCIntelligenceHub() {
             </div>
           </div>
           
-          <!-- Map Frame -->
-          <div style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155; margin-bottom: 10px;">
-            <iframe src="https://embed.windy.com/embed2.html?lat=20.000&lon=0.000&zoom=2&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+          <!-- Fixed Active Map Frame URL -->
+          <div style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155; margin-bottom: 10px; background: #0f172a;">
+            <iframe src="https://embed.windy.com/embed2.html?lat=20.000&lon=0.000&zoom=2&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1&theme=dark" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
           </div>
 
-          <!-- EXACT MAP LEGENDS BAR -->
+          <!-- MAP LEGENDS BAR -->
           <div style="display: flex; flex-wrap: wrap; gap: 12px; background: #0f172a; padding: 8px 12px; border-radius: 6px; border: 1px solid #334155; align-items: center; font-size: 0.72rem; color: #cbd5e1;">
             <strong style="color: #f59e0b;">LEGEND:[cite: 5]</strong>
             <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></span> High Alert[cite: 5]</span>
@@ -201,7 +201,7 @@ async function loadTandCIntelligenceHub() {
               <button onclick="switchIntelVideo('https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1')" style="background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Feed B</button>
             </div>
           </div>
-          <div style="position: relative; padding-bottom: 52%; height: 0; overflow: hidden; border-radius: 8px; margin-bottom: 14px;">
+          <div style="position: relative; padding-bottom: 52%; height: 0; overflow: hidden; border-radius: 8px; margin-bottom: 14px; background: #0f172a;">
             <iframe id="control-room-video-frame" src="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
@@ -265,7 +265,6 @@ function switchIntelVideo(videoUrl) {
     iframe.src = videoUrl;
   }
 }
-
 
 
 // ===================================================
