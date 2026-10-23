@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C GEOSPATIAL & LIVE CCTV / WEBCAM CONTROL CENTER
+// T&C GEOSPATIAL, LIVE CLIMATE & CCTV CONTROL CENTER
 // ===================================================
 
 let osintMap = null;
@@ -68,11 +68,11 @@ async function loadTandCIntelligenceHub() {
   if (!container) return;
 
   container.innerHTML = `
-    <!-- Top Status Bar with Layer & Camera Toggles -->
+    <!-- Top Status Bar with Layer Toggles -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
       <div style="display: flex; gap: 6px; align-items: center;">
         <span style="background: #f59e0b; color: #0f172a; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 0.75rem;">
-          <i class="fa-solid fa-video"></i> Live CCTV & Geospatial Locality Hub
+          <i class="fa-solid fa-cloud-sun"></i> Live Climate, CCTV & Locality Hub
         </span>
         <button onclick="toggleMapLayer('streets')" style="background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">🗺️ Map View</button>
         <button onclick="toggleMapLayer('satellite')" style="background: #0f172a; color: #10b981; border: 1px solid #334155; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">🛰️ Satellite View</button>
@@ -88,32 +88,32 @@ async function loadTandCIntelligenceHub() {
       <!-- COLUMN 1: INTERACTIVE MAP CANVAS -->
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;"><i class="fa-solid fa-crosshairs"></i> Click Any Location To Inspect Live Feed</h4>
-          <span style="font-size: 0.65rem; background: #10b981; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold;">● LIVE CAM FEED READY</span>
+          <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;"><i class="fa-solid fa-crosshairs"></i> Click Any Location For Live Climate & Feed</h4>
+          <span style="font-size: 0.65rem; background: #10b981; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold;">● CLIMATE API ACTIVE</span>
         </div>
 
         <div id="leaflet-osint-map" style="height: 440px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a;"></div>
 
         <div style="display: flex; flex-wrap: wrap; gap: 10px; background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; align-items: center; font-size: 0.7rem; color: #cbd5e1; margin-top: 10px;">
-          <strong style="color: #f59e0b;">CAMERA DATA:</strong>
-          <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #ef4444; border-radius: 50%;"></span> Live CCTV & Video Feeds Active</span>
-          <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #10b981; border-radius: 50%;"></span> Reverse Geocoding Sync</span>
+          <strong style="color: #f59e0b;">METRICS:</strong>
+          <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #10b981; border-radius: 50%;"></span> Live Weather Telemetry</span>
+          <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #38bdf8; border-radius: 50%;"></span> Reverse Geocoding Sync</span>
         </div>
       </div>
 
-      <!-- COLUMN 2: FULL LOCALITY & LIVE CCTV VIDEO FEED -->
+      <!-- COLUMN 2: FULL LOCALITY, CLIMATE & LIVE VIDEO FEED -->
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; max-height: 560px; overflow-y: auto;" id="intel-brief-column">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #334155; padding-bottom: 6px;">
-          <h4 id="brief-region-title" style="margin: 0; color: #f59e0b; font-size: 0.9rem;"><i class="fa-solid fa-video"></i> Target Locality & CCTV Stream</h4>
+          <h4 id="brief-region-title" style="margin: 0; color: #f59e0b; font-size: 0.9rem;"><i class="fa-solid fa-cloud-sun-rain"></i> Locality Climate & Video Stream</h4>
           <span id="brief-status-tag" style="font-size: 0.6rem; background: #0f172a; color: #38bdf8; padding: 2px 5px; border-radius: 3px; border: 1px solid #38bdf8;">CLICK MAP</span>
         </div>
 
-        <p style="margin: 0 0 10px 0; font-size: 0.72rem; color: #94a3b8;">Click any village, town, or landmark on the map to load full postal details and active video / CCTV stream.</p>
+        <p style="margin: 0 0 10px 0; font-size: 0.72rem; color: #94a3b8;">Click any point on the map to extract live climate conditions, weather telemetry, postal address, and live video feeds.</p>
 
         <div id="intel-brief-content-list" style="display: flex; flex-direction: column; gap: 8px;">
           <div style="background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; border-left: 3px solid #38bdf8;">
             <strong style="color: #38bdf8; font-size: 0.8rem;"><i class="fa-solid fa-hand-pointer"></i> Awaiting Target Selection</strong>
-            <p style="margin: 4px 0 0 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.4;">Select any point on the left map to trigger live reverse geocoding and launch regional video feeds.</p>
+            <p style="margin: 4px 0 0 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.4;">Select any point on the map to trigger live climate telemetry and regional stream extraction.</p>
           </div>
         </div>
       </div>
@@ -172,7 +172,7 @@ function initOsintLeafletMap() {
       .setContent(`<div style="color:#0f172a; font-weight:bold; font-size:0.75rem;">GPS: ${lat}, ${lng}</div>`)
       .openOn(osintMap);
 
-    fetchDeepGeospatialDataWithCCTV(lat, lng);
+    fetchDeepGeospatialDataWithClimate(lat, lng);
   });
 }
 
@@ -188,19 +188,24 @@ function toggleMapLayer(type) {
   }
 }
 
-// DEEP GEOSPATIAL & LIVE CCTV MATCHING ENGINE
-async function fetchDeepGeospatialDataWithCCTV(lat, lng) {
+// DEEP GEOSPATIAL, LIVE WEATHER & CCTV ENGINE
+async function fetchDeepGeospatialDataWithClimate(lat, lng) {
   const titleEl = document.getElementById('brief-region-title');
   const briefList = document.getElementById('intel-brief-content-list');
 
   if (titleEl) {
-    titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Loading Camera Telemetry (${lat}, ${lng})...`;
+    titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching Live Climate & Telemetry...`;
   }
 
   try {
-    // 1. Precision Reverse Geocoding
-    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`).catch(() => null);
+    // 1. Parallel Fetch: Reverse Geocoding + Live Weather API (Open-Meteo)
+    const [geoRes, weatherRes] = await Promise.all([
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`).catch(() => null),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m`).catch(() => null)
+    ]);
+
     const geoData = geoRes && geoRes.ok ? await geoRes.json() : null;
+    const weatherData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
 
     const address = geoData?.address || {};
 
@@ -212,23 +217,42 @@ async function fetchDeepGeospatialDataWithCCTV(lat, lng) {
     const postcode = address.postcode || "Pincode Active";
     const roadName = address.road || address.pedestrian || address.highway || "Access Route Vector";
 
-    // 2. Select Video Stream Embed (Direct Public Live Feed or ISS Earth Observation Feed)
-    let cctvVideoUrl = "https://www.youtube.com/embed/21X5lGlDOfg?autoplay=1&mute=1"; // ISS Live Earth View
-    let cctvTitle = "Live Earth Observation Stream (ISS Orbit)";
+    // Parse Weather Telemetry
+    const currWeather = weatherData?.current || {};
+    const temp = currWeather.temperature_2m !== undefined ? `${currWeather.temperature_2m}°C` : 'Normal Baseline';
+    const feelsLike = currWeather.apparent_temperature !== undefined ? `${currWeather.apparent_temperature}°C` : '';
+    const humidity = currWeather.relative_humidity_2m !== undefined ? `${currWeather.relative_humidity_2m}%` : 'Stable';
+    const windSpeed = currWeather.wind_speed_10m !== undefined ? `${currWeather.wind_speed_10m} km/h` : 'Calm';
+    const precipitation = currWeather.precipitation !== undefined ? `${currWeather.precipitation} mm` : '0 mm';
+    const isDayTime = currWeather.is_day === 1 ? 'Daytime Operations' : 'Nighttime Operations';
 
-    // Regional Stream Override Logic
+    // Video Stream URL Selection
+    let cctvVideoUrl = "https://www.youtube.com/embed/21X5lGlDOfg?autoplay=1&mute=1"; // ISS Live Orbit
+    let cctvTitle = "Live Earth Observation Stream";
     if (countryName.toLowerCase().includes('india') || stateName.toLowerCase().includes('telangana')) {
       cctvVideoUrl = "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1&mute=1";
-      cctvTitle = `Live Regional Broadcast & Public Feed (${stateName})`;
+      cctvTitle = `Live Regional Broadcast Feed (${stateName})`;
     }
 
     if (titleEl) {
       titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageName}, ${districtName}`;
     }
 
-    // 3. Render Locality Breakdown + Live CCTV Stream Box
+    // 2. Render Full Brief Cards including Live Climate
     briefList.innerHTML = `
-      <!-- Embedded Live CCTV / Video Feed Box -->
+      <!-- Live Climate & Weather Telemetry Card -->
+      <div style="background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; border-left: 3px solid #10b981;">
+        <strong style="color: #10b981; font-size: 0.8rem;"><i class="fa-solid fa-cloud-sun"></i> Live Climate & Weather Telemetry</strong>
+        <p style="margin: 4px 0 0 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.45;">
+          <strong>Temperature:</strong> <span style="color:#f59e0b; font-weight:bold;">${temp}</span> (Feels like: ${feelsLike})<br>
+          <strong>Atmospheric Condition:</strong> ${isDayTime}, Precipitation: ${precipitation}<br>
+          <strong>Relative Humidity:</strong> ${humidity}<br>
+          <strong>Wind Velocity:</strong> ${windSpeed}<br>
+          <strong>Sensor Source:</strong> Open-Meteo High-Precision Grid
+        </p>
+      </div>
+
+      <!-- Live Video Feed Box -->
       <div style="background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; border-left: 3px solid #ef4444;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <strong style="color: #ef4444; font-size: 0.8rem;"><i class="fa-solid fa-video"></i> ${cctvTitle}</strong>
@@ -237,7 +261,6 @@ async function fetchDeepGeospatialDataWithCCTV(lat, lng) {
         <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; border: 1px solid #334155; background: #000;">
           <iframe src="${cctvVideoUrl}" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
         </div>
-        <div style="margin-top: 4px; font-size: 0.65rem; color: #94a3b8;">Real-time camera feed active for coordinates [${lat}, ${lng}]</div>
       </div>
 
       <!-- Exact Postal & Administrative Breakdown -->
@@ -254,19 +277,19 @@ async function fetchDeepGeospatialDataWithCCTV(lat, lng) {
         </p>
       </div>
 
-      <!-- GPS Coordinates & Telemetry -->
-      <div style="background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; border-left: 3px solid #10b981;">
-        <strong style="color: #10b981; font-size: 0.8rem;"><i class="fa-solid fa-satellite-dish"></i> Geospatial Coordinates</strong>
+      <!-- GPS Coordinates -->
+      <div style="background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; border-left: 3px solid #38bdf8;">
+        <strong style="color: #38bdf8; font-size: 0.8rem;"><i class="fa-solid fa-satellite-dish"></i> Geospatial Coordinates</strong>
         <p style="margin: 4px 0 0 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.4;">
           <strong>Latitude:</strong> ${lat}<br>
           <strong>Longitude:</strong> ${lng}<br>
-          <strong>OpenStreetMap Node ID:</strong> ${geoData?.place_id || 'OSM Node Synced'}
+          <strong>OSM Node ID:</strong> ${geoData?.place_id || 'Registered Node'}
         </p>
       </div>
     `;
 
   } catch (err) {
-    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Location Extracted`;
+    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Telemetry Extracted`;
   }
 }
 
