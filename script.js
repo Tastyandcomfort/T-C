@@ -60,15 +60,14 @@ const tcIntelCategories = [
 // ===================================================
 
 function loadTandCIntelligenceHub() {
+  alert("THE INTELLIGENCE FUNCTION IS RUNNING!");
   const container = document.getElementById('intel-dynamic-content');
-  if (!container) return;
-
-  const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
-  const dateStamp = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-
-  container.innerHTML = `
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
-      
+  if (!container) {
+    alert("ERROR: #intel-dynamic-content NOT FOUND!");
+    return;
+  }
+  container.innerHTML = "<h2 style='color: #00ff00; padding: 20px;'>IT WORKED!</h2>";
+}      
       <!-- Card 1: National Risk Index -->
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #ef4444;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
