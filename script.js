@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C LIVE THREAT PLOTTING & TACTICAL CONTROL ROOM
+// T&C 2-COLUMN INTERACTIVE OSINT COMMAND CENTER
 // ===================================================
 
 async function loadTandCIntelligenceHub() {
@@ -67,12 +67,11 @@ async function loadTandCIntelligenceHub() {
 
   container.innerHTML = `
     <div style="color: #f59e0b; padding: 20px; text-align: center; font-size: 0.9rem;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Fetching live threat vectors and geospatial pins...
+      <i class="fa-solid fa-spinner fa-spin"></i> Initializing Interactive OSINT Control Room...
     </div>
   `;
 
   try {
-    // Fetch live conflict and intelligence events from World Monitor API
     const [cres, mres, fxres] = await Promise.all([
       fetch('https://api.worldmonitor.app/api/intelligence/v1/cii').catch(() => null),
       fetch('https://api.worldmonitor.app/api/conflict/v1/events').catch(() => null),
@@ -83,177 +82,142 @@ async function loadTandCIntelligenceHub() {
     const conflictData = mres && mres.ok ? await mres.json() : null;
     const fxData = fxres && fxres.ok ? await fxres.json() : null;
 
-    const inrRate = fxData?.rates?.INR ? fxData.rates.INR.toFixed(2) : '84.12';
     const globalRiskScore = ciiData?.scores?.[0]?.score || '52 / 100 (Moderate Risk)';
-    
-    // Extract live threat events or use active fallback operational markers
-    const events = conflictData?.events || [
-      { title: "Tactical Airspace Monitoring - Middle East Corridor", severity: "High Alert", lat: 31.5, lon: 34.4 },
-      { title: "Maritime Chokepoint Advisory - Red Sea Sector", severity: "Conflict Zone", lat: 15.5, lon: 42.0 },
-      { title: "Infrastructure Cyber Vector Scan - Eastern Europe", severity: "Elevated", lat: 50.4, lon: 30.5 },
-      { title: "Naval Surveillance Tracking - Indo-Pacific Rim", severity: "Monitoring", lat: 22.3, lon: 114.1 }
-    ];
-
-    let threatListHTML = '';
-    events.slice(0, 6).forEach((ev, idx) => {
-      const dotColor = idx % 2 === 0 ? '#ef4444' : '#f97316';
-      threatListHTML.V ? '' : '';
-      threatListHTML += `
-        <div style="display: flex; align-items: flex-start; gap: 8px; background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; margin-bottom: 6px;">
-          <span style="width: 8px; height: 8px; background: ${dotColor}; border-radius: 50%; margin-top: 5px; flex-shrink: 0;"></span>
-          <div style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.3;">
-            <strong style="color: #f8fafc;">${ev.title || 'Global Intelligence Log'}</strong>
-            <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">Vector Coordinates Active • Live OSINT Stream</div>
-          </div>
-        </div>
-      `;
-    });
 
     container.innerHTML = `
-      <!-- Top Workspace & View Navigation Bar -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 10px;">
-        <div style="display: flex; gap: 6px; overflow-x: auto;">
-          <button onclick="switchWorkspace('map')" id="btn-ws-map" style="background: #f59e0b; color: #0f172a; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">🌍 Global Map & Threats</button>
-          <button onclick="switchWorkspace('workspace')" id="btn-ws-workspace" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">📂 Mission Workspaces</button>
-          <button onclick="switchWorkspace('streams')" id="btn-ws-streams" style="background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">📺 Live Media Streams</button>
+      <!-- Top Status Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+        <div style="display: flex; gap: 6px;">
+          <span style="background: #f59e0b; color: #0f172a; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 0.75rem;"><i class="fa-solid fa-satellite-dish"></i> Interactive OSINT Matrix</span>
         </div>
         <span style="font-size: 0.7rem; color: #38bdf8; background: #1e293b; padding: 4px 8px; border: 1px solid #334155; border-radius: 4px;">
-          UTC: ${new Date().toUTCString().slice(17, 25)} UTC[cite: 5]
+          UTC: ${new Date().toUTCString().slice(17, 25)} UTC[cite: 5, 6]
         </span>
       </div>
 
-      <!-- VIEW 1: MAP + SIDEBAR LIVE THREAT FEED -->
-      <div id="ws-view-map" class="workspace-view" style="display: block;">
-        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 12px; align-items: start;">
-          
-          <!-- Map Section -->
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-              <h4 style="margin: 0; color: #38bdf8; font-size: 0.9rem;"><i class="fa-solid fa-earth-americas"></i> Global Situation Interactive Tactical Map</h4>
-              <div style="display: flex; gap: 4px;">
-                <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">1h</span>
-                <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">6h</span>
-                <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">24h</span>
-                <span style="background: #10b981; color: #0f172a; padding: 2px 6px; font-size: 0.65rem; font-weight: bold; border-radius: 3px;">7d</span>
-              </div>
+      <!-- 2-COLUMN LAYOUT -->
+      <div style="display: grid; grid-template-columns: 1fr 360px; gap: 14px; align-items: start;">
+        
+        <!-- COLUMN 1: INTERACTIVE MAP & LEGENDS -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+            <h4 id="map-title-indicator" style="margin: 0; color: #38bdf8; font-size: 0.9rem;"><i class="fa-solid fa-earth-americas"></i> Global Situation Interactive Map (All Layers Active)</h4>
+            <div style="display: flex; gap: 3px;">
+              <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">1h</span>
+              <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">24h</span>
+              <span style="background: #10b981; color: #0f172a; padding: 2px 6px; font-size: 0.65rem; font-weight: bold; border-radius: 3px;">7d</span>[cite: 6]
             </div>
+          </div>
+
+          <!-- Map Embed Frame -->
+          <div style="position: relative; padding-bottom: 56%; height: 0; overflow: hidden; border-radius: 6px; border: 1px solid #334155; margin-bottom: 10px; background: #0b0f19;">
+            <iframe id="osint-map-frame" src="https://www.openstreetmap.org/export/embed.html?bbox=-180,-60,180,70&layer=mapnik" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0; filter: invert(90%) hue-rotate(180deg) brightness(95%) contrast(110%);" allowfullscreen></iframe>
+          </div>
+
+          <!-- Map Legends Bar -->
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; align-items: center; font-size: 0.7rem; color: #cbd5e1;">
+            <strong style="color: #f59e0b;">LEGEND:[cite: 5, 6]</strong>
+            <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #ef4444; border-radius: 50%;"></span> High Alert[cite: 5, 6]</span>
+            <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #f97316; border-radius: 50%;"></span> Elevated[cite: 5, 6]</span>
+            <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #eab308; border-radius: 50%;"></span> Monitoring[cite: 5, 6]</span>
+            <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #dc2626; border-radius: 50%;"></span> Conflict Zone[cite: 5, 6]</span>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: CLICKABLE CATEGORY BRIEF & FILTER PANEL -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; max-height: 520px; overflow-y: auto;">
+          <h4 style="margin: 0 0 4px 0; color: #f59e0b; font-size: 0.9rem;"><i class="fa-solid fa-list-check"></i> Intelligence Categories</h4>
+          <p style="margin: 0 0 10px 0; font-size: 0.72rem; color: #94a3b8;">Click any module to filter map telemetry and view live briefs:</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px;" id="intel-categories-list">
             
-            <div style="position: relative; padding-bottom: 56%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155; margin-bottom: 10px; background: #0b0f19;">
-              <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-180,-60,180,70&layer=mapnik" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0; filter: invert(90%) hue-rotate(180deg) brightness(95%) contrast(110%);" allowfullscreen></iframe>
+            <!-- Category 1: Threats -->
+            <div onclick="filterOsintCategory('Threats & Escalations', 'High alert military posture and localized ballistic trajectory tracking vectors.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #ef4444; transition: 0.2s;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Threats & Escalations</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Active tactical warning indicators & threat logs.</div>
             </div>
 
-            <!-- MAP LEGENDS BAR -->
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; align-items: center; font-size: 0.7rem; color: #cbd5e1;">
-              <strong style="color: #f59e0b;">LEGEND:[cite: 5]</strong>
-              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #ef4444; border-radius: 50%;"></span> High Alert[cite: 5]</span>
-              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #f97316; border-radius: 50%;"></span> Elevated[cite: 5]</span>
-              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #eab308; border-radius: 50%;"></span> Monitoring[cite: 5]</span>
-              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 7px; height: 7px; background: #dc2626; border-radius: 50%;"></span> Conflict Zone[cite: 5]</span>
+            <!-- Category 2: Climate & Weather -->
+            <div onclick="filterOsintCategory('Climate & Severe Weather', 'Thermal anomaly mapping, typhoon trajectories, and NOAA atmospheric pressure arrays.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #10b981; transition: 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-cloud-sun-rain" style="color: #10b981;"></i> Climate & Severe Weather</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Satellite thermal sensors & storm velocities.</div>
             </div>
+
+            <!-- Category 3: Government Actions -->
+            <div onclick="filterOsintCategory('Government-Related Actions', 'Sanctions enforcement, emergency legislative decrees, and diplomatic embassy posture updates.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #38bdf8; transition: 0.2s;" onmouseover="this.style.borderColor='#38bdf8'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-landmark" style="color: #38bdf8;"></i> Government Actions</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Sanctions, decrees, and diplomatic advisories.</div>
+            </div>
+
+            <!-- Category 4: Protests & Civil Unrest -->
+            <div onclick="filterOsintCategory('Protests & Civil Unrest', 'Localized demonstrations, labor strikes, and public assembly mobilization trackers.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #eab308; transition: 0.2s;" onmouseover="this.style.borderColor='#eab308'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-signs-post" style="color: #eab308;"></i> Protests & Civil Unrest</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Crowd mobilization and strike density logs.</div>
+            </div>
+
+            <!-- Category 5: Conflicts & Military -->
+            <div onclick="filterOsintCategory('Conflicts & Strike Hotspots', 'Active combat zones, artillery exchanges, and naval strike group telemetry.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #dc2626; transition: 0.2s;" onmouseover="this.style.borderColor='#dc2626'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-crosshairs" style="color: #dc2626;"></i> Conflicts & Strike Hotspots</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">GDELT conflict event streams & kinetic strikes.</div>
+            </div>
+
+            <!-- Category 6: Police Stations & Security -->
+            <div onclick="filterOsintCategory('Police Stations & Security Hubs', 'Law enforcement command posts, municipal security perimeters, and emergency response grids.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #6366f1; transition: 0.2s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-shield-halved" style="color: #6366f1;"></i> Police & Security Stations</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Law enforcement response grid nodes.</div>
+            </div>
+
+            <!-- Category 7: Flights & Tracking -->
+            <div onclick="filterOsintCategory('Flights & Aviation Telemetry', 'Commercial airspace restrictions, military transport flight routing, and corridor deviations.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #0ea5e9; transition: 0.2s;" onmouseover="this.style.borderColor='#0ea5e9'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-plane-departure" style="color: #0ea5e9;"></i> Flights & Flight Tracking</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Airspace rerouting and tracking logs.</div>
+            </div>
+
+            <!-- Category 8: Latest News -->
+            <div onclick="filterOsintCategory('Latest Global News & Briefs', 'Real-time aggregated publisher feeds and breaking geopolitical dispatches.')" style="background: #0f172a; border: 1px solid #334155; padding: 9px 11px; border-radius: 6px; cursor: pointer; border-left: 3px solid #a855f7; transition: 0.2s;" onmouseover="this.style.borderColor='#a855f7'" onmouseout="this.style.borderColor='#334155'">
+              <div style="font-size: 0.8rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-newspaper" style="color: #a855f7;"></i> Latest News & Dispatches</div>
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Live publisher dispatches & breaking briefs.</div>
+            </div>
+
           </div>
 
-          <!-- Live Threat Stream Sidebar -->
-          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px; max-height: 440px; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <h4 style="margin: 0; color: #ef4444; font-size: 0.85rem;"><i class="fa-solid fa-triangle-exclamation"></i> Live Threat Feed</h4>
-              <span style="font-size: 0.6rem; background: #0f172a; color: #10b981; padding: 2px 5px; border-radius: 3px; border: 1px solid #10b981;">● ACTIVE</span>
-            </div>
-            ${threatListHTML}
+          <!-- Dynamic Brief Box Below Categories -->
+          <div id="osint-active-brief-box" style="margin-top: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <strong style="color: #f59e0b; font-size: 0.75rem; display: block; margin-bottom: 4px;">📌 Active Category Focus:</strong>
+            <p id="osint-brief-text" style="margin: 0; font-size: 0.75rem; color: #cbd5e1; line-height: 1.4;">
+              Select any intelligence category above to inspect specific global telemetry markers on the map.
+            </p>
           </div>
 
         </div>
-      </div>
 
-      <!-- VIEW 2: MISSION WORKSPACE SELECTOR BOX -->
-      <div id="ws-view-workspace" class="workspace-view" style="display: none;">
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
-          <h4 style="margin: 0 0 4px 0; color: #f59e0b; font-size: 0.95rem;"><i class="fa-solid fa-layer-group"></i> Choose Workspace[cite: 5]</h4>
-          <p style="margin: 0 0 12px 0; font-size: 0.78rem; color: #94a3b8;">Select a focused intelligence dashboard mode below[cite: 5]:</p>
-          
-          <div style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
-            <div onclick="selectWorkspaceItem('Crisis Desk')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer;">
-              <strong style="color: #f8fafc; font-size: 0.85rem;">🔴 Crisis Desk[cite: 5]</strong>
-              <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Conflict, posture, instability, and live intelligence logs[cite: 5].</p>
-            </div>
-            <div onclick="selectWorkspaceItem('Supply-Chain Risk')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer;">
-              <strong style="color: #f8fafc; font-size: 0.85rem;">🟢 Supply-Chain Risk[cite: 5]</strong>
-              <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Routes, chokepoints, country risk, and commodities[cite: 5].</p>
-            </div>
-            <div onclick="selectWorkspaceItem('Energy Security')" style="background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; cursor: pointer;">
-              <strong style="color: #f8fafc; font-size: 0.85rem;">🔵 Energy Security[cite: 5]</strong>
-              <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Pipelines, storage, tankers, and disruption logs[cite: 5].</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- VIEW 3: LIVE STREAMS & TELEMETRY -->
-      <div id="ws-view-streams" class="workspace-view" style="display: none;">
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
-          <h4 style="margin: 0 0 10px 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-tv"></i> Live Global Broadcast Feed</h4>
-          <div style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden; border-radius: 8px; margin-bottom: 14px; background: #0f172a;">
-            <iframe id="control-room-video-frame" src="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1&mute=1" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
-            <div style="background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid #334155;">
-              <strong style="color: #f59e0b; font-size: 0.8rem;">Global Risk Score</strong>
-              <p style="margin: 4px 0 0 0; color: #cbd5e1; font-size: 0.8rem;">${globalRiskScore}</p>
-            </div>
-            <div style="background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid #334155;">
-              <strong style="color: #10b981; font-size: 0.8rem;">USD / INR Rate</strong>
-              <p style="margin: 4px 0 0 0; color: #cbd5e1; font-size: 0.8rem;">₹${inrRate}</p>
-            </div>
-          </div>
-        </div>
       </div>
     `;
 
   } catch (err) {
     container.innerHTML = `
       <div style="color: #ef4444; padding: 14px; text-align: center; font-size: 0.85rem;">
-        <i class="fa-solid fa-triangle-exclamation"></i> Error loading live threat vectors.
+        <i class="fa-solid fa-triangle-exclamation"></i> Telemetry connection interrupted.
       </div>
     `;
   }
 }
 
-// Workspace & View Controllers
-function switchWorkspace(viewKey) {
-  const views = document.querySelectorAll('.workspace-view');
-  views.forEach(v => v.style.display = 'none');
+// Function triggered when user clicks any category in Column 2
+function filterOsintCategory(categoryName, categoryBrief) {
+  const titleEl = document.getElementById('map-title-indicator');
+  const briefEl = document.getElementById('osint-brief-text');
 
-  const target = document.getElementById(`ws-view-${viewKey}`);
-  if (target) target.style.display = 'block';
-
-  const mapBtn = document.getElementById('btn-ws-map');
-  const wsBtn = document.getElementById('btn-ws-workspace');
-  const strBtn = document.getElementById('btn-ws-streams');
-
-  [mapBtn, wsBtn, strBtn].forEach(b => {
-    if (b) {
-      b.style.background = '#1e293b';
-      b.style.color = '#cbd5e1';
-      b.style.border = '1px solid #475569';
-    }
-  });
-
-  const activeBtn = document.getElementById(`btn-ws-${viewKey}`);
-  if (activeBtn) {
-    activeBtn.style.background = '#f59e0b';
-    activeBtn.style.color = '#0f172a';
-    activeBtn.style.border = 'none';
+  if (titleEl) {
+    titleEl.innerHTML = `<i class="fa-solid fa-filter" style="color: #f59e0b;"></i> Filtered View: ${categoryName}`;
   }
-}
 
-function selectWorkspaceItem(workspaceName) {
-  switchWorkspace('map');
-}
-
-function switchIntelVideo(videoUrl) {
-  const iframe = document.getElementById('control-room-video-frame');
-  if (iframe) {
-    iframe.src = videoUrl;
+  if (briefEl) {
+    briefEl.innerHTML = `<strong>Live Telemetry:</strong> ${categoryBrief}`;
   }
+
+  // Visual notification feedback
+  console.log(`Switched map focus to: ${categoryName}`);
 }
 
 // ===================================================
