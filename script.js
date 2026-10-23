@@ -290,13 +290,53 @@ function openMenuModal(imgSrc, title, price, type) {
 
 
 // T&C Live Vercel Proxy Feed Engine (Connects directly to your existing #news-container)
+// Live Vercel Proxy Feed Engine (Self-contained inside #news-container)
 let currentScope = 'local';
+
+function switchNewsScope(scope, btn) {
+  currentScope = scope;
+  fetchNews();
+}
 
 async function fetchNews() {
   const container = document.getElementById('news-container');
   if (!container) return;
-  
-  container.innerHTML = `<div style="color: #ffd700; padding: 10px; font-size: 0.85rem;">Loading live headlines...</div>`;
+
+  // Formatted today's date (e.g., "23 Oct 2026")
+  const todayFormatted = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  // Render internal Category & Date Header Bar
+  const internalControlsHtml = `
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+      
+      <!-- Category Tabs (State, Country, World) -->
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button onclick="switchNewsScope('local', this)" style="background: ${currentScope === 'local' ? '#f59e0b' : '#1e293b'}; color: ${currentScope === 'local' ? '#0f172a' : '#cbd5e1'}; border: ${currentScope === 'local' ? 'none' : '1px solid #475569'}; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer;">
+          📍 Telangana (State)
+        </button>
+        <button onclick="switchNewsScope('india', this)" style="background: ${currentScope === 'india' ? '#f59e0b' : '#1e293b'}; color: ${currentScope === 'india' ? '#0f172a' : '#cbd5e1'}; border: ${currentScope === 'india' ? 'none' : '1px solid #475569'}; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer;">
+          🇮🇳 India (Country)
+        </button>
+        <button onclick="switchNewsScope('world', this)" style="background: ${currentScope === 'world' ? '#f59e0b' : '#1e293b'}; color: ${currentScope === 'world' ? '#0f172a' : '#cbd5e1'}; border: ${currentScope === 'world' ? 'none' : '1px solid #475569'}; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer;">
+          🌍 World
+        </button>
+      </div>
+
+      <!-- Date Badge -->
+      <div style="font-size: 0.72rem; color: #94a3b8; background: #0f172a; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155;">
+        📅 <strong>Date:</strong> <span style="color: #38bdf8;">${todayFormatted}</span>
+      </div>
+
+    </div>
+  `;
+
+  // Show internal loading state with header controls preserved
+  container.innerHTML = `
+    ${internalControlsHtml}
+    <div style="color: #ffd700; padding: 10px; font-size: 0.85rem;">
+      <i class="fa-solid fa-spinner fa-spin"></i> Syncing ${currentScope.toUpperCase()} headlines...
+    </div>
+  `;
 
   try {
     const res = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=${currentScope}`);
@@ -304,30 +344,103 @@ async function fetchNews() {
     const xml = new DOMParser().parseFromString(xmlText, "text/xml");
     const items = xml.querySelectorAll("item");
 
-    if (!items || items.length === 0) throw new Error("No items");
+    if (!items || items.length === 0) throw new Error("No items found");
 
-    let html = '';
+    // Fetch Top World Highlights if viewing State or Country feeds
+    let worldHighlightsHtml = '';
+    if (currentScope !== 'world') {
+      try {
+        const worldRes = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=world`);
+        const worldXmlText = await worldRes.text();
+        const worldXml = new DOMParser().parseFromString(worldXmlText, "text/xml");
+        const worldItems = worldXml.querySelectorAll("item");
+
+        if (worldItems && worldItems.length > 0) {
+          worldHighlightsHtml += `
+            <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px;">
+              <div style="font-size: 0.72rem; color: #38bdf8; font-weight: bold; margin-bottom: 4px;">🌍 TOP 3 WORLD BREAKING NEWS</div>
+          `;
+          Array.from(worldItems).slice(0, 3).forEach(wItem => {
+            const wRaw = wItem.querySelector("title")?.textContent || "";
+            const wLink = wItem.querySelector("link")?.textContent || "#";
+            let wTitle = wRaw;
+            if (wRaw.includes(" - ")) {
+              const parts = wRaw.split(" - ");
+              parts.pop();
+              wTitle = parts.join(" - ").trim();
+            }
+            worldHighlightsHtml += `
+              <a href="${wLink}" target="_blank" rel="noopener" style="color: #e2e8f0; text-decoration: none; font-size: 0.8rem; display: block; margin-bottom: 3px; line-height: 1.3;">
+                🔥 ${wTitle}
+              </a>
+            `;
+          });
+          worldHighlightsHtml += `</div>`;
+        }
+      } catch (err) {
+        // Skip world highlights on minor network glitches
+      }
+    }
+
+    // Parse and format main headline cards
+    let itemsHtml = '';
     Array.from(items).slice(0, 8).forEach(item => {
-      const title = item.querySelector("title")?.textContent || "";
+      const rawTitle = item.querySelector("title")?.textContent || "";
       const link = item.querySelector("link")?.textContent || "#";
-      html += `
-        <div class="news-item" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-          <a href="${link}" target="_blank" rel="noopener" style="color: #ffffff; text-decoration: none; font-size: 0.85rem; display: block; line-height: 1.4;">
-            • ${title}
+      const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
+      
+      let headline = rawTitle;
+      let sourceName = "GOOGLE NEWS";
+
+      if (rawTitle.includes(" - ")) {
+        const parts = rawTitle.split(" - ");
+        sourceName = parts.pop().trim();
+        headline = parts.join(" - ").trim();
+      }
+
+      let timeFormatted = "Live";
+      if (pubDateRaw) {
+        const dateObj = new Date(pubDateRaw);
+        if (!isNaN(dateObj)) {
+          timeFormatted = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+      }
+
+      itemsHtml += `
+        <div class="news-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-size: 0.7rem; display: flex; justify-content: space-between; align-items: center;">
+            <span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
+              ${sourceName.toUpperCase()}
+            </span>
+            <span style="color: #38bdf8; font-size: 0.68rem;">
+              <i class="fa-regular fa-clock" style="margin-right: 3px;"></i>${timeFormatted}
+            </span>
+          </div>
+          <a href="${link}" target="_blank" rel="noopener" style="color: #f8fafc; text-decoration: none; font-size: 0.85rem; font-weight: 500; line-height: 1.35; display: block;">
+            ${headline}
           </a>
         </div>
       `;
     });
-    container.innerHTML = html;
+
+    // Populate everything inside #news-container
+    container.innerHTML = `
+      ${internalControlsHtml}
+      ${worldHighlightsHtml}
+      ${itemsHtml}
+    `;
+
   } catch (e) {
-    container.innerHTML = `<div style="color: #ff5968; padding: 10px; font-size: 0.85rem;">Unable to load live feed. Click Refresh.</div>`;
+    container.innerHTML = `
+      ${internalControlsHtml}
+      <div style="color: #ff5968; padding: 10px; font-size: 0.85rem;">Unable to load live feed. Click Refresh.</div>
+    `;
   }
 }
 
-// Automatically load headlines when the page opens
-window.addEventListener('load', () => {
-  fetchNews();
-});
+// Load automatically on startup
+window.addEventListener('load', fetchNews);
+
 
 
 
