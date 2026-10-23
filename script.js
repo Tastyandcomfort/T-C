@@ -64,38 +64,27 @@ function loadTandCIntelligenceHub() {
   if (!container) return;
 
   const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
-  const dateStamp = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
   container.innerHTML = `
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #ef4444;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h4 style="margin: 0; color: #ef4444; font-size: 0.95rem;"><i class="fa-solid fa-earth-americas"></i> National Risk Index</h4>
-          <span style="font-size: 0.65rem; background: #0f172a; color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #10b981;">STABLE (50/100)</span>
-        </div>
-        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">
-          Active OSINT Stream: Tracking regional security indicators, protest logs, and critical infrastructure telemetry.
-        </p>
-        <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-          <span>Source: worldmonitor.app</span><span>Synced: ${timestamp}</span>
-        </div>
+        <h4 style="margin: 0 0 8px 0; color: #ef4444; font-size: 0.95rem;"><i class="fa-solid fa-earth-americas"></i> National Risk Index</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1;">Active OSINT Stream: Operational & Stable (50/100).</p>
+        <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8;">Synced: ${timestamp}</div>
       </div>
-
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h4 style="margin: 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-satellite-dish"></i> Live Stream Desk</h4>
-          <span style="font-size: 0.65rem; background: #0f172a; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #38bdf8;">● ACTIVE DESK</span>
-        </div>
-        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">
-          Global intelligence and risk desk operational. Supply chain disruption and market foresight active.
-        </p>
-        <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
-          <span>Route: Local Engine</span><span>${dateStamp}</span>
-        </div>
+        <h4 style="margin: 0 0 8px 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-satellite-dish"></i> Live Stream Desk</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1;">Supply chain disruption and market foresight active.</p>
+        <div style="margin-top: 10px; font-size: 0.7rem; color: #94a3b8;">Status: Online</div>
       </div>
     </div>
   `;
 }
+
+// Auto-run on page load so it never hangs
+window.addEventListener('DOMContentLoaded', loadTandCIntelligenceHub);
+
+
 
 // ===================================================
 // SECTION VIEW MANAGER ENGINE
