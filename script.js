@@ -58,18 +58,16 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C WORLD MONITOR WORKSPACE & FIXED MAP CONTROL ROOM
+// T&C TACTICAL INTELLIGENCE CONTROL ROOM (FIXED MAP)
 // ===================================================
 
 async function loadTandCIntelligenceHub() {
   const container = document.getElementById('intel-dynamic-content');
   if (!container) return;
 
-  const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
-
   container.innerHTML = `
     <div style="color: #f59e0b; padding: 20px; text-align: center; font-size: 0.9rem;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Initializing World Monitor Workspace & Telemetry...
+      <i class="fa-solid fa-spinner fa-spin"></i> Initializing Tactical Map & Workspace Telemetry...
     </div>
   `;
 
@@ -98,11 +96,11 @@ async function loadTandCIntelligenceHub() {
         </span>
       </div>
 
-      <!-- VIEW 1: GLOBAL SITUATION MAP WITH TIME RANGES & LEGENDS -->
+      <!-- VIEW 1: TACTICAL VECTOR MAP WITH TIME RANGES & LEGENDS -->
       <div id="ws-view-map" class="workspace-view" style="display: block;">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-            <h4 style="margin: 0; color: #38bdf8; font-size: 0.9rem;"><i class="fa-solid fa-earth-americas"></i> Global Situation Interactive Map & Timeline</h4>
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.9rem;"><i class="fa-solid fa-earth-americas"></i> Global Situation Interactive Tactical Map & Timeline</h4>
             <div style="display: flex; gap: 4px;">
               <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">1h</span>
               <span style="background: #0f172a; color: #cbd5e1; padding: 2px 6px; font-size: 0.65rem; border: 1px solid #334155; border-radius: 3px;">6h</span>
@@ -113,9 +111,10 @@ async function loadTandCIntelligenceHub() {
             </div>
           </div>
           
-          <!-- Fixed Active Map Frame URL -->
-          <div style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155; margin-bottom: 10px; background: #0f172a;">
-            <iframe src="https://embed.windy.com/embed2.html?lat=20.000&lon=0.000&zoom=2&level=surface&overlay=wind&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1&theme=dark" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+          <!-- Guaranteed Loading Tactical Map Frame (CartoDB Dark Matter Vector Tiles) -->
+          <div style="position: relative; padding-bottom: 50%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #334155; margin-bottom: 10px; background: #0b0f19;">
+            <iframe src="https://cartodb-basemaps-1.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png" style="display:none;"></iframe>
+            <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-180,-60,180,70&layer=mapnik" style="position: absolute; top:0; left:0; width:100%; height:100%; border:0; filter: invert(90%) hue-rotate(180deg) brightness(95%) contrast(110%);" allowfullscreen></iframe>
           </div>
 
           <!-- MAP LEGENDS BAR -->
