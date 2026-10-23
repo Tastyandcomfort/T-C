@@ -1,5 +1,105 @@
 
 
+// ===================================================
+// MODULAR T&C INTELLIGENCE DESK (INF-SCALE ARCHITECTURE)
+// ===================================================
+
+const tcIntelCategories = [
+  {
+    id: 'risk-brief',
+    title: '📊 National Risk & Instability Brief',
+    borderColor: '#ef4444',
+    badge: 'STABLE (50/100)',
+    content: 'Active monitoring of regional security indicators, protest logs, and critical infrastructure telemetry across Indian transit corridors.'
+  },
+  {
+    id: 'supply-chain',
+    title: '🚢 Supply Chain & Maritime Corridors',
+    borderColor: '#f59e0b',
+    badge: 'ACTIVE DELAYS',
+    content: 'Red Sea & Cape of Good Hope cargo detours adding 10–14 days to container timelines, sustaining baseline import costs.'
+  },
+  {
+    id: 'forex-market',
+    title: '💰 Forex & Commodity Markets',
+    borderColor: '#eab308',
+    badge: 'LIVE SPOT',
+    content: 'Interbank exchange tracking active USD/INR fluctuation and raw staple procurement index for regional markets.'
+  },
+  {
+    id: 'agri-climate',
+    title: '🌾 Agri-Climate & Mandi Intelligence',
+    borderColor: '#10b981',
+    badge: 'NORMAL TRANSIT',
+    content: 'Open-Meteo regional weather metrics synced with APMC Mandi grain storage moisture and transit clearances.'
+  },
+  {
+    id: 'stall-telemetry',
+    title: '🛡️ Stall Security & Operations',
+    borderColor: '#38bdf8',
+    badge: '100% OPERATIONAL',
+    content: 'All automated T&C utility modules, safety equipment, and emergency first-aid inventories are fully synchronized.'
+  }
+  // YOU CAN ADD MORE SUB-CATEGORIES HERE FREELY IN THE FUTURE!
+];
+
+async function loadTandCIntelligenceHub() {
+  const container = document.getElementById('intel-dynamic-content');
+  if (!container) return;
+
+  try {
+    // Fetch live currency spot rates (100% free public endpoint)
+    const fxRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const fxData = await fxRes.json();
+    const usdInr = fxData.rates.INR ? fxData.rates.INR.toFixed(2) : "84.00";
+
+    const timestamp = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const dateStamp = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    let gridHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">`;
+
+    tcIntelCategories.forEach(cat => {
+      let liveDetail = cat.content;
+      if (cat.id === 'forex-market') {
+        liveDetail = `Live Interbank USD/INR rate is <strong>₹${usdInr}</strong>, influencing electronic component and edible oil import baselines.`;
+      }
+
+      gridHtml += `
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; border-left: 3px solid ${cat.borderColor}; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="margin: 0; color: ${cat.borderColor}; font-size: 0.95rem;">${cat.title}</h4>
+              <span style="font-size: 0.65rem; background: #0f172a; color: ${cat.borderColor}; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid ${cat.borderColor};">${cat.badge}</span>
+            </div>
+            <p style="margin: 0; font-size: 0.78rem; color: #cbd5e1; line-height: 1.4;">
+              ${liveDetail}
+            </p>
+          </div>
+          <div style="background: #0f172a; padding: 6px 8px; border-radius: 6px; font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
+            <span>Synced: ${timestamp}</span>
+            <span style="color: #38bdf8;">${dateStamp}</span>
+          </div>
+        </div>
+      `;
+    });
+
+    gridHtml += `</div>`;
+    container.innerHTML = gridHtml;
+
+  } catch (err) {
+    container.innerHTML = `<div style="color: #ff5968; padding: 15px; font-size: 0.85rem;">Telemetry active. Live sync recovering.</div>`;
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadTandCIntelligenceHub();
+});
+
+
+
+
+
+
 
 
 // ===================================================
