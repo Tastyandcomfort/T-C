@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: PRODUCTION SUITE (WIKI-INTEGRATED)
+// T&C COMMAND CENTER: ENTERPRISE SUITE (BRANDED ICONS)
 // ===================================================
 
 let osintMap = null;
@@ -155,7 +155,32 @@ async function loadTandCIntelligenceHub() {
       .badge-both { font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
       .badge-tc-wiki { font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
       .timestamp-tag { font-size: 0.62rem; color: #94a3b8; font-family: monospace; }
-      .source-link { font-size: 0.65rem; color: #38bdf8; text-decoration: underline; }
+      
+      /* Elite Provider Logo Source Links */
+      .source-brand-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.68rem;
+        color: #38bdf8;
+        text-decoration: none;
+        background: #1e293b;
+        border: 1px solid #334155;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        transition: all 0.2s;
+      }
+      .source-brand-link:hover {
+        border-color: #38bdf8;
+        background: #0f172a;
+      }
+      .source-brand-link img {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+      }
+
       .opt-note-box {
         font-size: 0.68rem;
         color: #94a3b8;
@@ -441,16 +466,14 @@ async function executeCategoryFetch(catKey) {
   if (catKey === 'tc_ops') await fetchLiveTCOpsData(syncTagHtml);
   if (catKey === 'tsddps_weather') await fetchLiveTSDDPSData(syncTagHtml);
 
-  // Inject real-time Wikipedia trust card at the bottom of the active module
   await loadTargetedWikiSummary(catKey, syncTagHtml);
 }
 
-// DYNAMIC REAL-TIME WIKIPEDIA TARGETED INJECTION WITH BADGE
+// TARGETED WIKI SUMMARY WITH T&C TRUSTED BADGE & BRANDED LOGO
 async function loadTargetedWikiSummary(catKey, syncTagHtml) {
   const box = document.getElementById(`wiki-box-${catKey}`);
   if (!box) return;
 
-  // Map each category to a real-time live Wikipedia topic slug
   const wikiSlugs = {
     locality: "Geographic_coordinate_system",
     world_ai: "Current_events",
@@ -486,7 +509,9 @@ async function loadTargetedWikiSummary(catKey, syncTagHtml) {
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 6px; margin-top: 4px;">
           ${syncTagHtml}
-          <a href="${pageUrl}" target="_blank" class="source-link">Wikipedia Live Source ↗</a>
+          <a href="${pageUrl}" target="_blank" class="source-brand-link">
+            <img src="https://www.wikipedia.org/static/favicon/wikipedia.ico" alt="Wiki"> Wikipedia Live Source ↗
+          </a>
         </div>
       </div>
     `;
@@ -599,9 +624,7 @@ function resetLeafletMap() {
   }
 }
 
-async function fetchLocalityDetailsForMap(syncTagHtml) {
-  // Default initialization view for locality
-}
+async function fetchLocalityDetailsForMap(syncTagHtml) {}
 
 async function fetchLocalityDetails(lat, lng) {
   const titleEl = document.getElementById('brief-region-title');
@@ -662,7 +685,9 @@ async function fetchLocalityDetails(lat, lng) {
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
           ${syncTagHtml}
-          <a href="https://nominatim.openstreetmap.org" target="_blank" class="source-link">Verify Source ↗</a>
+          <a href="https://nominatim.openstreetmap.org" target="_blank" class="source-brand-link">
+            <img src="https://openstreetmap.org/favicon.ico" alt="OSM"> Nominatim ↗
+          </a>
         </div>
       </div>
 
@@ -676,7 +701,9 @@ async function fetchLocalityDetails(lat, lng) {
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
           ${syncTagHtml}
-          <a href="https://open-meteo.com" target="_blank" class="source-link">Verify Source ↗</a>
+          <a href="https://open-meteo.com" target="_blank" class="source-brand-link">
+            <img src="https://open-meteo.com/favicon.ico" alt="Meteo"> Open-Meteo ↗
+          </a>
         </div>
 
         <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top: 8px; width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
@@ -705,7 +732,7 @@ async function fetchLiveWorldNews(syncTagHtml) {
           <div class="compact-card" style="border-left: 3px solid #ef4444;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="badge-gl">USGS LIVE ALERT</span>
-              <a href="${q.properties.url}" target="_blank" class="source-link">Source (USGS) ↗</a>
+              <a href="${q.properties.url}" target="_blank" class="source-brand-link"><img src="https://earthquake.usgs.gov/favicon.ico" alt="USGS"> USGS Feed ↗</a>
             </div>
             <p style="margin: 4px 0 0 0; font-size: 0.75rem; color: #f8fafc;">🌋 <strong>Seismic Event (Mag ${q.properties.mag}):</strong> ${q.properties.place}</p>
           </div>
@@ -721,7 +748,7 @@ async function fetchLiveWorldNews(syncTagHtml) {
           <div class="compact-card" style="border-left: 3px solid #f59e0b;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
               <span class="badge-gl">WIKIPEDIA WIRE</span>
-              <a href="https://en.wikipedia.org/wiki/Portal:Current_events" target="_blank" class="source-link">Source (Wiki API) ↗</a>
+              <a href="https://en.wikipedia.org/wiki/Portal:Current_events" target="_blank" class="source-brand-link"><img src="https://www.wikipedia.org/static/favicon/wikipedia.ico" alt="Wiki"> Wikipedia ↗</a>
             </div>
             <p style="margin: 0; font-size: 0.75rem; color: #f8fafc;">● ${item.innerText.replace(/\[\d+\]/g, '').trim()}</p>
           </div>
@@ -748,7 +775,7 @@ async function fetchGDACSHazards(syncTagHtml) {
           <div class="compact-card" style="border-left: 3px solid #ef4444;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
               <span class="badge-gl">SEISMIC HAZARD</span>
-              <a href="${q.properties.url}" target="_blank" class="source-link">USGS Hazard ↗</a>
+              <a href="${q.properties.url}" target="_blank" class="source-brand-link"><img src="https://earthquake.usgs.gov/favicon.ico" alt="USGS"> USGS Hazard ↗</a>
             </div>
             <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #f8fafc;">🚨 Magnitude ${q.properties.mag} recorded at ${q.properties.place}</p>
           </div>
@@ -780,7 +807,7 @@ async function fetchLiveMarketData(syncTagHtml) {
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           ${syncTagHtml}
-          <a href="https://www.nseindia.com" target="_blank" class="source-link">NSE India ↗</a>
+          <a href="https://www.nseindia.com" target="_blank" class="source-brand-link">NSE India ↗</a>
         </div>
       </div>
     `;
@@ -817,7 +844,7 @@ async function fetchLiveSolarData(syncTagHtml) {
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           ${syncTagHtml}
-          <a href="https://www.swpc.noaa.gov" target="_blank" class="source-link">NOAA SWPC ↗</a>
+          <a href="https://www.swpc.noaa.gov" target="_blank" class="source-brand-link"><img src="https://www.noaa.gov/favicon.ico" alt="NOAA"> NOAA SWPC ↗</a>
         </div>
       </div>
     `;
@@ -871,7 +898,7 @@ async function fetchLiveSatSpaceData(syncTagHtml) {
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           ${syncTagHtml}
-          <a href="https://wheretheiss.at" target="_blank" class="source-link">Verify Source ↗</a>
+          <a href="https://wheretheiss.at" target="_blank" class="source-brand-link">wheretheiss.at ↗</a>
         </div>
       </div>
 
@@ -921,7 +948,7 @@ async function fetchLiveAirspaceRadar(syncTagHtml) {
             </p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
               ${syncTagHtml}
-              <a href="https://opensky-network.org" target="_blank" class="source-link">OpenSky ↗</a>
+              <a href="https://opensky-network.org" target="_blank" class="source-brand-link">OpenSky ↗</a>
             </div>
           </div>
         `;
@@ -943,7 +970,7 @@ async function fetchLiveAirspaceRadar(syncTagHtml) {
         <p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">OpenSky rate-limit protection active. Standby status active.</p>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
           ${syncTagHtml}
-          <a href="https://opensky-network.org" target="_blank" class="source-link">OpenSky Network ↗</a>
+          <a href="https://opensky-network.org" target="_blank" class="source-brand-link">OpenSky Network ↗</a>
         </div>
       </div>
     `;
@@ -964,7 +991,7 @@ async function fetchCyberSecurityAdvisories(syncTagHtml) {
       </p>
       <div style="display: flex; justify-content: space-between; align-items: center;">
         ${syncTagHtml}
-        <a href="https://cybercrime.gov.in" target="_blank" class="source-link">CyberCrime Gov ↗</a>
+        <a href="https://cybercrime.gov.in" target="_blank" class="source-brand-link"><img src="https://cybercrime.gov.in/favicon.ico" alt="Gov"> CyberCrime Gov ↗</a>
       </div>
     </div>
   `;
@@ -988,7 +1015,7 @@ async function fetchLiveTCOpsData(syncTagHtml) {
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           ${syncTagHtml}
-          <a href="https://open-meteo.com" target="_blank" class="source-link">Open-Meteo ↗</a>
+          <a href="https://open-meteo.com" target="_blank" class="source-brand-link"><img src="https://open-meteo.com/favicon.ico" alt="Meteo"> Open-Meteo ↗</a>
         </div>
       </div>
     `;
@@ -1013,7 +1040,7 @@ async function fetchLiveTSDDPSData(syncTagHtml) {
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           ${syncTagHtml}
-          <a href="https://open-meteo.com" target="_blank" class="source-link">Open-Meteo ↗</a>
+          <a href="https://open-meteo.com" target="_blank" class="source-brand-link"><img src="https://open-meteo.com/favicon.ico" alt="Meteo"> Open-Meteo ↗</a>
         </div>
       </div>
     `;
