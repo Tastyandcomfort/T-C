@@ -762,7 +762,7 @@ async function fetchLiveSolarData(syncTagHtml) {
   } catch(e) {}
 }
 
-// 🛰️ PERMANENTLY FIXED WORLDWIDE ISS TELEMETRY (Wheretheiss.at API)
+// 🛰️ BULLETPROOF WORLDWIDE ISS TELEMETRY
 async function fetchLiveSatSpaceData(syncTagHtml) {
   const container = document.getElementById('sat-space-container');
   if (!container) return;
@@ -771,16 +771,20 @@ async function fetchLiveSatSpaceData(syncTagHtml) {
   try {
     const [issRes, astrosRes] = await Promise.all([
       fetch('https://api.wheretheiss.at/v1/satellites/25544').catch(() => null),
-      fetch('http://api.open-notify.org/astros.json').catch(() => null)
+      fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('http://api.open-notify.org/astros.json')).catch(() => null)
     ]);
 
     const issData = issRes && issRes.ok ? await issRes.json() : null;
     const astrosData = astrosRes && astrosRes.ok ? await astrosRes.json() : null;
 
-    const lat = issData?.latitude ? issData.latitude.toFixed(4) : '17.3850';
-    const lon = issData?.longitude ? issData.longitude.toFixed(4) : '78.4867';
-    const altitude = issData?.altitude ? `${issData.altitude.toFixed(1)} km` : '408 km';
-    const velocity = issData?.velocity ? `${Math.round(issData.velocity)} km/h` : '27,600 km/h';
+    if (!issData || !issData.latitude) {
+      throw new Error("Invalid ISS telemetry data");
+    }
+
+    const lat = Number(issData.latitude).toFixed(4);
+    const lon = Number(issData.longitude).toFixed(4);
+    const altitude = issData.altitude ? `${Number(issData.altitude).toFixed(1)} km` : '408 km';
+    const velocity = issData.velocity ? `${Math.round(issData.velocity)} km/h` : '27,600 km/h';
     const peopleCount = astrosData?.number !== undefined ? astrosData.number : '12';
 
     // Reverse geocode live coordinates worldwide (Forced English)
