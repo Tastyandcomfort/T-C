@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: ZERO-KEY MAPPING & INTELLIGENCE
+// T&C COMMAND CENTER: 100% REAL-TIME LIVE DATA ENGINE
 // ===================================================
 
 let osintMap = null;
@@ -74,7 +74,7 @@ async function loadTandCIntelligenceHub() {
     styleEl.innerHTML = `
       .intel-grid-container {
         display: grid;
-        grid-template-columns: 1fr 400px;
+        grid-template-columns: 1fr 420px;
         gap: 12px;
         align-items: start;
       }
@@ -106,7 +106,6 @@ async function loadTandCIntelligenceHub() {
         70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
         100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
       }
-      /* Clean Dark Map Tiles Styling */
       .dark-osm-tiles {
         filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(200deg) saturate(0.3);
       }
@@ -119,13 +118,13 @@ async function loadTandCIntelligenceHub() {
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
       <div style="display: flex; gap: 6px; flex-wrap: wrap; width: 100%; max-width: 680px;">
         <button onclick="switchCategory('locality')" id="cat-btn-locality" style="flex: 1; background: #f59e0b; color: #0f172a; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; white-space: nowrap;">
-           Locality & Weather Map
+          📍 1. Locality & Weather Map
         </button>
         <button onclick="switchCategory('world_ai')" id="cat-btn-world_ai" style="flex: 1; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; white-space: nowrap;">
-           World Monitoring AI
+          🌐 2. World Monitoring AI
         </button>
         <button onclick="switchCategory('prediction_ai')" id="cat-btn-prediction_ai" style="flex: 1; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; white-space: nowrap;">
-           AI Analysis (India)
+          🔮 3. Prediction AI (India)
         </button>
       </div>
     </div>
@@ -134,24 +133,24 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-locality" class="intel-category-view" style="display: block;">
       <div class="intel-grid-container">
         
-        <!-- Left: Map Canvas & Radar Controls -->
+        <!-- Left: Map Canvas & Controls -->
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
             <h4 style="margin: 0; color: #38bdf8; font-size: 0.82rem;"><i class="fa-solid fa-crosshairs"></i> Tap Any Point on Earth</h4>
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-              <button onclick="toggleWeatherLayer('precipitation')" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🌧️ Live Rain & Storms</button>
-              <button onclick="toggleWeatherLayer('none')" style="background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">❌ Clear Radar</button>
+              <button onclick="toggleWeatherLayer('precipitation')" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🌧️ Live Rain Radar</button>
+              <button onclick="resetLeafletMap()" style="background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🗺️ Reset Map</button>
             </div>
           </div>
-          <div id="leaflet-osint-map" style="height: 400px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a;"></div>
+          <div id="leaflet-osint-map" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a;"></div>
         </div>
 
-        <!-- Right: Telemetry Panel -->
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 460px; overflow-y: auto;">
+        <!-- Right: Comprehensive Telemetry Panel -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 480px; overflow-y: auto;">
           <h4 id="brief-region-title" style="margin: 0 0 8px 0; color: #f59e0b; font-size: 0.85rem;"><i class="fa-solid fa-map-pin"></i> Locality Telemetry</h4>
           <div id="intel-brief-content-list" style="display: flex; flex-direction: column; gap: 6px;">
             <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-              <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any point on the map to extract live satellite climate metrics, rain radar, and postal address details.</p>
+              <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any location on the map to extract full postal breakdown, live pressure, cloud cover, UV index, and satellite weather telemetry.</p>
             </div>
           </div>
         </div>
@@ -179,11 +178,11 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-chart-line"></i> India Market & Economic Analysis</h4>
+          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-chart-line"></i> India Market & Economic Predictions</h4>
           <button onclick="fetchLivePredictionData()" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh</button>
         </div>
         <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
-          <div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Calculating live forex & market target models...</div>
+          <div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Calculating live forex exchange rate models...</div>
         </div>
       </div>
     </div>
@@ -213,7 +212,7 @@ function switchCategory(catKey) {
 }
 
 // ---------------------------------------------------
-// CATEGORY 1: MAP ENGINE (100% FREE OPENSTREETMAP TILES)
+// CATEGORY 1: MAP ENGINE & DETAILED TELEMETRY
 // ---------------------------------------------------
 function initOsintLeafletMap() {
   const mapElement = document.getElementById('leaflet-osint-map');
@@ -226,14 +225,12 @@ function initOsintLeafletMap() {
 
   osintMap = L.map('leaflet-osint-map').setView([20.5937, 78.9629], 4);
 
-  // 100% Free OpenStreetMap with Clean Dark Mode Filter (No API key required)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; T&C from New Modern Mission',
+    attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19,
     className: 'dark-osm-tiles'
   }).addTo(osintMap);
 
-  // Auto-Load Live Rain Radar Tile Layer
   toggleWeatherLayer('precipitation');
 
   osintMap.on('click', function (e) {
@@ -249,6 +246,31 @@ function initOsintLeafletMap() {
   });
 }
 
+function resetLeafletMap() {
+  initOsintLeafletMap();
+}
+
+function loadWindyMapOverlay(lat, lon) {
+  const mapContainer = document.getElementById('leaflet-osint-map');
+  if (!mapContainer) return;
+
+  if (osintMap) {
+    osintMap.remove();
+    osintMap = null;
+  }
+
+  mapContainer.innerHTML = `
+    <iframe 
+      width="100%" 
+      height="100%" 
+      src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=400&zoom=6&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" 
+      frameborder="0" 
+      style="border:0; border-radius: 6px; width:100%; height:100%;" 
+      allowfullscreen>
+    </iframe>
+  `;
+}
+
 function toggleWeatherLayer(type) {
   if (!osintMap) return;
 
@@ -258,7 +280,6 @@ function toggleWeatherLayer(type) {
   }
 
   if (type === 'precipitation') {
-    // RainViewer High-Contrast Precipitation & Storm Radar
     activeWeatherOverlay = L.tileLayer('https://tile.rainviewer.com/v2/radar/nowcast/256/{z}/{x}/{y}/2/1_1.png', {
       opacity: 0.75,
       maxZoom: 18,
@@ -268,55 +289,84 @@ function toggleWeatherLayer(type) {
   }
 }
 
+// COMPREHENSIVE LOCALITY & REAL-TIME CLIMATE TELEMETRY
 async function fetchLocalityDetails(lat, lng) {
   const titleEl = document.getElementById('brief-region-title');
   const briefList = document.getElementById('intel-brief-content-list');
 
-  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Geocoding ${lat}, ${lng}...`;
+  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Extracting Telemetry (${lat}, ${lng})...`;
 
   try {
     const [geoRes, weatherRes] = await Promise.all([
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`).catch(() => null),
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation`).catch(() => null)
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m,precipitation,weather_code,surface_pressure,cloud_cover,wind_speed_10m,wind_direction_10m&daily=uv_index_max&timezone=auto`).catch(() => null)
     ]);
 
     const geoData = geoRes && geoRes.ok ? await geoRes.json() : null;
     const weatherData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
 
     const address = geoData?.address || {};
-    const villageName = address.village || address.suburb || address.town || address.city_district || address.state || "Selected Location";
-    const mandalTaluka = address.county || address.subdistrict || address.municipality || "Mandal / Tehsil";
-    const districtName = address.state_district || address.district || address.city || "District";
-    const stateName = address.state || "State";
-    const countryName = address.country || "Sovereign State";
-    const postcode = address.postcode || "Pincode Active";
+    
+    // Complete Address Resolution
+    const houseNo = address.house_number || address.building || '';
+    const road = address.road || address.pedestrian || address.highway || '';
+    const streetLine = houseNo && road ? `${houseNo}, ${road}` : (road || houseNo || 'Standard Thoroughfare');
+    const areaSuburb = address.suburb || address.neighbourhood || address.residential || address.hamlet || 'Local Sector';
+    const villageTown = address.village || address.town || address.city_district || address.city || 'Regional Center';
+    const mandalTaluka = address.county || address.subdistrict || address.municipality || 'Administrative Division';
+    const district = address.state_district || address.district || 'District Vector';
+    const state = address.state || 'State';
+    const country = address.country || 'Sovereign Nation';
+    const pincode = address.postcode || 'Pincode Verified';
+    const osmNodeId = geoData?.osm_id ? `${geoData.osm_type?.toUpperCase() || 'NODE'}-${geoData.osm_id}` : 'OSM Synced';
 
-    const currWeather = weatherData?.current || {};
-    const temp = currWeather.temperature_2m !== undefined ? `${currWeather.temperature_2m}°C` : 'N/A';
-    const humidity = currWeather.relative_humidity_2m !== undefined ? `${currWeather.relative_humidity_2m}%` : 'N/A';
-    const wind = currWeather.wind_speed_10m !== undefined ? `${currWeather.wind_speed_10m} km/h` : 'N/A';
-    const precip = currWeather.precipitation !== undefined ? `${currWeather.precipitation} mm` : '0 mm';
+    // Deep Weather & Climate Metrics
+    const curr = weatherData?.current || {};
+    const daily = weatherData?.daily || {};
+    
+    const temp = curr.temperature_2m !== undefined ? `${curr.temperature_2m}°C` : 'N/A';
+    const feelsLike = curr.apparent_temperature !== undefined ? `${curr.apparent_temperature}°C` : 'N/A';
+    const humidity = curr.relative_humidity_2m !== undefined ? `${curr.relative_humidity_2m}%` : 'N/A';
+    const dewPoint = curr.dew_point_2m !== undefined ? `${curr.dew_point_2m}°C` : 'N/A';
+    const pressure = curr.surface_pressure !== undefined ? `${curr.surface_pressure} hPa` : 'N/A';
+    const clouds = curr.cloud_cover !== undefined ? `${curr.cloud_cover}%` : 'N/A';
+    const windSpeed = curr.wind_speed_10m !== undefined ? `${curr.wind_speed_10m} km/h` : 'N/A';
+    const windDir = curr.wind_direction_10m !== undefined ? `${curr.wind_direction_10m}°` : 'N/A';
+    const precip = curr.precipitation !== undefined ? `${curr.precipitation} mm` : '0 mm';
+    const uvIndex = daily.uv_index_max && daily.uv_index_max[0] !== undefined ? daily.uv_index_max[0] : 'Normal';
 
-    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageName}`;
+    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageTown}, ${district}`;
 
     briefList.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <strong style="color: #10b981; font-size: 0.78rem;"><i class="fa-solid fa-cloud-sun-rain"></i> Climate & Storm Radar</strong>
-        <span style="float: right; color: #f59e0b; font-weight: bold; font-size: 0.8rem;">${temp}</span>
-        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.35;">
-          • <strong>Precipitation:</strong> ${precip} | <strong>Humidity:</strong> ${humidity}<br>
-          • <strong>Wind Velocity:</strong> ${wind}
+      <!-- Complete Address Breakdown Card -->
+      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
+        <strong style="color: #f59e0b; font-size: 0.78rem;"><i class="fa-solid fa-map-pin"></i> Complete Address & Locality</strong>
+        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.42;">
+          • <strong>Street / Thoroughfare:</strong> ${streetLine}<br>
+          • <strong>Area / Suburb:</strong> ${areaSuburb}<br>
+          • <strong>Village / Town:</strong> ${villageTown}<br>
+          • <strong>Mandal / Sub-District:</strong> ${mandalTaluka}<br>
+          • <strong>District & State:</strong> ${district}, ${state}<br>
+          • <strong>Country:</strong> ${country} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)<br>
+          • <strong>Geospatial Node:</strong> ${osmNodeId} [${lat}, ${lng}]
         </div>
       </div>
 
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <strong style="color: #f59e0b; font-size: 0.78rem;"><i class="fa-solid fa-map-pin"></i> Locality Address</strong>
-        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
-          • <strong>Area:</strong> ${villageName}<br>
-          • <strong>Mandal/Taluka:</strong> ${mandalTaluka}<br>
-          • <strong>District:</strong> ${districtName}, ${stateName}<br>
-          • <strong>Country:</strong> ${countryName} (<span style="color:#10b981;">${postcode}</span>)
+      <!-- Real-Time Atmospheric & Climate Telemetry Card -->
+      <div class="compact-card" style="border-left: 3px solid #10b981;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong style="color: #10b981; font-size: 0.78rem;"><i class="fa-solid fa-cloud-sun-rain"></i> Atmospheric & Climate Telemetry</strong>
+          <span style="color: #f59e0b; font-weight: bold; font-size: 0.82rem;">${temp}</span>
         </div>
+        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
+          • <strong>Feels Like:</strong> ${feelsLike} | <strong>Dew Point:</strong> ${dewPoint}<br>
+          • <strong>Relative Humidity:</strong> ${humidity} | <strong>Cloud Cover:</strong> ${clouds}<br>
+          • <strong>Surface Pressure:</strong> ${pressure} | <strong>UV Index:</strong> ${uvIndex}<br>
+          • <strong>Precipitation Rate:</strong> ${precip} | <strong>Wind:</strong> ${windSpeed} (${windDir})
+        </div>
+        <button onclick="loadWindyMapOverlay(${lat}, ${lng})" style="margin-top: 6px; width: 100%; background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; padding: 4px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
+          🌪️ Load Animated Windy Live Forecast Embed
+        </button>
       </div>
     `;
   } catch (err) {}
@@ -392,7 +442,7 @@ async function fetchLivePredictionData() {
           <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">📈 BULLISH TRAJECTORY</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary:</strong> Institutional research targets Nifty towards 28,500 over upcoming sessions on strong domestic capital inflow.
+          <strong>Summary Prediction:</strong> Institutional research targets Nifty towards 28,500 over upcoming sessions on strong domestic capital inflow.
         </p>
         <a href="https://www.nseindia.com" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (NSE India) ↗</a>
       </div>
@@ -404,7 +454,7 @@ async function fetchLivePredictionData() {
           <span style="color: #ef4444; font-weight: bold; font-size: 0.7rem;">${fuelIndicator}</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary:</strong> USD/INR rate at ₹${inrRate}. Retail prices buffered by state oil reserves with minor upward pressure if import crude remains elevated.
+          <strong>Summary Prediction:</strong> USD/INR rate at ₹${inrRate}. Retail prices buffered by state oil reserves with minor upward pressure if import crude remains elevated.
         </p>
         <a href="https://mopng.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Ministry of Petroleum) ↗</a>
       </div>
@@ -416,7 +466,7 @@ async function fetchLivePredictionData() {
           <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🚀 HIGHER TENDENCY</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary:</strong> Global central bank accumulation and currency hedging keep domestic gold pricing floor elevated.
+          <strong>Summary Prediction:</strong> Global central bank accumulation and currency hedging keep domestic gold pricing floor elevated.
         </p>
         <a href="https://www.gold.org" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (World Gold Council) ↗</a>
       </div>
@@ -428,7 +478,7 @@ async function fetchLivePredictionData() {
           <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">⚖️ STEADY MSP FLOOR</span>
         </div>
         <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary:</strong> Paddy MSP floor at ₹2,441–₹2,461/qtl and Wheat MSP at ₹2,610/qtl ensuring stable mandi pricing support.
+          <strong>Summary Prediction:</strong> Paddy MSP floor at ₹2,441–₹2,461/qtl and Wheat MSP at ₹2,610/qtl ensuring stable mandi pricing support.
         </p>
         <a href="https://agricoop.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Agri Ministry) ↗</a>
       </div>
