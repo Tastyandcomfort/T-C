@@ -62,6 +62,8 @@ const tcIntelCategories = [
 // ===================================================
 
 let osintMap = null;
+let currentClickMarker = null;
+let currentActiveMode = 'locality';
 
 async function loadTandCIntelligenceHub() {
   const container = document.getElementById('intel-dynamic-content');
@@ -81,7 +83,7 @@ async function loadTandCIntelligenceHub() {
         .intel-grid-container {
           grid-template-columns: 1fr !important;
         }
-        #leaflet-osint-map {
+        #leaflet-map-canvas, #windy-iframe-canvas {
           height: 360px !important;
         }
       }
@@ -108,6 +110,34 @@ async function loadTandCIntelligenceHub() {
       .dark-osm-tiles {
         filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(200deg) saturate(0.3);
       }
+      .mode-btn {
+        background: #0f172a;
+        color: #94a3b8;
+        border: 1px solid #334155;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.68rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+      .mode-btn-active {
+        background: #f59e0b !important;
+        color: #0f172a !important;
+        border: 1px solid #f59e0b !important;
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+      }
+      /* Styled Leaflet Popup */
+      .leaflet-popup-content-wrapper {
+        background: #0f172a !important;
+        color: #f8fafc !important;
+        border: 1px solid #38bdf8 !important;
+        border-radius: 6px !important;
+        font-family: inherit;
+      }
+      .leaflet-popup-tip {
+        background: #0f172a !important;
+      }
     `;
     document.head.appendChild(styleEl);
   }
@@ -123,34 +153,39 @@ async function loadTandCIntelligenceHub() {
            World Monitoring AI
         </button>
         <button onclick="switchCategory('prediction_ai')" id="cat-btn-prediction_ai" style="flex: 1; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; white-space: nowrap;">
-           AI-Analysis (India)
+           Prediction AI (India)
         </button>
       </div>
     </div>
 
-    <!-- CATEGORY 1: GEOSPATIAL MAP & SEPARATE VIEW BUTTONS -->
+    <!-- CATEGORY 1: GEOSPATIAL MAP & DUAL CANVAS MODE -->
     <div id="intel-view-locality" class="intel-category-view" style="display: block;">
       <div class="intel-grid-container">
         
-        <!-- Left: Map Canvas & Dedicated Mode Switcher Buttons -->
+        <!-- Left: Map Container Frame -->
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
             <h4 style="margin: 0; color: #38bdf8; font-size: 0.82rem;"><i class="fa-solid fa-crosshairs"></i> Tap Any Point on Earth</h4>
+            
+            <!-- Mode Switcher Buttons with Active State Highlights -->
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-              <button onclick="initOsintLeafletMap()" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; font-weight: bold;">📍 Locality</button>
-              <button onclick="loadWindyMapOverlay(20.5937, 78.9629)" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; font-weight: bold;">🌪️ Live Weather</button>
-              <button onclick="initOsintLeafletMap()" style="background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 3px 7px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🗺️ Reset Map</button>
+              <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active">📍 Locality Intelligence</button>
+              <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn">🌪️ Live Weather (Windy)</button>
+              <button onclick="resetLeafletMap()" id="mode-btn-reset" class="mode-btn">🗺️ Reset Center</button>
             </div>
           </div>
-          <div id="leaflet-osint-map" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a;"></div>
+
+          <!-- Dual Display Canvas (Prevents blanking) -->
+          <div id="leaflet-map-canvas" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a; display: block;"></div>
+          <div id="windy-iframe-canvas" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a; display: none;"></div>
         </div>
 
-        <!-- Right: Comprehensive Telemetry Panel -->
+        <!-- Right: Telemetry Panel -->
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 480px; overflow-y: auto;">
           <h4 id="brief-region-title" style="margin: 0 0 8px 0; color: #f59e0b; font-size: 0.85rem;"><i class="fa-solid fa-map-pin"></i> Locality Telemetry</h4>
           <div id="intel-brief-content-list" style="display: flex; flex-direction: column; gap: 6px;">
             <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-              <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any location on the map to extract full postal breakdown and live atmospheric climate telemetry.</p>
+              <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any point on the map to display instant OSINT locality tags, mandal division, pincode, and live satellite weather.</p>
             </div>
           </div>
         </div>
@@ -158,7 +193,7 @@ async function loadTandCIntelligenceHub() {
       </div>
     </div>
 
-    <!-- CATEGORY 2: WORLD MONITORING AI (LIVE SIGNALS + SEISMIC EARTHQUAKES) -->
+    <!-- CATEGORY 2: WORLD MONITORING AI -->
     <div id="intel-view-world_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -212,23 +247,21 @@ function switchCategory(catKey) {
 }
 
 // ---------------------------------------------------
-// CATEGORY 1: MAP ENGINE (CLEAN MODE SWITCHING)
+// CATEGORY 1: MAP ENGINE & MODE SWITCHING
 // ---------------------------------------------------
 function initOsintLeafletMap() {
-  const mapElement = document.getElementById('leaflet-osint-map');
+  const mapElement = document.getElementById('leaflet-map-canvas');
   if (!mapElement) return;
-
-  mapElement.innerHTML = '';
 
   if (osintMap) {
     osintMap.remove();
     osintMap = null;
   }
 
-  osintMap = L.map('leaflet-osint-map').setView([20.5937, 78.9629], 4);
+  osintMap = L.map('leaflet-map-canvas').setView([20.5937, 78.9629], 4);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; T&C from New Modern Mission',
+    attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19,
     className: 'dark-osm-tiles'
   }).addTo(osintMap);
@@ -237,38 +270,56 @@ function initOsintLeafletMap() {
     const lat = e.latlng.lat.toFixed(5);
     const lng = e.latlng.lng.toFixed(5);
 
-    L.popup()
-      .setLatLng(e.latlng)
-      .setContent(`<div style="color:#0f172a; font-weight:bold; font-size:0.72rem;">GPS: ${lat}, ${lng}</div>`)
-      .openOn(osintMap);
+    if (currentClickMarker) {
+      osintMap.removeLayer(currentClickMarker);
+    }
+
+    currentClickMarker = L.marker(e.latlng).addTo(osintMap);
+    currentClickMarker.bindPopup(`<div style="font-size:0.7rem; color:#38bdf8;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching OSINT...</div>`).openPopup();
 
     fetchLocalityDetails(lat, lng);
   });
 }
 
-// DYNAMIC WINDY.COM EMBED (LIVE WEATHER MODE)
-function loadWindyMapOverlay(lat, lon) {
-  const mapContainer = document.getElementById('leaflet-osint-map');
-  if (!mapContainer) return;
+function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
+  currentActiveMode = mode;
+  const leafletCanvas = document.getElementById('leaflet-map-canvas');
+  const windyCanvas = document.getElementById('windy-iframe-canvas');
 
-  if (osintMap) {
-    osintMap.remove();
-    osintMap = null;
+  document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('mode-btn-active'));
+
+  if (mode === 'locality') {
+    if (leafletCanvas) leafletCanvas.style.display = 'block';
+    if (windyCanvas) windyCanvas.style.display = 'none';
+    document.getElementById('mode-btn-locality')?.classList.add('mode-btn-active');
+    if (!osintMap) initOsintLeafletMap();
+  } else if (mode === 'windy') {
+    if (leafletCanvas) leafletCanvas.style.display = 'none';
+    if (windyCanvas) {
+      windyCanvas.style.display = 'block';
+      windyCanvas.innerHTML = `
+        <iframe 
+          width="100%" 
+          height="100%" 
+          src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=420&zoom=6&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" 
+          frameborder="0" 
+          style="border:0; border-radius: 6px; width:100%; height:100%;" 
+          allowfullscreen>
+        </iframe>
+      `;
+    }
+    document.getElementById('mode-btn-windy')?.classList.add('mode-btn-active');
   }
-
-  mapContainer.innerHTML = `
-    <iframe 
-      width="100%" 
-      height="100%" 
-      src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=420&zoom=6&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" 
-      frameborder="0" 
-      style="border:0; border-radius: 6px; width:100%; height:100%;" 
-      allowfullscreen>
-    </iframe>
-  `;
 }
 
-// 100% VERIFIED LOCALITY & CLIMATE TELEMETRY
+function resetLeafletMap() {
+  setMapDisplayMode('locality');
+  if (osintMap) {
+    osintMap.setView([20.5937, 78.9629], 4);
+  }
+}
+
+// 100% VERIFIED LOCALITY & CLIMATE TELEMETRY + MAP POPUP OSINT BADGE
 async function fetchLocalityDetails(lat, lng) {
   const titleEl = document.getElementById('brief-region-title');
   const briefList = document.getElementById('intel-brief-content-list');
@@ -285,9 +336,9 @@ async function fetchLocalityDetails(lat, lng) {
     const weatherData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
 
     const address = geoData?.address || {};
-    const streetLine = address.road || address.house_number || 'Standard Thoroughfare';
+    const streetLine = address.road || address.house_number || 'Standard Vector';
     const areaSuburb = address.suburb || address.neighbourhood || 'Local Sector';
-    const villageTown = address.village || address.town || address.city || 'Regional Center';
+    const villageTown = address.village || address.town || address.city_district || address.city || 'Regional Center';
     const mandalTaluka = address.county || address.subdistrict || 'Administrative Division';
     const district = address.state_district || address.district || 'District Vector';
     const state = address.state || 'State';
@@ -295,8 +346,6 @@ async function fetchLocalityDetails(lat, lng) {
     const pincode = address.postcode || 'Pincode Verified';
 
     const curr = weatherData?.current || {};
-    const daily = weatherData?.daily || {};
-    
     const temp = curr.temperature_2m !== undefined ? `${curr.temperature_2m}°C` : 'N/A';
     const feelsLike = curr.apparent_temperature !== undefined ? `${curr.apparent_temperature}°C` : 'N/A';
     const humidity = curr.relative_humidity_2m !== undefined ? `${curr.relative_humidity_2m}%` : 'N/A';
@@ -304,6 +353,18 @@ async function fetchLocalityDetails(lat, lng) {
     const windSpeed = curr.wind_speed_10m !== undefined ? `${curr.wind_speed_10m} km/h` : 'N/A';
     const precip = curr.precipitation !== undefined ? `${curr.precipitation} mm` : '0 mm';
 
+    // 1. UPDATE MAP POPUP WITH INSTANT LOCALITY BADGE
+    if (currentClickMarker) {
+      currentClickMarker.bindPopup(`
+        <div style="font-size:0.73rem; color:#f8fafc; padding:2px;">
+          <strong style="color:#f59e0b; display:block; margin-bottom:2px;">📍 ${villageTown}</strong>
+          <span style="color:#cbd5e1;">${mandalTaluka}, ${district}</span><br>
+          <span style="color:#10b981; font-weight:bold;">Temp: ${temp}</span> | <span style="color:#38bdf8;">Precip: ${precip}</span>
+        </div>
+      `).openPopup();
+    }
+
+    // 2. UPDATE RIGHT-HAND TELEMETRY PANEL
     if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageTown}, ${district}`;
 
     briefList.innerHTML = `
@@ -329,8 +390,8 @@ async function fetchLocalityDetails(lat, lng) {
           • <strong>Pressure:</strong> ${pressure} | <strong>Precip:</strong> ${precip}<br>
           • <strong>Wind Velocity:</strong> ${windSpeed}
         </div>
-        <button onclick="loadWindyMapOverlay(${lat}, ${lng})" style="margin-top: 6px; width: 100%; background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; padding: 4px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
-          Live Weather
+        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top: 6px; width: 100%; background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; padding: 4px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
+           Switch Map to Windy Forecast for ${villageTown}
         </button>
       </div>
     `;
@@ -338,7 +399,7 @@ async function fetchLocalityDetails(lat, lng) {
 }
 
 // ---------------------------------------------------
-// CATEGORY 2: WORLD MONITORING AI + LIVE EARTHQUAKES
+// CATEGORY 2: WORLD MONITORING AI + LIVE SEISMIC FEEDS
 // ---------------------------------------------------
 async function fetchLiveWorldNews() {
   const container = document.getElementById('world-ai-feed-container');
@@ -347,7 +408,6 @@ async function fetchLiveWorldNews() {
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Syncing live seismic & news dispatches...</div>`;
 
   try {
-    // Fetch Live USGS Earthquakes & Wikipedia Current Events concurrently
     const [quakeRes, newsRes] = await Promise.all([
       fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_hour.geojson').catch(() => null),
       fetch('https://en.wikipedia.org/api/rest_v1/page/html/Portal%3ACurrent_events').catch(() => null)
@@ -355,7 +415,6 @@ async function fetchLiveWorldNews() {
 
     let html = '';
 
-    // 1. Parse Real-time Earthquakes / Natural Disasters
     const quakeData = quakeRes && quakeRes.ok ? await quakeRes.json() : null;
     if (quakeData && quakeData.features && quakeData.features.length > 0) {
       quakeData.features.slice(0, 2).forEach(q => {
@@ -365,7 +424,7 @@ async function fetchLiveWorldNews() {
         html += `
           <div class="compact-card" style="border-left: 3px solid #ef4444; background: #0f172a; padding: 10px 12px; margin-bottom: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <span style="font-size: 0.62rem; background: #ef4444; color: white; padding: 1px 5px; border-radius: 3px; font-weight: bold;">🌋 SEISMIC NATURAL DISASTER (Mag ${mag})</span>
+              <span style="font-size: 0.62rem; background: #ef4444; color: white; padding: 1px 5px; border-radius: 3px; font-weight: bold;">🌋 SEISMIC DISASTER ALERT (Mag ${mag})</span>
               <a href="${url}" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: none; border: 1px solid #334155; padding: 1px 6px; border-radius: 3px; background: #1e293b;">USGS ↗</a>
             </div>
             <p style="margin: 0; font-size: 0.75rem; color: #f8fafc; line-height: 1.35;">Significant earthquake detected at <strong>${place}</strong>.</p>
@@ -374,7 +433,6 @@ async function fetchLiveWorldNews() {
       });
     }
 
-    // 2. Parse Live News Dispatches
     if (newsRes && newsRes.ok) {
       const text = await newsRes.text();
       const parser = new DOMParser();
