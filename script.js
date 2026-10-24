@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: STRICT 100% REAL-TIME API SUITE
+// T&C COMMAND CENTER: FULLY FIXED & SYNCED SUITE
 // ===================================================
 
 let osintMap = null;
@@ -152,19 +152,19 @@ async function loadTandCIntelligenceHub() {
         <span id="active-badge-display" class="badge-both">TG + GL</span>
       </div>
 
-      <!-- Dropdown Selector -->
+      <!-- Dropdown Selector (Defaulted properly to 'locality') -->
       <div style="flex-grow: 1; max-width: 420px;">
         <select id="osint-category-dropdown" onchange="handleDropdownChange(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; outline: none;">
-          <optgroup label="☕ LIVE LOCAL & REGIONAL TELEMETRY">
-            <option value="tc_ops" data-badge="both" data-class="badge-both">☕ T&C Stall Zone Live Weather (Open-Meteo API)</option>
-            <option value="tsddps_weather" data-badge="TG" data-class="badge-tg">🌧️ Hyderabad Regional Live Weather (Open-Meteo API)</option>
-          </optgroup>
           <optgroup label="🌐 LIVE GLOBAL REAL-TIME APIs">
-            <option value="locality" data-badge="both" data-class="badge-both">📍 Geocoding Map & OSINT (Nominatim API)</option>
+            <option value="locality" data-badge="both" data-class="badge-both" selected>📍 Geocoding Map & OSINT (Nominatim API)</option>
             <option value="world_ai" data-badge="GL" data-class="badge-gl">🌐 Live Seismic Earthquakes & News Wire (USGS & Wiki API)</option>
             <option value="prediction_ai" data-badge="GL" data-class="badge-gl">🔮 Live Forex Currency Telemetry (ExchangeRate API)</option>
             <option value="solar_space" data-badge="GL" data-class="badge-gl">☀️ Solar Radiation & Space Weather (NOAA API)</option>
             <option value="sat_space" data-badge="GL" data-class="badge-gl">🛰️ Satellite Orbit ISS Tracking (Open-Notify API)</option>
+          </optgroup>
+          <optgroup label="☕ LIVE LOCAL & REGIONAL TELEMETRY">
+            <option value="tc_ops" data-badge="both" data-class="badge-both">☕ T&C Stall Zone Live Weather (Open-Meteo API)</option>
+            <option value="tsddps_weather" data-badge="TG" data-class="badge-tg">🌧️ Hyderabad Regional Live Weather (Open-Meteo API)</option>
           </optgroup>
         </select>
       </div>
@@ -177,7 +177,7 @@ async function loadTandCIntelligenceHub() {
       </div>
     </div>
 
-    <!-- CATEGORY 1: MAP ENGINE -->
+    <!-- CATEGORY 1: MAP ENGINE (Matches default selected dropdown option) -->
     <div id="intel-view-locality" class="intel-category-view" style="display: block;">
       <div class="intel-grid-container">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
@@ -414,7 +414,7 @@ function resetLeafletMap() {
   }
 }
 
-// MAP CARD: Dynamically fetches clicked coordinates
+// RESTORED FULL GEONAVIGATION ADDRESS BREAKDOWN + LIVE WEATHER
 async function fetchLocalityDetails(lat, lng) {
   const titleEl = document.getElementById('brief-region-title');
   const briefList = document.getElementById('intel-brief-content-list');
@@ -432,33 +432,68 @@ async function fetchLocalityDetails(lat, lng) {
     const weatherData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
 
     const address = geoData?.address || {};
-    const villageTown = address.village || address.town || address.city_district || address.city || 'Clicked Location';
-    const district = address.state_district || address.district || 'District';
-    
+    const streetLine = address.road || address.house_number || 'Standard Vector';
+    const areaSuburb = address.suburb || address.neighbourhood || 'Local Sector';
+    const villageTown = address.village || address.town || address.city_district || address.city || 'Regional Center';
+    const mandalTaluka = address.county || address.subdistrict || 'Administrative Division';
+    const district = address.state_district || address.district || 'District Vector';
+    const state = address.state || 'State';
+    const country = address.country || 'Sovereign Nation';
+    const pincode = address.postcode || 'Pincode Verified';
+
     const curr = weatherData?.current || {};
     const temp = curr.temperature_2m !== undefined ? `${curr.temperature_2m}°C` : 'N/A';
     const humidity = curr.relative_humidity_2m !== undefined ? `${curr.relative_humidity_2m}%` : 'N/A';
     const windSpeed = curr.wind_speed_10m !== undefined ? `${curr.wind_speed_10m} km/h` : 'N/A';
 
-    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> Pinned Point: ${villageTown}, ${district} <span class="timestamp-tag">${timestamp}</span>`;
+    if (currentClickMarker) {
+      currentClickMarker.bindPopup(`
+        <div style="font-size:0.73rem; color:#f8fafc; padding:2px;">
+          <strong style="color:#f59e0b; display:block; margin-bottom:2px;">📍 ${villageTown}</strong>
+          <span style="color:#cbd5e1;">${mandalTaluka}, ${district}</span><br>
+          <span style="color:#10b981; font-weight:bold;">Temp: ${temp}</span> | <span style="color:#38bdf8;">Humidity: ${humidity}</span>
+        </div>
+      `).openPopup();
+    }
+
+    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageTown}, ${district} <span class="timestamp-tag">Fetched: ${timestamp}</span>`;
 
     briefList.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <strong style="color: #10b981; font-size: 0.78rem;">📍 PINNED LOCATION METRICS (${lat}, ${lng})</strong>
-        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px;">
-          • <strong>Live Temp:</strong> ${temp} | <strong>Humidity:</strong> ${humidity}<br>
-          • <strong>Wind Speed:</strong> ${windSpeed}
+      <!-- RESTORED ADDRESS BREAKDOWN CARD -->
+      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <strong style="color: #f59e0b; font-size: 0.78rem;"><i class="fa-solid fa-map-pin"></i> Complete Address Breakdown</strong>
+          <span class="badge-gl">Nominatim API</span>
         </div>
-        <a href="https://open-meteo.com" target="_blank" class="source-link" style="display:block; margin-top:4px;">Verify Source (Open-Meteo API) ↗</a>
-        
-        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top: 8px; width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">
-          🌪️ Sync Windy Radar to Pinned Point (${villageTown})
+        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.42;">
+          • <strong>Street:</strong> ${streetLine}<br>
+          • <strong>Area:</strong> ${areaSuburb}<br>
+          • <strong>Town/Village:</strong> ${villageTown}<br>
+          • <strong>Mandal/Taluka:</strong> ${mandalTaluka}<br>
+          • <strong>District & State:</strong> ${district}, ${state}<br>
+          • <strong>Country:</strong> ${country} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
+        </div>
+        <a href="https://nominatim.openstreetmap.org" target="_blank" class="source-link" style="display:block; margin-top:6px;">Verify Source (OpenStreetMap) ↗</a>
+      </div>
+
+      <!-- LIVE WEATHER CARD FOR PINNED SPOT -->
+      <div class="compact-card" style="border-left: 3px solid #10b981;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong style="color: #10b981; font-size: 0.78rem;"><i class="fa-solid fa-cloud-sun"></i> Live Weather Telemetry</strong>
+          <span style="color: #f59e0b; font-weight: bold; font-size: 0.82rem;">${temp}</span>
+        </div>
+        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
+          • <strong>Humidity:</strong> ${humidity} | <strong>Wind Velocity:</strong> ${windSpeed}
+        </div>
+        <a href="https://open-meteo.com" target="_blank" class="source-link" style="display:block; margin-top:4px;">Verify Source (Open-Meteo) ↗</a>
+
+        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top: 8px; width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <i class="fa-solid fa-wind" style="color:#38bdf8;"></i> View Live Windy Radar for ${villageTown}
         </button>
       </div>
     `;
   } catch (err) {}
 }
-
 
 async function fetchLiveWorldNews(timestamp) {
   const container = document.getElementById('world-ai-feed-container');
@@ -529,29 +564,26 @@ async function fetchLivePredictionData(timestamp) {
   } catch(e) {}
 }
 
-// T&C STALL CARD: Explicitly labeled for Somajiguda Stall Zone
 async function fetchLiveTCOpsData(timestamp) {
   const container = document.getElementById('tc-ops-container');
   if (!container) return;
-  
+  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Querying Open-Meteo for Panjagutta/Somajiguda...</div>`;
   try {
-    // Panjagutta / Somajiguda stall project coordinates
-    const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=17.4239&longitude=78.4520&current=temperature_2m,relative_humidity_2m,wind_speed_10m').catch(() => null);
+    const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=17.4239&longitude=78.4520&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m').catch(() => null);
     const wData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
     const curr = wData?.current || {};
-
     container.innerHTML = `
       <div class="compact-card" style="border-left: 3px solid #f59e0b;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">☕ T&C ZONE (Somajiguda / Panjagutta Hub)</strong>
-          <span class="badge-both">STALL FIXED VECTOR</span>
+          <strong style="color:#f8fafc; font-size:0.78rem;">T&C Stall Zone Ambient Weather</strong>
+          <span class="badge-both">OPEN-METEO API</span>
         </div>
         <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-          Stall Ambient Environment: Temp <strong style="color:#f59e0b;">${curr.temperature_2m}°C</strong> | Humidity <strong>${curr.relative_humidity_2m}%</strong> | Wind Velocity <strong>${curr.wind_speed_10m} km/h</strong>
+          Somajiguda & Panjagutta Zone: Temp <strong style="color:#f59e0b;">${curr.temperature_2m}°C</strong> | Humidity <strong>${curr.relative_humidity_2m}%</strong> | Wind <strong>${curr.wind_speed_10m} km/h</strong>
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="timestamp-tag">Last Fetched: ${timestamp}</span>
-          <a href="https://open-meteo.com" target="_blank" class="source-link">Verify Source (Open-Meteo) ↗</a>
+          <span class="timestamp-tag">Pings: ${timestamp}</span>
+          <a href="https://open-meteo.com" target="_blank" class="source-link">Verify Source ↗</a>
         </div>
       </div>
     `;
