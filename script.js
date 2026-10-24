@@ -58,11 +58,27 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: FULLY HARDENED PRODUCTION SUITE
+// T&C COMMAND CENTER: OPTIMIZED API SCHEDULER SUITE
 // ===================================================
 
 let osintMap = null;
 let currentClickMarker = null;
+
+// Decentralized Rate Limit Registry (Intervals in Milliseconds)
+const API_SCHEDULE_REGISTRY = {
+  locality:        { intervalMs: 0,        lastFetchMs: 0, label: "On Demand Map Pin" },
+  sat_space:       { intervalMs: 60000,    lastFetchMs: 0, label: "1 Min Orbit Cycle" },       // 1 min
+  tc_ops:          { intervalMs: 900000,   lastFetchMs: 0, label: "15 Min Weather Cycle" },   // 15 mins
+  tsddps_weather:  { intervalMs: 900000,   lastFetchMs: 0, label: "15 Min Weather Cycle" },   // 15 mins
+  world_ai:        { intervalMs: 900000,   lastFetchMs: 0, label: "15 Min Wire Cycle" },      // 15 mins
+  solar_space:     { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min NOAA Cycle" },      // 30 mins
+  prediction_ai:   { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Market Cycle" },    // 30 mins
+  gdacs_hazards:   { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Disaster Cycle" },  // 30 mins
+  flight_radar:    { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Airspace Cycle" },  // 30 mins
+  cyber_alerts:    { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Cyber Cycle" }     // 30 mins
+};
+
+let schedulerInterval = null;
 
 async function loadTandCIntelligenceHub() {
   const container = document.getElementById('intel-dynamic-content');
@@ -138,49 +154,69 @@ async function loadTandCIntelligenceHub() {
       .badge-both { font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
       .timestamp-tag { font-size: 0.62rem; color: #94a3b8; font-family: monospace; }
       .source-link { font-size: 0.65rem; color: #38bdf8; text-decoration: underline; }
+      .opt-note-box {
+        font-size: 0.68rem;
+        color: #94a3b8;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-radius: 4px;
+        padding: 6px 10px;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
     `;
     document.head.appendChild(styleEl);
   }
 
   container.innerHTML = `
     <!-- Command Control Panel -->
-    <div style="margin-bottom: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <div style="margin-bottom: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px 14px;">
       
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span class="pulse-dot"></span>
-        <strong style="font-size: 0.8rem; color: #f8fafc;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b; margin-right:4px;"></i> Command Matrix:</strong>
-        <span id="active-badge-display" class="badge-both">TG + GL</span>
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="pulse-dot"></span>
+          <strong style="font-size: 0.8rem; color: #f8fafc;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b; margin-right:4px;"></i> Command Matrix:</strong>
+          <span id="active-badge-display" class="badge-both">TG + GL</span>
+        </div>
+
+        <!-- Dropdown Selector -->
+        <div style="flex-grow: 1; max-width: 440px;">
+          <select id="osint-category-dropdown" onchange="handleDropdownChange(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; outline: none;">
+            <optgroup label="🌐 LIVE GLOBAL REAL-TIME APIs">
+              <option value="locality" data-badge="both" data-class="badge-both" selected>📍 Geocoding Map & OSINT (Nominatim API)</option>
+              <option value="world_ai" data-badge="GL" data-class="badge-gl">🌐 Live Seismic Earthquakes & News Wire (USGS & Wiki)</option>
+              <option value="gdacs_hazards" data-badge="GL" data-class="badge-gl">🌊 Live Global Disasters & Tectonic Hazards</option>
+              <option value="prediction_ai" data-badge="GL" data-class="badge-gl">📈 Live Share Market Indices (Nifty / Sensex)</option>
+              <option value="solar_space" data-badge="GL" data-class="badge-gl">☀️ Plain-English Solar Space Weather (NOAA)</option>
+              <option value="sat_space" data-badge="GL" data-class="badge-gl">🛰️ ISS Live GPS & City Overpass Tracking</option>
+            </optgroup>
+            <optgroup label="☕ LIVE LOCAL, AVIATION & CYBER TELEMETRY">
+              <option value="flight_radar" data-badge="TG" data-class="badge-tg">✈️ Airspace Aviation Status & Emergency Feed</option>
+              <option value="cyber_alerts" data-badge="both" data-class="badge-both">🛡️ Cyber Threats & TGCSB Security Advisories</option>
+              <option value="tc_ops" data-badge="both" data-class="badge-both">☕ T&C Stall Zone Live Weather (Somajiguda)</option>
+              <option value="tsddps_weather" data-badge="TG" data-class="badge-tg">🌧️ Hyderabad Regional Live Weather Grid</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Scope Badge Legend -->
+        <div style="display: flex; gap: 6px; align-items: center; font-size: 0.65rem; color: #cbd5e1;">
+          <span class="badge-tg">TG = Telangana</span>
+          <span class="badge-gl">GL = Global</span>
+          <span class="badge-both">TG+GL = Both</span>
+        </div>
       </div>
 
-      <!-- Dropdown Selector -->
-      <div style="flex-grow: 1; max-width: 440px;">
-        <select id="osint-category-dropdown" onchange="handleDropdownChange(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; outline: none;">
-          <optgroup label="🌐 LIVE GLOBAL REAL-TIME APIs">
-            <option value="locality" data-badge="both" data-class="badge-both" selected>📍 English Geocoding Map & OSINT</option>
-            <option value="world_ai" data-badge="GL" data-class="badge-gl">🌐 Live Seismic Earthquakes & News Wire (USGS & Wiki)</option>
-            <option value="gdacs_hazards" data-badge="GL" data-class="badge-gl">🌊 Live Global Disasters & Tectonic Hazards</option>
-            <option value="prediction_ai" data-badge="GL" data-class="badge-gl">📈 Live Stock Market Indices (Nifty / Sensex)</option>
-            <option value="solar_space" data-badge="GL" data-class="badge-gl">☀️ Plain-English Solar Space Weather (NOAA)</option>
-            <option value="sat_space" data-badge="GL" data-class="badge-gl">🛰️ ISS Live GPS & City Overpass Tracking</option>
-          </optgroup>
-          <optgroup label="☕ LIVE LOCAL, AVIATION & CYBER TELEMETRY">
-            <option value="flight_radar" data-badge="TG" data-class="badge-tg">✈️ Airspace Aviation Status & Emergency Feed</option>
-            <option value="cyber_alerts" data-badge="both" data-class="badge-both">🛡️ Cyber Threats & TGCSB Security Advisories</option>
-            <option value="tc_ops" data-badge="both" data-class="badge-both">☕ T&C Stall Zone Live Weather (Somajiguda)</option>
-            <option value="tsddps_weather" data-badge="TG" data-class="badge-tg">🌧️ Hyderabad Regional Live Weather Grid</option>
-          </optgroup>
-        </select>
-      </div>
-
-      <!-- Scope Badge Legend -->
-      <div style="display: flex; gap: 6px; align-items: center; font-size: 0.65rem; color: #cbd5e1;">
-        <span class="badge-tg">TG = Telangana</span>
-        <span class="badge-gl">GL = Global</span>
-        <span class="badge-both">TG+GL = Both</span>
+      <!-- Optimization Notice Box Below Dropdown -->
+      <div class="opt-note-box">
+        <i class="fa-solid fa-circle-info" style="color:#38bdf8;"></i>
+        <span><strong>Optimization Note:</strong> Data fetches are automated on intelligent intervals to protect API connections. Please use provided source links for direct real-time verification.</span>
       </div>
     </div>
 
-    <!-- CATEGORY 1: MAP ENGINE -->
+    <!-- CATEGORY VIEWS -->
     <div id="intel-view-locality" class="intel-category-view" style="display: block;">
       <div class="intel-grid-container">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
@@ -199,19 +235,19 @@ async function loadTandCIntelligenceHub() {
           <h4 id="brief-region-title" style="margin: 0 0 8px 0; color: #f59e0b; font-size: 0.85rem;"><i class="fa-solid fa-map-pin"></i> Locality Telemetry</h4>
           <div id="intel-brief-content-list" style="display: flex; flex-direction: column; gap: 6px;">
             <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-              <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any point on the map to display English OSINT locality tags, mandal division, pincode, and live weather.</p>
+              <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any point on the map to display instant OSINT locality tags, mandal division, pincode, and live satellite weather.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- CATEGORY 2: SEISMIC & WORLD NEWS -->
+    <!-- CATEGORY 2: WORLD NEWS -->
     <div id="intel-view-world_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">Live World Seismic & Dispatches <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-world_ai" onclick="triggerRefresh('world_ai')" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Feed</button>
+          <button id="btn-sync-world_ai" onclick="triggerRefresh('world_ai', true)" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Feed</button>
         </div>
         <div id="world-ai-feed-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
       </div>
@@ -222,18 +258,18 @@ async function loadTandCIntelligenceHub() {
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;">Global Natural Hazards & Disasters <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-gdacs_hazards" onclick="triggerRefresh('gdacs_hazards')" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Hazards</button>
+          <button id="btn-sync-gdacs_hazards" onclick="triggerRefresh('gdacs_hazards', true)" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Hazards</button>
         </div>
         <div id="gdacs-hazards-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
       </div>
     </div>
 
-    <!-- CATEGORY 4: STOCK MARKET INDICES -->
+    <!-- CATEGORY 4: STOCK MARKETS -->
     <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;">Live Share Market Indices (Nifty & Sensex) <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-prediction_ai" onclick="triggerRefresh('prediction_ai')" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Markets</button>
+          <button id="btn-sync-prediction_ai" onclick="triggerRefresh('prediction_ai', true)" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Markets</button>
         </div>
         <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
@@ -244,18 +280,18 @@ async function loadTandCIntelligenceHub() {
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #eab308; font-size: 0.88rem;">Plain-English Solar Weather Telemetry <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-solar_space" onclick="triggerRefresh('solar_space')" style="background: #0f172a; color: #eab308; border: 1px solid #eab308; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync NOAA</button>
+          <button id="btn-sync-solar_space" onclick="triggerRefresh('solar_space', true)" style="background: #0f172a; color: #eab308; border: 1px solid #eab308; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync NOAA</button>
         </div>
         <div id="solar-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
     </div>
 
-    <!-- CATEGORY 6: ISS LIVE GPS & OVERPASS -->
+    <!-- CATEGORY 6: ISS LIVE GPS -->
     <div id="intel-view-sat_space" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;">ISS Live GPS & Position Tracking <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-sat_space" onclick="triggerRefresh('sat_space')" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch ISS</button>
+          <button id="btn-sync-sat_space" onclick="triggerRefresh('sat_space', true)" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch ISS</button>
         </div>
         <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
@@ -266,7 +302,7 @@ async function loadTandCIntelligenceHub() {
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">Live Aviation Airspace & Flight Radar <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
-          <button id="btn-sync-flight_radar" onclick="triggerRefresh('flight_radar')" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Check Radar</button>
+          <button id="btn-sync-flight_radar" onclick="triggerRefresh('flight_radar', true)" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Check Radar</button>
         </div>
         <div id="flight-radar-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
@@ -277,7 +313,7 @@ async function loadTandCIntelligenceHub() {
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;">Cyber Threats & Security Advisories <span class="badge-both" style="margin-left: 6px;">TG + GL</span></h4>
-          <button id="btn-sync-cyber_alerts" onclick="triggerRefresh('cyber_alerts')" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Advisories</button>
+          <button id="btn-sync-cyber_alerts" onclick="triggerRefresh('cyber_alerts', true)" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Advisories</button>
         </div>
         <div id="cyber-alerts-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
       </div>
@@ -288,7 +324,7 @@ async function loadTandCIntelligenceHub() {
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;">T&C Stall Zone Live Weather (Somajiguda) <span class="badge-both" style="margin-left: 6px;">TG + GL</span></h4>
-          <button id="btn-sync-tc_ops" onclick="triggerRefresh('tc_ops')" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Metrics</button>
+          <button id="btn-sync-tc_ops" onclick="triggerRefresh('tc_ops', true)" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Metrics</button>
         </div>
         <div id="tc-ops-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
@@ -299,7 +335,7 @@ async function loadTandCIntelligenceHub() {
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="margin: 0; color: #10b981; font-size: 0.88rem;">Hyderabad Regional Live Weather Grid <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
-          <button id="btn-sync-tsddps_weather" onclick="triggerRefresh('tsddps_weather')" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Feed</button>
+          <button id="btn-sync-tsddps_weather" onclick="triggerRefresh('tsddps_weather', true)" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Feed</button>
         </div>
         <div id="tsddps-weather-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
@@ -308,6 +344,7 @@ async function loadTandCIntelligenceHub() {
 
   setTimeout(() => {
     initOsintLeafletMap();
+    startSmartScheduler();
   }, 200);
 }
 
@@ -338,7 +375,23 @@ function switchCategory(catKey) {
   triggerRefresh(catKey, false);
 }
 
-async function triggerRefresh(catKey, manual = true) {
+// FORMATTER FOR TIMESTAMPS + NEXT QUEUED SYNC
+function generateSmartSyncTag(catKey) {
+  const now = new Date();
+  const fetchTimeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  
+  const config = API_SCHEDULE_REGISTRY[catKey];
+  if (!config || config.intervalMs === 0) {
+    return `<span class="timestamp-tag">Fetched: ${fetchTimeStr}</span>`;
+  }
+
+  const nextSyncDate = new Date(now.getTime() + config.intervalMs);
+  const nextTimeStr = nextSyncDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+  return `<span class="timestamp-tag">Fetched: <strong>${fetchTimeStr}</strong>; Next update queued for <strong>${nextTimeStr}</strong></span>`;
+}
+
+async function triggerRefresh(catKey, manual = false) {
   const btn = document.getElementById(`btn-sync-${catKey}`);
   if (btn && manual) {
     const origText = btn.innerText;
@@ -361,21 +414,55 @@ async function triggerRefresh(catKey, manual = true) {
 }
 
 async function executeCategoryFetch(catKey) {
-  const timestamp = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  const syncTagHtml = generateSmartSyncTag(catKey);
+  if (API_SCHEDULE_REGISTRY[catKey]) {
+    API_SCHEDULE_REGISTRY[catKey].lastFetchMs = Date.now();
+  }
 
-  if (catKey === 'world_ai') await fetchLiveWorldNews(timestamp);
-  if (catKey === 'gdacs_hazards') await fetchGDACSHazards(timestamp);
-  if (catKey === 'prediction_ai') await fetchLiveMarketData(timestamp);
-  if (catKey === 'solar_space') await fetchLiveSolarData(timestamp);
-  if (catKey === 'sat_space') await fetchLiveSatSpaceData(timestamp);
-  if (catKey === 'flight_radar') await fetchLiveAirspaceRadar(timestamp);
-  if (catKey === 'cyber_alerts') await fetchCyberSecurityAdvisories(timestamp);
-  if (catKey === 'tc_ops') await fetchLiveTCOpsData(timestamp);
-  if (catKey === 'tsddps_weather') await fetchLiveTSDDPSData(timestamp);
+  if (catKey === 'world_ai') await fetchLiveWorldNews(syncTagHtml);
+  if (catKey === 'gdacs_hazards') await fetchGDACSHazards(syncTagHtml);
+  if (catKey === 'prediction_ai') await fetchLiveMarketData(syncTagHtml);
+  if (catKey === 'solar_space') await fetchLiveSolarData(syncTagHtml);
+  if (catKey === 'sat_space') await fetchLiveSatSpaceData(syncTagHtml);
+  if (catKey === 'flight_radar') await fetchLiveAirspaceRadar(syncTagHtml);
+  if (catKey === 'cyber_alerts') await fetchCyberSecurityAdvisories(syncTagHtml);
+  if (catKey === 'tc_ops') await fetchLiveTCOpsData(syncTagHtml);
+  if (catKey === 'tsddps_weather') await fetchLiveTSDDPSData(syncTagHtml);
 }
 
 // ---------------------------------------------------
-// MAP ENGINE & FIXED REAL-TIME API FETCHERS
+// DECENTRALIZED AUTO-SCHEDULER (CHECKS EVERY 10 SECONDS)
+// ---------------------------------------------------
+function startSmartScheduler() {
+  if (schedulerInterval) clearInterval(schedulerInterval);
+
+  schedulerInterval = setInterval(() => {
+    if (document.hidden) return; // Pause execution if user switches tab
+
+    const dropdown = document.getElementById('osint-category-dropdown');
+    if (!dropdown) return;
+
+    const activeCat = dropdown.value;
+    const config = API_SCHEDULE_REGISTRY[activeCat];
+
+    if (config && config.intervalMs > 0) {
+      const elapsed = Date.now() - config.lastFetchMs;
+      if (elapsed >= config.intervalMs) {
+        executeCategoryFetch(activeCat);
+      }
+    }
+  }, 10000); // Check schedule state every 10 seconds
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    const dropdown = document.getElementById('osint-category-dropdown');
+    if (dropdown) executeCategoryFetch(dropdown.value);
+  }
+});
+
+// ---------------------------------------------------
+// MAP ENGINE & API FETCHERS
 // ---------------------------------------------------
 function initOsintLeafletMap() {
   const mapElement = document.getElementById('leaflet-map-canvas');
@@ -457,7 +544,7 @@ function resetLeafletMap() {
 async function fetchLocalityDetails(lat, lng) {
   const titleEl = document.getElementById('brief-region-title');
   const briefList = document.getElementById('intel-brief-content-list');
-  const timestamp = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  const syncTagHtml = generateSmartSyncTag('locality');
 
   if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying English Geocoding API...`;
 
@@ -495,7 +582,7 @@ async function fetchLocalityDetails(lat, lng) {
       `).openPopup();
     }
 
-    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageTown}, ${district} <span class="timestamp-tag">Fetched: ${timestamp}</span>`;
+    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageTown}, ${district}`;
 
     briefList.innerHTML = `
       <div class="compact-card" style="border-left: 3px solid #f59e0b;">
@@ -511,7 +598,10 @@ async function fetchLocalityDetails(lat, lng) {
           • <strong>District & State:</strong> ${district}, ${state}<br>
           • <strong>Country:</strong> ${country} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
         </div>
-        <a href="https://nominatim.openstreetmap.org" target="_blank" class="source-link" style="display:block; margin-top:6px;">Verify Source (OpenStreetMap) ↗</a>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+          ${syncTagHtml}
+          <a href="https://nominatim.openstreetmap.org" target="_blank" class="source-link">Verify Source ↗</a>
+        </div>
       </div>
 
       <div class="compact-card" style="border-left: 3px solid #10b981;">
@@ -522,7 +612,10 @@ async function fetchLocalityDetails(lat, lng) {
         <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
           • <strong>Humidity:</strong> ${humidity} | <strong>Wind Velocity:</strong> ${windSpeed}
         </div>
-        <a href="https://open-meteo.com" target="_blank" class="source-link" style="display:block; margin-top:4px;">Verify Source (Open-Meteo) ↗</a>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+          ${syncTagHtml}
+          <a href="https://open-meteo.com" target="_blank" class="source-link">Verify Source ↗</a>
+        </div>
 
         <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top: 8px; width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
           <i class="fa-solid fa-wind" style="color:#38bdf8;"></i> View Live Windy Radar for ${villageTown}
@@ -532,7 +625,7 @@ async function fetchLocalityDetails(lat, lng) {
   } catch (err) {}
 }
 
-async function fetchLiveWorldNews(timestamp) {
+async function fetchLiveWorldNews(syncTagHtml) {
   const container = document.getElementById('world-ai-feed-container');
   if (!container) return;
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching USGS & Wikipedia APIs...</div>`;
@@ -541,7 +634,7 @@ async function fetchLiveWorldNews(timestamp) {
       fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_hour.geojson').catch(() => null),
       fetch('https://en.wikipedia.org/api/rest_v1/page/html/Portal%3ACurrent_events').catch(() => null)
     ]);
-    let html = `<div style="font-size: 0.68rem; color: #94a3b8; text-align: right; margin-bottom: 4px;"><i class="fa-regular fa-clock"></i> API Time: ${timestamp}</div>`;
+    let html = `<div style="font-size: 0.68rem; color: #94a3b8; text-align: right; margin-bottom: 4px;">${syncTagHtml}</div>`;
     
     const quakeData = quakeRes && quakeRes.ok ? await quakeRes.json() : null;
     if (quakeData && quakeData.features && quakeData.features.length > 0) {
@@ -577,8 +670,7 @@ async function fetchLiveWorldNews(timestamp) {
   } catch(e) { container.innerHTML = `<div style="color: #ef4444; text-align: center;">API Request Failed.</div>`; }
 }
 
-// 2. STABLE GLOBAL DISASTERS & HAZARDS
-async function fetchGDACSHazards(timestamp) {
+async function fetchGDACSHazards(syncTagHtml) {
   const container = document.getElementById('gdacs-hazards-container');
   if (!container) return;
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Polling Global Disaster Feeds...</div>`;
@@ -586,14 +678,14 @@ async function fetchGDACSHazards(timestamp) {
     const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
     const data = await res.json();
     const quakes = data.features || [];
-    let html = `<div style="font-size: 0.68rem; color: #94a3b8; text-align: right; margin-bottom: 4px;"><i class="fa-regular fa-clock"></i> Updated: ${timestamp}</div>`;
+    let html = `<div style="font-size: 0.68rem; color: #94a3b8; text-align: right; margin-bottom: 4px;">${syncTagHtml}</div>`;
 
     if (quakes.length > 0) {
       quakes.slice(0, 4).forEach(q => {
         html += `
           <div class="compact-card" style="border-left: 3px solid #ef4444;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-              <span class="badge-gl">TBR / SEISMIC HAZARD</span>
+              <span class="badge-gl">SEISMIC HAZARD</span>
               <a href="${q.properties.url}" target="_blank" class="source-link">USGS Hazard ↗</a>
             </div>
             <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #f8fafc;">🚨 Magnitude ${q.properties.mag} recorded at ${q.properties.place}</p>
@@ -605,8 +697,7 @@ async function fetchGDACSHazards(timestamp) {
   } catch(e) { container.innerHTML = `<div style="color: #ef4444; text-align: center;">Hazard Feed Active.</div>`; }
 }
 
-// 3. SHARE MARKET INDICES (NIFTY / SENSEX)
-async function fetchLiveMarketData(timestamp) {
+async function fetchLiveMarketData(syncTagHtml) {
   const container = document.getElementById('prediction-ai-container');
   if (!container) return;
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching Live Exchange Data...</div>`;
@@ -626,7 +717,7 @@ async function fetchLiveMarketData(timestamp) {
           • <strong>USD/INR Forex:</strong> ₹${inrRate} (Live Exchange Rate)
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="timestamp-tag">Synced: ${timestamp}</span>
+          ${syncTagHtml}
           <a href="https://www.nseindia.com" target="_blank" class="source-link">NSE India ↗</a>
         </div>
       </div>
@@ -634,8 +725,7 @@ async function fetchLiveMarketData(timestamp) {
   } catch(e) {}
 }
 
-// 4. PLAIN-ENGLISH SOLAR WEATHER
-async function fetchLiveSolarData(timestamp) {
+async function fetchLiveSolarData(syncTagHtml) {
   const container = document.getElementById('solar-space-container');
   if (!container) return;
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing NOAA Solar Data...</div>`;
@@ -650,7 +740,7 @@ async function fetchLiveSolarData(timestamp) {
       statusText = "🟡 MODERATE STORM (Minor GPS Fluctuations)";
       barColor = "#f59e0b";
     } else if (kp >= 6) {
-      statusText = "🔴 SEVERE SOLAR STORM (High Radiation / Radio Blackout Risk)";
+      statusText = "🔴 SEVERE SOLAR STORM (High Radiation Risk)";
       barColor = "#ef4444";
     }
 
@@ -664,7 +754,7 @@ async function fetchLiveSolarData(timestamp) {
           <strong>Condition:</strong> ${statusText}
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="timestamp-tag">Synced: ${timestamp}</span>
+          ${syncTagHtml}
           <a href="https://www.swpc.noaa.gov" target="_blank" class="source-link">NOAA SWPC ↗</a>
         </div>
       </div>
@@ -672,8 +762,7 @@ async function fetchLiveSolarData(timestamp) {
   } catch(e) {}
 }
 
-// 5. ISS GPS WITH AUTOMATIC CITY/COUNTRY OVERPASS ESTIMATOR
-async function fetchLiveSatSpaceData(timestamp) {
+async function fetchLiveSatSpaceData(syncTagHtml) {
   const container = document.getElementById('sat-space-container');
   if (!container) return;
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Tracking ISS Orbital Position...</div>`;
@@ -683,8 +772,7 @@ async function fetchLiveSatSpaceData(timestamp) {
     const lat = issData?.iss_position?.latitude || '17.3850';
     const lon = issData?.iss_position?.longitude || '78.4867';
 
-    // Reverse geocode the ISS coordinates to find what country/region it is over right now!
-    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10&accept-language=en`).catch(() => null);
+    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=6&accept-language=en`).catch(() => null);
     const geoData = geoRes && geoRes.ok ? await geoRes.json() : null;
     const locationName = geoData?.display_name ? geoData.display_name : "Over Open Oceans / International Waters";
 
@@ -699,7 +787,7 @@ async function fetchLiveSatSpaceData(timestamp) {
           • <strong>Current Overpass Region:</strong> <span style="color:#38bdf8; font-weight:bold;">${locationName}</span>
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="timestamp-tag">Synced: ${timestamp}</span>
+          ${syncTagHtml}
           <a href="http://open-notify.org" target="_blank" class="source-link">Open-Notify ISS ↗</a>
         </div>
       </div>
@@ -707,16 +795,14 @@ async function fetchLiveSatSpaceData(timestamp) {
   } catch(e) {}
 }
 
-// 6. AIRSPACE AVIATION RADAR (WITH RATE-LIMIT PROTECTION)
-async function fetchLiveAirspaceRadar(timestamp) {
+async function fetchLiveAirspaceRadar(syncTagHtml) {
   const container = document.getElementById('flight-radar-container');
   if (!container) return;
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Polling Airspace Telemetry...</div>`;
   try {
     const res = await fetch('https://opensky-network.org/api/states/all?lamin=16.5&lamax=18.5&lomin=77.5&lomax=79.5');
-    if (res.status === 429) {
-      throw new Error("Rate limited");
-    }
+    if (res.status === 429) throw new Error("Rate limited");
+    
     const data = await res.json();
     const flights = data.states || [];
 
@@ -739,7 +825,7 @@ async function fetchLiveAirspaceRadar(timestamp) {
               Altitude: <strong>${alt}</strong> | Speed: <strong>${speed}</strong>
             </p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-              <span class="timestamp-tag">Synced: ${timestamp}</span>
+              ${syncTagHtml}
               <a href="https://opensky-network.org" target="_blank" class="source-link">OpenSky ↗</a>
             </div>
           </div>
@@ -750,7 +836,8 @@ async function fetchLiveAirspaceRadar(timestamp) {
       container.innerHTML = `
         <div class="compact-card" style="border-left: 3px solid #10b981;">
           <strong style="color:#f8fafc; font-size:0.78rem;">Airspace Status: Nominal</strong>
-          <p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Active regional airspace telemetry verified. All transponders operating within safety baselines. <span class="timestamp-tag">${timestamp}</span></p>
+          <p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Active regional airspace transponders operating within safety baselines.</p>
+          <div style="margin-top:4px;">${syncTagHtml}</div>
         </div>
       `;
     }
@@ -758,15 +845,17 @@ async function fetchLiveAirspaceRadar(timestamp) {
     container.innerHTML = `
       <div class="compact-card" style="border-left: 3px solid #f59e0b;">
         <strong style="color:#f8fafc; font-size:0.78rem;">✈️ Telangana Airspace Telemetry</strong>
-        <p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">OpenSky public rate-limit protection active. Air traffic radar cycling normal standby state. <span class="timestamp-tag">${timestamp}</span></p>
-        <a href="https://opensky-network.org" target="_blank" class="source-link" style="display:block; margin-top:4px;">OpenSky Network ↗</a>
+        <p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">OpenSky rate-limit protection active. Standby status active.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+          ${syncTagHtml}
+          <a href="https://opensky-network.org" target="_blank" class="source-link">OpenSky Network ↗</a>
+        </div>
       </div>
     `;
   }
 }
 
-// 7. CYBER THREATS & TGCSB ADVISORIES
-async function fetchCyberSecurityAdvisories(timestamp) {
+async function fetchCyberSecurityAdvisories(syncTagHtml) {
   const container = document.getElementById('cyber-alerts-container');
   if (!container) return;
   container.innerHTML = `
@@ -776,30 +865,17 @@ async function fetchCyberSecurityAdvisories(timestamp) {
         <span class="badge-tg">TGCSB HOTLINE 1930</span>
       </div>
       <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-        Active advisory issued against <strong>'Digital Arrest' Extortion Scams</strong> and fake courier customs parcel frauds. Cyber command units are tracking coordinated phishing vectors across Hyderabad urban circles.
+        Active advisory issued against <strong>'Digital Arrest' Extortion Scams</strong> and fake courier customs parcel frauds. Cyber command units tracking active phishing vectors across Hyderabad.
       </p>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="timestamp-tag">Verified: ${timestamp}</span>
+        ${syncTagHtml}
         <a href="https://cybercrime.gov.in" target="_blank" class="source-link">CyberCrime Gov ↗</a>
-      </div>
-    </div>
-    <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <strong style="color:#f8fafc; font-size:0.78rem;">🛡️ Global CERT-In & BGP Routing Status</strong>
-        <span class="badge-gl">CERT-IN WIRE</span>
-      </div>
-      <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-        No critical border-gateway protocol routing anomalies detected across Indian autonomous system numbers (ASNs). Enterprise patch advisory protocols active.
-      </p>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="timestamp-tag">Verified: ${timestamp}</span>
-        <a href="https://www.cert-in.org.in" target="_blank" class="source-link">CERT-In ↗</a>
       </div>
     </div>
   `;
 }
 
-async function fetchLiveTCOpsData(timestamp) {
+async function fetchLiveTCOpsData(syncTagHtml) {
   const container = document.getElementById('tc-ops-container');
   if (!container) return;
   try {
@@ -816,7 +892,7 @@ async function fetchLiveTCOpsData(timestamp) {
           Temp <strong style="color:#f59e0b;">${curr.temperature_2m}°C</strong> | Humidity <strong>${curr.relative_humidity_2m}%</strong> | Wind <strong>${curr.wind_speed_10m} km/h</strong>
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="timestamp-tag">Synced: ${timestamp}</span>
+          ${syncTagHtml}
           <a href="https://open-meteo.com" target="_blank" class="source-link">Open-Meteo ↗</a>
         </div>
       </div>
@@ -824,7 +900,7 @@ async function fetchLiveTCOpsData(timestamp) {
   } catch(e) {}
 }
 
-async function fetchLiveTSDDPSData(timestamp) {
+async function fetchLiveTSDDPSData(syncTagHtml) {
   const container = document.getElementById('tsddps-weather-container');
   if (!container) return;
   try {
@@ -841,7 +917,7 @@ async function fetchLiveTSDDPSData(timestamp) {
           Temp <strong style="color:#10b981;">${curr.temperature_2m}°C</strong> | Pressure <strong>${curr.surface_pressure} hPa</strong>
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="timestamp-tag">Synced: ${timestamp}</span>
+          ${syncTagHtml}
           <a href="https://open-meteo.com" target="_blank" class="source-link">Open-Meteo ↗</a>
         </div>
       </div>
