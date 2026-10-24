@@ -232,7 +232,7 @@ async function loadTandCIntelligenceHub() {
 
       <div class="opt-note-box">
         <i class="fa-solid fa-circle-info" style="color:#38bdf8;"></i>
-        <span><strong>Note:</strong> Data feeds auto-sync dynamically with verified live public telemetry.</span>
+        <span><strong>Note:</strong> Data from verified sources syncs automatically for live, real-time data. Visit source.</span>
       </div>
     </div>
 
