@@ -564,7 +564,7 @@ function initOsintLeafletMap() {
     }
 
     currentClickMarker = L.marker(e.latlng).addTo(osintMap);
-    currentClickMarker.bindPopup(`<div style="font-size:0.7rem; color:#38bdf8;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching English OSINT & AQI...</div>`).openPopup();
+    currentClickMarker.bindPopup(`<div style="font-size:0.7rem; color:#38bdf8;"><i class="fa-solid fa-spinner fa-spin"></i> T&C fetching...</div>`).openPopup();
 
     fetchLocalityDetails(lat, lng);
   });
