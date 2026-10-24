@@ -550,7 +550,7 @@ function initOsintLeafletMap() {
   osintMap = L.map('leaflet-map-canvas').setView([20.5937, 78.9629], 4);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
+    attribution: '&copy; New Modern Mission by T&C',
     maxZoom: 19,
     className: 'dark-osm-tiles'
   }).addTo(osintMap);
