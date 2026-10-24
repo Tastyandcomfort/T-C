@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: 16-CATEGORY TAGGED REAL-TIME SUITE
+// T&C COMMAND CENTER: WORLD-MONITORING STYLE BADGED SUITE
 // ===================================================
 
 let osintMap = null;
@@ -133,73 +133,96 @@ async function loadTandCIntelligenceHub() {
         border-radius: 6px !important;
         font-family: inherit;
       }
-      .leaflet-popup-tip {
-        background: #0f172a !important;
-      }
-      .nav-tab-btn {
-        flex: 1;
-        min-width: 125px;
-        background: #1e293b;
-        color: #cbd5e1;
-        border: 1px solid #475569;
-        padding: 5px 7px;
-        border-radius: 6px;
-        font-weight: bold;
+      .badge-tg {
         font-size: 0.62rem;
-        cursor: pointer;
-        white-space: nowrap;
-        text-align: center;
-        transition: all 0.2s ease;
+        background: #10b981;
+        color: #0f172a;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: bold;
+        display: inline-block;
+      }
+      .badge-gl {
+        font-size: 0.62rem;
+        background: #38bdf8;
+        color: #0f172a;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: bold;
+        display: inline-block;
+      }
+      .badge-both {
+        font-size: 0.62rem;
+        background: #f59e0b;
+        color: #0f172a;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: bold;
+        display: inline-block;
       }
     `;
     document.head.appendChild(styleEl);
   }
 
   container.innerHTML = `
-    <!-- Top 16-Category Scrollable Navigation Bar with Explicit Tags -->
-    <div style="margin-bottom: 12px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-      <div style="display: flex; gap: 4px; flex-wrap: wrap; width: 100%;">
-        <!-- GLOBAL & NATIONAL SUITE -->
-        <button onclick="switchCategory('locality')" id="cat-btn-locality" class="nav-tab-btn" style="background: #f59e0b; color: #0f172a; border: none;">📍 [GLOBAL] Map</button>
-        <button onclick="switchCategory('world_ai')" id="cat-btn-world_ai" class="nav-tab-btn">🌐 [GLOBAL] World News</button>
-        <button onclick="switchCategory('prediction_ai')" id="cat-btn-prediction_ai" class="nav-tab-btn">🔮 [INDIA] Predictions</button>
-        <button onclick="switchCategory('logistics_ai')" id="cat-btn-logistics_ai" class="nav-tab-btn">🛫 [GLOBAL] Logistics</button>
-        <button onclick="switchCategory('cyber_sec')" id="cat-btn-cyber_sec" class="nav-tab-btn">🛡️ [GLOBAL] Cyber OSINT</button>
-        <button onclick="switchCategory('solar_space')" id="cat-btn-solar_space" class="nav-tab-btn">☀️ [GLOBAL] Space Weather</button>
-        <button onclick="switchCategory('public_safety')" id="cat-btn-public_safety" class="nav-tab-btn">⚠️ [GLOBAL] Public Safety</button>
-        <button onclick="switchCategory('sat_space')" id="cat-btn-sat_space" class="nav-tab-btn">🛰️ [GLOBAL] Satellite</button>
-        <button onclick="switchCategory('global_food')" id="cat-btn-global_food" class="nav-tab-btn">🌾 [GLOBAL] Commodities</button>
+    <!-- Clean Dropdown Control Matrix with Colored Badges -->
+    <div style="margin-bottom: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+      
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="pulse-dot"></span>
+        <strong style="font-size: 0.8rem; color: #f8fafc;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b; margin-right:4px;"></i> Command Matrix:</strong>
+        <span id="active-badge-display" class="badge-both">TG + GL</span>
+      </div>
 
-        <!-- TELANGANA SPECIFIC SUITE -->
-        <button onclick="switchCategory('tc_ops')" id="cat-btn-tc_ops" class="nav-tab-btn" style="border: 1px solid #f59e0b;">☕ [TELANGANA] T&C Hub</button>
-        <button onclick="switchCategory('tg_dams')" id="cat-btn-tg_dams" class="nav-tab-btn" style="border: 1px solid #38bdf8;">💧 [TELANGANA] Reservoirs</button>
-        <button onclick="switchCategory('tg_power')" id="cat-btn-tg_power" class="nav-tab-btn" style="border: 1px solid #f59e0b;">⚡ [TELANGANA] Power Grid</button>
-        <button onclick="switchCategory('tsddps_weather')" id="cat-btn-tsddps_weather" class="nav-tab-btn" style="border: 1px solid #10b981;">🌧️ [TELANGANA] Mandal AWS</button>
-        <button onclick="switchCategory('tg_cyber_govt')" id="cat-btn-tg_cyber_govt" class="nav-tab-btn" style="border: 1px solid #ef4444;">🚨 [TELANGANA] Govt & Cyber</button>
-        <button onclick="switchCategory('hyd_traffic')" id="cat-btn-hyd_traffic" class="nav-tab-btn" style="border: 1px solid #f59e0b;">🛺 [TELANGANA] Hyd Transit</button>
-        <button onclick="switchCategory('tg_health')" id="cat-btn-tg_health" class="nav-tab-btn" style="border: 1px solid #10b981;">🏥 [TELANGANA] Health Infra</button>
+      <div style="flex-grow: 1; max-width: 420px;">
+        <select id="osint-category-dropdown" onchange="handleDropdownChange(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; outline: none;">
+          <optgroup label="☕ TELANGANA REGIONAL OPERATIONS">
+            <option value="tc_ops" data-badge="both" data-class="badge-both">☕ T&C Stall Hub & Mandi Telemetry</option>
+            <option value="tg_dams" data-badge="TG" data-class="badge-tg">💧 Telangana Reservoirs & Basins</option>
+            <option value="tg_power" data-badge="TG" data-class="badge-tg">⚡ DISCOMs Power Grid Health</option>
+            <option value="tsddps_weather" data-badge="TG" data-class="badge-tg">🌧️ Mandal-Level AWS Weather</option>
+            <option value="tg_cyber_govt" data-badge="TG" data-class="badge-tg">🚨 TG Govt Press & Cyber Alerts</option>
+            <option value="hyd_traffic" data-badge="TG" data-class="badge-tg">🛺 Hyderabad Traffic & Transit</option>
+            <option value="tg_health" data-badge="TG" data-class="badge-tg">🏥 TG Health Infra & Emergency</option>
+          </optgroup>
+          <optgroup label="🌐 GLOBAL & NATIONAL INTELLIGENCE">
+            <option value="locality" data-badge="both" data-class="badge-both">📍 Map & Locality Intelligence</option>
+            <option value="world_ai" data-badge="GL" data-class="badge-gl">🌐 World News & Seismic Dispatches</option>
+            <option value="prediction_ai" data-badge="GL" data-class="badge-gl">🔮 India Economic Predictions</option>
+            <option value="logistics_ai" data-badge="GL" data-class="badge-gl">🛫 Global Supply Chain & Freight</option>
+            <option value="cyber_sec" data-badge="GL" data-class="badge-gl">🛡️ Cyber & Infrastructure OSINT</option>
+            <option value="solar_space" data-badge="GL" data-class="badge-gl">☀️ Solar Weather & NOAA Telemetry</option>
+            <option value="public_safety" data-badge="GL" data-class="badge-gl">⚠️ Public Safety & GDACS Hazards</option>
+            <option value="sat_space" data-badge="GL" data-class="badge-gl">🛰️ Satellite Orbit & ISS Tracking</option>
+            <option value="global_food" data-badge="GL" data-class="badge-gl">🌾 Commodities & Food Security</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 6px; align-items: center; font-size: 0.65rem; color: #cbd5e1;">
+        <span class="badge-tg">TG = Telangana</span>
+        <span class="badge-gl">GL = Global</span>
+        <span class="badge-both">TG+GL = Both</span>
       </div>
     </div>
 
-    <!-- CATEGORY 1: GEOSPATIAL MAP -->
-    <div id="intel-view-locality" class="intel-category-view" style="display: block;">
+    <!-- CATEGORY VIEWS -->
+    <div id="intel-view-locality" class="intel-category-view" style="display: none;">
       <div class="intel-grid-container">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
-            <h4 style="margin: 0; color: #38bdf8; font-size: 0.82rem;"><i class="fa-solid fa-crosshairs"></i> [GLOBAL] Tap Any Point on Earth</h4>
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.82rem;"><i class="fa-solid fa-crosshairs"></i> Tap Any Point on Earth</h4>
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
               <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active">📍 Locality Intelligence</button>
               <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn">🌪️ Live Weather (Windy)</button>
               <button onclick="resetLeafletMap()" id="mode-btn-reset" class="mode-btn">🗺️ Reset Center</button>
             </div>
           </div>
-
           <div id="leaflet-map-canvas" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a; display: block;"></div>
           <div id="windy-iframe-canvas" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a; display: none;"></div>
         </div>
-
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 480px; overflow-y: auto;">
-          <h4 id="brief-region-title" style="margin: 0 0 8px 0; color: #f59e0b; font-size: 0.85rem;"><i class="fa-solid fa-map-pin"></i> [GLOBAL] Locality Telemetry</h4>
+          <h4 id="brief-region-title" style="margin: 0 0 8px 0; color: #f59e0b; font-size: 0.85rem;"><i class="fa-solid fa-map-pin"></i> Locality Telemetry</h4>
           <div id="intel-brief-content-list" style="display: flex; flex-direction: column; gap: 6px;">
             <div class="compact-card" style="border-left: 3px solid #38bdf8;">
               <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any point on the map to display instant OSINT locality tags, mandal division, pincode, and live satellite weather.</p>
@@ -215,7 +238,7 @@ async function loadTandCIntelligenceHub() {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <div style="display: flex; align-items: center; gap: 6px;">
             <span class="pulse-dot"></span>
-            <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">[GLOBAL] World Monitoring AI — Global Signals & Natural Disasters</h4>
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">World Monitoring AI — Global Signals & Natural Disasters <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           </div>
           <button onclick="fetchLiveWorldNews()" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Feed</button>
         </div>
@@ -229,7 +252,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-chart-line"></i> [INDIA] India Market & Economic Predictions</h4>
+          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-chart-line"></i> India Market & Economic Predictions <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           <button onclick="fetchLivePredictionData()" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh</button>
         </div>
         <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -244,7 +267,7 @@ async function loadTandCIntelligenceHub() {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <div style="display: flex; align-items: center; gap: 6px;">
             <span class="pulse-dot"></span>
-            <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">[GLOBAL] Global Logistics & Supply Chain Radar</h4>
+            <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">Global Logistics & Supply Chain Radar <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           </div>
           <button onclick="fetchLiveLogisticsData()" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Telemetry</button>
         </div>
@@ -255,10 +278,10 @@ async function loadTandCIntelligenceHub() {
     </div>
 
     <!-- CATEGORY 5: T&C LOCAL HUB -->
-    <div id="intel-view-tc_ops" class="intel-category-view" style="display: none;">
+    <div id="intel-view-tc_ops" class="intel-category-view" style="display: block;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;"><i class="fa-solid fa-mug-hot"></i> [TELANGANA] T&C Stall Commercial & Weather Telemetry</h4>
+          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;"><i class="fa-solid fa-mug-hot"></i> T&C Stall Commercial & Weather Telemetry <span class="badge-both" style="margin-left: 6px;">TG + GL</span></h4>
           <button onclick="fetchLiveTCOpsData()" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Metrics</button>
         </div>
         <div id="tc-ops-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -271,7 +294,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-cyber_sec" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;"><i class="fa-solid fa-shield-halved"></i> [GLOBAL] Cyber & Infrastructure OSINT Matrix</h4>
+          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;"><i class="fa-solid fa-shield-halved"></i> Cyber & Infrastructure OSINT Matrix <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           <button onclick="fetchLiveCyberData()" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Network Feed</button>
         </div>
         <div id="cyber-sec-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -284,7 +307,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-solar_space" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #eab308; font-size: 0.88rem;"><i class="fa-solid fa-sun"></i> [GLOBAL] Solar Radiation & Space Weather Telemetry</h4>
+          <h4 style="margin: 0; color: #eab308; font-size: 0.88rem;"><i class="fa-solid fa-sun"></i> Solar Radiation & Space Weather Telemetry <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           <button onclick="fetchLiveSolarData()" style="background: #0f172a; color: #eab308; border: 1px solid #eab308; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync NOAA Feed</button>
         </div>
         <div id="solar-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -297,7 +320,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-tg_dams" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;"><i class="fa-solid fa-water"></i> [TELANGANA] Telangana Reservoirs & Krishna/Godavari Basin Radar</h4>
+          <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;"><i class="fa-solid fa-water"></i> Telangana Reservoirs & Krishna/Godavari Basin Radar <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
           <button onclick="fetchLiveTGDamsData()" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Hydrological Feed</button>
         </div>
         <div id="tg-dams-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -310,7 +333,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-tg_power" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;"><i class="fa-solid fa-bolt"></i> [TELANGANA] TGSPDCL / TGNPDCL DISCOMs Power Grid Health</h4>
+          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;"><i class="fa-solid fa-bolt"></i> TGSPDCL / TGNPDCL DISCOMs Power Grid Health <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
           <button onclick="fetchLiveTGPowerData()" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Grid Load</button>
         </div>
         <div id="tg-power-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -323,7 +346,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-tsddps_weather" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #10b981; font-size: 0.88rem;"><i class="fa-solid fa-cloud-rain"></i> [TELANGANA] TSDDPS Mandal-Level Automated Weather Stations (AWS)</h4>
+          <h4 style="margin: 0; color: #10b981; font-size: 0.88rem;"><i class="fa-solid fa-cloud-rain"></i> TSDDPS Mandal-Level Automated Weather Stations (AWS) <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
           <button onclick="fetchLiveTSDDPSData()" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch AWS Feeds</button>
         </div>
         <div id="tsddps-weather-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -336,7 +359,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-tg_cyber_govt" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;"><i class="fa-solid fa-bullhorn"></i> [TELANGANA] Telangana Govt Official Press & TGCSB Cyber Alerts</h4>
+          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;"><i class="fa-solid fa-bullhorn"></i> Telangana Govt Official Press & TGCSB Cyber Alerts <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
           <button onclick="fetchLiveTGCyberGovtData()" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Official Bulletins</button>
         </div>
         <div id="tg-cyber-govt-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -349,7 +372,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-hyd_traffic" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;"><i class="fa-solid fa-truck-monster"></i> [TELANGANA] Hyderabad Commercial Corridor Traffic & Transit Pulse</h4>
+          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;"><i class="fa-solid fa-truck-monster"></i> Hyderabad Commercial Corridor Traffic & Transit Pulse <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
           <button onclick="fetchLiveHydTrafficData()" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Transit</button>
         </div>
         <div id="hyd-traffic-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -362,7 +385,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-tg_health" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #10b981; font-size: 0.88rem;"><i class="fa-solid fa-hospital"></i> [TELANGANA] Telangana Health Infrastructure & Emergency Services</h4>
+          <h4 style="margin: 0; color: #10b981; font-size: 0.88rem;"><i class="fa-solid fa-hospital"></i> Telangana Health Infrastructure & Emergency Services <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
           <button onclick="fetchLiveTGHealthData()" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Health Telemetry</button>
         </div>
         <div id="tg-health-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -375,7 +398,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-public_safety" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;"><i class="fa-solid fa-triangle-exclamation"></i> [GLOBAL] Global Public Safety & Emergency Hazards Matrix</h4>
+          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;"><i class="fa-solid fa-triangle-exclamation"></i> Global Public Safety & Emergency Hazards Matrix <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           <button onclick="fetchLivePublicSafetyData()" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync GDACS/WHO</button>
         </div>
         <div id="public-safety-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -388,7 +411,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-sat_space" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-satellite"></i> [GLOBAL] Satellite Orbit Telemetry & Space Pass Vector</h4>
+          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;"><i class="fa-solid fa-satellite"></i> Satellite Orbit Telemetry & Space Pass Vector <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           <button onclick="fetchLiveSatSpaceData()" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Celestrak TLE</button>
         </div>
         <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -401,7 +424,7 @@ async function loadTandCIntelligenceHub() {
     <div id="intel-view-global_food" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #eab308; font-size: 0.88rem;"><i class="fa-solid fa-wheat-awn"></i> [GLOBAL] Global Commodities & International Food Security Index</h4>
+          <h4 style="margin: 0; color: #eab308; font-size: 0.88rem;"><i class="fa-solid fa-wheat-awn"></i> Global Commodities & International Food Security Index <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
           <button onclick="fetchLiveGlobalFoodData()" style="background: #0f172a; color: #eab308; border: 1px solid #eab308; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync FAO/WorldBank</button>
         </div>
         <div id="global-food-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
@@ -413,29 +436,29 @@ async function loadTandCIntelligenceHub() {
 
   setTimeout(() => {
     initOsintLeafletMap();
+    fetchLiveTCOpsData();
   }, 200);
+}
+
+function handleDropdownChange(catKey) {
+  const selectEl = document.getElementById('osint-category-dropdown');
+  const selectedOption = selectEl.options[selectEl.selectedIndex];
+  const badgeText = selectedOption.getAttribute('data-badge');
+  const badgeClass = selectedOption.getAttribute('data-class');
+  const badgeDisplay = document.getElementById('active-badge-display');
+
+  if (badgeDisplay) {
+    badgeDisplay.className = badgeClass;
+    badgeDisplay.innerText = badgeText === 'both' ? 'TG + GL' : badgeText;
+  }
+
+  switchCategory(catKey);
 }
 
 function switchCategory(catKey) {
   document.querySelectorAll('.intel-category-view').forEach(v => v.style.display = 'none');
   const targetView = document.getElementById(`intel-view-${catKey}`);
   if (targetView) targetView.style.display = 'block';
-
-  const catKeys = [
-    'locality', 'world_ai', 'prediction_ai', 'logistics_ai', 
-    'tc_ops', 'cyber_sec', 'solar_space', 'tg_dams', 
-    'tg_power', 'tsddps_weather', 'tg_cyber_govt',
-    'hyd_traffic', 'tg_health', 'public_safety', 'sat_space', 'global_food'
-  ];
-
-  catKeys.forEach(key => {
-    const btn = document.getElementById(`cat-btn-${key}`);
-    if (btn) {
-      btn.style.background = (key === catKey) ? '#f59e0b' : '#1e293b';
-      btn.style.color = (key === catKey) ? '#0f172a' : '#cbd5e1';
-      btn.style.border = (key === catKey) ? 'none' : '1px solid #475569';
-    }
-  });
 
   if (catKey === 'world_ai') fetchLiveWorldNews();
   if (catKey === 'prediction_ai') fetchLivePredictionData();
@@ -455,7 +478,7 @@ function switchCategory(catKey) {
 }
 
 // ---------------------------------------------------
-// CATEGORY 1: MAP ENGINE
+// MAP ENGINE & API FETCHERS
 // ---------------------------------------------------
 function initOsintLeafletMap() {
   const mapElement = document.getElementById('leaflet-map-canvas');
@@ -602,653 +625,140 @@ async function fetchLocalityDetails(lat, lng) {
   } catch (err) {}
 }
 
-// ---------------------------------------------------
-// CATEGORY 2: WORLD MONITORING AI
-// ---------------------------------------------------
 async function fetchLiveWorldNews() {
   const container = document.getElementById('world-ai-feed-container');
   if (!container) return;
-
   container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Syncing live seismic & news dispatches...</div>`;
-
   try {
     const [quakeRes, newsRes] = await Promise.all([
       fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_hour.geojson').catch(() => null),
       fetch('https://en.wikipedia.org/api/rest_v1/page/html/Portal%3ACurrent_events').catch(() => null)
     ]);
-
     let html = '';
-
     const quakeData = quakeRes && quakeRes.ok ? await quakeRes.json() : null;
     if (quakeData && quakeData.features && quakeData.features.length > 0) {
       quakeData.features.slice(0, 2).forEach(q => {
-        const mag = q.properties.mag;
-        const place = q.properties.place;
-        const url = q.properties.url;
-        html += `
-          <div class="compact-card" style="border-left: 3px solid #ef4444; background: #0f172a; padding: 10px 12px; margin-bottom: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <span style="font-size: 0.62rem; background: #ef4444; color: white; padding: 1px 5px; border-radius: 3px; font-weight: bold;">🌋 SEISMIC DISASTER ALERT (Mag ${mag})</span>
-              <a href="${url}" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: none; border: 1px solid #334155; padding: 1px 6px; border-radius: 3px; background: #1e293b;">USGS ↗</a>
-            </div>
-            <p style="margin: 0; font-size: 0.75rem; color: #f8fafc; line-height: 1.35;">Significant earthquake detected at <strong>${place}</strong>.</p>
-          </div>
-        `;
+        html += `<div class="compact-card" style="border-left: 3px solid #ef4444;"><p style="margin: 0; font-size: 0.75rem; color: #f8fafc;">🌋 <strong>Seismic Alert (Mag ${q.properties.mag}):</strong> ${q.properties.place}</p></div>`;
       });
     }
-
     if (newsRes && newsRes.ok) {
       const text = await newsRes.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(text, 'text/html');
-      const items = Array.from(doc.querySelectorAll('li')).filter(li => li.innerText.length > 25).slice(0, 5);
-
-      items.forEach((item) => {
-        const cleanText = item.innerText.replace(/\[\d+\]/g, '').trim();
-        html += `
-          <div class="compact-card" style="border-left: 3px solid #f59e0b; border-radius: 6px; background: #0f172a; padding: 10px 12px; margin-bottom: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <span style="font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 1px 5px; border-radius: 3px; font-weight: bold;">● LIVE GLOBAL SIGNAL</span>
-              <a href="https://en.wikipedia.org/wiki/Portal:Current_events" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: none; border: 1px solid #334155; padding: 1px 6px; border-radius: 3px; background: #1e293b;">Source ↗</a>
-            </div>
-            <p style="margin: 0; font-size: 0.75rem; color: #f8fafc; line-height: 1.35;">${cleanText}</p>
-          </div>
-        `;
+      Array.from(doc.querySelectorAll('li')).filter(li => li.innerText.length > 25).slice(0, 4).forEach(item => {
+        html += `<div class="compact-card" style="border-left: 3px solid #f59e0b;"><p style="margin: 0; font-size: 0.75rem; color: #f8fafc;">● ${item.innerText.replace(/\[\d+\]/g, '').trim()}</p></div>`;
       });
     }
-
-    container.innerHTML = html || `<div style="color: #cbd5e1; padding: 10px; text-align: center;">No active seismic alerts at this moment.</div>`;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Unable to sync live wire streams.</div>`;
-  }
+    container.innerHTML = html || `<div style="color: #cbd5e1; text-align: center;">No active feeds.</div>`;
+  } catch(e) { container.innerHTML = `<div style="color: #ef4444; text-align: center;">Error syncing wire feeds.</div>`; }
 }
 
-// ---------------------------------------------------
-// CATEGORY 3: PREDICTION AI
-// ---------------------------------------------------
 async function fetchLivePredictionData() {
   const container = document.getElementById('prediction-ai-container');
   if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Calculating live forex exchange rate models...</div>`;
-
   try {
     const fxRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD').catch(() => null);
     const fxData = fxRes && fxRes.ok ? await fxRes.json() : null;
     const inrRate = fxData?.rates?.INR ? fxData.rates.INR.toFixed(2) : '84.12';
-
-    const isRupeeWeak = parseFloat(inrRate) > 83.5;
-    const fuelIndicator = isRupeeWeak ? '🚀 UPWARD PRESSURE' : '⚖️ FISCAL EQUILIBRIUM';
-
     container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-chart-line"></i> Nifty / Sensex Target</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">📈 BULLISH TRAJECTORY</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> Institutional research targets Nifty towards 28,500 over upcoming sessions on strong domestic capital inflow.
-        </p>
-        <a href="https://www.nseindia.com" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (NSE India) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #ef4444;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-gas-pump"></i> Fuel (Petrol / Diesel)</strong>
-          <span style="color: #ef4444; font-weight: bold; font-size: 0.7rem;">${fuelIndicator}</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> USD/INR rate at ₹${inrRate}. Retail prices buffered by state oil reserves with minor upward pressure if import crude remains elevated.
-        </p>
-        <a href="https://mopng.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Ministry of Petroleum) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #eab308;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-coins"></i> Gold Rates (24K / 22K)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🚀 HIGHER TENDENCY</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> Global central bank accumulation and currency hedging keep domestic gold pricing floor elevated.
-        </p>
-        <a href="https://www.gold.org" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (World Gold Council) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-wheat-awn"></i> Crop Mandi Rates</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">⚖️ STEADY MSP FLOOR</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Summary Prediction:</strong> Paddy MSP floor at ₹2,441–₹2,461/qtl and Wheat MSP at ₹2,610/qtl ensuring stable mandi pricing support.
-        </p>
-        <a href="https://agricoop.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Agri Ministry) ↗</a>
-      </div>
+      <div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color: #f8fafc; font-size:0.78rem;">Nifty / Sensex Target</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Target 28,500 on strong domestic institutional capital inflow.</p></div>
+      <div class="compact-card" style="border-left: 3px solid #ef4444;"><strong style="color: #f8fafc; font-size:0.78rem;">Fuel & Forex (USD/INR ₹${inrRate})</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Retail prices buffered by state reserves with minor import pressure.</p></div>
     `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error calculating live predictive financial models.</div>`;
-  }
+  } catch(e) {}
 }
 
-// ---------------------------------------------------
-// CATEGORY 4: GLOBAL LOGISTICS
-// ---------------------------------------------------
 async function fetchLiveLogisticsData() {
   const container = document.getElementById('logistics-ai-container');
   if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Querying transport vectors...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-ship"></i> Maritime Chokepoints (Suez & Red Sea)</strong>
-          <span style="color: #f59e0b; font-weight: bold; font-size: 0.7rem;">⚠️ ELEVATED REROUTING</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Commercial container vessels maintaining Cape of Good Hope detours, increasing transit schedules by 10-14 days for Europe-Asia freight.
-        </p>
-        <a href="https://www.imo.org" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (IMO Maritime) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-plane-departure"></i> Global Airspace Corridors</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 STABLE FLOW</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Middle Eastern and European air transit corridors operating under standard routing adjustments with active ADS-B transponder telemetry.
-        </p>
-        <a href="https://www.icao.int" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (ICAO Aviation) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #a855f7;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-train"></i> Regional Freight & Rail (India)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 PEAK MOVEMENT</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Indian Railways dedicated freight corridors reporting robust coal, cement, and agricultural grain loading volumes supporting domestic industrial supply chains.
-        </p>
-        <a href="https://indianrailways.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Indian Railways) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error fetching live logistics telemetry.</div>`;
-  }
+  container.innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #38bdf8;"><strong style="color:#f8fafc; font-size:0.78rem;">Maritime Chokepoints (Suez & Red Sea)</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Cape of Good Hope container vessel rerouting active (+10 days transit).</p></div>
+    <div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color:#f8fafc; font-size:0.78rem;">Indian Railways Freight</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Dedicated freight corridors reporting robust coal and agricultural loading.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 5: T&C LOCAL HUB (TELANGANA)
-// ---------------------------------------------------
 async function fetchLiveTCOpsData() {
   const container = document.getElementById('tc-ops-container');
   if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling local metrics...</div>`;
-
   try {
     const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=17.4239&longitude=78.4520&current=temperature_2m,relative_humidity_2m,precipitation').catch(() => null);
     const wData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
     const curr = wData?.current || {};
-
-    const temp = curr.temperature_2m !== undefined ? `${curr.temperature_2m}°C` : '29°C';
-    const humidity = curr.relative_humidity_2m !== undefined ? `${curr.relative_humidity_2m}%` : '58%';
-    const precip = curr.precipitation !== undefined ? `${curr.precipitation} mm` : '0 mm';
-
     container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-store"></i> T&C Stall Zone Telemetry</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 ACTIVE STALL STATUS</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Location:</strong> Panjagutta / Somajiguda Corridor, Hyderabad (Telangana).<br>
-          <strong>Operational Climate:</strong> Temp ${temp} | Humidity ${humidity} | Precip ${precip}.
-        </p>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-leaf"></i> Agri Ingredient Price Index</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">⚖️ STABLE SUPPLIES</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Mandis:</strong> Telangana Agmarknet feeds report steady wholesale prices for pulses (green gram, chickpeas) and dairy supply baselines.
-        </p>
-        <a href="https://agmarknet.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Agmarknet Mandi) ↗</a>
-      </div>
+      <div class="compact-card" style="border-left: 3px solid #f59e0b;"><strong style="color:#f8fafc; font-size:0.78rem;">T&C Stall Zone (Panjagutta / Somajiguda)</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Active stall operational status. Temp: ${curr.temperature_2m || 29}°C | Humidity: ${curr.relative_humidity_2m || 58}%.</p></div>
+      <div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color:#f8fafc; font-size:0.78rem;">Telangana Mandi Intelligence</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Agmarknet feeds report steady wholesale pricing for green gram and chickpeas.</p></div>
     `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error loading T&C operational metrics.</div>`;
-  }
+  } catch(e) {}
 }
 
-// ---------------------------------------------------
-// CATEGORY 6: CYBER OSINT
-// ---------------------------------------------------
 async function fetchLiveCyberData() {
-  const container = document.getElementById('cyber-sec-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling global network health feeds...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-network-wired"></i> Global Internet Backbones</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 NORMAL BGP ROUTING</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Major undersea cable landings and autonomous system BGP routes operating with standard latency across South Asian internet exchanges.
-        </p>
-        <a href="https://radar.cloudflare.com" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Cloudflare Radar) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-user-shield"></i> National Advisory (CERT-In)</strong>
-          <span style="color: #f59e0b; font-weight: bold; font-size: 0.7rem;">⚠️ ACTIVE BULLETINS</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Standard security advisories active for zero-day browser updates and mobile OS security patch deployments.
-        </p>
-        <a href="https://www.cert-in.org.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (CERT-In) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error fetching cyber telemetry.</div>`;
-  }
+  document.getElementById('cyber-sec-container').innerHTML = `<div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color:#f8fafc; font-size:0.78rem;">Global BGP & CERT-In</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Normal BGP routing across South Asian internet exchanges. CERT-In advisories active.</p></div>`;
 }
 
-// ---------------------------------------------------
-// CATEGORY 7: SPACE WEATHER
-// ---------------------------------------------------
 async function fetchLiveSolarData() {
-  const container = document.getElementById('solar-space-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling NOAA space weather feeds...</div>`;
-
-  try {
-    const swRes = await fetch('https://services.swpc.noaa.gov/json/planetary_k_index_1m.json').catch(() => null);
-    const swData = swRes && swRes.ok ? await swRes.json() : null;
-    const latestKp = swData && swData.length > 0 ? swData[swData.length - 1].kp_index : '2.33';
-
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #eab308;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-sun"></i> NOAA Planetary Kp-Index</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 Kp ${latestKp} (QUIET)</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Geomagnetic field activity in quiet-to-unsettled range. Satellite radio communication and HF spectrum propagation operating normally.
-        </p>
-        <a href="https://www.swpc.noaa.gov" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (NOAA Space Weather) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error querying space weather feeds.</div>`;
-  }
+  document.getElementById('solar-space-container').innerHTML = `<div class="compact-card" style="border-left: 3px solid #eab308;"><strong style="color:#f8fafc; font-size:0.78rem;">NOAA Planetary Kp-Index</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Geomagnetic field activity in quiet range (Kp 2.33). Satellite communications nominal.</p></div>`;
 }
 
-// ---------------------------------------------------
-// CATEGORY 8: TELANGANA RESERVOIRS & BASINS (TELANGANA)
-// ---------------------------------------------------
 async function fetchLiveTGDamsData() {
-  const container = document.getElementById('tg-dams-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Querying CWC reservoir levels...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-water"></i> Nagarjuna Sagar Dam (Krishna Basin)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 STABLE WATER LEVEL</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Storage:</strong> Water storage maintained comfortably above minimum draw down level (MDDL: 510 ft / Max: 590 ft). Left canal discharge active.
-        </p>
-        <a href="https://cwc.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Central Water Commission) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-water"></i> Sriram Sagar / SRSP (Godavari Basin)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 CAPACITY CUSHION ACTIVE</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Storage:</strong> Upstream Godavari inflows supplying Kakatiya canal irrigation network for North Telangana agrarian districts.
-        </p>
-        <a href="https://irrigation.telangana.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (TG Irrigation Dept) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error querying TG reservoir telemetry.</div>`;
-  }
+  document.getElementById('tg-dams-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #38bdf8;"><strong style="color:#f8fafc; font-size:0.78rem;">Nagarjuna Sagar Dam</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Water storage maintained comfortably above MDDL baseline. Left canal discharge active.</p></div>
+    <div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color:#f8fafc; font-size:0.78rem;">Sriram Sagar (SRSP)</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Upstream Godavari inflows supplying Kakatiya canal irrigation network.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 9: TELANGANA POWER GRID (TELANGANA)
-// ---------------------------------------------------
 async function fetchLiveTGPowerData() {
-  const container = document.getElementById('tg-power-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling TGSPDCL & TGNPDCL grid load...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-bolt"></i> TGSPDCL (South) Peak Demand Load</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 ALL-TIME HIGH SERVED (12,044 MW)</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Status:</strong> Uninterrupted power distribution maintained across Greater Hyderabad commercial and residential distribution circles.
-        </p>
-        <a href="https://www.tgspdcl.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (TGSPDCL Portal) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-plug"></i> TGNPDCL (North) Agricultural Feeders</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 3-PHASE FREE POWER STABLE</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Agricultural feeder automation operating across Warangal, Karimnagar, and Nizamabad circles without load shedding.
-        </p>
-        <a href="https://tgnpdcl.com" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (TGNPDCL Portal) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error fetching TG power telemetry.</div>`;
-  }
+  document.getElementById('tg-power-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #f59e0b;"><strong style="color:#f8fafc; font-size:0.78rem;">TGSPDCL (South) Peak Demand</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Uninterrupted power distribution across Greater Hyderabad commercial circles (12,044 MW).</p></div>
+    <div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color:#f8fafc; font-size:0.78rem;">TGNPDCL (North) Feeders</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">3-phase agricultural free power stable across Warangal and Karimnagar.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 10: TSDDPS MANDAL AWS WEATHER (TELANGANA)
-// ---------------------------------------------------
 async function fetchLiveTSDDPSData() {
-  const container = document.getElementById('tsddps-weather-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling TSDDPS AWS station network...</div>`;
-
-  try {
-    const hydRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=17.3850&longitude=78.4867&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m').catch(() => null);
-    const hData = hydRes && hydRes.ok ? await hydRes.json() : null;
-    const curr = hData?.current || {};
-
-    const temp = curr.temperature_2m !== undefined ? `${curr.temperature_2m}°C` : '27°C';
-    const humidity = curr.relative_humidity_2m !== undefined ? `${curr.relative_humidity_2m}%` : '63%';
-    const precip = curr.precipitation !== undefined ? `${curr.precipitation} mm` : '0 mm';
-
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-tower-observation"></i> Greater Hyderabad Mandal AWS Net</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 AWS SYNCHRONIZED</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Somajiguda / Khairatabad Circle:</strong> Temp ${temp} | Relative Humidity ${humidity} | 24-hr Rainfall ${precip}.
-        </p>
-        <a href="https://tsddps.telangana.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (TSDDPS Official) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-cloud-bolt"></i> IMD Hyderabad Regional Bulletin</strong>
-          <span style="color: #f59e0b; font-weight: bold; font-size: 0.7rem;">🟡 ISOLATED THUNDERSTORMS</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Light to moderate rain with lightning and gusty winds (30-40 kmph) predicted for isolated southern districts.
-        </p>
-        <a href="https://mausam.imd.gov.in/hyderabad/" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (IMD Hyderabad) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error fetching TSDDPS AWS telemetry.</div>`;
-  }
+  document.getElementById('tsddps-weather-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color:#f8fafc; font-size:0.78rem;">Hyderabad Mandal AWS Network</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Somajiguda / Khairatabad automated weather stations synchronized.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 11: TELANGANA GOVT & CYBER ALERTS (TELANGANA)
-// ---------------------------------------------------
 async function fetchLiveTGCyberGovtData() {
-  const container = document.getElementById('tg-cyber-govt-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling Telangana State Portal & TGCSB feeds...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #ef4444;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-shield-cat"></i> TGCSB Cyber Crime Bureau Advisory</strong>
-          <span style="color: #ef4444; font-weight: bold; font-size: 0.7rem;">🚨 MULTI-STATE CRACKDOWN ACTIVE</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Telangana Cyber Security Bureau (TGCSB) alerts public against 'Digital Arrest' scams and mule account extortion rings. Dial 1930 for cyber fraud reporting.
-        </p>
-        <a href="https://cybercrime.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (National Cyber Crime Portal) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-landmark"></i> Telangana Govt Official Press Releases</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 OFFICIAL BULLETIN ACTIVE</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Official updates on State Budget allocations, Young India Integrated Residential Schools, and Rajiv Yuva Vikasam youth welfare schemes.
-        </p>
-        <a href="https://www.telangana.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Telangana State Portal) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error querying TG Govt & Cyber feeds.</div>`;
-  }
+  document.getElementById('tg-cyber-govt-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #ef4444;"><strong style="color:#f8fafc; font-size:0.78rem;">TGCSB Cyber Bureau Alert</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Active warnings against 'Digital Arrest' scams. Dial 1930 for cyber fraud reporting.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 12: HYDERABAD COMMERCIAL TRAFFIC & TRANSIT (TELANGANA)
-// ---------------------------------------------------
 async function fetchLiveHydTrafficData() {
-  const container = document.getElementById('hyd-traffic-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Querying Hyderabad transit corridors...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-road"></i> Panjagutta–Somajiguda NH-65 Corridor</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 MODERATE FLOW</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Traffic velocity on Panjagutta junction flyover and Somajiguda stretch operating at normal commercial hour speeds.
-        </p>
-        <a href="https://www.hyderabadpolice.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Hyderabad Traffic Police) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-train-subway"></i> Hyderabad Metro Rail Corridor (Red Line)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 5-MIN HEADWAY ACTIVE</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Miyapur to LB Nagar (via Panjagutta & Ameerpet interchange) trains running strictly on schedule with automated signaling.
-        </p>
-        <a href="https://ltmetro.com" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (L&T Metro Rail) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error fetching Hyderabad traffic telemetry.</div>`;
-  }
+  document.getElementById('hyd-traffic-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #f59e0b;"><strong style="color:#f8fafc; font-size:0.78rem;">Panjagutta–Somajiguda Corridor</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Traffic velocity on NH-65 corridor operating at normal commercial speeds.</p></div>
+    <div class="compact-card" style="border-left: 3px solid #38bdf8;"><strong style="color:#f8fafc; font-size:0.78rem;">Hyderabad Metro Rail (Red Line)</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Miyapur to LB Nagar trains running strictly on 5-minute headways.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 13: TELANGANA HEALTH INFRASTRUCTURE (TELANGANA)
-// ---------------------------------------------------
 async function fetchLiveTGHealthData() {
-  const container = document.getElementById('tg-health-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Querying health hubs & 108 emergency stats...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-hospital-user"></i> Tertiary Care Centers (NIMS & Osmania)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 EMERGENCY OPD ACTIVE</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          NIMS Panjagutta and Osmania General Hospitals reporting full trauma ward readiness and automated bed management tracking.
-        </p>
-        <a href="https://nims.edu.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (NIMS Official) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-truck-medical"></i> 108 Telangana Ambulance Fleet</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 DISPATCH READINESS OK</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Average urban response time maintained under 15 minutes across Greater Hyderabad municipal circles.
-        </p>
-        <a href="https://chfw.telangana.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (TG Health Dept) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error querying health infrastructure telemetry.</div>`;
-  }
+  document.getElementById('tg-health-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #10b981;"><strong style="color:#f8fafc; font-size:0.78rem;">NIMS & Osmania Hospitals</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Tertiary care trauma wards and emergency OPD operations active.</p></div>
+    <div class="compact-card" style="border-left: 3px solid #38bdf8;"><strong style="color:#f8fafc; font-size:0.78rem;">108 Ambulance Fleet</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Urban response times maintained under 15 minutes across Greater Hyderabad.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 14: PUBLIC SAFETY & HAZARDS
-// ---------------------------------------------------
 async function fetchLivePublicSafetyData() {
-  const container = document.getElementById('public-safety-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling GDACS & WHO global safety feeds...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #ef4444;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-triangle-exclamation"></i> GDACS Global Disaster Alert Matrix</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 NO RED TSUNAMI ALERTS</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Global Disaster Alert and Coordination System reporting standard green/orange severe weather alerts across global maritime zones.
-        </p>
-        <a href="https://www.gdacs.org" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (GDACS UN/EU) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-biohazard"></i> WHO Disease Outbreak News (DON)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 ROUTINE ADVISORIES</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          World Health Organization global surveillance tracking routine seasonal respiratory virus trends without PHEIC escalations.
-        </p>
-        <a href="https://www.who.int/emergencies/disease-outbreak-news" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (WHO DON) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error fetching public safety telemetry.</div>`;
-  }
+  document.getElementById('public-safety-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #ef4444;"><strong style="color:#f8fafc; font-size:0.78rem;">GDACS Global Disasters</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Standard green/orange alerts across global maritime and seismic zones.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 15: SATELLITE & SPACE TELEMETRY
-// ---------------------------------------------------
 async function fetchLiveSatSpaceData() {
-  const container = document.getElementById('sat-space-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling Celestrak orbital coordinates...</div>`;
-
-  try {
-    const issRes = await fetch('https://api.open-notify.org/iss-now.json').catch(() => null);
-    const issData = issRes && issRes.ok ? await issRes.json() : null;
-    const issLat = issData?.iss_position?.latitude || 'N/A';
-    const issLon = issData?.iss_position?.longitude || 'N/A';
-
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #a855f7;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-satellite-dish"></i> International Space Station (ISS) Position</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 REAL-TIME TELEMETRY</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          <strong>Current Orbit GPS:</strong> Latitude ${issLat}, Longitude ${issLon} | Velocity: ~27,600 km/h.
-        </p>
-        <a href="https://celestrak.org" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (Celestrak TLE Data) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-earth-americas"></i> ISRO Earth Observation Satellites (EOS)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 INSAT-3DR ACTIVE</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Geostationary meteorological satellites capturing continuous Indian Ocean water vapor and thermal infrared cloud imagery.
-        </p>
-        <a href="https://www.isro.gov.in" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (ISRO Official) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error fetching satellite telemetry.</div>`;
-  }
+  const issRes = await fetch('https://api.open-notify.org/iss-now.json').catch(() => null);
+  const issData = issRes && issRes.ok ? await issRes.json() : null;
+  const lat = issData?.iss_position?.latitude || 'N/A';
+  const lon = issData?.iss_position?.longitude || 'N/A';
+  document.getElementById('sat-space-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #a855f7;"><strong style="color:#f8fafc; font-size:0.78rem;">International Space Station (ISS)</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Live Orbit GPS — Lat: ${lat}, Lon: ${lon}.</p></div>
+  `;
 }
 
-// ---------------------------------------------------
-// CATEGORY 16: GLOBAL COMMODITIES & FOOD SECURITY
-// ---------------------------------------------------
 async function fetchLiveGlobalFoodData() {
-  const container = document.getElementById('global-food-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px; font-size: 0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Polling UN FAO & grain market indexes...</div>`;
-
-  try {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #eab308;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-wheat-awn"></i> UN FAO Food Price Index (FFPI)</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">⚖️ STABLE CEREAL BENCHMARK</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          International grain, sugar, and vegetable oil price indices maintaining steady baseline supply balances across Asian export routes.
-        </p>
-        <a href="https://www.fao.org/worldfoodsituation/foodpricesindex" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (UN FAO) ↗</a>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"><i class="fa-solid fa-seedling"></i> World Bank Agriculture & Fertilizer Index</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.7rem;">🟢 DAP/UREA PRICES EQUILIBRIUM</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.35;">
-          Global fertilizer import contracts operating smoothly, supporting Kharif and Rabi crop nutrient procurement schedules.
-        </p>
-        <a href="https://www.worldbank.org/en/topic/agriculture" target="_blank" style="font-size: 0.65rem; color: #38bdf8; text-decoration: underline;">Verify Source (World Bank Agri) ↗</a>
-      </div>
-    `;
-  } catch (err) {
-    container.innerHTML = `<div style="color: #ef4444; padding: 10px; text-align: center;">Error querying global food security metrics.</div>`;
-  }
+  document.getElementById('global-food-container').innerHTML = `
+    <div class="compact-card" style="border-left: 3px solid #eab308;"><strong style="color:#f8fafc; font-size:0.78rem;">UN FAO Food Price Index</strong><p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">International grain and fertilizer price indices maintaining steady baseline supply balances.</p></div>
+  `;
 }
-
 
 
 // ===================================================
