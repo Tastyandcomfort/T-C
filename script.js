@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: PRODUCTION SUITE (FINAL)
+// T&C COMMAND CENTER: PRODUCTION SUITE (WIKI-INTEGRATED)
 // ===================================================
 
 let osintMap = null;
@@ -109,6 +109,14 @@ async function loadTandCIntelligenceHub() {
         padding: 10px 12px;
         margin-bottom: 8px;
       }
+      .wiki-trust-card {
+        background: #0f172a;
+        border: 1px solid #f59e0b;
+        border-left: 3px solid #f59e0b;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-top: 10px;
+      }
       .pulse-dot {
         display: inline-block;
         width: 8px;
@@ -142,16 +150,10 @@ async function loadTandCIntelligenceHub() {
         border: 1px solid #f59e0b !important;
         box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
       }
-      .leaflet-popup-content-wrapper {
-        background: #0f172a !important;
-        color: #f8fafc !important;
-        border: 1px solid #38bdf8 !important;
-        border-radius: 6px !important;
-        font-family: inherit;
-      }
       .badge-tg { font-size: 0.62rem; background: #10b981; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
       .badge-gl { font-size: 0.62rem; background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
       .badge-both { font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
+      .badge-tc-wiki { font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
       .timestamp-tag { font-size: 0.62rem; color: #94a3b8; font-family: monospace; }
       .source-link { font-size: 0.65rem; color: #38bdf8; text-decoration: underline; }
       .opt-note-box {
@@ -240,6 +242,7 @@ async function loadTandCIntelligenceHub() {
           </div>
         </div>
       </div>
+      <div id="wiki-box-locality"></div>
     </div>
 
     <!-- CATEGORY 2: WORLD NEWS -->
@@ -251,6 +254,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="world-ai-feed-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
       </div>
+      <div id="wiki-box-world_ai"></div>
     </div>
 
     <!-- CATEGORY 3: GDACS DISASTERS -->
@@ -262,6 +266,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="gdacs-hazards-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
       </div>
+      <div id="wiki-box-gdacs_hazards"></div>
     </div>
 
     <!-- CATEGORY 4: STOCK MARKETS -->
@@ -273,6 +278,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
+      <div id="wiki-box-prediction_ai"></div>
     </div>
 
     <!-- CATEGORY 5: NOAA SOLAR WEATHER -->
@@ -284,6 +290,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="solar-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
+      <div id="wiki-box-solar_space"></div>
     </div>
 
     <!-- CATEGORY 6: ISS LIVE GPS -->
@@ -295,6 +302,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
+      <div id="wiki-box-sat_space"></div>
     </div>
 
     <!-- CATEGORY 7: AIRSPACE AVIATION -->
@@ -306,6 +314,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="flight-radar-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
+      <div id="wiki-box-flight_radar"></div>
     </div>
 
     <!-- CATEGORY 8: CYBER THREATS -->
@@ -317,6 +326,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="cyber-alerts-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
       </div>
+      <div id="wiki-box-cyber_alerts"></div>
     </div>
 
     <!-- CATEGORY 9: T&C STALL ZONE -->
@@ -328,6 +338,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="tc-ops-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
+      <div id="wiki-box-tc_ops"></div>
     </div>
 
     <!-- CATEGORY 10: HYDERABAD WEATHER -->
@@ -339,6 +350,7 @@ async function loadTandCIntelligenceHub() {
         </div>
         <div id="tsddps-weather-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
+      <div id="wiki-box-tsddps_weather"></div>
     </div>
   `;
 
@@ -375,7 +387,6 @@ function switchCategory(catKey) {
   triggerRefresh(catKey, false);
 }
 
-// FORMATTER FOR TIMESTAMPS + NEXT QUEUED SYNC
 function generateSmartSyncTag(catKey) {
   const now = new Date();
   const fetchTimeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
@@ -419,6 +430,7 @@ async function executeCategoryFetch(catKey) {
     API_SCHEDULE_REGISTRY[catKey].lastFetchMs = Date.now();
   }
 
+  if (catKey === 'locality') await fetchLocalityDetailsForMap(syncTagHtml);
   if (catKey === 'world_ai') await fetchLiveWorldNews(syncTagHtml);
   if (catKey === 'gdacs_hazards') await fetchGDACSHazards(syncTagHtml);
   if (catKey === 'prediction_ai') await fetchLiveMarketData(syncTagHtml);
@@ -428,16 +440,66 @@ async function executeCategoryFetch(catKey) {
   if (catKey === 'cyber_alerts') await fetchCyberSecurityAdvisories(syncTagHtml);
   if (catKey === 'tc_ops') await fetchLiveTCOpsData(syncTagHtml);
   if (catKey === 'tsddps_weather') await fetchLiveTSDDPSData(syncTagHtml);
+
+  // Inject real-time Wikipedia trust card at the bottom of the active module
+  await loadTargetedWikiSummary(catKey, syncTagHtml);
 }
 
-// ---------------------------------------------------
-// DECENTRALIZED AUTO-SCHEDULER (CHECKS EVERY 10 SECONDS)
-// ---------------------------------------------------
+// DYNAMIC REAL-TIME WIKIPEDIA TARGETED INJECTION WITH BADGE
+async function loadTargetedWikiSummary(catKey, syncTagHtml) {
+  const box = document.getElementById(`wiki-box-${catKey}`);
+  if (!box) return;
+
+  // Map each category to a real-time live Wikipedia topic slug
+  const wikiSlugs = {
+    locality: "Geographic_coordinate_system",
+    world_ai: "Current_events",
+    gdacs_hazards: "Natural_hazard",
+    prediction_ai: "Stock_market",
+    solar_space: "Space_weather",
+    sat_space: "International_Space_Station",
+    flight_radar: "Airspace",
+    cyber_alerts: "Cybersecurity",
+    tc_ops: "Meteorology",
+    tsddps_weather: "Weather_forecasting"
+  };
+
+  const slug = wikiSlugs[catKey] || "Current_events";
+
+  try {
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`).catch(() => null);
+    if (!res || !res.ok) throw new Error("Wiki API error");
+    const data = await res.json();
+
+    const title = data.title || "Live Knowledge Wire";
+    const extract = data.extract || "Real-time synthesized knowledge extract.";
+    const pageUrl = data.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${slug}`;
+
+    box.innerHTML = `
+      <div class="wiki-trust-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <strong style="color: #f8fafc; font-size: 0.78rem;">☕ T&C Intelligence Desk: ${title} Briefing</strong>
+          <span class="badge-tc-wiki">T&C TRUSTED WIKI</span>
+        </div>
+        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.42;">
+          ${extract}
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 6px; margin-top: 4px;">
+          ${syncTagHtml}
+          <a href="${pageUrl}" target="_blank" class="source-link">Wikipedia Live Source ↗</a>
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    box.innerHTML = '';
+  }
+}
+
 function startSmartScheduler() {
   if (schedulerInterval) clearInterval(schedulerInterval);
 
   schedulerInterval = setInterval(() => {
-    if (document.hidden) return; // Pause execution if user switches tab
+    if (document.hidden) return;
 
     const dropdown = document.getElementById('osint-category-dropdown');
     if (!dropdown) return;
@@ -451,7 +513,7 @@ function startSmartScheduler() {
         executeCategoryFetch(activeCat);
       }
     }
-  }, 10000); // Check schedule state every 10 seconds
+  }, 10000);
 }
 
 document.addEventListener("visibilitychange", () => {
@@ -461,9 +523,6 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-// ---------------------------------------------------
-// MAP ENGINE & API FETCHERS
-// ---------------------------------------------------
 function initOsintLeafletMap() {
   const mapElement = document.getElementById('leaflet-map-canvas');
   if (!mapElement) return;
@@ -540,7 +599,10 @@ function resetLeafletMap() {
   }
 }
 
-// 1. GEOCODING MAP (FORCED ENGLISH TEXT)
+async function fetchLocalityDetailsForMap(syncTagHtml) {
+  // Default initialization view for locality
+}
+
 async function fetchLocalityDetails(lat, lng) {
   const titleEl = document.getElementById('brief-region-title');
   const briefList = document.getElementById('intel-brief-content-list');
@@ -762,7 +824,6 @@ async function fetchLiveSolarData(syncTagHtml) {
   } catch(e) {}
 }
 
-// 🛰️ BULLETPROOF WORLDWIDE ISS TELEMETRY
 async function fetchLiveSatSpaceData(syncTagHtml) {
   const container = document.getElementById('sat-space-container');
   if (!container) return;
@@ -787,7 +848,6 @@ async function fetchLiveSatSpaceData(syncTagHtml) {
     const velocity = issData.velocity ? `${Math.round(issData.velocity)} km/h` : '27,600 km/h';
     const peopleCount = astrosData?.number !== undefined ? astrosData.number : '12';
 
-    // Reverse geocode live coordinates worldwide (Forced English)
     const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=6&accept-language=en`).catch(() => null);
     const geoData = geoRes && geoRes.ok ? await geoRes.json() : null;
     const country = geoData?.address?.country || geoData?.address?.continent || '';
