@@ -58,7 +58,7 @@ const tcIntelCategories = [
 
 
 // ===================================================
-// T&C COMMAND CENTER: PRODUCTION SYNCED & TIMESTAMPED SUITE
+// T&C COMMAND CENTER: COMPLETE SUITE WITH SYNCED MAP & BADGES
 // ===================================================
 
 let osintMap = null;
@@ -142,14 +142,16 @@ async function loadTandCIntelligenceHub() {
   }
 
   container.innerHTML = `
-    <!-- Control Matrix -->
+    <!-- Command Control Panel with Restored Legend Badges -->
     <div style="margin-bottom: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+      
       <div style="display: flex; align-items: center; gap: 8px;">
         <span class="pulse-dot"></span>
         <strong style="font-size: 0.8rem; color: #f8fafc;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b; margin-right:4px;"></i> Command Matrix:</strong>
         <span id="active-badge-display" class="badge-both">TG + GL</span>
       </div>
 
+      <!-- Category Dropdown Selector -->
       <div style="flex-grow: 1; max-width: 420px;">
         <select id="osint-category-dropdown" onchange="handleDropdownChange(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; outline: none;">
           <optgroup label="☕ TELANGANA REGIONAL OPERATIONS">
@@ -174,9 +176,16 @@ async function loadTandCIntelligenceHub() {
           </optgroup>
         </select>
       </div>
+
+      <!-- Restored Scope Legend Badges -->
+      <div style="display: flex; gap: 6px; align-items: center; font-size: 0.65rem; color: #cbd5e1;">
+        <span class="badge-tg">TG = Telangana</span>
+        <span class="badge-gl">GL = Global</span>
+        <span class="badge-both">TG+GL = Both</span>
+      </div>
     </div>
 
-    <!-- CATEGORY VIEWS -->
+    <!-- CATEGORY 1: GEOSPATIAL MAP -->
     <div id="intel-view-locality" class="intel-category-view" style="display: none;">
       <div class="intel-grid-container">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
@@ -398,11 +407,9 @@ function switchCategory(catKey) {
     osintMap.invalidateSize();
   }
 
-  // Load data automatically on switch
   triggerRefresh(catKey, false);
 }
 
-// Visual feedback for refresh button
 async function triggerRefresh(catKey, manual = true) {
   const btn = document.getElementById(`btn-sync-${catKey}`);
   if (btn && manual) {
@@ -446,7 +453,7 @@ async function executeCategoryFetch(catKey) {
 }
 
 // ---------------------------------------------------
-// MAP ENGINE & API FETCHERS WITH TIMESTAMPS
+// MAP ENGINE & WEATHER SYNC
 // ---------------------------------------------------
 function initOsintLeafletMap() {
   const mapElement = document.getElementById('leaflet-map-canvas');
@@ -505,7 +512,7 @@ function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
         <iframe 
           width="100%" 
           height="100%" 
-          src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=420&zoom=6&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" 
+          src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=420&zoom=7&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" 
           frameborder="0" 
           style="border:0; border-radius: 6px; width:100%; height:100%;" 
           allowfullscreen>
@@ -567,6 +574,7 @@ async function fetchLocalityDetails(lat, lng) {
 
     if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageTown}, ${district} <span class="timestamp-tag">Fetched: ${timestamp}</span>`;
 
+    // RESTORED WEATHER BUTTON WITH EXACT PINNED LAT/LNG
     briefList.innerHTML = `
       <div class="compact-card" style="border-left: 3px solid #f59e0b;">
         <strong style="color: #f59e0b; font-size: 0.78rem;"><i class="fa-solid fa-map-pin"></i> Complete Address Breakdown</strong>
@@ -588,6 +596,11 @@ async function fetchLocalityDetails(lat, lng) {
         <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
           • <strong>Humidity:</strong> ${humidity} | <strong>Wind Velocity:</strong> ${windSpeed}
         </div>
+        
+        <!-- Restored Interactive Button syncing Windy to exact pinned coordinates -->
+        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top: 8px; width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <i class="fa-solid fa-wind" style="color:#38bdf8;"></i> View Live Windy Radar for ${villageTown}
+        </button>
       </div>
     `;
   } catch (err) {}
