@@ -2018,7 +2018,7 @@ body {
 
   align-items: flex-start;
 
-  gap: 10px;
+  gap: 5px;
 
   font-size: 0.9rem;
 
@@ -2028,7 +2028,7 @@ body {
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
-  padding-bottom: 10px;
+  padding-bottom: 5px;
 
 }
 
