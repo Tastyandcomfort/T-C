@@ -1185,7 +1185,7 @@ let pendingLat = null;
 let pendingLng = null;
 let masterTelemetryData = null; // Common destination & telemetry data
 
-// Initialize Leaflet Map
+// Initialize Leaflet Map with script-enforced minimum mobile height
 const mapDivEl = document.getElementById('map');
 if (mapDivEl) {
   mapDivEl.style.width = '100%';
@@ -1370,7 +1370,6 @@ map.on('click', async function(e) {
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
 
-  // If a destination is already pinned, prompt confirmation before changing it
   if (activePinnedLat !== null && activePinnedLng !== null) {
     pendingLat = lat;
     pendingLng = lng;
@@ -1378,13 +1377,12 @@ map.on('click', async function(e) {
     return;
   }
 
-  // Otherwise, set it immediately if no destination is set yet
   activePinnedLat = lat;
   activePinnedLng = lng;
   await fetchLocationDataAndRoutes(lat, lng);
 });
 
-// Show Apple-Styled Confirmation Modal
+// Show Apple-Styled Confirmation Modal with Working Button Handlers
 function showConfirmModal(lat, lng) {
   const mapDiv = document.getElementById('map');
   if (!mapDiv) return;
@@ -1396,7 +1394,6 @@ function showConfirmModal(lat, lng) {
     mapDiv.appendChild(modal);
   }
 
-  // Ensure high z-index and pointer-events so buttons are fully clickable
   modal.style.cssText = 'position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:#0f172a; border:1px solid #38bdf8; border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.8); font-family:system-ui, -apple-system, sans-serif; text-align:center; color:#f8fafc; pointer-events:auto;';
 
   modal.innerHTML = `
@@ -1408,7 +1405,6 @@ function showConfirmModal(lat, lng) {
     </div>
   `;
 
-  // Explicitly attach event listeners to guarantee robust click response without inline string evaluation failures
   document.getElementById('btn-confirm-yes').onclick = function(e) {
     e.stopPropagation();
     confirmDestinationChange();
@@ -1444,7 +1440,6 @@ async function confirmDestinationChange() {
     closeConfirmModal();
   }
 }
-
 
 // Universal fetch function for search and amenities
 async function fetchRouteData(query, customDisplayName = null) {
@@ -1515,7 +1510,6 @@ async function fetchIntelligenceSummary(villageTown, district, landmark, state, 
     }
   }
 
-  const fallbackAddress = `${landmark}, ${villageTown}, ${district}, ${state} - ${pincode}`;
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 
   return {
@@ -1620,7 +1614,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
-// Master Card Renderer
+// Master Card Renderer with Mobile-Optimized Scrolling Box (`max-height` + `overflow-y: auto`)
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -1634,7 +1628,7 @@ function renderMasterCard() {
     routes.forEach((route, index) => {
       const dist = (route.distance / 1000).toFixed(1);
       const timeFormatted = formatDuration(route.duration);
-      const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
+      const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
       
       optionsHtml += `
         <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -1651,19 +1645,22 @@ function renderMasterCard() {
   } 
   else if (currentMode === 'locality') {
     tabSpecificHtml = `
-      <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc; margin-bottom: 6px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="font-weight: bold; color: #38bdf8;">T&C Intelligence</span>
-          <span style="background: #0f172a; color: ${t.intelBadgeColor}; border: 1px solid ${t.intelBadgeColor}; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">
-            Source: ${t.intelSourceName} 🟢
-          </span>
-        </div>
-        <p style="margin: 0 0 6px 0; color: #cbd5e1; line-height: 1.35; font-size: 0.65rem;">${t.intelSummary}</p>
-        <div style="font-size: 0.6rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
-          <span>Mandal: <b>${t.county}</b></span>
-          <a href="${t.intelSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: bold;">
-            Open ${t.intelSourceName} ↗
-          </a>
+      <!-- SCROLLABLE CONTAINER FOR LOCALITY INTELLIGENCE -->
+      <div style="max-height: 160px; overflow-y: auto; padding-right: 4px; margin-bottom: 6px; scrollbar-width: thin;">
+        <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence</span>
+            <span style="background: #0f172a; color: ${t.intelBadgeColor}; border: 1px solid ${t.intelBadgeColor}; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">
+              Source: ${t.intelSourceName} 🟢
+            </span>
+          </div>
+          <p style="margin: 0 0 6px 0; color: #cbd5e1; line-height: 1.35; font-size: 0.65rem;">${t.intelSummary}</p>
+          <div style="font-size: 0.6rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <span>Mandal: <b>${t.county}</b></span>
+            <a href="${t.intelSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: bold;">
+              Open ${t.intelSourceName} ↗
+            </a>
+          </div>
         </div>
       </div>
       <div style="background: #1e293b; border: 1px solid #334155; padding: 5px 8px; border-radius: 6px; font-size: 0.62rem; color: #cbd5e1;">
@@ -1685,10 +1682,10 @@ function renderMasterCard() {
 
       <!-- 4 PERMANENT TOP MODE BUTTONS -->
       <div class="mode-switcher" style="display: flex; gap: 3px; margin-bottom: 8px;">
-        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Driving</button>
-        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Walking</button>
-        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Locality</button>
-        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Radar</button>
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚗 Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚶 Walking</button>
+        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;">📍 Locality</button>
+        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🌪️ Radar</button>
       </div>
 
       ${tabSpecificHtml}
@@ -1696,7 +1693,7 @@ function renderMasterCard() {
       <!-- BOTTOM CLEAR BUTTON TO RESET MAP -->
       ${activePinnedLat ? `
         <button onclick="removePinnedLocation()" style="width:100%; margin-top:8px; background:#1e293b; color:#ef4444; border:1px solid #ef4444; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-           Clear Pin & Reset Map
+          🗑️ Clear Pin & Reset Map
         </button>
       ` : ''}
 
@@ -1775,8 +1772,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
-
 
 
 
