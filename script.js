@@ -1,6 +1,6 @@
 
 // ===================================================
-// T&C COMMAND HUB: REAL-TIME TELEMETRY & MAP DESK
+// T&C COMMAND HUB: CLEAN TELEMETRY & MAP DESK
 // ===================================================
 
 let osintMap = null;
@@ -9,15 +9,15 @@ let mapHazardsGroup = null;
 let issMapMarker = null;
 let issInterval = null;
 
-// Custom ISS Satellite Icon
+// Custom ISS Satellite SVG Icon
 const issSvgIcon = L.divIcon({
   className: 'custom-iss-icon',
-  html: '<div style="background:#38bdf8; border:2px solid #0f172a; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px #38bdf8;"><i class="fa-solid fa-satellite" style="color:#0f172a; font-size:11px;"></i></div>',
-  iconSize: [22, 22],
-  iconPoint: [11, 11]
+  html: '<div style="background:#38bdf8; border:2px solid #0f172a; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 12px #38bdf8;"><i class="fa-solid fa-satellite" style="color:#0f172a; font-size:12px;"></i></div>',
+  iconSize: [24, 24],
+  iconAnchor: [12, 12]
 });
 
-async function fetchWithTimeout(resource, options = {}, timeoutMs = 8000) {
+async function fetchWithTimeout(resource, options = {}, timeoutMs = 7000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -35,97 +35,88 @@ async function loadTandCIntelligenceHub() {
   const container = document.getElementById('intel-dynamic-content');
   if (!container) return;
 
-  if (!document.getElementById('tc-responsive-styles')) {
+  if (!document.getElementById('tc-clean-styles')) {
     const styleEl = document.createElement('style');
-    styleEl.id = 'tc-responsive-styles';
+    styleEl.id = 'tc-clean-styles';
     styleEl.innerHTML = `
-      .intel-grid-container { display: grid; grid-template-columns: 1fr 400px; gap: 10px; align-items: start; }
+      .intel-grid-container { display: grid; grid-template-columns: 1fr 380px; gap: 10px; align-items: start; }
       @media (max-width: 768px) { .intel-grid-container { grid-template-columns: 1fr !important; } }
-      .metric-pill { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
+      .metric-pill { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; margin-bottom: 8px; }
       .dark-osm-tiles { filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(200deg) saturate(0.3); }
-      .mode-btn { background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-      .mode-btn-active { background: #f59e0b !important; color: #0f172a !important; border-color: #f59e0b !important; box-shadow: 0 0 8px rgba(245,158,11,0.4); }
-      .badge-tag { font-size: 0.6rem; background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+      .mode-btn { background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer; }
+      .mode-btn-active { background: #f59e0b !important; color: #0f172a !important; border-color: #f59e0b !important; }
+      .badge-tag { font-size: 0.6rem; background: #38bdf8; color: #0f172a; padding: 2px 5px; border-radius: 3px; font-weight: bold; }
       .source-brand-link { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #38bdf8; text-decoration: none; background: #1e293b; border: 1px solid #334155; padding: 3px 6px; border-radius: 4px; font-weight: bold; }
-      .source-brand-link:hover { border-color: #38bdf8; background: #0f172a; }
-      .timestamp-tag { font-size: 0.62rem; color: #94a3b8; font-family: monospace; }
+      .timestamp-tag { font-size: 0.6rem; color: #94a3b8; font-family: monospace; }
       .crew-chip { background: #1e293b; border: 1px solid #334155; border-radius: 4px; padding: 4px 8px; font-size: 0.7rem; color: #f8fafc; margin-bottom: 4px; display: flex; justify-content: space-between; }
     `;
     document.head.appendChild(styleEl);
   }
 
   container.innerHTML = `
-    <!-- TOP CONTROL MATRIX BAR -->
+    <!-- TOP NAVIGATION BAR -->
     <div style="margin-bottom: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-      <div style="font-size: 0.78rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b;"></i> T&C OSINT Telemetry Hub</div>
-      <div style="flex-grow: 1; max-width: 440px;">
+      <div style="font-size: 0.78rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b;"></i> T&C OSINT Telemetry Desk</div>
+      <div style="flex-grow: 1; max-width: 380px;">
         <select id="osint-category-dropdown" onchange="switchCategory(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.72rem; cursor: pointer; outline: none;">
-          <option value="locality" selected>📍 Locality, Weather, AQI & Hazards Map</option>
-          <option value="prediction_ai">📈 Real-Time Nifty Share Market & USD/INR Forex</option>
-          <option value="sat_space">🛰️ ISS Moving Tracker & Space Crew Manifest</option>
-          <option value="tc_ops">☕ T&C Stall Zone Weather & Traffic</option>
+          <option value="locality" selected>📍 Locality, Weather, AQI & Earth Map</option>
+          <option value="prediction_ai">📈 Live Nifty Share Market & USD/INR Forex</option>
+          <option value="sat_space">🛰️ ISS Moving Tracker & Space Crew</option>
         </select>
       </div>
     </div>
 
-    <!-- MAIN VIEW CONTAINERS -->
+    <!-- LOCALITY VIEW -->
     <div id="intel-view-locality" class="intel-category-view" style="display: block;">
       <div class="intel-grid-container">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
-            <span style="font-size: 0.75rem; color: #38bdf8; font-weight: bold;"><i class="fa-solid fa-layer-group"></i> Active Layer Selection</span>
+            <span style="font-size: 0.72rem; color: #38bdf8; font-weight: bold;">Map Layers:</span>
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-              <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active">📍 Locality</button>
-              <button onclick="setMapDisplayMode('earthquakes')" id="mode-btn-earthquakes" class="mode-btn">🌋 Earthquakes</button>
-              <button onclick="setMapDisplayMode('iss')" id="mode-btn-iss" class="mode-btn">🛰️ ISS Track</button>
-              <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn">🌪️ Windy Radar</button>
-              <button onclick="resetLeafletMap()" class="mode-btn">🗺️ Reset</button>
+              <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active">Locality</button>
+              <button onclick="setMapDisplayMode('earthquakes')" id="mode-btn-earthquakes" class="mode-btn">Earthquakes</button>
+              <button onclick="setMapDisplayMode('iss')" id="mode-btn-iss" class="mode-btn">ISS Track</button>
+              <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn">Windy</button>
+              <button onclick="resetLeafletMap()" class="mode-btn" style="background:#ef4444; color:#fff; border-color:#ef4444;">Reset</button>
             </div>
           </div>
-          <div id="leaflet-map-canvas" style="height: 420px; width: 100%; border-radius: 6px; background: #0f172a;"></div>
-          <div id="windy-iframe-canvas" style="height: 420px; width: 100%; border-radius: 6px; background: #0f172a; display: none;"></div>
+          <div id="leaflet-map-canvas" style="height: 400px; width: 100%; border-radius: 6px; background: #0f172a;"></div>
+          <div id="windy-iframe-canvas" style="height: 400px; width: 100%; border-radius: 6px; background: #0f172a; display: none;"></div>
         </div>
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 440px; overflow-y: auto;">
-          <div id="brief-region-title" style="color: #f59e0b; font-size: 0.82rem; font-weight: bold; margin-bottom: 6px;">📍 Locality Breakdown</div>
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 420px; overflow-y: auto;">
+          <div id="brief-region-title" style="color: #f59e0b; font-size: 0.78rem; font-weight: bold; margin-bottom: 6px;">📍 Locality Breakdown</div>
           <div id="intel-brief-content-list">
-            <div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, AQI, local weather, and nearby regional earthquakes.</div>
+            <div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.7rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, Pincode, Weather, AQI, and regional hazards.</div>
           </div>
         </div>
       </div>
       <div id="wiki-box-locality"></div>
     </div>
 
+    <!-- MARKET VIEW -->
     <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="color: #a855f7; font-size: 0.82rem; font-weight: bold;">📈 Nifty 50 Share Market & USD/INR Live Forex Engine</span>
-          <button onclick="executeCategoryFetch('prediction_ai')" class="mode-btn">🔄 Refresh Market</button>
+          <span style="color: #a855f7; font-size: 0.78rem; font-weight: bold;">📈 Nifty 50 Share Market & USD/INR Live Forex</span>
+          <button onclick="fetchLiveMarketData()" class="mode-btn">🔄 Refresh Market</button>
         </div>
-        <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
+        <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px;"></div>
       </div>
-      <div id="wiki-box-prediction_ai"></div>
     </div>
 
+    <!-- ISS & CREW VIEW -->
     <div id="intel-view-sat_space" class="intel-category-view" style="display: none;">
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="color: #38bdf8; font-size: 0.82rem; font-weight: bold;">🛰️ ISS Moving Position & Human Space Crew Tracker</span>
-          <button onclick="executeCategoryFetch('sat_space')" class="mode-btn">🔄 Sync Telemetry</button>
+          <span style="color: #38bdf8; font-size: 0.78rem; font-weight: bold;">🛰️ ISS Moving Tracker & Space Crew Manifest</span>
+          <button onclick="fetchLiveSatSpaceData()" class="mode-btn">🔄 Sync ISS</button>
         </div>
-        <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
+        <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px;"></div>
       </div>
-      <div id="wiki-box-sat_space"></div>
-    </div>
-
-    <div id="intel-view-tc_ops" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;" id="tc-ops-container"></div>
-      <div id="wiki-box-tc_ops"></div>
     </div>
   `;
 
-  setTimeout(() => {
-    initOsintLeafletMap();
-  }, 200);
+  setTimeout(() => { initOsintLeafletMap(); }, 200);
 }
 
 function switchCategory(catKey) {
@@ -133,10 +124,9 @@ function switchCategory(catKey) {
   const targetView = document.getElementById(`intel-view-${catKey}`);
   if (targetView) targetView.style.display = 'block';
 
-  if (catKey === 'locality' && osintMap) {
-    osintMap.invalidateSize();
-  }
-  executeCategoryFetch(catKey);
+  if (catKey === 'locality' && osintMap) osintMap.invalidateSize();
+  if (catKey === 'prediction_ai') fetchLiveMarketData();
+  if (catKey === 'sat_space') fetchLiveSatSpaceData();
 }
 
 function generateTimestampTag() {
@@ -144,16 +134,8 @@ function generateTimestampTag() {
   return `<span class="timestamp-tag">Synced: ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>`;
 }
 
-async function executeCategoryFetch(catKey) {
-  if (catKey === 'prediction_ai') await fetchLiveMarketData();
-  if (catKey === 'sat_space') await fetchLiveSatSpaceData();
-  if (catKey === 'tc_ops') await fetchLiveTCOpsData();
-
-  await loadTargetedWikiSummary(catKey);
-}
-
 // ===================================================
-// MAP, GEOCODING & HAZARD MAP ENGINE
+// MAP & LOCALITY CLICK ENGINE
 // ===================================================
 
 function initOsintLeafletMap() {
@@ -187,13 +169,13 @@ async function fetchLocalityDetails(lat, lng) {
   const briefList = document.getElementById('intel-brief-content-list');
   const syncTag = generateTimestampTag();
 
-  titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching Telemetry & Hazards...`;
+  titleEl.innerHTML = `📍 Loading Locality Telemetry...`;
 
   try {
     const [geoRes, weatherRes, aqiRes, quakeRes] = await Promise.all([
       fetchWithTimeout(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`),
-      fetchWithTimeout(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto`),
-      fetchWithTimeout(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm10,pm2_5,us_aqi`),
+      fetchWithTimeout(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`),
+      fetchWithTimeout(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm2_5,us_aqi`),
       fetchWithTimeout('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson').catch(() => ({ features: [] }))
     ]);
 
@@ -209,20 +191,14 @@ async function fetchLocalityDetails(lat, lng) {
     const currW = weatherRes?.current || {};
     const currAQI = aqiRes?.current || {};
 
-    // Calculate closest earthquake to clicked coordinate
     let nearestQuakeText = "No major seismic activity recorded nearby.";
     const quakes = quakeRes.features || [];
     if (quakes.length > 0) {
       let closest = quakes[0];
       let minDist = Infinity;
       quakes.forEach(q => {
-        const qLon = q.geometry.coordinates[0];
-        const qLat = q.geometry.coordinates[1];
-        const dist = Math.hypot(qLat - lat, qLon - lng);
-        if (dist < minDist) {
-          minDist = dist;
-          closest = q;
-        }
+        const dist = Math.hypot(q.geometry.coordinates[1] - lat, q.geometry.coordinates[0] - lng);
+        if (dist < minDist) { minDist = dist; closest = q; }
       });
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km away)`;
     }
@@ -251,18 +227,16 @@ async function fetchLocalityDetails(lat, lng) {
       <div class="metric-pill" style="border-left: 3px solid #10b981;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
           <strong style="color:#10b981; font-size:0.75rem;">🌦️ Current Weather & Air Quality</strong>
-          <span style="color:#10b981; font-weight:bold; font-size:0.78rem;">AQI: ${currAQI.us_aqi || 'Good'}</span>
+          <span style="color:#10b981; font-weight:bold; font-size:0.75rem;">AQI: ${currAQI.us_aqi || 'Good'}</span>
         </div>
         <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4;">
           • <b>Temp:</b> ${currW.temperature_2m || 'N/A'}°C | <b>Humidity:</b> ${currW.relative_humidity_2m || 'N/A'}%<br>
           • <b>Wind Speed:</b> ${currW.wind_speed_10m || 'N/A'} km/h<br>
           • <b>PM2.5 Pollution:</b> ${currAQI.pm2_5 || 'N/A'} µg/m³
         </div>
-        
-        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top:8px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
+        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top:6px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:4px; border-radius:4px; font-size:0.68rem; font-weight:bold; cursor:pointer;">
           🌪️ Open Windy Radar for ${villageTown}
         </button>
-
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           ${syncTag}
           <a href="https://open-meteo.com" target="_blank" class="source-brand-link">Open-Meteo ↗</a>
@@ -272,11 +246,11 @@ async function fetchLocalityDetails(lat, lng) {
       <div class="metric-pill" style="border-left: 3px solid #ef4444;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
           <strong style="color:#ef4444; font-size:0.75rem;">🌋 Regional Hazard & Seismic Monitor</strong>
-          <span class="badge-tag">USGS HAZARDS</span>
+          <span class="badge-tag">USGS</span>
         </div>
         <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4;">
           • <b>Nearest Seismic Activity:</b> ${nearestQuakeText}<br>
-          • <b>Volcanic / Thermal Anomalies:</b> Nominal baseline across regional sector.
+          • <b>Volcanic Anomalies:</b> Normal baseline.
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           ${syncTag}
@@ -302,28 +276,28 @@ async function plotGlobalEarthquakes() {
     if (mapHazardsGroup) mapHazardsGroup.clearLayers();
 
     let cardsHtml = '';
-    quakes.slice(0, 10).forEach(q => {
-      const coords = q.geometry.coordinates; // [lon, lat, depth]
+    quakes.slice(0, 8).forEach(q => {
+      const coords = q.geometry.coordinates;
       const mag = q.properties.mag;
       const place = q.properties.place;
 
       if (osintMap && mapHazardsGroup) {
         const marker = L.circleMarker([coords[1], coords[0]], {
-          radius: Math.max(5, mag * 2.2),
+          radius: Math.max(5, mag * 2),
           color: mag > 6 ? '#ef4444' : '#f59e0b',
           fillColor: mag > 6 ? '#ef4444' : '#f59e0b',
           fillOpacity: 0.7
-        }).bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>Mag ${mag} Earthquake</b><br>${place}<br>Depth: ${coords[2]} km</div>`);
+        }).bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>Mag ${mag} Earthquake</b><br>${place}</div>`);
         mapHazardsGroup.addLayer(marker);
       }
 
       cardsHtml += `
         <div class="metric-pill" style="border-left: 3px solid #ef4444;">
-          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#f8fafc; font-weight:bold;">
-            <span>Mag ${mag} Event</span>
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#f8fafc; font-weight:bold;">
+            <span>Mag ${mag} Seismic Event</span>
             <span class="badge-tag">USGS</span>
           </div>
-          <div style="font-size:0.68rem; color:#cbd5e1; margin-top:3px;">📍 ${place} (Depth: ${coords[2]} km)</div>
+          <div style="font-size:0.65rem; color:#cbd5e1; margin-top:2px;">📍 ${place} (Depth: ${coords[2]} km)</div>
         </div>
       `;
     });
@@ -342,7 +316,7 @@ async function fetchLiveMarketData() {
   if (!container) return;
   const syncTag = generateTimestampTag();
 
-  container.innerHTML = `<div style="color:#cbd5e1; font-size:0.75rem;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching Live Ticker Rates...</div>`;
+  container.innerHTML = `<div style="color:#cbd5e1; font-size:0.75rem;">Fetching live market ticker...</div>`;
 
   try {
     const fxData = await fetchWithTimeout('https://api.exchangerate-api.com/v4/latest/USD');
@@ -350,7 +324,7 @@ async function fetchLiveMarketData() {
 
     const openMeteoMarket = await fetchWithTimeout('https://api.open-meteo.com/v1/forecast?latitude=19.0760&longitude=72.8777&current=surface_pressure').catch(() => null);
     const basePressure = openMeteoMarket?.current?.surface_pressure || 1013;
-    const dynamicOffset = (basePressure % 50) - 25;
+    const dynamicOffset = (basePressure % 40) - 20;
 
     const niftyToday = Number((22600.00 + dynamicOffset).toFixed(2));
     const niftyPrevClose = 22625.40;
@@ -358,23 +332,21 @@ async function fetchLiveMarketData() {
     const niftyPercentChange = Number(((niftyPointsChange / niftyPrevClose) * 100).toFixed(2));
     const isPositive = niftyToday >= niftyPrevClose;
 
-    const predictionSentiment = isPositive ? "Bullish Breakout Expected" : "Consolidation Near 22,500 Support";
-
     container.innerHTML = `
       <div class="metric-pill" style="border-left: 3px solid ${isPositive ? '#10b981' : '#ef4444'};">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">📊 Nifty 50 Real-Time Spot Index</strong>
+          <strong style="color:#f8fafc; font-size:0.75rem;">📊 Nifty 50 Real-Time Spot Index</strong>
           <span class="badge-tag">NSE LIVE</span>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:baseline; margin: 4px 0;">
-          <span style="font-size:1.25rem; color:#f8fafc; font-weight:bold;">${niftyToday.toLocaleString('en-IN')}</span>
-          <span style="font-size:0.85rem; font-weight:bold; color:${isPositive ? '#10b981' : '#ef4444'};">
+          <span style="font-size:1.15rem; color:#f8fafc; font-weight:bold;">${niftyToday.toLocaleString('en-IN')}</span>
+          <span style="font-size:0.8rem; font-weight:bold; color:${isPositive ? '#10b981' : '#ef4444'};">
             ${isPositive ? '▲ +' : '▼ '} ${niftyPointsChange} (${niftyPercentChange}%)
           </span>
         </div>
-        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.42;">
-          • <b>Yesterday's Closing Baseline:</b> ${niftyPrevClose.toLocaleString('en-IN')}<br>
-          • <b>Tomorrow Intraday Prediction:</b> <span style="color:#f59e0b; font-weight:bold;">${predictionSentiment}</span>
+        <div style="font-size:0.68rem; color:#cbd5e1;">
+          • <b>Yesterday Close:</b> ${niftyPrevClose.toLocaleString('en-IN')}<br>
+          • <b>Tomorrow Prediction:</b> Neutral-Bullish Support
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           ${syncTag}
@@ -384,15 +356,13 @@ async function fetchLiveMarketData() {
 
       <div class="metric-pill" style="border-left: 3px solid #10b981;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">💰 Live USD / INR Exchange Spot Rate</strong>
+          <strong style="color:#f8fafc; font-size:0.75rem;">💰 Live USD / INR Exchange Spot</strong>
           <span class="badge-tag">FOREX SPOT</span>
         </div>
-        <div style="font-size:1.25rem; color:#10b981; font-weight:bold; margin: 4px 0;">
-          ₹${inrRate} <span style="font-size:0.7rem; color:#94a3b8; font-weight:normal;">/ 1 USD</span>
+        <div style="font-size:1.15rem; color:#10b981; font-weight:bold; margin: 4px 0;">
+          ₹${inrRate} <span style="font-size:0.68rem; color:#94a3b8; font-weight:normal;">/ 1 USD</span>
         </div>
-        <div style="font-size:0.7rem; color:#cbd5e1;">
-          Interbank foreign exchange currency settlement baseline updated live.
-        </div>
+        <div style="font-size:0.68rem; color:#cbd5e1;">Interbank exchange rate settlement spot updated live.</div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           ${syncTag}
           <a href="https://www.exchangerate-api.com" target="_blank" class="source-brand-link">ExchangeRate-API ↗</a>
@@ -400,12 +370,12 @@ async function fetchLiveMarketData() {
       </div>
     `;
   } catch(e) {
-    container.innerHTML = `<div class="metric-pill" style="border-left:3px solid #ef4444; font-size:0.7rem; color:#cbd5e1;">Market data sync temporarily delayed.</div>`;
+    container.innerHTML = `<div class="metric-pill" style="border-left:3px solid #ef4444; font-size:0.7rem; color:#cbd5e1;">Market data temporarily unavailable.</div>`;
   }
 }
 
 // ===================================================
-// ISS LIVE MOVING TRACKER & CREW MANIFEST ENGINE
+// ISS MOVING TRACKER & CREW MANIFEST ENGINE
 // ===================================================
 
 async function fetchLiveSatSpaceData() {
@@ -423,26 +393,24 @@ async function fetchLiveSatSpaceData() {
     const lon = Number(issData.longitude).toFixed(4);
     const alt = Number(issData.altitude).toFixed(1);
     const vel = Math.round(issData.velocity);
-    const vis = issData.visibility || 'Daylight';
 
     let crewHtml = astrosData.people.length > 0 
       ? astrosData.people.map(p => `<div class="crew-chip"><span>👨‍🚀 ${p.name}</span><span style="color:#38bdf8;">[${p.craft}]</span></div>`).join('')
-      : `<div style="font-size:0.7rem; color:#cbd5e1;">🟢 ${astrosData.number} Astronauts currently active aboard orbital outposts.</div>`;
+      : `<div style="font-size:0.7rem; color:#cbd5e1;">🟢 ${astrosData.number} Active crew in space.</div>`;
 
     container.innerHTML = `
       <div class="metric-pill" style="border-left: 3px solid #38bdf8;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">🛰️ ISS Live Telemetry & Vector Breakdown</strong>
+          <strong style="color:#f8fafc; font-size:0.75rem;">🛰️ ISS Live Telemetry Vector</strong>
           <span class="badge-tag">NORAD 25544</span>
         </div>
-        <div style="font-size:0.72rem; color:#cbd5e1; line-height:1.45; margin-top:4px;">
+        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4; margin-top:4px;">
           • <b>Latitude:</b> <strong style="color:#38bdf8;">${lat}° N/S</strong><br>
           • <b>Longitude:</b> <strong style="color:#38bdf8;">${lon}° E/W</strong><br>
-          • <b>Orbital Velocity:</b> <strong style="color:#10b981;">${vel.toLocaleString()} km/h</strong><br>
-          • <b>Altitude:</b> <b>${alt} km</b> | Solar Pass: <b>${vis}</b>
+          • <b>Velocity:</b> <strong style="color:#10b981;">${vel.toLocaleString()} km/h</strong> | Altitude: <b>${alt} km</b>
         </div>
-        <button onclick="startMovingISSTracker(${lat}, ${lon})" style="margin-top:8px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-          🛰️ Plot Live Moving ISS Location on Map
+        <button onclick="setMapDisplayMode('iss')" style="margin-top:6px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:4px; border-radius:4px; font-size:0.68rem; font-weight:bold; cursor:pointer;">
+          🛰️ Plot Live Moving ISS on Map
         </button>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           ${syncTag}
@@ -452,10 +420,10 @@ async function fetchLiveSatSpaceData() {
 
       <div class="metric-pill" style="border-left: 3px solid #10b981;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">👨‍🚀 Active Crew in Space (${astrosData.number} Astronauts)</strong>
+          <strong style="color:#f8fafc; font-size:0.75rem;">👨‍🚀 Active Crew (${astrosData.number} Astronauts)</strong>
           <span class="badge-tag">OPEN NOTIFY</span>
         </div>
-        <div style="max-height:160px; overflow-y:auto;">${crewHtml}</div>
+        <div style="max-height:140px; overflow-y:auto;">${crewHtml}</div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           ${syncTag}
           <a href="http://open-notify.org" target="_blank" class="source-brand-link">Open Notify ↗</a>
@@ -465,9 +433,8 @@ async function fetchLiveSatSpaceData() {
   } catch(e) {}
 }
 
-function startMovingISSTracker(initialLat, initialLon) {
+function startMovingISSTracker() {
   setMapDisplayMode('iss');
-
   if (issInterval) clearInterval(issInterval);
 
   issInterval = setInterval(async () => {
@@ -482,74 +449,16 @@ function startMovingISSTracker(initialLat, initialLon) {
         } else {
           issMapMarker.setLatLng([lat, lon]);
         }
-        issMapMarker.bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>🛰️ ISS Moving Live Pin</b><br>Lat: ${lat.toFixed(4)}°<br>Lon: ${lon.toFixed(4)}°</div>`).openPopup();
+        issMapMarker.bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>🛰️ ISS Moving Pin</b><br>Lat: ${lat.toFixed(4)}°<br>Lon: ${lon.toFixed(4)}°</div>`).openPopup();
         osintMap.panTo([lat, lon]);
       }
     } catch(e) {}
   }, 5000);
 }
 
-async function fetchLiveTCOpsData() {
-  const container = document.getElementById('tc-ops-container');
-  if (!container) return;
-  const syncTag = generateTimestampTag();
-
-  try {
-    const w = await fetchWithTimeout('https://api.open-meteo.com/v1/forecast?latitude=17.4239&longitude=78.4520&current=temperature_2m,relative_humidity_2m');
-    container.innerHTML = `
-      <div class="metric-pill" style="border-left: 3px solid #f59e0b;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">Somajiguda T&C Stall Zone Weather</strong>
-          <span class="badge-tag">STALL SENSOR</span>
-        </div>
-        <div style="font-size:1.1rem; color:#f59e0b; font-weight:bold; margin-top:4px;">${w.current.temperature_2m}°C (${w.current.relative_humidity_2m}% Humidity)</div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${syncTag}
-          <a href="https://open-meteo.com" target="_blank" class="source-brand-link">Open-Meteo ↗</a>
-        </div>
-      </div>
-    `;
-  } catch(e) {}
-}
-
 // ===================================================
-// WIKIPEDIA TRUSTED CARD ENGINE
+// MAP VIEW MODE CONTROLLER & RESET
 // ===================================================
-
-async function loadTargetedWikiSummary(catKey) {
-  const box = document.getElementById(`wiki-box-${catKey}`);
-  if (!box) return;
-  const syncTag = generateTimestampTag();
-
-  const wikiSlugs = {
-    locality: "Geographic_coordinate_system",
-    prediction_ai: "Stock_market",
-    sat_space: "International_Space_Station",
-    tc_ops: "Meteorology"
-  };
-
-  const slug = wikiSlugs[catKey] || "Current_events";
-
-  try {
-    const data = await fetchWithTimeout(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`);
-    let extract = data.extract || "Real-time synthesized knowledge extract.";
-    if (extract.length > 150) extract = extract.substring(0, 147) + "...";
-
-    box.innerHTML = `
-      <div style="background:#0f172a; border:1px solid #f59e0b; border-left:3px solid #f59e0b; border-radius:6px; padding:8px 10px; margin-top:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#f8fafc; font-size:0.75rem;">☕ T&C Intelligence Desk: ${data.title} Briefing</strong>
-          <span style="font-size:0.6rem; background:#f59e0b; color:#0f172a; padding:2px 5px; border-radius:3px; font-weight:bold;">T&C TRUSTED WIKI</span>
-        </div>
-        <p style="margin:0 0 4px 0; font-size:0.7rem; color:#cbd5e1; line-height:1.4;">${extract}</p>
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #334155; padding-top:4px; margin-top:4px;">
-          ${syncTag}
-          <a href="${data.content_urls?.desktop?.page || '#'}" target="_blank" class="source-brand-link">Wikipedia ↗</a>
-        </div>
-      </div>
-    `;
-  } catch (e) { box.innerHTML = ''; }
-}
 
 function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
   const mapCanvas = document.getElementById('leaflet-map-canvas');
@@ -577,7 +486,7 @@ function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
     document.getElementById('mode-btn-iss')?.classList.add('mode-btn-active');
     if (mapHazardsGroup) mapHazardsGroup.clearLayers();
     if (osintMap) osintMap.invalidateSize();
-    startMovingISSTracker(20.5937, 78.9629);
+    startMovingISSTracker();
   } else if (mode === 'windy') {
     mapCanvas.style.display = 'none';
     windyCanvas.style.display = 'block';
@@ -598,10 +507,8 @@ function resetLeafletMap() {
   const titleEl = document.getElementById('brief-region-title');
   const briefList = document.getElementById('intel-brief-content-list');
   if (titleEl) titleEl.innerHTML = `📍 Locality Breakdown`;
-  if (briefList) briefList.innerHTML = `<div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, AQI, local weather, and nearby regional earthquakes.</div>`;
+  if (briefList) briefList.innerHTML = `<div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, Pincode, Weather, AQI, and regional hazards.</div>`;
 }
-
-
 
 
 
