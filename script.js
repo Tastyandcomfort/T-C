@@ -1181,8 +1181,9 @@ let currentDestName = "";
 let telemetryMarker = null;
 let activePinnedLat = null;
 let activePinnedLng = null;
+let pendingLat = null;
+let pendingLng = null;
 let masterTelemetryData = null; // Common destination & telemetry data
-let radarPressTimer = null; // Timer for long-press detection
 
 // Initialize Leaflet Map with script-enforced minimum mobile height
 const mapDivEl = document.getElementById('map');
@@ -1266,6 +1267,7 @@ function removePinnedLocation() {
   masterTelemetryData = null;
 
   closeWindyOverlay();
+  closeConfirmModal();
 
   const infoBox = document.getElementById('route-info');
   if (infoBox) {
@@ -1278,7 +1280,7 @@ function removePinnedLocation() {
   setTimeout(() => map.invalidateSize(), 50);
 }
 
-// Open Same-Container Windy Radar Overlay (Allows normal double-tap zoom & long-press to pin)
+// Open Same-Container Windy Radar Overlay
 function openSameContainerWindy() {
   if (!activePinnedLat || !activePinnedLng || !masterTelemetryData) {
     alert("Please search or pin a location on the map first!");
@@ -1306,10 +1308,9 @@ function openSameContainerWindy() {
 
   windyOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:8px; display:flex; flex-direction:column; overflow:hidden;';
 
-  // Transparent shield captures long-press (mousedown/touchstart for 700ms), letting double-taps pass through to iframe for zoom
   windyOverlay.innerHTML = `
     <!-- TOP RADAR CONTROL BAR WITH CLICK-BLEED PREVENTION -->
-    <div onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; flex-shrink:0; pointer-events:auto; z-index:1000;">
+    <div onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; flex-shrink:0; z-index:1000;">
       <div style="display:flex; align-items:center; gap:5px; overflow:hidden;">
         <span style="font-size:0.68rem; color:#38bdf8; font-weight:bold; white-space:nowrap;">🌪️ Radar:</span>
         <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</span>
@@ -1317,31 +1318,13 @@ function openSameContainerWindy() {
         <span style="background: #1e293b; border: 1px solid ${aqiBadge.color}; color: ${aqiBadge.color}; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">${aqiBadge.text}</span>
       </div>
       <button onclick="switchMode('driving')" style="background:#ef4444; color:#ffffff; border:none; padding:3px 8px; border-radius:3px; font-size:0.62rem; font-weight:bold; cursor:pointer; flex-shrink:0;">
-        ✖ Close
+        ✖ Close Radar
       </button>
     </div>
     <div style="flex-grow:1; width:100%; height:100%; position:relative;">
-      <div id="radar-touch-shield" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; background:transparent;" 
-           onmousedown="startRadarLongPress(event)" onmouseup="cancelRadarLongPress()" onttouchstart="startRadarLongPress(event)" ontouchend="cancelRadarLongPress()" title="Double-tap to zoom, Hold 1s to pin location">
-      </div>
       <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${activePinnedLat}&lon=${activePinnedLng}&detailLat=${activePinnedLat}&detailLon=${activePinnedLng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%; display:block;"></iframe>
     </div>
   `;
-}
-
-// Long-press handlers for pinning from radar view
-function startRadarLongPress(e) {
-  radarPressTimer = setTimeout(() => {
-    closeWindyOverlay();
-    alert("Long press detected! Please tap on the main interactive map to select your new destination point.");
-  }, 900); // 900ms hold triggers new pin prompt
-}
-
-function cancelRadarLongPress() {
-  if (radarPressTimer) {
-    clearTimeout(radarPressTimer);
-    radarPressTimer = null;
-  }
 }
 
 function closeWindyOverlay() {
@@ -1367,6 +1350,7 @@ function switchMode(mode) {
   }
   
   closeWindyOverlay();
+  closeConfirmModal();
   currentMode = mode;
 
   if (mode === 'driving' || mode === 'walking') {
@@ -1381,18 +1365,65 @@ function switchMode(mode) {
   }, 50);
 }
 
-// MAP CLICK LISTENER
+// MAP CLICK LISTENER: Intercepts clicks during radar active state and prompts confirmation
 map.on('click', async function(e) {
-  const windyOverlay = document.getElementById('windy-overlay-frame');
-  if (windyOverlay) return; // Block single clicks when radar is active
-
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
+
+  const windyOverlay = document.getElementById('windy-overlay-frame');
+  if (windyOverlay) {
+    // Show confirmation dialog before updating destination from radar mode
+    pendingLat = lat;
+    pendingLng = lng;
+    showConfirmModal(lat, lng);
+    return;
+  }
+
   activePinnedLat = lat;
   activePinnedLng = lng;
-
   await fetchLocationDataAndRoutes(lat, lng);
 });
+
+// Show Apple-Styled Confirmation Modal
+function showConfirmModal(lat, lng) {
+  const mapDiv = document.getElementById('map');
+  if (!mapDiv) return;
+
+  let modal = document.getElementById('confirm-pin-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'confirm-pin-modal';
+    mapDiv.appendChild(modal);
+  }
+
+  modal.style.cssText = 'position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:1001; background:#0f172a; border:1px solid #38bdf8; border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.6); font-family:system-ui, -apple-system, sans-serif; text-align:center; color:#f8fafc;';
+
+  modal.innerHTML = `
+    <div style="font-size:0.75rem; font-weight:800; color:#38bdf8; margin-bottom:4px;">📍 Confirm Destination Change?</div>
+    <div style="font-size:0.62rem; color:#cbd5e1; margin-bottom:8px;">New point selected: <b>${lat}, ${lng}</b></div>
+    <div style="display:flex; gap:6px;">
+      <button onclick="confirmDestinationChange()" style="flex:1; background:#059669; color:#fff; border:none; padding:5px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">YES, Update</button>
+      <button onclick="closeConfirmModal()" style="flex:1; background:#334155; color:#fff; border:none; padding:5px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">NO, Keep Current</button>
+    </div>
+  `;
+}
+
+function closeConfirmModal() {
+  const modal = document.getElementById('confirm-pin-modal');
+  if (modal) modal.remove();
+  pendingLat = null;
+  pendingLng = null;
+}
+
+async function confirmDestinationChange() {
+  if (pendingLat && pendingLng) {
+    activePinnedLat = pendingLat;
+    activePinnedLng = pendingLng;
+    closeConfirmModal();
+    closeWindyOverlay();
+    await fetchLocationDataAndRoutes(activePinnedLat, activePinnedLng);
+  }
+}
 
 // Universal fetch function for search and amenities
 async function fetchRouteData(query, customDisplayName = null) {
@@ -1438,7 +1469,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p> T&C fetching intel & routes...</p>
+      <p>Resolving location, Wikipedia summary, & routes...</p>
     </div>
   `;
 
@@ -1495,7 +1526,6 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km)`;
     }
 
-    // Fetch Wikipedia Summary for the locality/town/district
     let wikiSummary = "Detailed intelligence summary not available for this specific sector.";
     let wikiUrl = "#";
     try {
@@ -1551,7 +1581,7 @@ function renderMasterCard() {
     routes.forEach((route, index) => {
       const dist = (route.distance / 1000).toFixed(1);
       const timeFormatted = formatDuration(route.duration);
-      const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
+      const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
       
       optionsHtml += `
         <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -1570,7 +1600,7 @@ function renderMasterCard() {
     tabSpecificHtml = `
       <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc; margin-bottom: 6px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="font-weight: bold; color: #38bdf8;"> T&C Intelligence</span>
+          <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence & Wiki</span>
           <span style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">Verified Source 🟢</span>
         </div>
         <p style="margin: 0 0 6px 0; color: #cbd5e1; line-height: 1.35; font-size: 0.65rem;">${t.wikiSummary}</p>
@@ -1598,10 +1628,10 @@ function renderMasterCard() {
 
       <!-- 4 PERMANENT TOP MODE BUTTONS -->
       <div class="mode-switcher" style="display: flex; gap: 3px; margin-bottom: 8px;">
-        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Driving</button>
-        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Walking</button>
-        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Locality</button>
-        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Radar</button>
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚗 Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚶 Walking</button>
+        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;">📍 Locality</button>
+        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🌪️ Radar</button>
       </div>
 
       ${tabSpecificHtml}
@@ -1609,7 +1639,7 @@ function renderMasterCard() {
       <!-- BOTTOM CLEAR BUTTON TO RESET MAP -->
       ${activePinnedLat ? `
         <button onclick="removePinnedLocation()" style="width:100%; margin-top:8px; background:#1e293b; color:#ef4444; border:1px solid #ef4444; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-           Clear Pin & Reset Map
+          🗑️ Clear Pin & Reset Map
         </button>
       ` : ''}
 
@@ -1688,7 +1718,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 
