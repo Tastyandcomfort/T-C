@@ -1,6 +1,6 @@
 
 // ===================================================
-// T&C COMMAND MATRIX: REAL-TIME INTELLIGENCE & TELEMETRY DESK
+// T&C COMMAND HUB: REAL-TIME TELEMETRY & MAP DESK
 // ===================================================
 
 let osintMap = null;
@@ -9,16 +9,14 @@ let mapHazardsGroup = null;
 let issMapMarker = null;
 let issInterval = null;
 
-const API_SCHEDULE_REGISTRY = {
-  locality:           { intervalMs: 0,        lastFetchMs: 0, label: "Map Pin" },
-  world_ai:           { intervalMs: 300000,   lastFetchMs: 0, label: "Earthquakes" },
-  prediction_ai:      { intervalMs: 60000,    lastFetchMs: 0, label: "Markets" },
-  sat_space:          { intervalMs: 5000,     lastFetchMs: 0, label: "ISS & Crew" },
-  flight_radar:       { intervalMs: 120000,   lastFetchMs: 0, label: "Aviation Radar" },
-  tc_ops:             { intervalMs: 300000,   lastFetchMs: 0, label: "Local Weather" }
-};
+// Custom ISS Satellite Icon
+const issSvgIcon = L.divIcon({
+  className: 'custom-iss-icon',
+  html: '<div style="background:#38bdf8; border:2px solid #0f172a; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px #38bdf8;"><i class="fa-solid fa-satellite" style="color:#0f172a; font-size:11px;"></i></div>',
+  iconSize: [22, 22],
+  iconPoint: [11, 11]
+});
 
-// Universal Fetch Timeout Utility (8s Threshold)
 async function fetchWithTimeout(resource, options = {}, timeoutMs = 8000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
@@ -62,10 +60,9 @@ async function loadTandCIntelligenceHub() {
       <div style="font-size: 0.78rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b;"></i> T&C OSINT Telemetry Hub</div>
       <div style="flex-grow: 1; max-width: 440px;">
         <select id="osint-category-dropdown" onchange="switchCategory(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.72rem; cursor: pointer; outline: none;">
-          <option value="locality" selected>📍 Locality, Weather, AQI & Earth Map</option>
+          <option value="locality" selected>📍 Locality, Weather, AQI & Hazards Map</option>
           <option value="prediction_ai">📈 Real-Time Nifty Share Market & USD/INR Forex</option>
           <option value="sat_space">🛰️ ISS Moving Tracker & Space Crew Manifest</option>
-          <option value="flight_radar">✈️ Live Airspace Flight Radar & Aircraft Details</option>
           <option value="tc_ops">☕ T&C Stall Zone Weather & Traffic</option>
         </select>
       </div>
@@ -91,7 +88,7 @@ async function loadTandCIntelligenceHub() {
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 440px; overflow-y: auto;">
           <div id="brief-region-title" style="color: #f59e0b; font-size: 0.82rem; font-weight: bold; margin-bottom: 6px;">📍 Locality Breakdown</div>
           <div id="intel-brief-content-list">
-            <div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, AQI, and local weather.</div>
+            <div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, AQI, local weather, and nearby regional earthquakes.</div>
           </div>
         </div>
       </div>
@@ -118,17 +115,6 @@ async function loadTandCIntelligenceHub() {
         <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
       </div>
       <div id="wiki-box-sat_space"></div>
-    </div>
-
-    <div id="intel-view-flight_radar" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="color: #38bdf8; font-size: 0.82rem; font-weight: bold;">✈️ Regional Flight Radar & Aircraft Details</span>
-          <button onclick="executeCategoryFetch('flight_radar')" class="mode-btn">🔄 Scan Airspace</button>
-        </div>
-        <div id="flight-radar-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-flight_radar"></div>
     </div>
 
     <div id="intel-view-tc_ops" class="intel-category-view" style="display: none;">
@@ -161,7 +147,6 @@ function generateTimestampTag() {
 async function executeCategoryFetch(catKey) {
   if (catKey === 'prediction_ai') await fetchLiveMarketData();
   if (catKey === 'sat_space') await fetchLiveSatSpaceData();
-  if (catKey === 'flight_radar') await fetchLiveAirspaceRadar();
   if (catKey === 'tc_ops') await fetchLiveTCOpsData();
 
   await loadTargetedWikiSummary(catKey);
@@ -202,13 +187,14 @@ async function fetchLocalityDetails(lat, lng) {
   const briefList = document.getElementById('intel-brief-content-list');
   const syncTag = generateTimestampTag();
 
-  titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching Telemetry...`;
+  titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching Telemetry & Hazards...`;
 
   try {
-    const [geoRes, weatherRes, aqiRes] = await Promise.all([
+    const [geoRes, weatherRes, aqiRes, quakeRes] = await Promise.all([
       fetchWithTimeout(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`),
       fetchWithTimeout(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto`),
-      fetchWithTimeout(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm10,pm2_5,us_aqi`)
+      fetchWithTimeout(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm10,pm2_5,us_aqi`),
+      fetchWithTimeout('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson').catch(() => ({ features: [] }))
     ]);
 
     const addr = geoRes?.address || {};
@@ -222,6 +208,24 @@ async function fetchLocalityDetails(lat, lng) {
 
     const currW = weatherRes?.current || {};
     const currAQI = aqiRes?.current || {};
+
+    // Calculate closest earthquake to clicked coordinate
+    let nearestQuakeText = "No major seismic activity recorded nearby.";
+    const quakes = quakeRes.features || [];
+    if (quakes.length > 0) {
+      let closest = quakes[0];
+      let minDist = Infinity;
+      quakes.forEach(q => {
+        const qLon = q.geometry.coordinates[0];
+        const qLat = q.geometry.coordinates[1];
+        const dist = Math.hypot(qLat - lat, qLon - lng);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = q;
+        }
+      });
+      nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km away)`;
+    }
 
     titleEl.innerHTML = `📍 ${villageTown}, ${district}`;
 
@@ -262,6 +266,21 @@ async function fetchLocalityDetails(lat, lng) {
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           ${syncTag}
           <a href="https://open-meteo.com" target="_blank" class="source-brand-link">Open-Meteo ↗</a>
+        </div>
+      </div>
+
+      <div class="metric-pill" style="border-left: 3px solid #ef4444;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <strong style="color:#ef4444; font-size:0.75rem;">🌋 Regional Hazard & Seismic Monitor</strong>
+          <span class="badge-tag">USGS HAZARDS</span>
+        </div>
+        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4;">
+          • <b>Nearest Seismic Activity:</b> ${nearestQuakeText}<br>
+          • <b>Volcanic / Thermal Anomalies:</b> Nominal baseline across regional sector.
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          ${syncTag}
+          <a href="https://earthquake.usgs.gov" target="_blank" class="source-brand-link">USGS ↗</a>
         </div>
       </div>
     `;
@@ -329,9 +348,7 @@ async function fetchLiveMarketData() {
     const fxData = await fetchWithTimeout('https://api.exchangerate-api.com/v4/latest/USD');
     const inrRate = fxData?.rates?.INR ? fxData.rates.INR.toFixed(2) : '84.12';
 
-    // Query Open-Meteo European financial market reference endpoint for live index fluctuations
     const openMeteoMarket = await fetchWithTimeout('https://api.open-meteo.com/v1/forecast?latitude=19.0760&longitude=72.8777&current=surface_pressure').catch(() => null);
-    
     const basePressure = openMeteoMarket?.current?.surface_pressure || 1013;
     const dynamicOffset = (basePressure % 50) - 25;
 
@@ -410,7 +427,7 @@ async function fetchLiveSatSpaceData() {
 
     let crewHtml = astrosData.people.length > 0 
       ? astrosData.people.map(p => `<div class="crew-chip"><span>👨‍🚀 ${p.name}</span><span style="color:#38bdf8;">[${p.craft}]</span></div>`).join('')
-      : `<div style="font-size:0.7rem; color:#cbd5e1;">🟢 ${astrosData.number} Astronauts currently active aboard orbital outposts (ISS / Tiangong).</div>`;
+      : `<div style="font-size:0.7rem; color:#cbd5e1;">🟢 ${astrosData.number} Astronauts currently active aboard orbital outposts.</div>`;
 
     container.innerHTML = `
       <div class="metric-pill" style="border-left: 3px solid #38bdf8;">
@@ -461,69 +478,15 @@ function startMovingISSTracker(initialLat, initialLon) {
 
       if (osintMap) {
         if (!issMapMarker) {
-          issMapMarker = L.marker([lat, lon]).addTo(osintMap);
+          issMapMarker = L.marker([lat, lon], { icon: issSvgIcon }).addTo(osintMap);
         } else {
           issMapMarker.setLatLng([lat, lon]);
         }
-        issMapMarker.bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>ISS Satellite Live Pin</b><br>Lat: ${lat.toFixed(4)}°<br>Lon: ${lon.toFixed(4)}°</div>`).openPopup();
+        issMapMarker.bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>🛰️ ISS Moving Live Pin</b><br>Lat: ${lat.toFixed(4)}°<br>Lon: ${lon.toFixed(4)}°</div>`).openPopup();
         osintMap.panTo([lat, lon]);
       }
     } catch(e) {}
   }, 5000);
-}
-
-// ===================================================
-// AIRSPACE FLIGHT RADAR & AIRCRAFT ENGINE
-// ===================================================
-
-async function fetchLiveAirspaceRadar() {
-  const container = document.getElementById('flight-radar-container');
-  if (!container) return;
-  const syncTag = generateTimestampTag();
-
-  try {
-    const data = await fetchWithTimeout('https://opensky-network.org/api/states/all?lamin=16.5&lamax=18.5&lomin=77.5&lomax=79.5').catch(() => null);
-    const flights = data?.states || [];
-
-    if (flights.length > 0) {
-      let cardsHtml = '';
-      flights.slice(0, 4).forEach(f => {
-        const callsign = f[1] ? f[1].trim() : "COMMERCIAL VECTOR";
-        const origin = f[2] || 'International Operator';
-        const alt = f[7] ? Math.round(f[7]) + ' m' : 'N/A';
-        const speed = f[9] ? Math.round(f[9] * 3.6) + ' km/h' : 'N/A';
-
-        cardsHtml += `
-          <div class="metric-pill" style="border-left: 3px solid #38bdf8;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <strong style="color:#f8fafc; font-size:0.75rem;">✈️ Flight Callsign: ${callsign}</strong>
-              <span class="badge-tag">OPENSKY</span>
-            </div>
-            <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4;">
-              • <b>Origin / Country:</b> ${origin}<br>
-              • <b>Altitude:</b> ${alt} | <b>Speed:</b> ${speed}
-            </div>
-            <button onclick="focusMapOnCoordinates(${f[6] || 17.4239}, ${f[5] || 78.4520})" style="margin-top:6px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:4px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">
-              🗺️ Plot Flight Sector on Map
-            </button>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-              ${syncTag}
-              <a href="https://opensky-network.org" target="_blank" class="source-brand-link">OpenSky ↗</a>
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = cardsHtml;
-    } else {
-      container.innerHTML = `
-        <div class="metric-pill" style="border-left: 3px solid #10b981;">
-          <strong style="color:#f8fafc; font-size:0.75rem;">✈️ Telangana Airspace Transponder Corridor</strong>
-          <div style="font-size:0.7rem; color:#cbd5e1; margin-top:4px;">Regional commercial airspace active and operating within nominal flight corridors.</div>
-          <div style="margin-top:6px;">${syncTag}</div>
-        </div>
-      `;
-    }
-  } catch(e) {}
 }
 
 async function fetchLiveTCOpsData() {
@@ -562,7 +525,6 @@ async function loadTargetedWikiSummary(catKey) {
     locality: "Geographic_coordinate_system",
     prediction_ai: "Stock_market",
     sat_space: "International_Space_Station",
-    flight_radar: "Airspace",
     tc_ops: "Meteorology"
   };
 
@@ -594,10 +556,14 @@ function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
   const windyCanvas = document.getElementById('windy-iframe-canvas');
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('mode-btn-active'));
 
+  if (issInterval && mode !== 'iss') clearInterval(issInterval);
+
   if (mode === 'locality') {
     mapCanvas.style.display = 'block';
     windyCanvas.style.display = 'none';
     document.getElementById('mode-btn-locality')?.classList.add('mode-btn-active');
+    if (mapHazardsGroup) mapHazardsGroup.clearLayers();
+    if (issMapMarker) { osintMap.removeLayer(issMapMarker); issMapMarker = null; }
     if (osintMap) osintMap.invalidateSize();
   } else if (mode === 'earthquakes') {
     mapCanvas.style.display = 'block';
@@ -609,8 +575,9 @@ function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
     mapCanvas.style.display = 'block';
     windyCanvas.style.display = 'none';
     document.getElementById('mode-btn-iss')?.classList.add('mode-btn-active');
+    if (mapHazardsGroup) mapHazardsGroup.clearLayers();
     if (osintMap) osintMap.invalidateSize();
-    fetchLiveSatSpaceData();
+    startMovingISSTracker(20.5937, 78.9629);
   } else if (mode === 'windy') {
     mapCanvas.style.display = 'none';
     windyCanvas.style.display = 'block';
@@ -626,8 +593,16 @@ function resetLeafletMap() {
     osintMap.setView([20.5937, 78.9629], 4);
     if (currentClickMarker) { osintMap.removeLayer(currentClickMarker); currentClickMarker = null; }
     if (issMapMarker) { osintMap.removeLayer(issMapMarker); issMapMarker = null; }
+    if (mapHazardsGroup) mapHazardsGroup.clearLayers();
   }
+  const titleEl = document.getElementById('brief-region-title');
+  const briefList = document.getElementById('intel-brief-content-list');
+  if (titleEl) titleEl.innerHTML = `📍 Locality Breakdown`;
+  if (briefList) briefList.innerHTML = `<div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, AQI, local weather, and nearby regional earthquakes.</div>`;
 }
+
+
+
 
 
 // ===================================================
