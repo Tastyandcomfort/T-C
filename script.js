@@ -1396,34 +1396,55 @@ function showConfirmModal(lat, lng) {
     mapDiv.appendChild(modal);
   }
 
-  modal.style.cssText = 'position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:1001; background:#0f172a; border:1px solid #38bdf8; border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.6); font-family:system-ui, -apple-system, sans-serif; text-align:center; color:#f8fafc;';
+  // Ensure high z-index and pointer-events so buttons are fully clickable
+  modal.style.cssText = 'position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:#0f172a; border:1px solid #38bdf8; border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.8); font-family:system-ui, -apple-system, sans-serif; text-align:center; color:#f8fafc; pointer-events:auto;';
 
   modal.innerHTML = `
     <div style="font-size:0.75rem; font-weight:800; color:#38bdf8; margin-bottom:4px;">📍 Confirm Destination Change?</div>
     <div style="font-size:0.62rem; color:#cbd5e1; margin-bottom:8px;">New point selected: <b>${lat}, ${lng}</b></div>
     <div style="display:flex; gap:6px;">
-      <button onclick="confirmDestinationChange()" style="flex:1; background:#059669; color:#fff; border:none; padding:5px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">YES, Update</button>
-      <button onclick="closeConfirmModal()" style="flex:1; background:#334155; color:#fff; border:none; padding:5px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer;">NO, Keep Current</button>
+      <button id="btn-confirm-yes" style="flex:1; background:#059669; color:#fff; border:none; padding:6px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer; pointer-events:auto;">YES, Update</button>
+      <button id="btn-confirm-no" style="flex:1; background:#334155; color:#fff; border:none; padding:6px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer; pointer-events:auto;">NO, Keep Current</button>
     </div>
   `;
+
+  // Explicitly attach event listeners to guarantee robust click response without inline string evaluation failures
+  document.getElementById('btn-confirm-yes').onclick = function(e) {
+    e.stopPropagation();
+    confirmDestinationChange();
+  };
+
+  document.getElementById('btn-confirm-no').onclick = function(e) {
+    e.stopPropagation();
+    closeConfirmModal();
+  };
 }
 
 function closeConfirmModal() {
   const modal = document.getElementById('confirm-pin-modal');
-  if (modal) modal.remove();
+  if (modal) {
+    modal.remove();
+  }
   pendingLat = null;
   pendingLng = null;
 }
 
 async function confirmDestinationChange() {
-  if (pendingLat && pendingLng) {
+  if (pendingLat !== null && pendingLng !== null) {
     activePinnedLat = pendingLat;
     activePinnedLng = pendingLng;
+    const targetLat = pendingLat;
+    const targetLng = pendingLng;
+    
     closeConfirmModal();
     closeWindyOverlay();
-    await fetchLocationDataAndRoutes(activePinnedLat, activePinnedLng);
+    
+    await fetchLocationDataAndRoutes(targetLat, targetLng);
+  } else {
+    closeConfirmModal();
   }
 }
+
 
 // Universal fetch function for search and amenities
 async function fetchRouteData(query, customDisplayName = null) {
