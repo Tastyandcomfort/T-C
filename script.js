@@ -1365,19 +1365,20 @@ function switchMode(mode) {
   }, 50);
 }
 
-// MAP CLICK LISTENER
+// MAP CLICK LISTENER: Protected with confirmation if a destination is already active
 map.on('click', async function(e) {
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
 
-  const windyOverlay = document.getElementById('windy-overlay-frame');
-  if (windyOverlay) {
+  // If a destination is already pinned, prompt confirmation before changing it
+  if (activePinnedLat !== null && activePinnedLng !== null) {
     pendingLat = lat;
     pendingLng = lng;
     showConfirmModal(lat, lng);
     return;
   }
 
+  // Otherwise, set it immediately if no destination is set yet
   activePinnedLat = lat;
   activePinnedLng = lng;
   await fetchLocationDataAndRoutes(lat, lng);
@@ -1466,7 +1467,6 @@ async function fetchRouteData(query, customDisplayName = null) {
 async function fetchIntelligenceSummary(villageTown, district, landmark, state, pincode, lat, lng) {
   const searchQueries = [villageTown, district, "Hyderabad"].filter(q => q && q !== 'Local Sector');
 
-  // Try Wikipedia First
   for (let term of searchQueries) {
     try {
       const searchRes = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(term)}&limit=1&namespace=0&format=json&origin=*`);
@@ -1494,7 +1494,6 @@ async function fetchIntelligenceSummary(villageTown, district, landmark, state, 
     }
   }
 
-  // Google Maps / Geospatial Fallback
   const fallbackAddress = `${landmark}, ${villageTown}, ${district}, ${state} - ${pincode}`;
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 
@@ -1569,7 +1568,6 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km)`;
     }
 
-    // Resolve Wikipedia or Google Maps summary + badge URL
     const intelResult = await fetchIntelligenceSummary(villageTown, district, landmark, state, pincode, lat, lng);
 
     if (driveData.code === "Ok" && walkData.code === "Ok") {
@@ -1601,7 +1599,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
-// Master Card Renderer with Dynamic Source Badge & External Redirect
+// Master Card Renderer
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -1615,7 +1613,7 @@ function renderMasterCard() {
     routes.forEach((route, index) => {
       const dist = (route.distance / 1000).toFixed(1);
       const timeFormatted = formatDuration(route.duration);
-      const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
+      const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
       
       optionsHtml += `
         <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -1634,7 +1632,7 @@ function renderMasterCard() {
     tabSpecificHtml = `
       <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc; margin-bottom: 6px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence</span>
+          <span style="font-weight: bold; color: #38bdf8;">T&C Intelligence</span>
           <span style="background: #0f172a; color: ${t.intelBadgeColor}; border: 1px solid ${t.intelBadgeColor}; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">
             Source: ${t.intelSourceName} 🟢
           </span>
@@ -1666,10 +1664,10 @@ function renderMasterCard() {
 
       <!-- 4 PERMANENT TOP MODE BUTTONS -->
       <div class="mode-switcher" style="display: flex; gap: 3px; margin-bottom: 8px;">
-        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚗 Driving</button>
-        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚶 Walking</button>
-        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;">📍 Locality</button>
-        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🌪️ Radar</button>
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Walking</button>
+        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Locality</button>
+        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Radar</button>
       </div>
 
       ${tabSpecificHtml}
@@ -1677,7 +1675,7 @@ function renderMasterCard() {
       <!-- BOTTOM CLEAR BUTTON TO RESET MAP -->
       ${activePinnedLat ? `
         <button onclick="removePinnedLocation()" style="width:100%; margin-top:8px; background:#1e293b; color:#ef4444; border:1px solid #ef4444; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-          🗑️ Clear Pin & Reset Map
+           Clear Pin & Reset Map
         </button>
       ` : ''}
 
@@ -1756,7 +1754,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 
