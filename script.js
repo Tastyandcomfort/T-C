@@ -1268,11 +1268,6 @@ function removePinnedLocation() {
   }
 }
 
-// Close Telemetry Panel
-function closeTelemetryPanel() {
-  removePinnedLocation();
-}
-
 // Trigger OSRM Route Calculation from Pinned Telemetry Marker
 function routeToPinnedLocation() {
   if (activePinnedLat && activePinnedLng) {
@@ -1281,7 +1276,7 @@ function routeToPinnedLocation() {
   }
 }
 
-// Open Same-Container Windy Radar Overlay (Close button pinned to bottom-left)
+// Open Same-Container Windy Radar Overlay (Dedicated Control Bar)
 function openSameContainerWindy(lat, lng, locationName) {
   const mapDiv = document.getElementById('map');
   if (!mapDiv) return;
@@ -1290,17 +1285,21 @@ function openSameContainerWindy(lat, lng, locationName) {
   if (!windyOverlay) {
     windyOverlay = document.createElement('div');
     windyOverlay.id = 'windy-overlay-frame';
-    windyOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:8px; overflow:hidden;';
+    windyOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:8px; display:flex; flex-direction:column; overflow:hidden;';
     mapDiv.style.position = 'relative';
     mapDiv.appendChild(windyOverlay);
   }
 
   windyOverlay.innerHTML = `
-    <div style="position:absolute; bottom:15px; left:15px; z-index:1000; display:flex; gap:8px; align-items:center; background:rgba(15,23,42,0.95); padding:8px 14px; border-radius:6px; border:1px solid #334155; box-shadow:0 4px 16px rgba(0,0,0,0.6);">
-      <span style="font-size:0.75rem; color:#38bdf8; font-weight:bold;">📍 Radar: ${locationName}</span>
-      <button onclick="closeWindyOverlay()" style="background:#ef4444; color:#fff; border:none; padding:5px 12px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">Close Radar ✖</button>
+    <div style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 12px; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:0.75rem; color:#38bdf8; font-weight:bold;">📍 Live Radar: ${locationName}</span>
+      <button onclick="closeWindyOverlay()" style="background:#ef4444; color:#ffffff; border:none; padding:4px 10px; border-radius:4px; font-size:0.68rem; font-weight:bold; cursor:pointer;">
+        ✖ Close Radar
+      </button>
     </div>
-    <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0;"></iframe>
+    <div style="flex-grow:1; width:100%; position:relative;">
+      <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%;"></iframe>
+    </div>
   `;
 }
 
@@ -1378,29 +1377,26 @@ map.on('click', async function(e) {
     infoBox.innerHTML = `
       <div style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; font-family: system-ui, -apple-system, sans-serif; color: #f8fafc; box-shadow: 0 4px 16px rgba(0,0,0,0.4); max-width: 100%; overflow: hidden;">
         
-        <!-- TOP ROW: LOCATION TITLE + CLOSE BUTTON -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-          <div>
-            <div style="font-size: 0.9rem; font-weight: 800; color: #38bdf8;">
-              📍 ${villageTown}, ${district}
-            </div>
-            <div style="font-size: 0.68rem; color: #cbd5e1; margin-top: 2px;">
-              ${landmark} • ${mandalTaluka} • ${state} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
-            </div>
+        <!-- TOP ROW: LOCATION TITLE ONLY (X BUTTON REMOVED) -->
+        <div style="margin-bottom: 8px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+          <div style="font-size: 0.9rem; font-weight: 800; color: #38bdf8;">
+            📍 ${villageTown}, ${district}
           </div>
-          <button onclick="closeTelemetryPanel()" style="background: #1e293b; color: #94a3b8; border: 1px solid #475569; width: 24px; height: 24px; border-radius: 50%; font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Close">✖</button>
+          <div style="font-size: 0.68rem; color: #cbd5e1; margin-top: 2px;">
+            ${landmark} • ${mandalTaluka} • ${state} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
+          </div>
         </div>
 
-        <!-- ACTION BUTTONS ROW (Distinct styling from metrics) -->
+        <!-- INTERACTIVE ACTION BUTTONS -->
         <div style="display: flex; gap: 6px; margin-bottom: 8px;">
           <button onclick="openSameContainerWindy(${lat}, ${lng}, '${villageTown}')" style="flex:1; background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 6px rgba(2,132,199,0.3);">
             🌪️ Open Live Radar
           </button>
           <button onclick="routeToPinnedLocation()" style="flex:1; background: linear-gradient(135deg, #059669, #047857); color: #fff; border: 1px solid #10b981; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 6px rgba(5,150,105,0.3);">
-             Route Here
+            🚗 Route Here
           </button>
           <button onclick="removePinnedLocation()" style="background: #1e293b; color: #ef4444; border: 1px solid #ef4444; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer;" title="Clear Pin">
-             Clear
+            🗑️ Clear
           </button>
         </div>
 
