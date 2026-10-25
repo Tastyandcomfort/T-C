@@ -1,978 +1,402 @@
 
 // ===================================================
-// T&C COMMAND HUB: REAL-TIME TELEMETRY & MAP DESK  (v2)
-// ---------------------------------------------------
-// Page needs:  Leaflet 1.9.x (CSS + JS) and Font Awesome 6
-// Mount point: <div id="intel-dynamic-content"></div>
-// Entry point: loadTandCIntelligenceHub()
-//
-// What changed vs v1:
-//  - ISS tracker no longer recurses forever (setMapDisplayMode <-> startMovingISSTracker)
-//  - ISS button now switches to the map view first (the map lives in the Locality view)
-//  - Crew list uses an HTTPS feed (http://api.open-notify.org is blocked on https sites)
-//  - Nifty panel shows a real TradingView quote instead of a hard-coded number
-//  - No invented "prediction", "Nominal", "Verified" or "7 astronauts" fallbacks:
-//    missing data shows "—" or an honest "unavailable" message
-//  - Leaflet icon option fixed (iconPoint -> iconAnchor), OSM attribution added
-//  - Third-party text is escaped before it goes into innerHTML
-//  - One failing API no longer blanks the whole Locality panel
+// T&C COMMAND DESK: STRICT REAL-DATA TELEMETRY DESK
 // ===================================================
 
-// ---------- Config ----------
-const TC_STALL = { name: 'Somajiguda', lat: 17.4239, lon: 78.4520 };
-const TC_INDIA_VIEW = { lat: 20.5937, lon: 78.9629, zoom: 4 };
-const TC_ISS_POLL_MS = 5000;
-const TC_ISS_URL = 'https://api.wheretheiss.at/v1/satellites/25544';
-const TC_CREW_URL = 'https://corquaid.github.io/international-space-station-APIs/JSON/people-in-space.json';
-const TC_QUAKE_URL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson';
-const TC_WIKI_SLUGS = {
-  locality: 'Geographic_coordinate_system',
-  prediction_ai: 'Stock_market',
-  sat_space: 'International_Space_Station',
-  tc_ops: 'Meteorology'
-};
-const TC_DEFAULT_BRIEF_TITLE = '📍 Locality Breakdown';
-const TC_DEFAULT_BRIEF_HTML = `<div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to extract Mandal/Taluka, Village, AQI, local weather, and nearby regional earthquakes.</div>`;
-
-// ---------- State ----------
 let osintMap = null;
 let currentClickMarker = null;
 let mapHazardsGroup = null;
-let issMapMarker = null;
-let issInterval = null;
-let issIcon = null;
-let issFollow = true;
-let issPollBusy = false;
-let currentMapMode = 'locality';
-let lastPick = null;          // { lat, lng } of the last point picked on the map
-let localityBrief = null;     // last locality card, restored when you come back to Locality mode
-let lookupToken = 0;
-let lookupTimer = null;
-let lastNominatimAt = 0;
-let mapInitTimer = null;
-let mapResizeObserver = null;
-let visibilityBound = false;
-let quakeCache = { at: 0, data: null };
-let fxCache = { at: 0, data: null };
-const wikiCache = {};
 
-// ---------- Small helpers ----------
-function tcEsc(value) {
-  return String(value ?? '').replace(/[&<>"']/g, ch => (
-    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
-  ));
-}
-
-function tcVal(value, fallback = '—') {
-  return (value === undefined || value === null || value === '') ? tcEsc(fallback) : tcEsc(value);
-}
-
-function tcJoin(...parts) {
-  const clean = parts.filter(p => p !== undefined && p !== null && p !== '').map(tcEsc);
-  return clean.length ? clean.join(', ') : '—';
-}
-
-function tcToNum(v) {
-  return (v === undefined || v === null || v === '') ? NaN : Number(v);
-}
-
-function tcFmtDate(value) {
-  if (!value) return '—';
-  const d = new Date(value);
-  return Number.isNaN(d.getTime())
-    ? tcEsc(value)
-    : d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-}
-
-function tcDistanceKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const rad = d => (d * Math.PI) / 180;
-  const dLat = rad(lat2 - lat1);
-  const dLon = rad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(a));
-}
-
-function tcFmtLat(v) { return `${Math.abs(v).toFixed(4)}° ${v >= 0 ? 'N' : 'S'}`; }
-function tcFmtLon(v) { return `${Math.abs(v).toFixed(4)}° ${v >= 0 ? 'E' : 'W'}`; }
-
-// US AQI bands
-function tcAqiInfo(aqi) {
-  if (aqi === undefined || aqi === null || Number.isNaN(Number(aqi))) return { label: 'N/A', color: '#94a3b8' };
-  const v = Number(aqi);
-  if (v <= 50) return { label: 'Good', color: '#10b981' };
-  if (v <= 100) return { label: 'Moderate', color: '#eab308' };
-  if (v <= 150) return { label: 'Unhealthy for sensitive groups', color: '#f97316' };
-  if (v <= 200) return { label: 'Unhealthy', color: '#ef4444' };
-  if (v <= 300) return { label: 'Very unhealthy', color: '#a855f7' };
-  return { label: 'Hazardous', color: '#be123c' };
-}
-
-// Trim on a sentence or word boundary instead of mid-word
-function tcTrimExtract(text, max = 220) {
-  if (!text || text.length <= max) return text || '';
-  const cut = text.slice(0, max);
-  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('; '));
-  if (stop > 80) return cut.slice(0, stop + 1);
-  const space = cut.lastIndexOf(' ');
-  return (space > 0 ? cut.slice(0, space) : cut) + '…';
-}
-
-function generateTimestampTag() {
-  const now = new Date();
-  return `<span class="timestamp-tag">Synced: ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>`;
-}
-
-async function fetchWithTimeout(resource, options = {}, timeoutMs = 8000) {
+// Universal Fetch Utility (8s Limit) — Throws Hard Errors On Failure
+async function fetchRealData(url) {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetch(resource, { ...options, signal: controller.signal });
-    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-    return await response.json();
-  } finally {
-    clearTimeout(id);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!res.ok) throw new Error(`API HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
   }
-}
-
-// USGS feed refreshes about once a minute, so a 5-minute cache is plenty
-async function getQuakeFeed() {
-  if (quakeCache.data && Date.now() - quakeCache.at < 5 * 60 * 1000) return quakeCache.data;
-  const data = await fetchWithTimeout(TC_QUAKE_URL);
-  quakeCache = { at: Date.now(), data };
-  return data;
-}
-
-// ---------- Styles ----------
-function tcInjectStyles() {
-  let styleEl = document.getElementById('tc-responsive-styles');
-  if (!styleEl) {
-    styleEl = document.createElement('style');
-    styleEl.id = 'tc-responsive-styles';
-    document.head.appendChild(styleEl);
-  }
-  styleEl.textContent = `
-    .intel-grid-container { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); gap: 10px; align-items: start; }
-    @media (max-width: 768px) { .intel-grid-container { grid-template-columns: minmax(0, 1fr) !important; } }
-    .metric-pill { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
-    .dark-osm-tiles { filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(200deg) saturate(0.3); }
-    .mode-btn { background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-    .mode-btn:hover { border-color: #38bdf8; color: #f8fafc; }
-    .mode-btn:focus-visible, .source-brand-link:focus-visible, #osint-category-dropdown:focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; }
-    .mode-btn-active { background: #f59e0b !important; color: #0f172a !important; border-color: #f59e0b !important; box-shadow: 0 0 8px rgba(245,158,11,0.4); }
-    .badge-tag { font-size: 0.6rem; background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
-    .source-brand-link { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #38bdf8; text-decoration: none; background: #1e293b; border: 1px solid #334155; padding: 3px 6px; border-radius: 4px; font-weight: bold; }
-    .source-brand-link:hover { border-color: #38bdf8; background: #0f172a; }
-    .timestamp-tag { font-size: 0.62rem; color: #94a3b8; font-family: monospace; }
-    .crew-chip { background: #1e293b; border: 1px solid #334155; border-radius: 4px; padding: 4px 8px; font-size: 0.7rem; color: #f8fafc; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 8px; }
-    .leaflet-control-attribution { background: rgba(15,23,42,0.85) !important; color: #94a3b8 !important; }
-    .leaflet-control-attribution a { color: #38bdf8 !important; }
-    @media (prefers-reduced-motion: reduce) { .mode-btn { transition: none; } }
-  `;
-}
-
-// ---------- Mount / teardown ----------
-function tcTeardownHub() {
-  clearTimeout(mapInitTimer);
-  clearTimeout(lookupTimer);
-  lookupToken++;
-  stopISSPolling();
-  if (mapResizeObserver) { mapResizeObserver.disconnect(); mapResizeObserver = null; }
-  if (osintMap) { try { osintMap.remove(); } catch (e) { /* container already gone */ } }
-  osintMap = null;
-  currentClickMarker = null;
-  mapHazardsGroup = null;
-  issMapMarker = null;
-  currentMapMode = 'locality';
-  lastPick = null;
-  localityBrief = null;
-}
-
-// Pause ISS polling while the browser tab is hidden
-function tcBindVisibility() {
-  if (visibilityBound) return;
-  visibilityBound = true;
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      stopISSPolling();
-    } else if (currentMapMode === 'iss' && osintMap && tcLocalityViewVisible()) {
-      beginISSPolling();
-    }
-  });
-}
-
-function tcLocalityViewVisible() {
-  const el = document.getElementById('intel-view-locality');
-  return !!el && el.style.display !== 'none';
 }
 
 async function loadTandCIntelligenceHub() {
   const container = document.getElementById('intel-dynamic-content');
   if (!container) return;
 
-  tcTeardownHub();
-  tcInjectStyles();
-  tcBindVisibility();
+  if (!document.getElementById('tc-strict-styles')) {
+    const styleEl = document.createElement('style');
+    styleEl.id = 'tc-strict-styles';
+    styleEl.innerHTML = `
+      .intel-grid-container { display: grid; grid-template-columns: 1fr 380px; gap: 10px; align-items: start; }
+      @media (max-width: 768px) { .intel-grid-container { grid-template-columns: 1fr !important; } }
+      .metric-pill { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
+      .dark-osm-tiles { filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(200deg) saturate(0.3); }
+      .mode-btn { background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+      .mode-btn-active { background: #f59e0b !important; color: #0f172a !important; border-color: #f59e0b !important; box-shadow: 0 0 8px rgba(245,158,11,0.4); }
+      .badge-tag { font-size: 0.6rem; background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+      .source-brand-link { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #38bdf8; text-decoration: none; background: #1e293b; border: 1px solid #334155; padding: 3px 6px; border-radius: 4px; font-weight: bold; }
+      .source-brand-link:hover { border-color: #38bdf8; background: #0f172a; }
+      .timestamp-tag { font-size: 0.62rem; color: #94a3b8; font-family: monospace; }
+      .error-pill { background: #1e1b1b; border: 1px solid #ef4444; border-left: 3px solid #ef4444; color: #f8fafc; padding: 8px; font-size: 0.7rem; border-radius: 6px; }
+    `;
+    document.head.appendChild(styleEl);
+  }
 
   container.innerHTML = `
     <!-- TOP CONTROL BAR -->
     <div style="margin-bottom: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-      <div style="font-size: 0.78rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b;"></i> T&amp;C OSINT Telemetry Hub</div>
-      <div style="flex-grow: 1; max-width: 440px;">
-        <select id="osint-category-dropdown" aria-label="Choose intel category" onchange="switchCategory(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.72rem; cursor: pointer;">
-          <option value="locality" selected>📍 Locality, Weather, AQI &amp; Hazards Map</option>
-          <option value="prediction_ai">📈 Markets: Nifty 50 &amp; USD/INR</option>
-          <option value="sat_space">🛰️ ISS Moving Tracker &amp; Space Crew Manifest</option>
-          <option value="tc_ops">☕ T&amp;C Stall Zone Weather &amp; Traffic</option>
-        </select>
-      </div>
+      <div style="font-size: 0.78rem; color: #f8fafc; font-weight: bold;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b;"></i> T&C OSINT Live Telemetry Matrix</div>
+      <div style="font-size: 0.7rem; color: #10b981; font-weight: bold;"><i class="fa-solid fa-bolt"></i> Pure Native Public APIs Only</div>
     </div>
 
-    <!-- LOCALITY VIEW (the map lives here) -->
-    <div id="intel-view-locality" class="intel-category-view" style="display: block;">
-      <div class="intel-grid-container">
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
-            <span style="font-size: 0.75rem; color: #38bdf8; font-weight: bold;"><i class="fa-solid fa-layer-group"></i> Active Layer Selection</span>
-            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-              <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active">📍 Locality</button>
-              <button onclick="setMapDisplayMode('earthquakes')" id="mode-btn-earthquakes" class="mode-btn">🌋 Earthquakes</button>
-              <button onclick="setMapDisplayMode('iss')" id="mode-btn-iss" class="mode-btn">🛰️ ISS Track</button>
-              <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn">🌪️ Windy Radar</button>
-              <button onclick="jumpToStall()" id="mode-btn-stall" class="mode-btn">☕ Stall</button>
-              <button onclick="resetLeafletMap()" class="mode-btn">🗺️ Reset</button>
-            </div>
+    <!-- MAIN GRID CONTAINER -->
+    <div class="intel-grid-container">
+      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+          <span style="font-size: 0.75rem; color: #38bdf8; font-weight: bold;"><i class="fa-solid fa-layer-group"></i> Layer Selection:</span>
+          <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+            <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active">📍 Locality</button>
+            <button onclick="setMapDisplayMode('earthquakes')" id="mode-btn-earthquakes" class="mode-btn">🌋 Earthquakes</button>
+            <button onclick="setMapDisplayMode('forex')" id="mode-btn-forex" class="mode-btn">💰 USD/INR Spot</button>
+            <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn">🌪️ Windy Radar</button>
+            <button onclick="resetLeafletMap()" class="mode-btn" style="background:#ef4444; color:#fff; border-color:#ef4444;">🗺️ Reset Map</button>
           </div>
-          <div id="leaflet-map-canvas" style="height: 420px; width: 100%; border-radius: 6px; background: #0f172a;"></div>
-          <div id="windy-iframe-canvas" style="height: 420px; width: 100%; border-radius: 6px; background: #0f172a; display: none;"></div>
         </div>
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 440px; overflow-y: auto;">
-          <div id="brief-region-title" style="color: #f59e0b; font-size: 0.82rem; font-weight: bold; margin-bottom: 6px;">${TC_DEFAULT_BRIEF_TITLE}</div>
-          <div id="intel-brief-content-list">${TC_DEFAULT_BRIEF_HTML}</div>
-        </div>
+        <div id="leaflet-map-canvas" style="height: 420px; width: 100%; border-radius: 6px; background: #0f172a;"></div>
+        <div id="windy-iframe-canvas" style="height: 420px; width: 100%; border-radius: 6px; background: #0f172a; display: none;"></div>
       </div>
-      <div id="wiki-box-locality"></div>
-    </div>
 
-    <!-- MARKETS VIEW -->
-    <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="color: #a855f7; font-size: 0.82rem; font-weight: bold;">📈 Nifty 50 &amp; USD/INR</span>
-          <button onclick="executeCategoryFetch('prediction_ai')" class="mode-btn">🔄 Refresh Market</button>
+      <!-- SIDE TELEMETRY PANEL -->
+      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 440px; overflow-y: auto;">
+        <div id="brief-region-title" style="color: #f59e0b; font-size: 0.82rem; font-weight: bold; margin-bottom: 6px;">📍 Locality Breakdown</div>
+        <div id="intel-brief-content-list">
+          <div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to query OpenStreetMap, Open-Meteo Weather/AQI, and USGS Earthquakes in real time.</div>
         </div>
-        <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
       </div>
-      <div id="wiki-box-prediction_ai"></div>
-    </div>
-
-    <!-- ISS / SPACE VIEW -->
-    <div id="intel-view-sat_space" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="color: #38bdf8; font-size: 0.82rem; font-weight: bold;">🛰️ ISS Moving Position &amp; Human Space Crew Tracker</span>
-          <button onclick="executeCategoryFetch('sat_space')" class="mode-btn">🔄 Sync Telemetry</button>
-        </div>
-        <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-sat_space"></div>
-    </div>
-
-    <!-- STALL ZONE VIEW -->
-    <div id="intel-view-tc_ops" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="color: #f59e0b; font-size: 0.82rem; font-weight: bold;">☕ T&amp;C Stall Zone</span>
-          <button onclick="executeCategoryFetch('tc_ops')" class="mode-btn">🔄 Refresh</button>
-        </div>
-        <div id="tc-ops-container"></div>
-      </div>
-      <div id="wiki-box-tc_ops"></div>
     </div>
   `;
 
-  // Small delay so the container has a size before Leaflet measures it
-  mapInitTimer = setTimeout(initOsintLeafletMap, 200);
-  loadTargetedWikiSummary('locality');
+  setTimeout(() => {
+    initOsintLeafletMap();
+  }, 200);
 }
 
-// ---------- Category switching ----------
-function switchCategory(catKey) {
-  document.querySelectorAll('.intel-category-view').forEach(v => v.style.display = 'none');
-  const targetView = document.getElementById(`intel-view-${catKey}`);
-  if (targetView) targetView.style.display = 'block';
-
-  const dropdown = document.getElementById('osint-category-dropdown');
-  if (dropdown && dropdown.value !== catKey) dropdown.value = catKey;
-
-  if (catKey === 'locality') {
-    if (osintMap) osintMap.invalidateSize();
-    if (currentMapMode === 'iss') beginISSPolling();   // resume where you left off
-  } else {
-    stopISSPolling();                                   // no background polling while the map is hidden
-  }
-  executeCategoryFetch(catKey);
-}
-
-async function executeCategoryFetch(catKey) {
-  const jobs = [loadTargetedWikiSummary(catKey)];
-  if (catKey === 'prediction_ai') jobs.push(fetchLiveMarketData());
-  if (catKey === 'sat_space') jobs.push(fetchLiveSatSpaceData());
-  if (catKey === 'tc_ops') jobs.push(fetchLiveTCOpsData());
-  await Promise.all(jobs);
+function generateTimestampTag() {
+  const now = new Date();
+  return `<span class="timestamp-tag">Fetched: ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>`;
 }
 
 // ===================================================
-// MAP, GEOCODING & HAZARD ENGINE
+// MAP & REAL-TIME GEOCODING ENGINE
 // ===================================================
-
-function renderBrief(title, html) {
-  const titleEl = document.getElementById('brief-region-title');
-  const listEl = document.getElementById('intel-brief-content-list');
-  if (titleEl) titleEl.innerHTML = title;
-  if (listEl) listEl.innerHTML = html;
-}
-
-function setBriefLoading() {
-  const titleEl = document.getElementById('brief-region-title');
-  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching Telemetry &amp; Hazards...`;
-}
 
 function initOsintLeafletMap() {
   const mapEl = document.getElementById('leaflet-map-canvas');
   if (!mapEl) return;
 
-  if (typeof L === 'undefined') {
-    mapEl.innerHTML = '<div style="padding:16px; font-size:0.75rem; color:#cbd5e1;">Map library (Leaflet) did not load. Check the Leaflet script and CSS tags on the page.</div>';
-    return;
+  if (osintMap) {
+    osintMap.remove();
+    osintMap = null;
   }
 
-  if (osintMap) { osintMap.remove(); osintMap = null; }
-
-  osintMap = L.map(mapEl, { worldCopyJump: true }).setView([TC_INDIA_VIEW.lat, TC_INDIA_VIEW.lon], TC_INDIA_VIEW.zoom);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  osintMap = L.map('leaflet-map-canvas').setView([20.5937, 78.9629], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
     className: 'dark-osm-tiles'
   }).addTo(osintMap);
 
   mapHazardsGroup = L.layerGroup().addTo(osintMap);
 
-  osintMap.on('click', e => {
-    const ll = e.latlng.wrap();   // keeps longitude inside -180..180 when you pan across the dateline
-    placePick(ll.lat, ll.lng);
+  osintMap.on('click', function (e) {
+    const lat = e.latlng.lat.toFixed(4);
+    const lng = e.latlng.lng.toFixed(4);
+    if (currentClickMarker) osintMap.removeLayer(currentClickMarker);
+    currentClickMarker = L.marker(e.latlng).addTo(osintMap);
+    fetchLocalityDetails(lat, lng);
   });
-  osintMap.on('dragstart', () => { issFollow = false; });   // stop auto-following the ISS once you pan
-
-  // The Intel tab can be hidden when the map is created; re-measure whenever the size changes
-  if (typeof ResizeObserver !== 'undefined') {
-    mapResizeObserver = new ResizeObserver(() => { if (osintMap) osintMap.invalidateSize(); });
-    mapResizeObserver.observe(mapEl);
-  }
 }
 
-function placePick(lat, lng) {
-  if (!osintMap) return;
-  if (currentMapMode !== 'locality') setMapDisplayMode('locality');
-  lastPick = { lat, lng };
-  if (currentClickMarker) osintMap.removeLayer(currentClickMarker);
-  currentClickMarker = L.marker([lat, lng]).addTo(osintMap);
-  scheduleLocalityLookup(lat, lng);
-}
+async function fetchLocalityDetails(lat, lng) {
+  const titleEl = document.getElementById('brief-region-title');
+  const briefList = document.getElementById('intel-brief-content-list');
+  const syncTag = generateTimestampTag();
 
-function jumpToStall() {
-  if (!osintMap) return;
-  osintMap.setView([TC_STALL.lat, TC_STALL.lon], 15);
-  placePick(TC_STALL.lat, TC_STALL.lon);
-}
+  titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Contacting Live APIs...`;
+  briefList.innerHTML = '';
 
-// Nominatim asks for at most 1 request per second, so lookups are debounced
-function scheduleLocalityLookup(lat, lng) {
-  clearTimeout(lookupTimer);
-  const token = ++lookupToken;
-  setBriefLoading();
-  const wait = Math.max(250, 1100 - (Date.now() - lastNominatimAt));
-  lookupTimer = setTimeout(() => fetchLocalityDetails(lat, lng, token), wait);
-}
+  let geoData = null;
+  let weatherData = null;
+  let aqiData = null;
+  let quakeData = null;
 
-async function fetchLocalityDetails(lat, lng, token) {
-  if (token === undefined) token = ++lookupToken;
-  lat = Number(Number(lat).toFixed(5));
-  lng = Number(Number(lng).toFixed(5));
-  lastNominatimAt = Date.now();
-  setBriefLoading();
-
+  // 1. Nominatim Reverse Geocoding
   try {
-    const [geoR, wxR, aqiR, quakeR] = await Promise.allSettled([
-      fetchWithTimeout(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`),
-      fetchWithTimeout(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto`),
-      fetchWithTimeout(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm10,pm2_5,us_aqi`),
-      getQuakeFeed()
-    ]);
-    if (token !== lookupToken) return;   // a newer click took over while we were waiting
+    geoData = await fetchRealData(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`);
+  } catch(e) {
+    briefList.innerHTML += `<div class="error-pill">⚠️ Nominatim Reverse Geocoding API Failed (${e.message})</div>`;
+  }
 
-    const geo = geoR.status === 'fulfilled' ? geoR.value : null;
-    const wx = wxR.status === 'fulfilled' ? (wxR.value?.current || null) : null;
-    const aq = aqiR.status === 'fulfilled' ? (aqiR.value?.current || null) : null;
-    const quakes = quakeR.status === 'fulfilled' ? (quakeR.value?.features || []) : null;
+  // 2. Open-Meteo Weather
+  try {
+    weatherData = await fetchRealData(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`);
+  } catch(e) {
+    briefList.innerHTML += `<div class="error-pill">⚠️ Open-Meteo Weather API Failed (${e.message})</div>`;
+  }
 
-    // ---- address ----
-    const hasAddress = !!(geo && !geo.error && geo.address);
-    const addr = hasAddress ? geo.address : {};
-    const villageTown = addr.hamlet || addr.village || addr.town || addr.suburb || addr.city_district || addr.city;
-    const mandalTaluka = addr.county || addr.subdistrict;
-    const district = addr.state_district || addr.district;
-    const landmark = addr.road || addr.suburb || addr.neighbourhood;
-    const placeName = villageTown || landmark || 'Selected point';
+  // 3. Open-Meteo AQI
+  try {
+    aqiData = await fetchRealData(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm2_5,us_aqi`);
+  } catch(e) {
+    briefList.innerHTML += `<div class="error-pill">⚠️ Open-Meteo AQI API Failed (${e.message})</div>`;
+  }
 
-    const addressRows = hasAddress ? `
-          • <b>Landmark / Area:</b> ${tcVal(landmark)}<br>
-          • <b>Village / Town:</b> ${tcVal(villageTown)}<br>
-          • <b>Mandal / Taluka:</b> ${tcVal(mandalTaluka)}<br>
-          • <b>District &amp; State:</b> ${tcJoin(district, addr.state)}<br>
-          • <b>Country &amp; Pincode:</b> ${tcVal(addr.country)} (<span style="color:#10b981; font-weight:bold;">${tcVal(addr.postcode)}</span>)<br>
-          • <b>Coordinates:</b> ${lat.toFixed(4)}, ${lng.toFixed(4)}`
-      : `
-          • ${geoR.status === 'fulfilled' ? 'No address found for this point (open water or unmapped area).' : 'Address lookup is unavailable right now.'}<br>
-          • <b>Coordinates:</b> ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  // 4. USGS Earthquakes
+  try {
+    quakeData = await fetchRealData('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
+  } catch(e) {
+    briefList.innerHTML += `<div class="error-pill">⚠️ USGS Earthquake API Failed (${e.message})</div>`;
+  }
 
-    // ---- weather + AQI ----
-    const aqi = tcAqiInfo(aq?.us_aqi);
-    const weatherRows = wx ? `
-          • <b>Temp:</b> ${tcVal(wx.temperature_2m, 'N/A')}°C | <b>Humidity:</b> ${tcVal(wx.relative_humidity_2m, 'N/A')}%<br>
-          • <b>Wind Speed:</b> ${tcVal(wx.wind_speed_10m, 'N/A')} km/h | <b>Rain now:</b> ${tcVal(wx.precipitation, 'N/A')} mm<br>
-          • <b>PM2.5:</b> ${tcVal(aq?.pm2_5, 'N/A')} µg/m³ | <b>PM10:</b> ${tcVal(aq?.pm10, 'N/A')} µg/m³`
-      : `
-          • Weather feed is unavailable right now.<br>
-          • <b>PM2.5:</b> ${tcVal(aq?.pm2_5, 'N/A')} µg/m³`;
+  // Render Nominatim Data
+  if (geoData && geoData.address) {
+    const addr = geoData.address;
+    const villageTown = addr.village || addr.town || addr.city_district || addr.city || 'Unnamed Location';
+    const mandalTaluka = addr.county || addr.subdistrict || 'N/A';
+    const district = addr.state_district || addr.district || 'N/A';
+    const state = addr.state || 'N/A';
+    const country = addr.country || 'N/A';
+    const pincode = addr.postcode || 'N/A';
+    const landmark = addr.road || addr.suburb || 'N/A';
 
-    // ---- seismic ----
-    let quakeText;
-    if (quakes === null) {
-      quakeText = 'Seismic feed is unavailable right now.';
-    } else {
-      let nearest = null;
-      let minKm = Infinity;
-      quakes.forEach(q => {
-        const c = q?.geometry?.coordinates;
-        if (!Array.isArray(c)) return;
-        const d = tcDistanceKm(lat, lng, c[1], c[0]);
-        if (d < minKm) { minKm = d; nearest = q; }
-      });
-      if (!nearest) {
-        quakeText = 'No M4.5+ earthquakes reported worldwide in the last 24 hours.';
-      } else {
-        const desc = `M${tcVal(nearest.properties?.mag, 'N/A')} ${tcVal(nearest.properties?.place, 'unknown location')}`;
-        const km = Math.round(minKm).toLocaleString('en-IN');
-        quakeText = minKm > 500
-          ? `No M4.5+ quake within 500 km in the last 24 hours. Nearest: ${desc} (~${km} km away).`
-          : `${desc} (~${km} km away, last 24 hours).`;
-      }
-    }
+    titleEl.innerHTML = `📍 ${villageTown}, ${district}`;
 
-    const title = `📍 ${tcEsc(placeName)}${district ? ', ' + tcEsc(district) : ''}`;
-    const html = `
+    briefList.innerHTML += `
       <div class="metric-pill" style="border-left: 3px solid #f59e0b;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#f59e0b; font-size:0.75rem;">🗺️ Full Locality Breakdown</strong>
-          <span class="badge-tag">GEOCODING</span>
+          <strong style="color:#f59e0b; font-size:0.75rem;">🗺️ Address Hierarchy</strong>
+          <span class="badge-tag">OSM NOMINATIM</span>
         </div>
-        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.42;">${addressRows}
+        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.42;">
+          • <b>Street / Landmark:</b> ${landmark}<br>
+          • <b>Village / Town:</b> ${villageTown}<br>
+          • <b>Mandal / Taluka:</b> ${mandalTaluka}<br>
+          • <b>District & State:</b> ${district}, ${state}<br>
+          • <b>Country & Pincode:</b> ${country} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${generateTimestampTag()}
-          <a href="https://nominatim.openstreetmap.org" target="_blank" rel="noopener" class="source-brand-link">Nominatim ↗</a>
+          ${syncTag}
+          <a href="https://nominatim.openstreetmap.org" target="_blank" class="source-brand-link">Nominatim Source ↗</a>
         </div>
       </div>
+    `;
+  }
 
-      <div class="metric-pill" style="border-left: 3px solid ${aqi.color};">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:8px;">
-          <strong style="color:#10b981; font-size:0.75rem;">🌦️ Current Weather &amp; Air Quality</strong>
-          <span style="color:${aqi.color}; font-weight:bold; font-size:0.74rem; text-align:right;">AQI ${tcVal(aq?.us_aqi, 'N/A')} (${aqi.label})</span>
-        </div>
-        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4;">${weatherRows}
-        </div>
-        <button onclick="setMapDisplayMode('windy', ${lat.toFixed(4)}, ${lng.toFixed(4)})" style="margin-top:8px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-          🌪️ Open Windy Radar for ${tcEsc(placeName)}
-        </button>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${generateTimestampTag()}
-          <a href="https://open-meteo.com" target="_blank" rel="noopener" class="source-brand-link">Open-Meteo ↗</a>
-        </div>
-      </div>
+  // Render Weather & AQI Data
+  if (weatherData && weatherData.current) {
+    const currW = weatherData.current;
+    const currAQI = aqiData?.current || {};
+    const villageTown = geoData?.address?.village || geoData?.address?.town || geoData?.address?.city || 'Location';
 
-      <div class="metric-pill" style="border-left: 3px solid #ef4444;">
+    briefList.innerHTML += `
+      <div class="metric-pill" style="border-left: 3px solid #10b981;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#ef4444; font-size:0.75rem;">🌋 Regional Seismic Monitor</strong>
-          <span class="badge-tag">USGS</span>
+          <strong style="color:#10b981; font-size:0.75rem;">🌦️ Weather & AQI Telemetry</strong>
+          <span style="color:#10b981; font-weight:bold; font-size:0.75rem;">AQI: ${currAQI.us_aqi !== undefined ? currAQI.us_aqi : 'N/A'}</span>
         </div>
         <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4;">
-          • <b>Nearest M4.5+ activity:</b> ${quakeText}
+          • <b>Temperature:</b> ${currW.temperature_2m}°C | <b>Humidity:</b> ${currW.relative_humidity_2m}%<br>
+          • <b>Wind Speed:</b> ${currW.wind_speed_10m} km/h<br>
+          • <b>PM2.5 Density:</b> ${currAQI.pm2_5 !== undefined ? currAQI.pm2_5 + ' µg/m³' : 'N/A'}
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${generateTimestampTag()}
-          <a href="https://earthquake.usgs.gov" target="_blank" rel="noopener" class="source-brand-link">USGS ↗</a>
-        </div>
-      </div>
-    `;
-
-    localityBrief = { title, html };
-    if (currentMapMode === 'locality') renderBrief(title, html);
-  } catch (e) {
-    if (token !== lookupToken) return;
-    const title = '📍 Locality Selected';
-    const html = `<div class="metric-pill" style="border-left:3px solid #ef4444; font-size:0.7rem; color:#cbd5e1;">Coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)}. Details could not be loaded, click the map again to retry.</div>`;
-    localityBrief = { title, html };
-    if (currentMapMode === 'locality') renderBrief(title, html);
-  }
-}
-
-async function plotGlobalEarthquakes() {
-  renderBrief(`<i class="fa-solid fa-spinner fa-spin"></i> Loading earthquakes...`, '');
-  try {
-    const data = await getQuakeFeed();
-    if (currentMapMode !== 'earthquakes' || !osintMap || !mapHazardsGroup) return;
-
-    const quakes = (data.features || []).filter(q => q && q.geometry && Array.isArray(q.geometry.coordinates));
-    mapHazardsGroup.clearLayers();
-
-    // Every event goes on the map...
-    const markers = quakes.map(q => {
-      const [qLon, qLat, depth] = q.geometry.coordinates;
-      const mag = q.properties?.mag ?? 0;
-      const strong = mag > 6;
-      const marker = L.circleMarker([qLat, qLon], {
-        radius: Math.max(5, mag * 2.2),
-        color: strong ? '#ef4444' : '#f59e0b',
-        fillColor: strong ? '#ef4444' : '#f59e0b',
-        fillOpacity: 0.7
-      }).bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>Mag ${tcVal(q.properties?.mag, 'N/A')} earthquake</b><br>${tcVal(q.properties?.place, 'Unknown location')}<br>Depth: ${tcVal(depth, 'N/A')} km</div>`);
-      mapHazardsGroup.addLayer(marker);
-      return marker;
-    });
-    if (markers.length) osintMap.fitBounds(L.featureGroup(markers).getBounds().pad(0.15), { maxZoom: 4 });
-
-    // ...and the sidebar lists the 10 strongest
-    const strongest = [...quakes].sort((a, b) => (b.properties?.mag ?? 0) - (a.properties?.mag ?? 0)).slice(0, 10);
-    const cards = strongest.map(q => {
-      const depth = q.geometry.coordinates[2];
-      const when = q.properties?.time ? tcFmtDate(q.properties.time) : '—';
-      return `
-        <div class="metric-pill" style="border-left: 3px solid #ef4444;">
-          <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#f8fafc; font-weight:bold;">
-            <span>Mag ${tcVal(q.properties?.mag, 'N/A')} Event</span>
-            <span class="badge-tag">USGS</span>
-          </div>
-          <div style="font-size:0.68rem; color:#cbd5e1; margin-top:3px;">📍 ${tcVal(q.properties?.place, 'Unknown location')} (Depth: ${tcVal(depth, 'N/A')} km)</div>
-          <div style="font-size:0.62rem; color:#94a3b8; margin-top:2px;">${when}</div>
-        </div>`;
-    }).join('');
-
-    const body = quakes.length
-      ? cards
-      : `<div class="metric-pill" style="font-size:0.7rem; color:#cbd5e1;">No M4.5+ earthquakes reported in the last 24 hours.</div>`;
-    renderBrief(
-      `🌋 Seismic Earthquakes (${quakes.length} Events, 24 h)`,
-      body + `<div style="margin-top:6px;">${generateTimestampTag()}</div>`
-    );
-  } catch (e) {
-    if (currentMapMode === 'earthquakes') {
-      renderBrief('🌋 Seismic Earthquakes', `<div class="metric-pill" style="border-left:3px solid #ef4444; font-size:0.7rem; color:#cbd5e1;">The USGS feed is unavailable right now. Press 🌋 Earthquakes again in a minute.</div>`);
-    }
-  }
-}
-
-// ===================================================
-// MARKETS: NIFTY 50 (TradingView widget) & USD/INR
-// ===================================================
-
-function tcMountTradingView(hostEl) {
-  if (!hostEl) return;
-  hostEl.innerHTML = '';
-  const wrap = document.createElement('div');
-  wrap.className = 'tradingview-widget-container';
-  const slot = document.createElement('div');
-  slot.className = 'tradingview-widget-container__widget';
-  const script = document.createElement('script');
-  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-  script.async = true;
-  script.text = JSON.stringify({
-    symbol: 'NSE:NIFTY',
-    width: '100%',
-    height: 220,
-    locale: 'en',
-    dateRange: '1D',
-    colorTheme: 'dark',
-    isTransparent: true,
-    autosize: false,
-    largeChartUrl: ''
-  });
-  script.onerror = () => {
-    hostEl.innerHTML = '<div style="font-size:0.7rem; color:#cbd5e1;">The chart could not load (ad-blocker or network). <a href="https://www.nseindia.com" target="_blank" rel="noopener" class="source-brand-link">NSE India ↗</a></div>';
-  };
-  wrap.appendChild(slot);
-  wrap.appendChild(script);
-  hostEl.appendChild(wrap);
-}
-
-// Open-access endpoint updates once a day and is rate limited, so cache for 30 min and keep the old endpoint as backup
-async function tcGetUsdInr() {
-  if (fxCache.data && Date.now() - fxCache.at < 30 * 60 * 1000) return fxCache.data;
-  const sources = [
-    { url: 'https://open.er-api.com/v6/latest/USD', updated: d => d.time_last_update_utc },
-    { url: 'https://api.exchangerate-api.com/v4/latest/USD', updated: d => d.date }
-  ];
-  for (const s of sources) {
-    try {
-      const d = await fetchWithTimeout(s.url);
-      const rate = Number(d?.rates?.INR);
-      if (Number.isFinite(rate) && rate > 0) {
-        fxCache = { at: Date.now(), data: { rate, updated: s.updated(d) || '' } };
-        return fxCache.data;
-      }
-    } catch (e) { /* try the next source */ }
-  }
-  throw new Error('USD/INR unavailable');
-}
-
-async function fetchLiveMarketData() {
-  const container = document.getElementById('prediction-ai-container');
-  if (!container) return;
-
-  container.innerHTML = `
-    <div class="metric-pill" style="border-left: 3px solid #a855f7;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <strong style="color:#f8fafc; font-size:0.78rem;">📊 Nifty 50 Index</strong>
-        <span class="badge-tag">TRADINGVIEW</span>
-      </div>
-      <div id="tc-nifty-widget" style="min-height:220px;"><span style="font-size:0.7rem; color:#cbd5e1;"><i class="fa-solid fa-spinner fa-spin"></i> Loading chart...</span></div>
-      <div style="font-size:0.65rem; color:#94a3b8; line-height:1.4; margin-top:4px;">Quotes may be delayed. For information only, not investment advice.</div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-        ${generateTimestampTag()}
-        <a href="https://www.tradingview.com/symbols/NSE-NIFTY/" target="_blank" rel="noopener" class="source-brand-link">Nifty 50 by TradingView ↗</a>
-      </div>
-    </div>
-
-    <div class="metric-pill" id="tc-fx-card" style="border-left: 3px solid #10b981;">
-      <span style="font-size:0.7rem; color:#cbd5e1;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching USD/INR...</span>
-    </div>
-  `;
-
-  tcMountTradingView(document.getElementById('tc-nifty-widget'));
-
-  const fxEl = document.getElementById('tc-fx-card');
-  if (!fxEl) return;
-  try {
-    const fx = await tcGetUsdInr();
-    fxEl.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <strong style="color:#f8fafc; font-size:0.78rem;">💰 USD / INR Exchange Rate</strong>
-        <span class="badge-tag">DAILY RATE</span>
-      </div>
-      <div style="font-size:1.25rem; color:#10b981; font-weight:bold; margin: 4px 0;">
-        ₹${fx.rate.toFixed(2)} <span style="font-size:0.7rem; color:#94a3b8; font-weight:normal;">/ 1 USD</span>
-      </div>
-      <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.42;">
-        Daily reference rate (not a live trading quote). Provider update: ${tcFmtDate(fx.updated)}
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-        ${generateTimestampTag()}
-        <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener" class="source-brand-link">Rates By Exchange Rate API ↗</a>
-      </div>
-    `;
-  } catch (e) {
-    fxEl.innerHTML = `<div style="font-size:0.7rem; color:#cbd5e1;">USD/INR rate is unavailable right now. Press 🔄 Refresh Market in a few minutes.</div>`;
-  }
-}
-
-// ===================================================
-// ISS MOVING TRACKER & CREW MANIFEST
-// ===================================================
-
-function getIssIcon() {
-  if (!issIcon) {
-    issIcon = L.divIcon({
-      className: 'custom-iss-icon',
-      html: '<div style="background:#38bdf8; border:2px solid #0f172a; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px #38bdf8;"><i class="fa-solid fa-satellite" style="color:#0f172a; font-size:11px;"></i></div>',
-      iconSize: [22, 22],
-      iconAnchor: [11, 11]
-    });
-  }
-  return issIcon;
-}
-
-function removeISSMarker() {
-  if (issMapMarker && osintMap) osintMap.removeLayer(issMapMarker);
-  issMapMarker = null;
-}
-
-function stopISSPolling() {
-  if (issInterval) { clearInterval(issInterval); issInterval = null; }
-}
-
-function beginISSPolling() {
-  stopISSPolling();
-  pollISS();                                            // first fix right away, not after 5 s
-  issInterval = setInterval(pollISS, TC_ISS_POLL_MS);
-}
-
-async function pollISS() {
-  if (issPollBusy) return;
-  issPollBusy = true;
-  try {
-    const d = await fetchWithTimeout(TC_ISS_URL);
-    if (currentMapMode !== 'iss' || !osintMap) return;
-    const lat = Number(d.latitude);
-    const lon = Number(d.longitude);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
-
-    const popup = `<div style="font-size:0.7rem; color:#0f172a;"><b>🛰️ ISS live position</b><br>${tcFmtLat(lat)}<br>${tcFmtLon(lon)}</div>`;
-    if (!issMapMarker) {
-      issMapMarker = L.marker([lat, lon], { icon: getIssIcon() }).addTo(osintMap).bindPopup(popup);
-      osintMap.setView([lat, lon], 3);
-      issMapMarker.openPopup();
-    } else {
-      issMapMarker.setLatLng([lat, lon]);
-      issMapMarker.setPopupContent(popup);
-      if (issFollow) osintMap.panTo([lat, lon]);
-    }
-
-    renderBrief('🛰️ ISS Live Track', `
-      <div class="metric-pill" style="border-left: 3px solid #38bdf8;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#38bdf8; font-size:0.75rem;">NORAD 25544</strong>
-          <span class="badge-tag">LIVE</span>
-        </div>
-        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.45;">
-          • <b>Latitude:</b> ${tcFmtLat(lat)}<br>
-          • <b>Longitude:</b> ${tcFmtLon(lon)}<br>
-          • <b>Altitude:</b> ${tcVal(Number(d.altitude).toFixed(1))} km<br>
-          • <b>Velocity:</b> ${Math.round(Number(d.velocity)).toLocaleString('en-IN')} km/h<br>
-          • <b>Solar pass:</b> ${tcVal(d.visibility)}
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${generateTimestampTag()}
-          <a href="https://wheretheiss.at" target="_blank" rel="noopener" class="source-brand-link">wheretheiss.at ↗</a>
-        </div>
-      </div>
-    `);
-  } catch (e) {
-    // keep the last known position and try again on the next tick
-  } finally {
-    issPollBusy = false;
-  }
-}
-
-// Button in the Space view: jump to the map view, then start tracking
-function startMovingISSTracker() {
-  const dropdown = document.getElementById('osint-category-dropdown');
-  if (dropdown) dropdown.value = 'locality';
-  switchCategory('locality');
-  setMapDisplayMode('iss');
-}
-
-async function fetchLiveSatSpaceData() {
-  const container = document.getElementById('sat-space-container');
-  if (!container) return;
-  container.innerHTML = `<div style="color:#cbd5e1; font-size:0.75rem;"><i class="fa-solid fa-spinner fa-spin"></i> Syncing ISS telemetry...</div>`;
-
-  const [issR, crewR] = await Promise.allSettled([
-    fetchWithTimeout(TC_ISS_URL),
-    fetchWithTimeout(TC_CREW_URL)
-  ]);
-
-  let issCard;
-  if (issR.status === 'fulfilled' && Number.isFinite(Number(issR.value?.latitude))) {
-    const d = issR.value;
-    issCard = `
-      <div class="metric-pill" style="border-left: 3px solid #38bdf8;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">🛰️ ISS Live Telemetry &amp; Vector Breakdown</strong>
-          <span class="badge-tag">NORAD 25544</span>
-        </div>
-        <div style="font-size:0.72rem; color:#cbd5e1; line-height:1.45; margin-top:4px;">
-          • <b>Latitude:</b> <strong style="color:#38bdf8;">${tcFmtLat(Number(d.latitude))}</strong><br>
-          • <b>Longitude:</b> <strong style="color:#38bdf8;">${tcFmtLon(Number(d.longitude))}</strong><br>
-          • <b>Orbital Velocity:</b> <strong style="color:#10b981;">${Math.round(Number(d.velocity)).toLocaleString('en-IN')} km/h</strong><br>
-          • <b>Altitude:</b> <b>${Number(d.altitude).toFixed(1)} km</b> | Solar Pass: <b>${tcVal(d.visibility)}</b>
-        </div>
-        <button onclick="startMovingISSTracker()" style="margin-top:8px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-          🛰️ Plot Live Moving ISS Location on Map
+        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top:6px; width:100%; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.68rem; font-weight:bold; cursor:pointer;">
+          🌪️ Open Windy Radar for ${villageTown}
         </button>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${generateTimestampTag()}
-          <a href="https://wheretheiss.at" target="_blank" rel="noopener" class="source-brand-link">wheretheiss.at ↗</a>
+          ${syncTag}
+          <a href="https://open-meteo.com" target="_blank" class="source-brand-link">Open-Meteo Source ↗</a>
         </div>
-      </div>`;
-  } else {
-    issCard = `<div class="metric-pill" style="border-left:3px solid #ef4444; font-size:0.7rem; color:#cbd5e1;">ISS position feed is unavailable right now. Press 🔄 Sync Telemetry to retry.</div>`;
+      </div>
+    `;
   }
 
-  let crewCard;
-  const people = crewR.status === 'fulfilled' ? crewR.value?.people : null;
-  if (Array.isArray(people)) {
-    const total = crewR.value.number ?? people.length;
-    const chips = people.map(p => `
-        <div class="crew-chip">
-          <span>👨‍🚀 ${tcVal(p.name)}</span>
-          <span style="color:#38bdf8;">${p.iss === false ? 'Tiangong' : 'ISS'}${p.agency ? ' · ' + tcEsc(p.agency) : ''}</span>
-        </div>`).join('');
-    crewCard = `
+  // Render Nearest USGS Earthquake
+  if (quakeData && quakeData.features && quakeData.features.length > 0) {
+    const quakes = quakeData.features;
+    let closest = quakes[0];
+    let minDist = Infinity;
+    quakes.forEach(q => {
+      const dist = Math.hypot(q.geometry.coordinates[1] - lat, q.geometry.coordinates[0] - lng);
+      if (dist < minDist) { minDist = dist; closest = q; }
+    });
+
+    const km = Math.round(minDist * 111);
+    briefList.innerHTML += `
+      <div class="metric-pill" style="border-left: 3px solid #ef4444;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <strong style="color:#ef4444; font-size:0.75rem;">🌋 Nearest Recorded Seismic Event</strong>
+          <span class="badge-tag">USGS REAL-TIME</span>
+        </div>
+        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.4;">
+          • <b>Magnitude ${closest.properties.mag}</b> near ${closest.properties.place}<br>
+          • <b>Distance from Pin:</b> ~${km} km | <b>Depth:</b> ${closest.geometry.coordinates[2]} km
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          ${syncTag}
+          <a href="${closest.properties.url || 'https://earthquake.usgs.gov'}" target="_blank" class="source-brand-link">USGS Details ↗</a>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ===================================================
+// USGS EARTHQUAKE PLOTTING ENGINE
+// ===================================================
+
+async function plotGlobalEarthquakes() {
+  const titleEl = document.getElementById('brief-region-title');
+  const briefList = document.getElementById('intel-brief-content-list');
+  const syncTag = generateTimestampTag();
+
+  titleEl.innerHTML = `🌋 Fetching Live USGS Feed...`;
+  briefList.innerHTML = '';
+
+  try {
+    const data = await fetchRealData('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
+    const quakes = data.features || [];
+
+    if (mapHazardsGroup) mapHazardsGroup.clearLayers();
+
+    let cardsHtml = '';
+    quakes.slice(0, 10).forEach(q => {
+      const coords = q.geometry.coordinates; // [lon, lat, depth]
+      const mag = q.properties.mag;
+      const place = q.properties.place;
+
+      if (osintMap && mapHazardsGroup) {
+        const marker = L.circleMarker([coords[1], coords[0]], {
+          radius: Math.max(5, mag * 2),
+          color: mag > 6 ? '#ef4444' : '#f59e0b',
+          fillColor: mag > 6 ? '#ef4444' : '#f59e0b',
+          fillOpacity: 0.7
+        }).bindPopup(`<div style="font-size:0.7rem; color:#0f172a;"><b>Mag ${mag} Earthquake</b><br>${place}<br>Depth: ${coords[2]} km</div>`);
+        mapHazardsGroup.addLayer(marker);
+      }
+
+      cardsHtml += `
+        <div class="metric-pill" style="border-left: 3px solid #ef4444;">
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#f8fafc; font-weight:bold;">
+            <span>Mag ${mag} Seismic Event</span>
+            <span class="badge-tag">USGS</span>
+          </div>
+          <div style="font-size:0.65rem; color:#cbd5e1; margin-top:2px;">📍 ${place} (Depth: ${coords[2]} km)</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            ${syncTag}
+            <a href="${q.properties.url}" target="_blank" class="source-brand-link">USGS ↗</a>
+          </div>
+        </div>
+      `;
+    });
+
+    titleEl.innerHTML = `🌋 Seismic Events (${quakes.length} Recorded)`;
+    briefList.innerHTML = cardsHtml;
+  } catch(e) {
+    titleEl.innerHTML = `🌋 USGS Fetch Failed`;
+    briefList.innerHTML = `<div class="error-pill">⚠️ Live USGS Feed Request Failed: ${e.message}</div>`;
+  }
+}
+
+// ===================================================
+// REAL FOREX ENGINE (NO STATICS)
+// ===================================================
+
+async function fetchRealForexSpot() {
+  const titleEl = document.getElementById('brief-region-title');
+  const briefList = document.getElementById('intel-brief-content-list');
+  const syncTag = generateTimestampTag();
+
+  titleEl.innerHTML = `💰 Fetching Interbank Forex...`;
+  briefList.innerHTML = '';
+
+  try {
+    const fx = await fetchRealData('https://api.exchangerate-api.com/v4/latest/USD');
+    const inr = fx?.rates?.INR;
+
+    if (!inr) throw new Error("INR rate missing from payload");
+
+    titleEl.innerHTML = `💰 Interbank Currency Spot`;
+    briefList.innerHTML = `
       <div class="metric-pill" style="border-left: 3px solid #10b981;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">👨‍🚀 Active Crew in Space (${tcEsc(total)})</strong>
-          <span class="badge-tag">ISS CREW API</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <strong style="color:#f8fafc; font-size:0.78rem;">USD / INR Real-Time Rate</strong>
+          <span class="badge-tag">EXCHANGERATE-API</span>
         </div>
-        <div style="max-height:160px; overflow-y:auto;">${chips || '<div style="font-size:0.7rem; color:#cbd5e1;">No crew listed.</div>'}</div>
+        <div style="font-size:1.3rem; color:#10b981; font-weight:bold; margin: 4px 0;">
+          ₹${inr.toFixed(2)} <span style="font-size:0.7rem; color:#cbd5e1; font-weight:normal;">per 1 USD</span>
+        </div>
+        <div style="font-size:0.68rem; color:#cbd5e1;">Live spot interbank conversion baseline provided natively.</div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${generateTimestampTag()}
-          <a href="https://github.com/corquaid/international-space-station-APIs" target="_blank" rel="noopener" class="source-brand-link">ISS Crew API ↗</a>
-        </div>
-      </div>`;
-  } else {
-    crewCard = `<div class="metric-pill" style="border-left:3px solid #ef4444; font-size:0.7rem; color:#cbd5e1;">The crew manifest is unavailable right now. Press 🔄 Sync Telemetry to retry.</div>`;
-  }
-
-  container.innerHTML = issCard + crewCard;
-}
-
-// ===================================================
-// T&C STALL ZONE
-// ===================================================
-
-async function fetchLiveTCOpsData() {
-  const container = document.getElementById('tc-ops-container');
-  if (!container) return;
-  container.innerHTML = `<div style="color:#cbd5e1; font-size:0.75rem;"><i class="fa-solid fa-spinner fa-spin"></i> Reading stall-zone weather...</div>`;
-
-  try {
-    const w = await fetchWithTimeout(`https://api.open-meteo.com/v1/forecast?latitude=${TC_STALL.lat}&longitude=${TC_STALL.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto`);
-    const c = w.current || {};
-    const trafficUrl = `https://www.google.com/maps/@${TC_STALL.lat},${TC_STALL.lon},15z/data=!5m1!1e1`;
-    container.innerHTML = `
-      <div class="metric-pill" style="border-left: 3px solid #f59e0b;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">${tcEsc(TC_STALL.name)} T&amp;C Stall Zone Weather</strong>
-          <span class="badge-tag">STALL ZONE</span>
-        </div>
-        <div style="font-size:1.1rem; color:#f59e0b; font-weight:bold; margin-top:4px;">${tcVal(c.temperature_2m, 'N/A')}°C <span style="font-size:0.72rem; color:#cbd5e1; font-weight:normal;">(${tcVal(c.relative_humidity_2m, 'N/A')}% humidity)</span></div>
-        <div style="font-size:0.7rem; color:#cbd5e1; line-height:1.45; margin-top:4px;">
-          • <b>Feels like:</b> ${tcVal(c.apparent_temperature, 'N/A')}°C<br>
-          • <b>Rain now:</b> ${tcVal(c.precipitation, 'N/A')} mm<br>
-          • <b>Wind:</b> ${tcVal(c.wind_speed_10m, 'N/A')} km/h
-        </div>
-        <a href="${trafficUrl}" target="_blank" rel="noopener" style="display:block; margin-top:8px; text-align:center; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; text-decoration:none;">
-          🚦 Open live traffic near the stall
-        </a>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          ${generateTimestampTag()}
-          <a href="https://open-meteo.com" target="_blank" rel="noopener" class="source-brand-link">Open-Meteo ↗</a>
+          ${syncTag}
+          <a href="https://www.exchangerate-api.com" target="_blank" class="source-brand-link">API Source ↗</a>
         </div>
       </div>
     `;
-  } catch (e) {
-    container.innerHTML = `<div class="metric-pill" style="border-left:3px solid #ef4444; font-size:0.7rem; color:#cbd5e1;">Stall-zone weather is unavailable right now. Press 🔄 Refresh to retry.</div>`;
+  } catch(e) {
+    titleEl.innerHTML = `💰 Forex Fetch Failed`;
+    briefList.innerHTML = `<div class="error-pill">⚠️ Live Forex Spot Request Failed: ${e.message}</div>`;
   }
 }
 
 // ===================================================
-// WIKIPEDIA BACKGROUND CARD
+// MAP VIEW MODE CONTROLLER & RESET
 // ===================================================
 
-async function loadTargetedWikiSummary(catKey) {
-  const box = document.getElementById(`wiki-box-${catKey}`);
-  if (!box) return;
-  const slug = TC_WIKI_SLUGS[catKey] || 'Current_events';
-
-  try {
-    let data = wikiCache[slug];
-    if (!data) {
-      data = await fetchWithTimeout(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slug)}`);
-      wikiCache[slug] = data;
-    }
-    const extract = tcTrimExtract(data.extract || '');
-    const pageUrl = data.content_urls?.desktop?.page;
-    const safeUrl = (typeof pageUrl === 'string' && pageUrl.startsWith('https://')) ? pageUrl : 'https://en.wikipedia.org';
-
-    box.innerHTML = `
-      <div style="background:#0f172a; border:1px solid #f59e0b; border-left:3px solid #f59e0b; border-radius:6px; padding:8px 10px; margin-top:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:8px;">
-          <strong style="color:#f8fafc; font-size:0.75rem;">☕ T&amp;C Intelligence Desk: ${tcVal(data.title)} Briefing</strong>
-          <span style="font-size:0.6rem; background:#f59e0b; color:#0f172a; padding:2px 5px; border-radius:3px; font-weight:bold; white-space:nowrap;">T&amp;C TRUSTED WIKI</span>
-        </div>
-        <p style="margin:0 0 4px 0; font-size:0.7rem; color:#cbd5e1; line-height:1.4;">${tcEsc(extract)}</p>
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #334155; padding-top:4px; margin-top:4px;">
-          ${generateTimestampTag()}
-          <a href="${tcEsc(safeUrl)}" target="_blank" rel="noopener" class="source-brand-link">Wikipedia ↗</a>
-        </div>
-      </div>
-    `;
-  } catch (e) {
-    box.innerHTML = '';
-  }
-}
-
-// ===================================================
-// MAP MODE SWITCHER
-// ===================================================
-
-function setMapDisplayMode(mode, lat, lon) {
+function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
   const mapCanvas = document.getElementById('leaflet-map-canvas');
   const windyCanvas = document.getElementById('windy-iframe-canvas');
-  if (!mapCanvas || !windyCanvas) return;
-
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('mode-btn-active'));
-  currentMapMode = mode;
-
-  // Leave ISS mode cleanly
-  if (mode !== 'iss') { stopISSPolling(); removeISSMarker(); }
-  // Leave Windy mode cleanly (frees the iframe)
-  if (mode !== 'windy') windyCanvas.innerHTML = '';
-
-  mapCanvas.style.display = mode === 'windy' ? 'none' : 'block';
-  windyCanvas.style.display = mode === 'windy' ? 'block' : 'none';
-  const activeBtn = document.getElementById(`mode-btn-${mode}`);
-  if (activeBtn) activeBtn.classList.add('mode-btn-active');
-
-  if (mode === 'windy') {
-    let wLat = tcToNum(lat);
-    let wLon = tcToNum(lon);
-    let zoom = 8;
-    if (!Number.isFinite(wLat) || !Number.isFinite(wLon)) {
-      if (lastPick) { wLat = lastPick.lat; wLon = lastPick.lng; }
-      else { wLat = TC_INDIA_VIEW.lat; wLon = TC_INDIA_VIEW.lon; zoom = 5; }
-    }
-    windyCanvas.innerHTML = `<iframe title="Windy weather radar" loading="lazy" width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${wLat}&amp;lon=${wLon}&amp;detailLat=${wLat}&amp;detailLon=${wLon}&amp;zoom=${zoom}&amp;level=surface&amp;overlay=wind" frameborder="0" style="border:0; width:100%; height:100%; border-radius:6px;"></iframe>`;
-    return;
-  }
-
-  if (osintMap) osintMap.invalidateSize();
 
   if (mode === 'locality') {
+    mapCanvas.style.display = 'block';
+    windyCanvas.style.display = 'none';
+    document.getElementById('mode-btn-locality')?.classList.add('mode-btn-active');
     if (mapHazardsGroup) mapHazardsGroup.clearLayers();
-    if (localityBrief) renderBrief(localityBrief.title, localityBrief.html);
-    else renderBrief(TC_DEFAULT_BRIEF_TITLE, TC_DEFAULT_BRIEF_HTML);
+    if (osintMap) osintMap.invalidateSize();
   } else if (mode === 'earthquakes') {
+    mapCanvas.style.display = 'block';
+    windyCanvas.style.display = 'none';
+    document.getElementById('mode-btn-earthquakes')?.classList.add('mode-btn-active');
+    if (osintMap) osintMap.invalidateSize();
     plotGlobalEarthquakes();
-  } else if (mode === 'iss') {
-    if (mapHazardsGroup) mapHazardsGroup.clearLayers();
-    issFollow = true;
-    beginISSPolling();
+  } else if (mode === 'forex') {
+    mapCanvas.style.display = 'block';
+    windyCanvas.style.display = 'none';
+    document.getElementById('mode-btn-forex')?.classList.add('mode-btn-active');
+    if (osintMap) osintMap.invalidateSize();
+    fetchRealForexSpot();
+  } else if (mode === 'windy') {
+    mapCanvas.style.display = 'none';
+    windyCanvas.style.display = 'block';
+    windyCanvas.innerHTML = `<iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&zoom=8&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%; border-radius:6px;"></iframe>`;
+    document.getElementById('mode-btn-windy')?.classList.add('mode-btn-active');
   }
 }
 
 function resetLeafletMap() {
-  clearTimeout(lookupTimer);
-  lookupToken++;
-  lastPick = null;
-  localityBrief = null;
-  if (currentClickMarker && osintMap) osintMap.removeLayer(currentClickMarker);
-  currentClickMarker = null;
-  setMapDisplayMode('locality');   // also clears hazards, the ISS marker and restores the default brief
-  if (osintMap) osintMap.setView([TC_INDIA_VIEW.lat, TC_INDIA_VIEW.lon], TC_INDIA_VIEW.zoom);
+  setMapDisplayMode('locality');
+  if (osintMap) {
+    osintMap.setView([20.5937, 78.9629], 4);
+    if (currentClickMarker) { osintMap.removeLayer(currentClickMarker); currentClickMarker = null; }
+    if (mapHazardsGroup) mapHazardsGroup.clearLayers();
+  }
+  const titleEl = document.getElementById('brief-region-title');
+  const briefList = document.getElementById('intel-brief-content-list');
+  if (titleEl) titleEl.innerHTML = `📍 Locality Breakdown`;
+  if (briefList) briefList.innerHTML = `<div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to query OpenStreetMap, Open-Meteo Weather/AQI, and USGS Earthquakes in real time.</div>`;
 }
-
-
 
 // ===================================================
 // SECTION VIEW MANAGER ENGINE
