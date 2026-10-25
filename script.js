@@ -1185,13 +1185,26 @@ let pendingLat = null;
 let pendingLng = null;
 let masterTelemetryData = null; // Common destination & telemetry data
 
-// Initialize Leaflet Map with script-enforced minimum mobile height
+// --- 100% SCRIPT-ENFORCED LAYOUT & OVERLAP PREVENTION ---
 const mapDivEl = document.getElementById('map');
 if (mapDivEl) {
   mapDivEl.style.width = '100%';
-  mapDivEl.style.height = '420px';
-  mapDivEl.style.minHeight = '420px';
+  mapDivEl.style.height = '400px';
+  mapDivEl.style.minHeight = '400px';
   mapDivEl.style.position = 'relative';
+  mapDivEl.style.display = 'block';
+  mapDivEl.style.marginBottom = '16px'; // Forces clean gap below map
+  mapDivEl.style.clear = 'both';
+  mapDivEl.style.zIndex = '1';
+}
+
+const infoBoxEl = document.getElementById('route-info');
+if (infoBoxEl) {
+  infoBoxEl.style.position = 'relative';
+  infoBoxEl.style.display = 'block';
+  infoBoxEl.style.marginTop = '12px'; // Ensures it sits strictly below map
+  infoBoxEl.style.clear = 'both';
+  infoBoxEl.style.zIndex = '2';
 }
 
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1397,7 +1410,7 @@ function showConfirmModal(lat, lng) {
   modal.style.cssText = 'position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:#0f172a; border:1px solid #38bdf8; border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.8); font-family:system-ui, -apple-system, sans-serif; text-align:center; color:#f8fafc; pointer-events:auto;';
 
   modal.innerHTML = `
-    <div style="font-size:0.75rem; font-weight:800; color:#38bdf8; margin-bottom:4px;">📍 Confirm Destination Change?</div>
+    <div style="font-size:0.75rem; font-weight:800; color:#38bdf8; margin-bottom:4px;"> Oy! Confirm Destination Change?</div>
     <div style="font-size:0.62rem; color:#cbd5e1; margin-bottom:8px;">New point selected: <b>${lat}, ${lng}</b></div>
     <div style="display:flex; gap:6px;">
       <button id="btn-confirm-yes" style="flex:1; background:#059669; color:#fff; border:none; padding:6px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer; pointer-events:auto;">YES, Update</button>
@@ -1610,7 +1623,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
 
   } catch (err) {
     console.error("Master telemetry & route error:", err);
-    infoBox.innerHTML = `<div class="card-placeholder"><p>Could not load route or telemetry data.</p></div>`;
+    infoBox.innerHTML = `<div><p>Could not load route or telemetry data.</p></div>`;
   }
 }
 
@@ -1628,7 +1641,7 @@ function renderMasterCard() {
     routes.forEach((route, index) => {
       const dist = (route.distance / 1000).toFixed(1);
       const timeFormatted = formatDuration(route.duration);
-      const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
+      const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
       
       optionsHtml += `
         <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -1682,10 +1695,10 @@ function renderMasterCard() {
 
       <!-- 4 PERMANENT TOP MODE BUTTONS -->
       <div class="mode-switcher" style="display: flex; gap: 3px; margin-bottom: 8px;">
-        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚗 Driving</button>
-        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚶 Walking</button>
-        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;">📍 Locality</button>
-        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🌪️ Radar</button>
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Walking</button>
+        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Locality</button>
+        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Radar</button>
       </div>
 
       ${tabSpecificHtml}
@@ -1693,7 +1706,7 @@ function renderMasterCard() {
       <!-- BOTTOM CLEAR BUTTON TO RESET MAP -->
       ${activePinnedLat ? `
         <button onclick="removePinnedLocation()" style="width:100%; margin-top:8px; background:#1e293b; color:#ef4444; border:1px solid #ef4444; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-          🗑️ Clear Pin & Reset Map
+           Clear Pin & Reset Map
         </button>
       ` : ''}
 
@@ -1771,37 +1784,6 @@ if (mapContainerElement) {
     }
   });
   observer.observe(mapContainerElement);
-}
-
-
-
-
-
-
-// 🎧 headphones pop-up
-// Track whether we already reminded them in this browser session
-let hasShownHeadphones = false;
-
-function checkAndShowHeadphonesNotice() {
-  if (hasShownHeadphones) return; // Only show once per page load
-
-  const modal = document.getElementById('smart-headphones-popup');
-  if (modal) {
-    hasShownHeadphones = true;
-    modal.style.display = 'block';
-
-    // Smart Auto-dismiss: hide automatically after 10 seconds if they don't click anything
-    setTimeout(() => {
-      dismissHeadphonesNotice(false);
-    }, 10000);
-  }
-}
-
-function dismissHeadphonesNotice(rememberChoice) {
-  const modal = document.getElementById('smart-headphones-popup');
-  if (modal) {
-    modal.style.display = 'none';
-  }
 }
 
 
