@@ -1181,13 +1181,14 @@ let currentDestName = "";
 let telemetryMarker = null;
 let activePinnedLat = null;
 let activePinnedLng = null;
-let masterTelemetryData = null; // Common destination & weather data for all buttons
+let masterTelemetryData = null; // Common destination & telemetry data
+let radarPressTimer = null; // Timer for long-press detection
 
 // Initialize Leaflet Map with script-enforced minimum mobile height
 const mapDivEl = document.getElementById('map');
 if (mapDivEl) {
   mapDivEl.style.width = '100%';
-  mapDivEl.style.height = '420px'; // Locks absolute sizing so mobile viewports never collapse
+  mapDivEl.style.height = '420px';
   mapDivEl.style.minHeight = '420px';
   mapDivEl.style.position = 'relative';
 }
@@ -1277,7 +1278,7 @@ function removePinnedLocation() {
   setTimeout(() => map.invalidateSize(), 50);
 }
 
-// Open Same-Container Windy Radar Overlay (Script-enforced absolute sizing)
+// Open Same-Container Windy Radar Overlay (Allows normal double-tap zoom & long-press to pin)
 function openSameContainerWindy() {
   if (!activePinnedLat || !activePinnedLng || !masterTelemetryData) {
     alert("Please search or pin a location on the map first!");
@@ -1303,14 +1304,14 @@ function openSameContainerWindy() {
   const currW = t.currW;
   const aqiBadge = t.aqiBadge;
 
-  // Enforce absolute script styling so mobile viewports never alter map frame size
   windyOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:8px; display:flex; flex-direction:column; overflow:hidden;';
 
+  // Transparent shield captures long-press (mousedown/touchstart for 700ms), letting double-taps pass through to iframe for zoom
   windyOverlay.innerHTML = `
-    <!-- TOP RADAR CONTROL BAR WITH EMBEDDED WEATHER PILLS -->
-    <div style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; flex-shrink:0;">
+    <!-- TOP RADAR CONTROL BAR WITH CLICK-BLEED PREVENTION -->
+    <div onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; flex-shrink:0; pointer-events:auto; z-index:1000;">
       <div style="display:flex; align-items:center; gap:5px; overflow:hidden;">
-        <span style="font-size:0.68rem; color:#38bdf8; font-weight:bold; white-space:nowrap;"> Radar:</span>
+        <span style="font-size:0.68rem; color:#38bdf8; font-weight:bold; white-space:nowrap;">🌪️ Radar:</span>
         <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</span>
         <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">💨 ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}</span>
         <span style="background: #1e293b; border: 1px solid ${aqiBadge.color}; color: ${aqiBadge.color}; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">${aqiBadge.text}</span>
@@ -1320,9 +1321,27 @@ function openSameContainerWindy() {
       </button>
     </div>
     <div style="flex-grow:1; width:100%; height:100%; position:relative;">
+      <div id="radar-touch-shield" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; background:transparent;" 
+           onmousedown="startRadarLongPress(event)" onmouseup="cancelRadarLongPress()" onttouchstart="startRadarLongPress(event)" ontouchend="cancelRadarLongPress()" title="Double-tap to zoom, Hold 1s to pin location">
+      </div>
       <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${activePinnedLat}&lon=${activePinnedLng}&detailLat=${activePinnedLat}&detailLon=${activePinnedLng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%; display:block;"></iframe>
     </div>
   `;
+}
+
+// Long-press handlers for pinning from radar view
+function startRadarLongPress(e) {
+  radarPressTimer = setTimeout(() => {
+    closeWindyOverlay();
+    alert("Long press detected! Please tap on the main interactive map to select your new destination point.");
+  }, 900); // 900ms hold triggers new pin prompt
+}
+
+function cancelRadarLongPress() {
+  if (radarPressTimer) {
+    clearTimeout(radarPressTimer);
+    radarPressTimer = null;
+  }
 }
 
 function closeWindyOverlay() {
@@ -1340,7 +1359,7 @@ function closeWindyOverlay() {
   }
 }
 
-// Switch Master Mode with layout recalculation
+// Switch Master Mode
 function switchMode(mode) {
   if (mode === 'radar') {
     openSameContainerWindy();
@@ -1364,6 +1383,9 @@ function switchMode(mode) {
 
 // MAP CLICK LISTENER
 map.on('click', async function(e) {
+  const windyOverlay = document.getElementById('windy-overlay-frame');
+  if (windyOverlay) return; // Block single clicks when radar is active
+
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
   activePinnedLat = lat;
@@ -1410,13 +1432,13 @@ async function fetchRouteData(query, customDisplayName = null) {
   }
 }
 
-// Master data fetcher
+// Master data fetcher (Includes Wikipedia Summary for Locality Tab)
 async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   const infoBox = document.getElementById('route-info');
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Resolving location, address, and routes...</p>
+      <p> T&C fetching intel & routes...</p>
     </div>
   `;
 
@@ -1446,6 +1468,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
     const district = addr.state_district || addr.district || 'District';
     const state = addr.state || 'State';
     const landmark = addr.road || addr.neighbourhood || 'Landmark Area';
+    const county = addr.county || addr.subdistrict || 'Mandal/Taluka';
 
     let pincode = addr.postcode || addr.pincode || addr.postal_code;
     if (!pincode && geoData?.display_name) {
@@ -1472,6 +1495,23 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km)`;
     }
 
+    // Fetch Wikipedia Summary for the locality/town/district
+    let wikiSummary = "Detailed intelligence summary not available for this specific sector.";
+    let wikiUrl = "#";
+    try {
+      const wikiQuery = encodeURIComponent(villageTown !== 'Local Sector' ? villageTown : district);
+      const wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${wikiQuery}`);
+      if (wikiRes.ok) {
+        const wikiData = await wikiRes.json();
+        if (wikiData && wikiData.extract) {
+          wikiSummary = wikiData.extract;
+          wikiUrl = wikiData.content_urls?.desktop?.page || "#";
+        }
+      }
+    } catch (wErr) {
+      console.warn("Wikipedia fetch skipped:", wErr);
+    }
+
     if (driveData.code === "Ok" && walkData.code === "Ok") {
       allModesData.driving = driveData.routes;
       walkData.routes.forEach(route => {
@@ -1483,7 +1523,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
     }
 
     masterTelemetryData = {
-      villageTown, district, state, landmark, pincode, currW, currAQI, aqiBadge, nearestQuakeText
+      villageTown, district, state, landmark, county, pincode, currW, currAQI, aqiBadge, nearestQuakeText, wikiSummary, wikiUrl
     };
 
     currentMode = 'driving';
@@ -1497,7 +1537,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
-// Master Card Renderer with Common Address Header
+// Master Card Renderer with Furnished Locality View & Wikipedia Intelligence
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -1528,7 +1568,18 @@ function renderMasterCard() {
   } 
   else if (currentMode === 'locality') {
     tabSpecificHtml = `
-      <div style="background: #1e293b; border: 1px solid #334155; padding: 6px 8px; border-radius: 6px; font-size: 0.65rem; color: #cbd5e1;">
+      <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc; margin-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span style="font-weight: bold; color: #38bdf8;"> T&C Intelligence</span>
+          <span style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">Verified Source 🟢</span>
+        </div>
+        <p style="margin: 0 0 6px 0; color: #cbd5e1; line-height: 1.35; font-size: 0.65rem;">${t.wikiSummary}</p>
+        <div style="font-size: 0.6rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 4px; display: flex; justify-content: space-between;">
+          <span>Mandal: <b>${t.county}</b></span>
+          <a href="${t.wikiUrl}" target="_blank" style="color: #38bdf8; text-decoration: none;">View Full Wiki Source ↗</a>
+        </div>
+      </div>
+      <div style="background: #1e293b; border: 1px solid #334155; padding: 5px 8px; border-radius: 6px; font-size: 0.62rem; color: #cbd5e1;">
         <span style="color:#ef4444; font-weight:bold;">🌋 Nearest Seismic Event:</span> ${t.nearestQuakeText}
       </div>
     `;
@@ -1637,6 +1688,7 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
+
 
 
 
