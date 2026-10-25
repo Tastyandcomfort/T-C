@@ -1,6 +1,6 @@
 
 // ===================================================
-// T&C FULL GLOBAL INTELLIGENCE DESK (LIVE OSINT FEEDS)
+// T&C FULL GLOBAL INTELLIGENCE & LIVE TELEMETRY DESK
 // ===================================================
 
 const tcIntelCategories = [
@@ -54,10 +54,6 @@ const tcIntelCategories = [
   }
 ];
 
-// ===================================================
-// T&C COMMAND CENTER: ENTERPRISE SUITE (FINAL FIXES)
-// ===================================================
-
 let osintMap = null;
 let currentClickMarker = null;
 
@@ -76,7 +72,7 @@ const API_SCHEDULE_REGISTRY = {
 
 let schedulerInterval = null;
 
-// Universal Fetch Timeout Utility (8s Limit)
+// Universal Fetch Timeout Utility (8s Limit)[cite: 1]
 async function fetchWithTimeout(resource, options = {}, timeoutMs = 8000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
@@ -225,6 +221,9 @@ async function loadTandCIntelligenceHub() {
               <option value="prediction_ai" data-badge="GL" data-class="badge-gl">📈 Live Share Market Indices (Nifty / Sensex & Forex)</option>
               <option value="solar_space" data-badge="GL" data-class="badge-gl">☀️ Plain-English Solar Weather & Rocket Launch Schedule</option>
               <option value="sat_space" data-badge="GL" data-class="badge-gl">🛰️ ISS Live GPS & Radiation Monitoring Feed</option>
+              <option value="celestrak_pass" data-badge="GL" data-class="badge-gl">🛰️ CelesTrak NORAD Active Satellite Telemetry</option>
+              <option value="open_notify_astros" data-badge="GL" data-class="badge-gl">👨‍🚀 Open Notify Active Crew in Space Tracker</option>
+              <option value="solar_ephemeris" data-badge="TG" data-class="badge-tg">🌅 Sunrise-Sunset Solar Ephemeris Engine (Hyderabad)</option>
             </optgroup>
             <optgroup label="☕ LIVE LOCAL, AVIATION & CYBER TELEMETRY">
               <option value="flight_radar" data-badge="TG" data-class="badge-tg">✈️ Airspace Aviation Status & Emergency Feed</option>
@@ -244,7 +243,7 @@ async function loadTandCIntelligenceHub() {
 
       <div class="opt-note-box">
         <i class="fa-solid fa-circle-info" style="color:#38bdf8;"></i>
-        <span><strong>Note:</strong> Data feeds auto-sync dynamically with verified live public telemetry.</span>
+        <span><strong>Note:</strong> Data feeds auto-sync dynamically with verified live public telemetry endpoints.</span>
       </div>
     </div>
 
@@ -329,6 +328,39 @@ async function loadTandCIntelligenceHub() {
         <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
       </div>
       <div id="wiki-box-sat_space"></div>
+    </div>
+
+    <div id="intel-view-celestrak_pass" class="intel-category-view" style="display: none;">
+      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">CelesTrak NORAD Satellite Pass & Orbital Tracker <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
+          <button id="btn-sync-celestrak_pass" onclick="triggerRefresh('celestrak_pass', true)" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Satellite</button>
+        </div>
+        <div id="celestrak-pass-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
+      </div>
+      <div id="wiki-box-celestrak_pass"></div>
+    </div>
+
+    <div id="intel-view-open_notify_astros" class="intel-category-view" style="display: none;">
+      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h4 style="margin: 0; color: #10b981; font-size: 0.88rem;">Open Notify Active Astronauts in Space <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
+          <button id="btn-sync-open_notify_astros" onclick="triggerRefresh('open_notify_astros', true)" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Crew</button>
+        </div>
+        <div id="open-notify-astros-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
+      </div>
+      <div id="wiki-box-open_notify_astros"></div>
+    </div>
+
+    <div id="intel-view-solar_ephemeris" class="intel-category-view" style="display: none;">
+      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;">Sunrise-Sunset Solar Ephemeris Engine (Hyderabad) <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
+          <button id="btn-sync-solar_ephemeris" onclick="triggerRefresh('solar_ephemeris', true)" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Solar</button>
+        </div>
+        <div id="solar-ephemeris-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
+      </div>
+      <div id="wiki-box-solar_ephemeris"></div>
     </div>
 
     <div id="intel-view-flight_radar" class="intel-category-view" style="display: none;">
@@ -457,6 +489,9 @@ async function executeCategoryFetch(catKey) {
   if (catKey === 'prediction_ai') await fetchLiveMarketData(syncTagHtml);
   if (catKey === 'solar_space') await fetchLiveSolarData(syncTagHtml);
   if (catKey === 'sat_space') await fetchLiveSatSpaceData(syncTagHtml);
+  if (catKey === 'celestrak_pass') await fetchCelesTrakSatelliteData(syncTagHtml);
+  if (catKey === 'open_notify_astros') await fetchOpenNotifyAstronautsData(syncTagHtml);
+  if (catKey === 'solar_ephemeris') await fetchSolarEphemerisEngineData(syncTagHtml);
   if (catKey === 'flight_radar') await fetchLiveAirspaceRadar(syncTagHtml);
   if (catKey === 'cyber_alerts') await fetchCyberSecurityAdvisories(syncTagHtml);
   if (catKey === 'tc_ops') await fetchLiveTCOpsData(syncTagHtml);
@@ -476,6 +511,9 @@ async function loadTargetedWikiSummary(catKey, syncTagHtml) {
     prediction_ai: "Stock_market",
     solar_space: "Space_weather",
     sat_space: "International_Space_Station",
+    celestrak_pass: "Artificial_satellite",
+    open_notify_astros: "List_of_spaceflight_records",
+    solar_ephemeris: "Sunrise",
     flight_radar: "Airspace",
     cyber_alerts: "Cybersecurity",
     tc_ops: "Meteorology",
@@ -516,6 +554,117 @@ async function loadTargetedWikiSummary(catKey, syncTagHtml) {
     box.innerHTML = '';
   }
 }
+
+// ===================================================
+// SHORTLISTED NATIVE CORS LIVE MODULES
+// ===================================================
+
+async function fetchCelesTrakSatelliteData(syncTagHtml) {
+  const container = document.getElementById('celestrak-pass-container');
+  if (!container) return;
+  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Querying CelesTrak NORAD Ephemeris...</div>`;
+
+  try {
+    const data = await fetchWithTimeout('https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json');
+    const primaryOrbiter = data.find(sat => sat.OBJECT_NAME.includes('ISS') || sat.NORAD_CAT_ID === 25544) || data[0];
+
+    container.innerHTML = `
+      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <strong style="color:#f8fafc; font-size:0.78rem;">🛰️ NORAD Orbital Telemetry: ${primaryOrbiter.OBJECT_NAME}</strong>
+          <span class="badge-gl">CELESTRAK API</span>
+        </div>
+        <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1; line-height:1.42;">
+          • <strong>NORAD ID:</strong> ${primaryOrbiter.NORAD_CAT_ID}<br>
+          • <strong>Orbital Inclination:</strong> ${Number(primaryOrbiter.INCLINATION).toFixed(2)}°<br>
+          • <strong>Orbits Per Day:</strong> ${Number(primaryOrbiter.MEAN_MOTION).toFixed(2)}
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          ${syncTagHtml}
+          <a href="https://celestrak.org" target="_blank" class="source-brand-link">CelesTrak ↗</a>
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    container.innerHTML = `<div style="color: #ef4444; text-align: center; font-size: 0.75rem;">CelesTrak telemetry endpoint temporarily busy.</div>`;
+  }
+}
+
+async function fetchOpenNotifyAstronautsData(syncTagHtml) {
+  const container = document.getElementById('open-notify-astros-container');
+  if (!container) return;
+  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Polling Open Notify Crew Manifest...</div>`;
+
+  try {
+    const data = await fetchWithTimeout('http://api.open-notify.org/astros.json');
+    const peopleTags = data.people.map(p => `
+      <div style="background: rgba(255,255,255,0.05); border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; margin-bottom: 4px;">
+        👨‍🚀 <strong>${p.name}</strong> <span style="color:#38bdf8; float:right;">[${p.craft}]</span>
+      </div>
+    `).join('');
+
+    container.innerHTML = `
+      <div class="compact-card" style="border-left: 3px solid #10b981;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <strong style="color:#f8fafc; font-size:0.78rem;">👨‍🚀 Human Presence in Space (${data.number} Active Crew)</strong>
+          <span class="badge-gl">OPEN NOTIFY API</span>
+        </div>
+        <div style="max-height: 180px; overflow-y: auto;">${peopleTags}</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; border-top: 1px solid #334155; pt: 4px;">
+          ${syncTagHtml}
+          <a href="http://open-notify.org" target="_blank" class="source-brand-link">Open Notify ↗</a>
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    container.innerHTML = `<div style="color: #ef4444; text-align: center; font-size: 0.75rem;">Astronaut telemetry unavailable.</div>`;
+  }
+}
+
+async function fetchSolarEphemerisEngineData(syncTagHtml) {
+  const container = document.getElementById('solar-ephemeris-container');
+  if (!container) return;
+  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Calculating Solar Ephemeris for Hyderabad...</div>`;
+
+  try {
+    const lat = 17.4239;
+    const lon = 78.4522;
+    const data = await fetchWithTimeout(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lon}&formatted=0`);
+    if (data.status !== 'OK') throw new Error("Invalid Solar Status");
+
+    const res = data.results;
+    const sunrise = new Date(res.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const sunset = new Date(res.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const solarNoon = new Date(res.solar_noon).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const hours = Math.floor(res.day_length / 3600);
+    const minutes = Math.floor((res.day_length % 3600) / 60);
+
+    container.innerHTML = `
+      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <strong style="color:#f8fafc; font-size:0.78rem;">🌅 Hyderabad Solar Ephemeris (${lat}°N, ${lon}°E)</strong>
+          <span class="badge-tg">SUNRISE-SUNSET API</span>
+        </div>
+        <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1; line-height:1.42;">
+          • <strong>Sunrise (IST):</strong> ${sunrise}<br>
+          • <strong>Solar Noon:</strong> ${solarNoon}<br>
+          • <strong>Sunset (IST):</strong> ${sunset}<br>
+          • <strong>Daylight Duration:</strong> ${hours}h ${minutes}m
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          ${syncTagHtml}
+          <a href="https://sunrise-sunset.org" target="_blank" class="source-brand-link">Sunrise-Sunset ↗</a>
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    container.innerHTML = `<div style="color: #ef4444; text-align: center; font-size: 0.75rem;">Solar ephemeris calculation failed.</div>`;
+  }
+}
+
+// ===================================================
+// SYSTEM MAPS & OSINT ROUTINES
+// ===================================================
 
 function startSmartScheduler() {
   if (schedulerInterval) clearInterval(schedulerInterval);
