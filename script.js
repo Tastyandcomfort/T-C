@@ -1,11 +1,3 @@
-// Check if the map element exists on the current page before running anything
-const mapDivCheck = document.getElementById('map');
-if (!mapDivCheck) {
-  // If we are on Home or another tab where the map doesn't exist, stop running here!
-  // (This prevents the script from breaking or rendering things where they shouldn't be)
-} else {
-  // --- YOUR EXISTING SCRIPT CODE GOES HERE ---
-}
 
 
 // ===================================================
