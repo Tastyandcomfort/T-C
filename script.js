@@ -1183,7 +1183,15 @@ let activePinnedLat = null;
 let activePinnedLng = null;
 let masterTelemetryData = null; // Common destination & weather data for all buttons
 
-// Initialize Leaflet Map
+// Initialize Leaflet Map with script-enforced minimum mobile height
+const mapDivEl = document.getElementById('map');
+if (mapDivEl) {
+  mapDivEl.style.width = '100%';
+  mapDivEl.style.height = '420px'; // Locks absolute sizing so mobile viewports never collapse
+  mapDivEl.style.minHeight = '420px';
+  mapDivEl.style.position = 'relative';
+}
+
 const map = L.map('map').setView([stallLat, stallLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1266,9 +1274,10 @@ function removePinnedLocation() {
       </div>
     `;
   }
+  setTimeout(() => map.invalidateSize(), 50);
 }
 
-// Open Same-Container Windy Radar Overlay (Weather/Wind metrics integrated here)
+// Open Same-Container Windy Radar Overlay (Script-enforced absolute sizing)
 function openSameContainerWindy() {
   if (!activePinnedLat || !activePinnedLng || !masterTelemetryData) {
     alert("Please search or pin a location on the map first!");
@@ -1287,8 +1296,6 @@ function openSameContainerWindy() {
   if (!windyOverlay) {
     windyOverlay = document.createElement('div');
     windyOverlay.id = 'windy-overlay-frame';
-    windyOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:8px; display:flex; flex-direction:column; overflow:hidden;';
-    mapDiv.style.position = 'relative';
     mapDiv.appendChild(windyOverlay);
   }
 
@@ -1296,21 +1303,24 @@ function openSameContainerWindy() {
   const currW = t.currW;
   const aqiBadge = t.aqiBadge;
 
+  // Enforce absolute script styling so mobile viewports never alter map frame size
+  windyOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:8px; display:flex; flex-direction:column; overflow:hidden;';
+
   windyOverlay.innerHTML = `
     <!-- TOP RADAR CONTROL BAR WITH EMBEDDED WEATHER PILLS -->
-    <div style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span style="font-size:0.7rem; color:#38bdf8; font-weight:bold;">🌪️ Radar: ${currentDestName}</span>
-        <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 1px 5px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</span>
-        <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 1px 5px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">💨 ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}</span>
-        <span style="background: #1e293b; border: 1px solid ${aqiBadge.color}; color: ${aqiBadge.color}; padding: 1px 5px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">${aqiBadge.text}</span>
+    <div style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; flex-shrink:0;">
+      <div style="display:flex; align-items:center; gap:5px; overflow:hidden;">
+        <span style="font-size:0.68rem; color:#38bdf8; font-weight:bold; white-space:nowrap;"> Radar:</span>
+        <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</span>
+        <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">💨 ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}</span>
+        <span style="background: #1e293b; border: 1px solid ${aqiBadge.color}; color: ${aqiBadge.color}; padding: 1px 4px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">${aqiBadge.text}</span>
       </div>
-      <button onclick="switchMode('driving')" style="background:#ef4444; color:#ffffff; border:none; padding:3px 8px; border-radius:3px; font-size:0.62rem; font-weight:bold; cursor:pointer;">
-        ✖ Close Radar
+      <button onclick="switchMode('driving')" style="background:#ef4444; color:#ffffff; border:none; padding:3px 8px; border-radius:3px; font-size:0.62rem; font-weight:bold; cursor:pointer; flex-shrink:0;">
+        ✖ Close
       </button>
     </div>
-    <div style="flex-grow:1; width:100%; position:relative;">
-      <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${activePinnedLat}&lon=${activePinnedLng}&detailLat=${activePinnedLat}&detailLon=${activePinnedLng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%;"></iframe>
+    <div style="flex-grow:1; width:100%; height:100%; position:relative;">
+      <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${activePinnedLat}&lon=${activePinnedLng}&detailLat=${activePinnedLat}&detailLon=${activePinnedLng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%; display:block;"></iframe>
     </div>
   `;
 }
@@ -1323,10 +1333,14 @@ function closeWindyOverlay() {
   if (mapDiv) {
     const leafletControls = mapDiv.querySelectorAll('.leaflet-control-container');
     leafletControls.forEach(el => el.style.display = 'block');
+    
+    setTimeout(() => {
+      if (typeof map !== 'undefined') map.invalidateSize();
+    }, 50);
   }
 }
 
-// Switch Master Mode
+// Switch Master Mode with layout recalculation
 function switchMode(mode) {
   if (mode === 'radar') {
     openSameContainerWindy();
@@ -1342,6 +1356,10 @@ function switchMode(mode) {
     }
   }
   renderMasterCard();
+
+  setTimeout(() => {
+    if (typeof map !== 'undefined') map.invalidateSize();
+  }, 50);
 }
 
 // MAP CLICK LISTENER
@@ -1464,7 +1482,6 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
       allModesData.walking = walkData.routes;
     }
 
-    // Save master telemetry for all tabs
     masterTelemetryData = {
       villageTown, district, state, landmark, pincode, currW, currAQI, aqiBadge, nearestQuakeText
     };
@@ -1472,6 +1489,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
     currentMode = 'driving';
     renderMasterCard();
     drawRouteOnMap('driving', 0);
+    setTimeout(() => map.invalidateSize(), 50);
 
   } catch (err) {
     console.error("Master telemetry & route error:", err);
@@ -1487,14 +1505,13 @@ function renderMasterCard() {
   const t = masterTelemetryData;
   let tabSpecificHtml = '';
 
-  // 1. Driving or Walking Route View
   if (currentMode === 'driving' || currentMode === 'walking') {
     const routes = allModesData[currentMode] || [];
     let optionsHtml = '';
     routes.forEach((route, index) => {
       const dist = (route.distance / 1000).toFixed(1);
       const timeFormatted = formatDuration(route.duration);
-      const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
+      const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
       
       optionsHtml += `
         <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -1509,7 +1526,6 @@ function renderMasterCard() {
       <div class="route-options-group">${optionsHtml}</div>
     `;
   } 
-  // 2. Locality Telemetry View
   else if (currentMode === 'locality') {
     tabSpecificHtml = `
       <div style="background: #1e293b; border: 1px solid #334155; padding: 6px 8px; border-radius: 6px; font-size: 0.65rem; color: #cbd5e1;">
@@ -1518,11 +1534,10 @@ function renderMasterCard() {
     `;
   }
 
-  // Master UI Structure (Common Apple-inspired Destination Header + 4 Mode Buttons + Tab Content + Clear Button)
   infoBox.innerHTML = `
     <div class="route-results-grid" style="font-family: system-ui, -apple-system, sans-serif;">
       
-      <!-- COMMON DESTINATION BANNER (APPLE-INSPIRED STYLE) -->
+      <!-- COMMON DESTINATION BANNER -->
       <div style="background: #1e293b; border-left: 3px solid #38bdf8; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px;">
         <div style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;">📍 ${t.villageTown}, ${t.district}</div>
         <div style="font-size: 0.62rem; color: #cbd5e1; margin-top: 1px;">
@@ -1532,10 +1547,10 @@ function renderMasterCard() {
 
       <!-- 4 PERMANENT TOP MODE BUTTONS -->
       <div class="mode-switcher" style="display: flex; gap: 3px; margin-bottom: 8px;">
-        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚗 Driving</button>
-        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚶 Walking</button>
-        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;">📍 Locality</button>
-        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🌪️ Radar</button>
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Walking</button>
+        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Locality</button>
+        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;"> Radar</button>
       </div>
 
       ${tabSpecificHtml}
@@ -1543,7 +1558,7 @@ function renderMasterCard() {
       <!-- BOTTOM CLEAR BUTTON TO RESET MAP -->
       ${activePinnedLat ? `
         <button onclick="removePinnedLocation()" style="width:100%; margin-top:8px; background:#1e293b; color:#ef4444; border:1px solid #ef4444; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-          🗑️ Clear Pin & Reset Map
+           Clear Pin & Reset Map
         </button>
       ` : ''}
 
@@ -1622,6 +1637,7 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
+
 
 
 
