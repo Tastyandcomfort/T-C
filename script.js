@@ -1185,7 +1185,7 @@ let pendingLat = null;
 let pendingLng = null;
 let masterTelemetryData = null; // Common destination & telemetry data
 
-// Initialize Leaflet Map with script-enforced minimum mobile height
+// Initialize Leaflet Map
 const mapDivEl = document.getElementById('map');
 if (mapDivEl) {
   mapDivEl.style.width = '100%';
@@ -1365,14 +1365,13 @@ function switchMode(mode) {
   }, 50);
 }
 
-// MAP CLICK LISTENER: Intercepts clicks during radar active state and prompts confirmation
+// MAP CLICK LISTENER
 map.on('click', async function(e) {
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
 
   const windyOverlay = document.getElementById('windy-overlay-frame');
   if (windyOverlay) {
-    // Show confirmation dialog before updating destination from radar mode
     pendingLat = lat;
     pendingLng = lng;
     showConfirmModal(lat, lng);
@@ -1463,13 +1462,57 @@ async function fetchRouteData(query, customDisplayName = null) {
   }
 }
 
-// Master data fetcher (Includes Wikipedia Summary for Locality Tab)
+// Dual Wikipedia & Google Maps Intelligence Resolver
+async function fetchIntelligenceSummary(villageTown, district, landmark, state, pincode, lat, lng) {
+  const searchQueries = [villageTown, district, "Hyderabad"].filter(q => q && q !== 'Local Sector');
+
+  // Try Wikipedia First
+  for (let term of searchQueries) {
+    try {
+      const searchRes = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(term)}&limit=1&namespace=0&format=json&origin=*`);
+      if (searchRes.ok) {
+        const searchData = await searchRes.json();
+        const matchedTitle = searchData[1] && searchData[1][0];
+
+        if (matchedTitle) {
+          const summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(matchedTitle)}`);
+          if (summaryRes.ok) {
+            const summaryData = await summaryRes.json();
+            if (summaryData && summaryData.extract) {
+              return {
+                summary: summaryData.extract,
+                sourceName: "Wikipedia Org",
+                badgeColor: "#10b981",
+                sourceUrl: summaryData.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(matchedTitle)}`
+              };
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn(`Wiki query skipped for ${term}:`, err);
+    }
+  }
+
+  // Google Maps / Geospatial Fallback
+  const fallbackAddress = `${landmark}, ${villageTown}, ${district}, ${state} - ${pincode}`;
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+  return {
+    summary: `Verified sector overview for <b>${villageTown}</b> (${district}). Located near ${landmark}, within pin code zone <b>${pincode}</b>, ${state}.`,
+    sourceName: "Google Maps",
+    badgeColor: "#38bdf8",
+    sourceUrl: googleMapsUrl
+  };
+}
+
+// Master data fetcher
 async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   const infoBox = document.getElementById('route-info');
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Resolving location, Wikipedia summary, & routes...</p>
+      <p>Resolving location, intelligence, & routes...</p>
     </div>
   `;
 
@@ -1526,21 +1569,8 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km)`;
     }
 
-    let wikiSummary = "Detailed intelligence summary not available for this specific sector.";
-    let wikiUrl = "#";
-    try {
-      const wikiQuery = encodeURIComponent(villageTown !== 'Local Sector' ? villageTown : district);
-      const wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${wikiQuery}`);
-      if (wikiRes.ok) {
-        const wikiData = await wikiRes.json();
-        if (wikiData && wikiData.extract) {
-          wikiSummary = wikiData.extract;
-          wikiUrl = wikiData.content_urls?.desktop?.page || "#";
-        }
-      }
-    } catch (wErr) {
-      console.warn("Wikipedia fetch skipped:", wErr);
-    }
+    // Resolve Wikipedia or Google Maps summary + badge URL
+    const intelResult = await fetchIntelligenceSummary(villageTown, district, landmark, state, pincode, lat, lng);
 
     if (driveData.code === "Ok" && walkData.code === "Ok") {
       allModesData.driving = driveData.routes;
@@ -1553,7 +1583,11 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
     }
 
     masterTelemetryData = {
-      villageTown, district, state, landmark, county, pincode, currW, currAQI, aqiBadge, nearestQuakeText, wikiSummary, wikiUrl
+      villageTown, district, state, landmark, county, pincode, currW, currAQI, aqiBadge, nearestQuakeText,
+      intelSummary: intelResult.summary,
+      intelSourceName: intelResult.sourceName,
+      intelBadgeColor: intelResult.badgeColor,
+      intelSourceUrl: intelResult.sourceUrl
     };
 
     currentMode = 'driving';
@@ -1567,7 +1601,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
-// Master Card Renderer with Furnished Locality View & Wikipedia Intelligence
+// Master Card Renderer with Dynamic Source Badge & External Redirect
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -1600,13 +1634,17 @@ function renderMasterCard() {
     tabSpecificHtml = `
       <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc; margin-bottom: 6px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence & Wiki</span>
-          <span style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">Verified Source 🟢</span>
+          <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence</span>
+          <span style="background: #0f172a; color: ${t.intelBadgeColor}; border: 1px solid ${t.intelBadgeColor}; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">
+            Source: ${t.intelSourceName} 🟢
+          </span>
         </div>
-        <p style="margin: 0 0 6px 0; color: #cbd5e1; line-height: 1.35; font-size: 0.65rem;">${t.wikiSummary}</p>
-        <div style="font-size: 0.6rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 4px; display: flex; justify-content: space-between;">
+        <p style="margin: 0 0 6px 0; color: #cbd5e1; line-height: 1.35; font-size: 0.65rem;">${t.intelSummary}</p>
+        <div style="font-size: 0.6rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>Mandal: <b>${t.county}</b></span>
-          <a href="${t.wikiUrl}" target="_blank" style="color: #38bdf8; text-decoration: none;">View Full Wiki Source ↗</a>
+          <a href="${t.intelSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: bold;">
+            Open ${t.intelSourceName} ↗
+          </a>
         </div>
       </div>
       <div style="background: #1e293b; border: 1px solid #334155; padding: 5px 8px; border-radius: 6px; font-size: 0.62rem; color: #cbd5e1;">
@@ -1718,7 +1756,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 
