@@ -1156,6 +1156,8 @@ setInterval(fetchWeather, 600000);
 
 
 
+
+
 // Map updated
 // 1. Your exact stall coordinates
 const stallLat = 17.367761; 
@@ -1176,6 +1178,7 @@ let currentMode = 'driving';
 let routeLayers = [];
 let destMarker = null;
 let currentDestName = "";
+let telemetryMarker = null;
 
 // Initialize Leaflet Map
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1189,7 +1192,135 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.marker([stallLat, stallLng]).addTo(map)
   .bindPopup('<b>You are here Tasty & Comfort Stall</b>').openPopup();
 
-// FORCE MAP TO RENDER AUTOMATICALLY ON LOAD (Multiple staggered intervals catch mobile browser layout delays)
+// Seismic Event Layer Group (USGS Live Data)
+const seismicLayerGroup = L.layerGroup().addTo(map);
+
+// Automatically load active live earthquakes on startup
+async function loadLiveUSGSEarthquakes() {
+  try {
+    const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
+    if (!res.ok) return;
+    const data = await res.json();
+    const quakes = data.features || [];
+
+    seismicLayerGroup.clearLayers();
+
+    quakes.forEach(q => {
+      const coords = q.geometry.coordinates; // [lon, lat, depth]
+      const mag = q.properties.mag;
+      const place = q.properties.place;
+
+      L.circleMarker([coords[1], coords[0]], {
+        radius: Math.max(4, mag * 2),
+        color: mag > 6 ? '#ef4444' : '#f59e0b',
+        fillColor: mag > 6 ? '#ef4444' : '#f59e0b',
+        fillOpacity: 0.75
+      }).bindPopup(`
+        <div style="font-size:0.75rem; color:#0f172a;">
+          <b>🌋 Mag ${mag} Earthquake</b><br>
+          ${place}<br>
+          Depth: ${coords[2]} km
+        </div>
+      `).addTo(seismicLayerGroup);
+    });
+  } catch (err) {
+    console.warn("USGS seismic feed fetch failed:", err);
+  }
+}
+
+loadLiveUSGSEarthquakes();
+
+// MAP CLICK LISTENER: Real-Time Locality Geocoding, Weather, AQI & Seismic Telemetry
+map.on('click', async function(e) {
+  const lat = e.latlng.lat.toFixed(4);
+  const lng = e.latlng.lng.toFixed(4);
+
+  const infoBox = document.getElementById('route-info');
+  infoBox.innerHTML = `
+    <div class="card-placeholder">
+      <span class="pulse-icon">⏳</span>
+      <p>Fetching real-time locality telemetry, weather, and AQI...</p>
+    </div>
+  `;
+
+  if (telemetryMarker) map.removeLayer(telemetryMarker);
+  telemetryMarker = L.marker([lat, lng]).addTo(map)
+    .bindPopup(`<b>Selected Point</b><br>${lat}, ${lng}`).openPopup();
+
+  try {
+    const [geoRes, weatherRes, aqiRes, quakeRes] = await Promise.all([
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`),
+      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm2_5,us_aqi`),
+      fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson').catch(() => null)
+    ]);
+
+    const geoData = geoRes.ok ? await geoRes.json() : null;
+    const weatherData = weatherRes.ok ? await weatherRes.json() : null;
+    const aqiData = aqiRes.ok ? await aqiRes.json() : null;
+    const quakeData = quakeRes && quakeRes.ok ? await quakeRes.json() : null;
+
+    const addr = geoData?.address || {};
+    const villageTown = addr.village || addr.town || addr.city_district || addr.city || addr.suburb || 'Local Sector';
+    const mandalTaluka = addr.county || addr.subdistrict || 'N/A';
+    const district = addr.state_district || addr.district || 'N/A';
+    const state = addr.state || 'N/A';
+    const country = addr.country || 'N/A';
+    const pincode = addr.postcode || 'N/A';
+    const landmark = addr.road || addr.neighbourhood || 'N/A';
+
+    const currW = weatherData?.current || {};
+    const currAQI = aqiData?.current || {};
+
+    let nearestQuakeText = "No major seismic activity recorded nearby.";
+    const quakes = quakeData?.features || [];
+    if (quakes.length > 0) {
+      let closest = quakes[0];
+      let minDist = Infinity;
+      quakes.forEach(q => {
+        const dist = Math.hypot(q.geometry.coordinates[1] - lat, q.geometry.coordinates[0] - lng);
+        if (dist < minDist) { minDist = dist; closest = q; }
+      });
+      nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km away)`;
+    }
+
+    infoBox.innerHTML = `
+      <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 0.8rem; color: #f8fafc;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 8px;">
+          <strong style="color: #38bdf8;">📍 ${villageTown}, ${district}</strong>
+          <span style="font-size: 0.65rem; background: #10b981; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold;">LIVE TELEMETRY</span>
+        </div>
+
+        <div style="margin-bottom: 8px;">
+          <div style="color: #f59e0b; font-weight: bold; margin-bottom: 3px;">🗺️ Address Breakdown:</div>
+          • <b>Landmark / Street:</b> ${landmark}<br>
+          • <b>Village / Town:</b> ${villageTown}<br>
+          • <b>Mandal / Taluka:</b> ${mandalTaluka}<br>
+          • <b>District & State:</b> ${district}, ${state}<br>
+          • <b>Country & Pincode:</b> ${country} (<span style="color: #10b981; font-weight: bold;">${pincode}</span>)
+        </div>
+
+        <div style="margin-bottom: 8px;">
+          <div style="color: #10b981; font-weight: bold; margin-bottom: 3px;">🌦️ Weather & Air Quality:</div>
+          • <b>Temperature:</b> ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'} | <b>Humidity:</b> ${currW.relative_humidity_2m !== undefined ? currW.relative_humidity_2m + '%' : 'N/A'}<br>
+          • <b>Wind Speed:</b> ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}<br>
+          • <b>US AQI Index:</b> <span style="color: #38bdf8; font-weight: bold;">${currAQI.us_aqi !== undefined ? currAQI.us_aqi : 'N/A'}</span> (PM2.5: ${currAQI.pm2_5 !== undefined ? currAQI.pm2_5 + ' µg/m³' : 'N/A'})
+        </div>
+
+        <div>
+          <div style="color: #ef4444; font-weight: bold; margin-bottom: 3px;">🌋 Nearest Seismic Event:</div>
+          • ${nearestQuakeText}
+        </div>
+      </div>
+    `;
+
+  } catch (err) {
+    console.error("Locality telemetry fetch error:", err);
+    infoBox.innerHTML = `<div class="card-placeholder"><p>Could not retrieve telemetry for this location.</p></div>`;
+  }
+});
+
+// FORCE MAP TO RENDER AUTOMATICALLY ON LOAD
 function triggerMapRefresh() {
   if (typeof map !== 'undefined') {
     map.invalidateSize(true);
@@ -1206,8 +1337,6 @@ window.addEventListener('load', () => {
   setTimeout(triggerMapRefresh, 100);
   setTimeout(triggerMapRefresh, 500);
 });
-
-
 
 // Tab click function to fix the half-blank map rendering bug if switched later
 function openMapView() {
@@ -1255,7 +1384,6 @@ async function fetchRouteData(query, customDisplayName = null) {
   try {
     let destLat, destLng, destName;
 
-    // 1. Check if query is raw lat/lng coordinates
     const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
     const match = query.match(latLngRegex);
 
@@ -1264,7 +1392,6 @@ async function fetchRouteData(query, customDisplayName = null) {
       destLng = parseFloat(match[3]);
       destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
     } else {
-      // 2. Clean up search query safely
       let searchQuery = query.trim();
       const lowerQuery = searchQuery.toLowerCase();
 
@@ -1272,7 +1399,6 @@ async function fetchRouteData(query, customDisplayName = null) {
         searchQuery = lowerQuery.replace(/near\s*me/g, '').replace(/near/g, '').trim();
       }
 
-      // 3. Search via Nominatim globally
       const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=1`;
       const geoRes = await fetch(geoUrl);
       
@@ -1296,7 +1422,6 @@ async function fetchRouteData(query, customDisplayName = null) {
     destMarker = L.marker([destLat, destLng]).addTo(map)
       .bindPopup(`<b>${destName}</b>`).openPopup();
 
-    // 4. Fetch routing data from OSRM safely
     const [driveRes, walkRes] = await Promise.all([
       fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
       fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`)
@@ -1426,7 +1551,6 @@ function drawRouteOnMap(mode, index) {
   }
 }
 
-
 // Automatically fix map tiles the exact moment the container finishes rendering
 const mapContainerElement = document.getElementById('map');
 if (mapContainerElement) {
@@ -1437,6 +1561,10 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
+
+
+
+
 
 
 
