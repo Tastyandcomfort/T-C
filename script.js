@@ -1185,26 +1185,32 @@ let pendingLat = null;
 let pendingLng = null;
 let masterTelemetryData = null; // Common destination & telemetry data
 
-// --- 100% SCRIPT-ENFORCED LAYOUT & OVERLAP PREVENTION ---
+// --- 100% SCRIPT-ENFORCED MOBILE LAYOUT & SCROLLING WRAPPER ---
 const mapDivEl = document.getElementById('map');
 if (mapDivEl) {
   mapDivEl.style.width = '100%';
-  mapDivEl.style.height = '400px';
-  mapDivEl.style.minHeight = '400px';
+  // Use a compact height on mobile screens to prevent vertical crowding
+  mapDivEl.style.height = window.innerWidth < 768 ? '320px' : '400px';
+  mapDivEl.style.minHeight = window.innerWidth < 768 ? '320px' : '400px';
   mapDivEl.style.position = 'relative';
   mapDivEl.style.display = 'block';
-  mapDivEl.style.marginBottom = '16px'; // Forces clean gap below map
+  mapDivEl.style.marginBottom = '12px';
   mapDivEl.style.clear = 'both';
   mapDivEl.style.zIndex = '1';
 }
 
+// Ensure the info box below the map is fully scrollable and neatly separated
 const infoBoxEl = document.getElementById('route-info');
 if (infoBoxEl) {
   infoBoxEl.style.position = 'relative';
   infoBoxEl.style.display = 'block';
-  infoBoxEl.style.marginTop = '12px'; // Ensures it sits strictly below map
+  infoBoxEl.style.marginTop = '8px';
   infoBoxEl.style.clear = 'both';
   infoBoxEl.style.zIndex = '2';
+  infoBoxEl.style.maxHeight = 'calc(100vh - 380px)';
+  infoBoxEl.style.overflowY = 'auto';
+  infoBoxEl.style.webkitOverflowScrolling = 'touch';
+  infoBoxEl.style.paddingRight = '2px';
 }
 
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1410,7 +1416,7 @@ function showConfirmModal(lat, lng) {
   modal.style.cssText = 'position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:#0f172a; border:1px solid #38bdf8; border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.8); font-family:system-ui, -apple-system, sans-serif; text-align:center; color:#f8fafc; pointer-events:auto;';
 
   modal.innerHTML = `
-    <div style="font-size:0.75rem; font-weight:800; color:#38bdf8; margin-bottom:4px;"> Oy! Confirm Destination Change?</div>
+    <div style="font-size:0.75rem; font-weight:800; color:#38bdf8; margin-bottom:4px;">📍 Confirm Destination Change?</div>
     <div style="font-size:0.62rem; color:#cbd5e1; margin-bottom:8px;">New point selected: <b>${lat}, ${lng}</b></div>
     <div style="display:flex; gap:6px;">
       <button id="btn-confirm-yes" style="flex:1; background:#059669; color:#fff; border:none; padding:6px; border-radius:4px; font-size:0.65rem; font-weight:bold; cursor:pointer; pointer-events:auto;">YES, Update</button>
@@ -1662,7 +1668,7 @@ function renderMasterCard() {
       <div style="max-height: 160px; overflow-y: auto; padding-right: 4px; margin-bottom: 6px; scrollbar-width: thin;">
         <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence</span>
+            <span style="font-weight: bold; color: #38bdf8;"> T&C Locality Intelligence</span>
             <span style="background: #0f172a; color: ${t.intelBadgeColor}; border: 1px solid ${t.intelBadgeColor}; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">
               Source: ${t.intelSourceName} 🟢
             </span>
