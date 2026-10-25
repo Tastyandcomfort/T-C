@@ -61,8 +61,8 @@ async function loadTandCIntelligenceHub() {
             <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active">📍 Locality</button>
             <button onclick="setMapDisplayMode('earthquakes')" id="mode-btn-earthquakes" class="mode-btn">🌋 Earthquakes</button>
             <button onclick="setMapDisplayMode('forex')" id="mode-btn-forex" class="mode-btn">💰 USD/INR Spot</button>
-            <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn">🌪️ Windy Radar</button>
-            <button onclick="resetLeafletMap()" class="mode-btn" style="background:#ef4444; color:#fff; border-color:#ef4444;">🗺️ Reset Map</button>
+            <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn"> Windy Radar</button>
+            <button onclick="resetLeafletMap()" class="mode-btn" style="background:#ef4444; color:#fff; border-color:#ef4444;"> Reset Map</button>
           </div>
         </div>
         <div id="leaflet-map-canvas" style="height: 420px; width: 100%; border-radius: 6px; background: #0f172a;"></div>
@@ -71,7 +71,7 @@ async function loadTandCIntelligenceHub() {
 
       <!-- SIDE TELEMETRY PANEL -->
       <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 440px; overflow-y: auto;">
-        <div id="brief-region-title" style="color: #f59e0b; font-size: 0.82rem; font-weight: bold; margin-bottom: 6px;">📍 Locality Breakdown</div>
+        <div id="brief-region-title" style="color: #f59e0b; font-size: 0.82rem; font-weight: bold; margin-bottom: 6px;"> Locality Breakdown</div>
         <div id="intel-brief-content-list">
           <div class="metric-pill" style="border-left: 3px solid #38bdf8; font-size: 0.72rem; color: #cbd5e1;">Click anywhere on the map to query OpenStreetMap, Open-Meteo Weather/AQI, and USGS Earthquakes in real time.</div>
         </div>
@@ -1239,12 +1239,25 @@ function getAQIShortBadge(aqiVal) {
   return { text: `🔴 AQI ${aqiVal}`, color: '#ef4444' };
 }
 
-// Close Telemetry Panel
-function closeTelemetryPanel() {
+// REMOVE PINNED LOCATION & CLEAR SELECTION
+function removePinnedLocation() {
   if (telemetryMarker) {
     map.removeLayer(telemetryMarker);
     telemetryMarker = null;
   }
+  if (destMarker) {
+    map.removeLayer(destMarker);
+    destMarker = null;
+  }
+  routeLayers.forEach(layer => map.removeLayer(layer));
+  routeLayers = [];
+  
+  activePinnedLat = null;
+  activePinnedLng = null;
+  currentDestName = "";
+
+  closeWindyOverlay();
+
   const infoBox = document.getElementById('route-info');
   if (infoBox) {
     infoBox.innerHTML = `
@@ -1255,6 +1268,11 @@ function closeTelemetryPanel() {
   }
 }
 
+// Close Telemetry Panel
+function closeTelemetryPanel() {
+  removePinnedLocation();
+}
+
 // Trigger OSRM Route Calculation from Pinned Telemetry Marker
 function routeToPinnedLocation() {
   if (activePinnedLat && activePinnedLng) {
@@ -1263,7 +1281,7 @@ function routeToPinnedLocation() {
   }
 }
 
-// Open Same-Container Windy Radar Overlay (Top-Left Bar Unblocks Layer Controls)
+// Open Same-Container Windy Radar Overlay (Close button pinned to bottom-left)
 function openSameContainerWindy(lat, lng, locationName) {
   const mapDiv = document.getElementById('map');
   if (!mapDiv) return;
@@ -1277,11 +1295,10 @@ function openSameContainerWindy(lat, lng, locationName) {
     mapDiv.appendChild(windyOverlay);
   }
 
-  // Positioned top-left to leave Windy's right-hand layer picker (Rain, Thunder, Clouds) completely clear
   windyOverlay.innerHTML = `
-    <div style="position:absolute; top:10px; left:10px; z-index:1000; display:flex; gap:8px; align-items:center; background:rgba(15,23,42,0.92); padding:6px 12px; border-radius:8px; border:1px solid #334155; box-shadow:0 4px 12px rgba(0,0,0,0.5);">
-      <span style="font-size:0.75rem; color:#38bdf8; font-weight:bold;">📍 Radar Pin: ${locationName}</span>
-      <button onclick="closeWindyOverlay()" style="background:#ef4444; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:0.68rem; font-weight:bold; cursor:pointer;">Close Radar ✖</button>
+    <div style="position:absolute; bottom:15px; left:15px; z-index:1000; display:flex; gap:8px; align-items:center; background:rgba(15,23,42,0.95); padding:8px 14px; border-radius:6px; border:1px solid #334155; box-shadow:0 4px 16px rgba(0,0,0,0.6);">
+      <span style="font-size:0.75rem; color:#38bdf8; font-weight:bold;">📍 Radar: ${locationName}</span>
+      <button onclick="closeWindyOverlay()" style="background:#ef4444; color:#fff; border:none; padding:5px 12px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">Close Radar ✖</button>
     </div>
     <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0;"></iframe>
   `;
@@ -1292,7 +1309,7 @@ function closeWindyOverlay() {
   if (windyOverlay) windyOverlay.remove();
 }
 
-// MAP CLICK TELEMETRY ENGINE WITH TOP-ACCESSIBLE ACTION BUTTONS
+// MAP CLICK TELEMETRY ENGINE
 map.on('click', async function(e) {
   closeWindyOverlay();
   const lat = e.latlng.lat.toFixed(4);
@@ -1333,7 +1350,6 @@ map.on('click', async function(e) {
     const country = addr.country || 'India';
     const landmark = addr.road || addr.neighbourhood || 'Landmark Area';
 
-    // Pincode Fallback Guard
     let pincode = addr.postcode || addr.pincode || addr.postal_code;
     if (!pincode && geoData?.display_name) {
       const match = geoData.display_name.match(/\b\d{6}\b/);
@@ -1362,8 +1378,8 @@ map.on('click', async function(e) {
     infoBox.innerHTML = `
       <div style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; font-family: system-ui, -apple-system, sans-serif; color: #f8fafc; box-shadow: 0 4px 16px rgba(0,0,0,0.4); max-width: 100%; overflow: hidden;">
         
-        <!-- TOP ROW: LOCATION TITLE + ACCESS BUTTONS (RADAR & ROUTE HERE) + CLOSE -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #334155; padding-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+        <!-- TOP ROW: LOCATION TITLE + CLOSE BUTTON -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
           <div>
             <div style="font-size: 0.9rem; font-weight: 800; color: #38bdf8;">
               📍 ${villageTown}, ${district}
@@ -1372,17 +1388,20 @@ map.on('click', async function(e) {
               ${landmark} • ${mandalTaluka} • ${state} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
             </div>
           </div>
-          
-          <!-- TOP ACTION BUTTON GROUP FOR EASY ACCESS -->
-          <div style="display: flex; gap: 6px; align-items: center;">
-            <button onclick="openSameContainerWindy(${lat}, ${lng}, '${villageTown}')" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 5px 9px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
-              🌪️ Radar
-            </button>
-            <button onclick="routeToPinnedLocation()" style="background: #10b981; color: #0f172a; border: 1px solid #10b981; padding: 5px 9px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
-              🚗 Route Here
-            </button>
-            <button onclick="closeTelemetryPanel()" style="background: #1e293b; color: #94a3b8; border: 1px solid #475569; width: 24px; height: 24px; border-radius: 50%; font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Close">✖</button>
-          </div>
+          <button onclick="closeTelemetryPanel()" style="background: #1e293b; color: #94a3b8; border: 1px solid #475569; width: 24px; height: 24px; border-radius: 50%; font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Close">✖</button>
+        </div>
+
+        <!-- ACTION BUTTONS ROW (Distinct styling from metrics) -->
+        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+          <button onclick="openSameContainerWindy(${lat}, ${lng}, '${villageTown}')" style="flex:1; background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 6px rgba(2,132,199,0.3);">
+            🌪️ Open Live Radar
+          </button>
+          <button onclick="routeToPinnedLocation()" style="flex:1; background: linear-gradient(135deg, #059669, #047857); color: #fff; border: 1px solid #10b981; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 6px rgba(5,150,105,0.3);">
+             Route Here
+          </button>
+          <button onclick="removePinnedLocation()" style="background: #1e293b; color: #ef4444; border: 1px solid #ef4444; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer;" title="Clear Pin">
+             Clear
+          </button>
         </div>
 
         <!-- COMPACT HORIZONTAL METRIC PILLS -->
@@ -1595,11 +1614,15 @@ function renderRouteCard() {
     `;
   });
 
-  // Added persistent button to allow re-checking telemetry for the active pinned location
   const telemetryAccessHtml = (activePinnedLat && activePinnedLng) ? `
-    <button onclick="map.fire('click', {latlng: L.latLng(${activePinnedLat}, ${activePinnedLng})})" style="width:100%; margin-top:8px; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-      📍 View Locality Telemetry & Weather for Pinned Spot
-    </button>
+    <div style="display:flex; gap:6px; margin-top:8px;">
+      <button onclick="map.fire('click', {latlng: L.latLng(${activePinnedLat}, ${activePinnedLng})})" style="flex-grow:1; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
+        📍 View Locality Info
+      </button>
+      <button onclick="removePinnedLocation()" style="background:#ef4444; color:#fff; border:1px solid #ef4444; padding:5px 10px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
+        🗑️ Clear
+      </button>
+    </div>
   ` : '';
 
   infoBox.innerHTML = `
@@ -1663,7 +1686,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 
