@@ -1181,7 +1181,7 @@ let currentDestName = "";
 let telemetryMarker = null;
 let activePinnedLat = null;
 let activePinnedLng = null;
-let lastFetchedTelemetryHtml = ""; // Stores telemetry card for quick recall
+let lastFetchedTelemetryHtml = ""; 
 
 // Initialize Leaflet Map
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1235,8 +1235,8 @@ loadLiveUSGSEarthquakes();
 function getAQIShortBadge(aqiVal) {
   if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) return { text: 'AQI N/A', color: '#94a3b8' };
   if (aqiVal <= 50) return { text: `🟢 AQI ${aqiVal} (Good)`, color: '#10b981' };
-  if (aqiVal <= 100) return { text: `🟡 AQI ${aqiVal} (Moderate)`, color: '#f59e0b' };
-  if (aqiVal <= 150) return { text: `🟠 AQI ${aqiVal} (Sensitive)`, color: '#f97316' };
+  if (aqiVal <= 100) return { text: `🟡 AQI ${aqiVal} (Mod)`, color: '#f59e0b' };
+  if (aqiVal <= 150) return { text: `🟠 AQI ${aqiVal} (Sens)`, color: '#f97316' };
   return { text: `🔴 AQI ${aqiVal} (Poor)`, color: '#ef4444' };
 }
 
@@ -1280,6 +1280,7 @@ function routeToPinnedLocation() {
 
 // Re-display saved telemetry card in the route-info box
 function showViewLocality() {
+  currentMode = 'locality';
   const infoBox = document.getElementById('route-info');
   if (infoBox && lastFetchedTelemetryHtml) {
     infoBox.innerHTML = lastFetchedTelemetryHtml;
@@ -1329,9 +1330,10 @@ function closeWindyOverlay() {
   }
 }
 
-// MAP CLICK TELEMETRY ENGINE WITH UPGRADED METRIC CARDS
+// MAP CLICK TELEMETRY ENGINE WITH MICRO ADDRESS-INLINE WEATHER & AQI
 map.on('click', async function(e) {
   closeWindyOverlay();
+  currentMode = 'locality';
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
   activePinnedLat = lat;
@@ -1395,62 +1397,58 @@ map.on('click', async function(e) {
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km)`;
     }
 
-    // Upgraded visual appearance for Temp, Wind, and AQI (Eye-catching card layout)
+    // Micro styled address-integrated telemetry card layout
     lastFetchedTelemetryHtml = `
-      <div style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; font-family: system-ui, -apple-system, sans-serif; color: #f8fafc; box-shadow: 0 4px 16px rgba(0,0,0,0.4); max-width: 100%; overflow: hidden;">
+      <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; font-family: system-ui, -apple-system, sans-serif; color: #f8fafc; box-shadow: 0 4px 12px rgba(0,0,0,0.4); max-width: 100%; overflow: hidden;">
         
-        <!-- TOP ROW: LOCATION TITLE -->
-        <div style="margin-bottom: 8px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-          <div style="font-size: 0.9rem; font-weight: 800; color: #38bdf8;">
-            📍 ${villageTown}, ${district}
+        <!-- TOP ROW: LOCATION TITLE + MODE SWITCHER -->
+        <div style="margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: flex-start; gap: 4px;">
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">
+              📍 ${villageTown}, ${district}
+            </div>
+            <div style="font-size: 0.65rem; color: #cbd5e1; margin-top: 1px;">
+              ${landmark} • ${mandalTaluka} • ${state} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
+            </div>
           </div>
-          <div style="font-size: 0.68rem; color: #cbd5e1; margin-top: 2px;">
-            ${landmark} • ${mandalTaluka} • ${state} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
-          </div>
-        </div>
-
-        <!-- INTERACTIVE ACTION BUTTONS -->
-        <div style="display: flex; gap: 6px; margin-bottom: 10px;">
-          <button onclick="openSameContainerWindy(${lat}, ${lng}, '${villageTown}')" style="flex:1; background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 6px rgba(2,132,199,0.3);">
-            🌪️ Open Live Radar
-          </button>
-          <button onclick="routeToPinnedLocation()" style="flex:1; background: linear-gradient(135deg, #059669, #047857); color: #fff; border: 1px solid #10b981; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 6px rgba(5,150,105,0.3);">
-            🚗 Route Here
-          </button>
-          <button onclick="removePinnedLocation()" style="background: #1e293b; color: #ef4444; border: 1px solid #ef4444; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; cursor: pointer;" title="Clear Pin">
-            🗑️ Clear
-          </button>
-        </div>
-
-        <!-- UPGRADED EYE-CATCHING METRIC CARDS GRID -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px;">
           
-          <!-- Temp Card -->
-          <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #f59e0b; border-left: 3px solid #f59e0b; border-radius: 6px; padding: 6px; text-align: center;">
-            <div style="font-size: 0.58rem; color: #f59e0b; font-weight: bold; text-transform: uppercase;">Temperature</div>
-            <div style="font-size: 0.95rem; font-weight: 800; color: #f8fafc; margin: 2px 0;">${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</div>
-            <div style="font-size: 0.58rem; color: #94a3b8;">Humidity: ${currW.relative_humidity_2m}%</div>
+          <!-- MODE SWITCHER (MATCHING DRIVING & WALKING BUTTONS EXACTLY) -->
+          <div class="mode-switcher" style="display: flex; gap: 3px;">
+            <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="padding: 2px 6px; font-size: 0.65rem;"> Driving</button>
+            <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="padding: 2px 6px; font-size: 0.65rem;"> Walking</button>
+            <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="showViewLocality()" style="padding: 2px 6px; font-size: 0.65rem;"> Locality</button>
           </div>
+        </div>
 
-          <!-- Wind Card -->
-          <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #38bdf8; border-left: 3px solid #38bdf8; border-radius: 6px; padding: 6px; text-align: center;">
-            <div style="font-size: 0.58rem; color: #38bdf8; font-weight: bold; text-transform: uppercase;">Wind Speed</div>
-            <div style="font-size: 0.95rem; font-weight: 800; color: #f8fafc; margin: 2px 0;">${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m : 'N/A'} <span style="font-size:0.55rem;">km/h</span></div>
-            <div style="font-size: 0.58rem; color: #94a3b8;">Surface Vector</div>
-          </div>
+        <!-- ACTION BUTTONS -->
+        <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+          <button onclick="openSameContainerWindy(${lat}, ${lng}, '${villageTown}')" style="flex:1; background: #0284c7; color: #fff; border: 1px solid #38bdf8; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
+             Radar
+          </button>
+          <button onclick="routeToPinnedLocation()" style="flex:1; background: #059669; color: #fff; border: 1px solid #10b981; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
+             Route Here
+          </button>
+          <button onclick="removePinnedLocation()" style="background: #1e293b; color: #ef4444; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;" title="Clear Pin">
+             Clear
+          </button>
+        </div>
 
-          <!-- AQI Card -->
-          <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid ${aqiBadge.color}; border-left: 3px solid ${aqiBadge.color}; border-radius: 6px; padding: 6px; text-align: center;">
-            <div style="font-size: 0.58rem; color: ${aqiBadge.color}; font-weight: bold; text-transform: uppercase;">Air Quality</div>
-            <div style="font-size: 0.72rem; font-weight: 800; color: ${aqiBadge.color}; margin: 3px 0;">${aqiBadge.text}</div>
-            <div style="font-size: 0.58rem; color: #94a3b8;">PM2.5: ${currAQI.pm2_5 !== undefined ? currAQI.pm2_5 + ' µg/m³' : 'N/A'}</div>
-          </div>
-
+        <!-- MICRO INLINE WEATHER & AQI PILLS (COMPACT ALONGSIDE ADDRESS) -->
+        <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-bottom: 6px;">
+          <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
+            🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'} (Hum: ${currW.relative_humidity_2m}%)
+          </span>
+          <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
+            💨 ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}
+          </span>
+          <span style="background: #1e293b; border: 1px solid ${aqiBadge.color}; color: ${aqiBadge.color}; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
+            ${aqiBadge.text}
+          </span>
         </div>
 
         <!-- BOTTOM HAZARD BRIEF -->
-        <div style="background: #1e293b; border: 1px solid #334155; padding: 6px 10px; border-radius: 6px; font-size: 0.65rem; color: #cbd5e1;">
-          <span style="color:#ef4444; font-weight:bold;">🌋 Nearest Seismic Event:</span> ${nearestQuakeText}
+        <div style="background: #1e293b; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.62rem; color: #cbd5e1;">
+          <span style="color:#ef4444; font-weight:bold;">🌋 Quake:</span> ${nearestQuakeText}
         </div>
 
       </div>
@@ -1631,13 +1629,13 @@ function formatDuration(seconds) {
 
 function renderRouteCard() {
   const infoBox = document.getElementById('route-info');
-  const routes = allModesData[currentMode];
+  const routes = allModesData[currentMode] || [];
 
   let optionsHtml = '';
   routes.forEach((route, index) => {
     const dist = (route.distance / 1000).toFixed(1);
     const timeFormatted = formatDuration(route.duration);
-    const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
+    const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
     
     optionsHtml += `
       <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -1647,18 +1645,6 @@ function renderRouteCard() {
     `;
   });
 
-  // Action buttons added below route options including "Locality" and "Clear"
-  const telemetryAccessHtml = (activePinnedLat && activePinnedLng) ? `
-    <div style="display:flex; gap:6px; margin-top:8px;">
-      <button onclick="showViewLocality()" style="flex:1; background:#0f172a; color:#38bdf8; border:1px solid #38bdf8; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-        📍 Locality Info
-      </button>
-      <button onclick="removePinnedLocation()" style="background:#ef4444; color:#fff; border:1px solid #ef4444; padding:5px 10px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
-        🗑️ Clear
-      </button>
-    </div>
-  ` : '';
-
   infoBox.innerHTML = `
     <div class="route-results-grid">
       <div class="destination-header">
@@ -1666,19 +1652,17 @@ function renderRouteCard() {
         <div><strong>Destination:</strong> ${currentDestName}</div>
       </div>
       
-      <!-- MODE SWITCHER NOW INCLUDES LOCALITY BUTTON BESIDE DRIVING & WALKING -->
+      <!-- MODE SWITCHER WITH UNIFIED BUTTON STYLING -->
       <div class="mode-switcher" style="display: flex; gap: 4px;">
-        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1;">🚗 Driving</button>
-        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1;">🚶 Walking</button>
-        ${activePinnedLat ? `<button class="mode-btn" onclick="showViewLocality()" style="flex:1; background:#1e293b; color:#38bdf8; border:1px solid #38bdf8;">📍 Locality</button>` : ''}
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1;"> Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1;"> Walking</button>
+        ${activePinnedLat ? `<button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="showViewLocality()" style="flex:1;"> Locality</button>` : ''}
       </div>
 
       <div style="font-size:0.75rem; color:#8b949e;">Route suggestion:</div>
       <div class="route-options-group">
         ${optionsHtml}
       </div>
-
-      ${telemetryAccessHtml}
     </div>
   `;
 }
@@ -1694,6 +1678,7 @@ function drawRouteOnMap(mode, index) {
   routeLayers = [];
 
   const routes = allModesData[mode];
+  if (!routes || routes.length === 0) return;
   
   routes.forEach((r, i) => {
     const color = i === index ? (mode === 'driving' ? '#34c759' : '#00c7be') : '#888888';
@@ -1722,7 +1707,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 // 🎧 headphones pop-up
