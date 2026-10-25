@@ -16,54 +16,73 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    /* Map Container & Search Layering Fix */
-    .map-container-wrapper {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      margin-bottom: 15px;
-      z-index: 1;
-    }
-    #map {
-      width: 100%;
-      height: 400px;
-      border-radius: 12px;
-      z-index: 1;
-    }
-    .map-search-container {
-      display: flex;
-      gap: 10px;
-      overflow: hidden;
-      margin-bottom: 15px;
-      position: relative;
-      z-index: 10;
-    }
-    .map-search-container input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      background: #1a1a1a;
-      color: #fff;
-    }
-    .map-search-container button {
-      padding: 10px 20px;
-      background: #ffd700;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #route-info {
-      background: #16181c;
-      padding: 12px;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 0.9rem;
-      position: relative;
-      z-index: 10;
-    }
+    /* --- Map Container & Search Layering Fix (Tab-Safe) --- */
+.map-container-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  clear: both;
+  z-index: 1;
+}
 
+#map {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.map-search-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px; /* Ensures clean gap from the map above */
+  margin-bottom: 15px;
+  position: relative;
+  clear: both;
+  z-index: 10;
+}
+
+.map-search-container input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #fff;
+  outline: none;
+}
+
+.map-search-container input:focus {
+  border-color: #ffd700;
+}
+
+.map-search-container button {
+  padding: 10px 20px;
+  background: #ffd700;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #000;
+}
+
+.map-search-container button:active {
+  transform: scale(0.96);
+}
+
+#route-info {
+  background: #16181c;
+  padding: 12px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  position: relative;
+  clear: both;
+  z-index: 10;
+}
+    
 </style>
   
 </head>
