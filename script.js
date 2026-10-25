@@ -1194,47 +1194,33 @@ let pendingLat = null;
 let pendingLng = null;
 let masterTelemetryData = null;
 
-// --- ABSOLUTE JAVASCRIPT LAYOUT & ORDER ENFORCEMENT ---
-const mapViewSection = document.getElementById('map-view');
-const mapWrapper = document.querySelector('.map-container-wrapper');
+// --- SAFE MAP & SCROLL ENFORCEMENT (Leaves Tab Switching Alone) ---
+const mapDivEl = document.getElementById('map');
 const searchContainer = document.querySelector('.map-search-container');
 const amenitiesContainer = document.querySelector('.amenities-container');
 const infoBoxEl = document.getElementById('route-info');
-const mapDivEl = document.getElementById('map');
+const mapWrapper = document.querySelector('.map-container-wrapper');
 
-if (mapViewSection) {
-  // Force section into a clean vertical column layout
-  mapViewSection.style.display = 'flex';
-  mapViewSection.style.flexDirection = 'column';
-  mapViewSection.style.position = 'relative';
-  mapViewSection.style.height = 'auto';
-  mapViewSection.style.overflow = 'visible';
-}
-
-if (mapDivEl && mapWrapper) {
-  // Fix map height specifically for mobile vs desktop viewports
+if (mapDivEl) {
   const compactHeight = window.innerWidth < 768 ? '260px' : '360px';
   mapDivEl.style.width = '100%';
   mapDivEl.style.height = compactHeight;
   mapDivEl.style.minHeight = compactHeight;
-  
-  // Force explicit structural stacking order using flexbox 'order' property
-  if (mapWrapper) mapWrapper.style.order = '1';
-  if (searchContainer) {
-    searchContainer.style.order = '2';
-    searchContainer.style.marginTop = '12px';
-    searchContainer.style.marginBottom = '8px';
-  }
-  if (amenitiesContainer) {
-    amenitiesContainer.style.order = '3';
-    amenitiesContainer.style.marginBottom = '8px';
-  }
-  if (infoBoxEl) {
-    infoBoxEl.style.order = '4';
-    infoBoxEl.style.maxHeight = 'calc(100vh - 350px)';
-    infoBoxEl.style.overflowY = 'auto';
-    infoBoxEl.style.webkitOverflowScrolling = 'touch';
-  }
+}
+
+if (searchContainer) {
+  searchContainer.style.marginTop = '8px';
+  searchContainer.style.marginBottom = '8px';
+}
+
+if (amenitiesContainer) {
+  amenitiesContainer.style.marginBottom = '8px';
+}
+
+if (infoBoxEl) {
+  infoBoxEl.style.maxHeight = 'calc(100vh - 350px)';
+  infoBoxEl.style.overflowY = 'auto';
+  infoBoxEl.style.webkitOverflowScrolling = 'touch';
 }
 
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1815,7 +1801,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 
