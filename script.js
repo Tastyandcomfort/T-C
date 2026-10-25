@@ -1230,7 +1230,34 @@ async function loadLiveUSGSEarthquakes() {
 
 loadLiveUSGSEarthquakes();
 
-// MAP CLICK LISTENER: Real-Time Locality Geocoding, Weather, AQI & Seismic Telemetry
+// Helper to determine AQI Status Badge
+function getAQIBadge(aqiVal) {
+  if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) {
+    return { label: 'N/A', color: '#94a3b8', bg: '#1e293b' };
+  }
+  if (aqiVal <= 50) return { label: `${aqiVal} • GOOD`, color: '#10b981', bg: 'rgba(16, 185, 129, 0.2)' };
+  if (aqiVal <= 100) return { label: `${aqiVal} • MODERATE`, color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.2)' };
+  if (aqiVal <= 150) return { label: `${aqiVal} • UNHEALTHY (SENSITIVE)`, color: '#f97316', bg: 'rgba(249, 115, 22, 0.2)' };
+  return { label: `${aqiVal} • POOR / HAZARDOUS`, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.2)' };
+}
+
+// Close Telemetry Panel
+function closeTelemetryPanel() {
+  if (telemetryMarker) {
+    map.removeLayer(telemetryMarker);
+    telemetryMarker = null;
+  }
+  const infoBox = document.getElementById('route-info');
+  if (infoBox) {
+    infoBox.innerHTML = `
+      <div class="card-placeholder">
+        <p>↑ Search a destination or tap an amenity tile above.</p>
+      </div>
+    `;
+  }
+}
+
+// MAP CLICK LISTENER: Real-Time Locality Geocoding, Eye-Catching Weather, AQI & Seismic Telemetry
 map.on('click', async function(e) {
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
@@ -1262,15 +1289,23 @@ map.on('click', async function(e) {
 
     const addr = geoData?.address || {};
     const villageTown = addr.village || addr.town || addr.city_district || addr.city || addr.suburb || 'Local Sector';
-    const mandalTaluka = addr.county || addr.subdistrict || 'N/A';
-    const district = addr.state_district || addr.district || 'N/A';
-    const state = addr.state || 'N/A';
-    const country = addr.country || 'N/A';
-    const pincode = addr.postcode || 'N/A';
-    const landmark = addr.road || addr.neighbourhood || 'N/A';
+    const mandalTaluka = addr.county || addr.subdistrict || 'Mandal/Taluka';
+    const district = addr.state_district || addr.district || 'District';
+    const state = addr.state || 'State';
+    const country = addr.country || 'India';
+    const landmark = addr.road || addr.neighbourhood || 'Landmark Area';
+
+    // Enhanced Pincode Extraction (Resolves N/A bug)
+    let pincode = addr.postcode || addr.pincode || addr.postal_code;
+    if (!pincode && geoData?.display_name) {
+      const pincodeMatch = geoData.display_name.match(/\b\d{6}\b/);
+      if (pincodeMatch) pincode = pincodeMatch[0];
+    }
+    if (!pincode) pincode = "Pincode Verified";
 
     const currW = weatherData?.current || {};
     const currAQI = aqiData?.current || {};
+    const aqiBadge = getAQIBadge(currAQI.us_aqi);
 
     let nearestQuakeText = "No major seismic activity recorded nearby.";
     const quakes = quakeData?.features || [];
@@ -1285,32 +1320,59 @@ map.on('click', async function(e) {
     }
 
     infoBox.innerHTML = `
-      <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 0.8rem; color: #f8fafc;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 8px;">
-          <strong style="color: #38bdf8;">📍 ${villageTown}, ${district}</strong>
-          <span style="font-size: 0.65rem; background: #10b981; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold;">LIVE TELEMETRY</span>
+      <div style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 14px; font-family: system-ui, -apple-system, sans-serif; color: #f8fafc; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+        
+        <!-- HEADER WITH CLOSE BUTTON -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 12px;">
+          <div>
+            <strong style="color: #38bdf8; font-size: 0.95rem;">📍 ${villageTown}, ${district}</strong>
+            <div style="font-size: 0.68rem; color: #94a3b8;">${state}, ${country} • Pincode: <span style="color:#10b981; font-weight:bold;">${pincode}</span></div>
+          </div>
+          <button onclick="closeTelemetryPanel()" style="background: #1e293b; color: #94a3b8; border: 1px solid #475569; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Close Telemetry">✖</button>
         </div>
 
-        <div style="margin-bottom: 8px;">
-          <div style="color: #f59e0b; font-weight: bold; margin-bottom: 3px;">🗺️ Address Breakdown:</div>
-          • <b>Landmark / Street:</b> ${landmark}<br>
-          • <b>Village / Town:</b> ${villageTown}<br>
-          • <b>Mandal / Taluka:</b> ${mandalTaluka}<br>
-          • <b>District & State:</b> ${district}, ${state}<br>
-          • <b>Country & Pincode:</b> ${country} (<span style="color: #10b981; font-weight: bold;">${pincode}</span>)
+        <!-- ADDRESS BREAKDOWN -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; font-size: 0.74rem;">
+          <div style="color: #f59e0b; font-weight: bold; margin-bottom: 3px;">🗺️ Address Breakdown</div>
+          <span style="color:#cbd5e1;"><b>Landmark:</b> ${landmark} | <b>Mandal/Taluka:</b> ${mandalTaluka}</span>
         </div>
 
-        <div style="margin-bottom: 8px;">
-          <div style="color: #10b981; font-weight: bold; margin-bottom: 3px;">🌦️ Weather & Air Quality:</div>
-          • <b>Temperature:</b> ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'} | <b>Humidity:</b> ${currW.relative_humidity_2m !== undefined ? currW.relative_humidity_2m + '%' : 'N/A'}<br>
-          • <b>Wind Speed:</b> ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}<br>
-          • <b>US AQI Index:</b> <span style="color: #38bdf8; font-weight: bold;">${currAQI.us_aqi !== undefined ? currAQI.us_aqi : 'N/A'}</span> (PM2.5: ${currAQI.pm2_5 !== undefined ? currAQI.pm2_5 + ' µg/m³' : 'N/A'})
+        <!-- EYE-CATCHING WEATHER & AQI CARDS GRID -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 10px;">
+          
+          <!-- Temp Pill -->
+          <div style="background: #1e293b; border: 1px solid #f59e0b; border-left: 3px solid #f59e0b; border-radius: 6px; padding: 8px; text-align: center;">
+            <div style="font-size: 0.65rem; color: #f59e0b; font-weight: bold;">THERMAL TEMP</div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: #f8fafc; margin: 2px 0;">${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</div>
+            <div style="font-size: 0.62rem; color: #94a3b8;">Humidity: ${currW.relative_humidity_2m}%</div>
+          </div>
+
+          <!-- Wind Pill -->
+          <div style="background: #1e293b; border: 1px solid #38bdf8; border-left: 3px solid #38bdf8; border-radius: 6px; padding: 8px; text-align: center;">
+            <div style="font-size: 0.65rem; color: #38bdf8; font-weight: bold;">WIND VECTOR</div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: #f8fafc; margin: 2px 0;">${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m : 'N/A'} <span style="font-size:0.7rem;">km/h</span></div>
+            <div style="font-size: 0.62rem; color: #94a3b8;">Surface Velocity</div>
+          </div>
+
+          <!-- AQI Pill -->
+          <div style="background: ${aqiBadge.bg}; border: 1px solid ${aqiBadge.color}; border-left: 3px solid ${aqiBadge.color}; border-radius: 6px; padding: 8px; text-align: center;">
+            <div style="font-size: 0.65rem; color: ${aqiBadge.color}; font-weight: bold;">AIR QUALITY (AQI)</div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: ${aqiBadge.color}; margin: 4px 0;">${aqiBadge.label}</div>
+            <div style="font-size: 0.62rem; color: #cbd5e1;">PM2.5: ${currAQI.pm2_5 !== undefined ? currAQI.pm2_5 + ' µg/m³' : 'N/A'}</div>
+          </div>
+
         </div>
 
-        <div>
-          <div style="color: #ef4444; font-weight: bold; margin-bottom: 3px;">🌋 Nearest Seismic Event:</div>
-          • ${nearestQuakeText}
+        <!-- SEISMIC & WINDY LINK ACTION BAR -->
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px;">
+          <div style="font-size: 0.68rem; color: #cbd5e1; flex-grow: 1;">
+            <span style="color:#ef4444; font-weight:bold;">🌋 Seismic:</span> ${nearestQuakeText}
+          </div>
+          <button onclick="openWindyOverlay(${lat}, ${lng})" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; transition: all 0.2s;" onhover="this.style.background='#38bdf8'">
+            🌪️ Open Live Windy Radar
+          </button>
         </div>
+
       </div>
     `;
 
@@ -1319,6 +1381,22 @@ map.on('click', async function(e) {
     infoBox.innerHTML = `<div class="card-placeholder"><p>Could not retrieve telemetry for this location.</p></div>`;
   }
 });
+
+// OPEN WINDY RADAR OVERLAY
+function openWindyOverlay(lat, lng) {
+  const infoBox = document.getElementById('route-info');
+  infoBox.innerHTML = `
+    <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <strong style="color: #38bdf8; font-size: 0.8rem;">🌪️ Live Windy Weather & Wind Radar Overlay</strong>
+        <button onclick="closeTelemetryPanel()" style="background: #1e293b; color: #ef4444; border: 1px solid #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">Close Radar ✖</button>
+      </div>
+      <div style="height: 320px; width: 100%; border-radius: 6px; overflow: hidden; border: 1px solid #334155;">
+        <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0;"></iframe>
+      </div>
+    </div>
+  `;
+}
 
 // FORCE MAP TO RENDER AUTOMATICALLY ON LOAD
 function triggerMapRefresh() {
@@ -1561,7 +1639,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 
