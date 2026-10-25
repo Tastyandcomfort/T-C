@@ -1185,32 +1185,29 @@ let pendingLat = null;
 let pendingLng = null;
 let masterTelemetryData = null; // Common destination & telemetry data
 
-// --- 100% SCRIPT-ENFORCED MOBILE LAYOUT & SCROLLING WRAPPER ---
+// --- SCRIPT-ENFORCED ABSOLUTE LAYOUT ISOLATION ---
 const mapDivEl = document.getElementById('map');
 if (mapDivEl) {
   mapDivEl.style.width = '100%';
-  // Use a compact height on mobile screens to prevent vertical crowding
-  mapDivEl.style.height = window.innerWidth < 768 ? '320px' : '400px';
-  mapDivEl.style.minHeight = window.innerWidth < 768 ? '320px' : '400px';
+  mapDivEl.style.height = window.innerWidth < 768 ? '280px' : '380px';
+  mapDivEl.style.minHeight = window.innerWidth < 768 ? '280px' : '380px';
   mapDivEl.style.position = 'relative';
   mapDivEl.style.display = 'block';
-  mapDivEl.style.marginBottom = '12px';
   mapDivEl.style.clear = 'both';
+  mapDivEl.style.marginBottom = '12px';
   mapDivEl.style.zIndex = '1';
 }
 
-// Ensure the info box below the map is fully scrollable and neatly separated
+// Wrap everything below the map into a clean scrollable control panel container
 const infoBoxEl = document.getElementById('route-info');
 if (infoBoxEl) {
   infoBoxEl.style.position = 'relative';
   infoBoxEl.style.display = 'block';
-  infoBoxEl.style.marginTop = '8px';
   infoBoxEl.style.clear = 'both';
   infoBoxEl.style.zIndex = '2';
-  infoBoxEl.style.maxHeight = 'calc(100vh - 380px)';
+  infoBoxEl.style.maxHeight = 'calc(100vh - 340px)';
   infoBoxEl.style.overflowY = 'auto';
   infoBoxEl.style.webkitOverflowScrolling = 'touch';
-  infoBoxEl.style.paddingRight = '2px';
 }
 
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1633,7 +1630,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
-// Master Card Renderer with Mobile-Optimized Scrolling Box (`max-height` + `overflow-y: auto`)
+// Master Card Renderer
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -1664,11 +1661,10 @@ function renderMasterCard() {
   } 
   else if (currentMode === 'locality') {
     tabSpecificHtml = `
-      <!-- SCROLLABLE CONTAINER FOR LOCALITY INTELLIGENCE -->
-      <div style="max-height: 160px; overflow-y: auto; padding-right: 4px; margin-bottom: 6px; scrollbar-width: thin;">
+      <div style="max-height: 140px; overflow-y: auto; padding-right: 4px; margin-bottom: 6px; scrollbar-width: thin;">
         <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-weight: bold; color: #38bdf8;"> T&C Locality Intelligence</span>
+            <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence</span>
             <span style="background: #0f172a; color: ${t.intelBadgeColor}; border: 1px solid ${t.intelBadgeColor}; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">
               Source: ${t.intelSourceName} 🟢
             </span>
