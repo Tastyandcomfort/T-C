@@ -57,1006 +57,345 @@ const tcIntelCategories = [
 
 
 
-// ===================================================
-// T&C COMMAND CENTER: ENTERPRISE SUITE (FINAL FIXES)
-// ===================================================
+/**
+ * T&C Command Center - Intelligence & Real-Time Telemetry Suite
+ * Architecture: Pure Vanilla JS, Direct Public APIs, Native CORS, No Middleman Proxies.
+ * Standards: Robust Error Handling, Source Footers, Lazy-Loading, Zero Overclaiming.
+ */
 
-let osintMap = null;
-let currentClickMarker = null;
-
-const API_SCHEDULE_REGISTRY = {
-  locality:        { intervalMs: 0,        lastFetchMs: 0, label: "On Demand Map Pin" },
-  sat_space:       { intervalMs: 60000,    lastFetchMs: 0, label: "1 Min Orbit Cycle" },
-  tc_ops:          { intervalMs: 900000,   lastFetchMs: 0, label: "15 Min Weather Cycle" },
-  tsddps_weather:  { intervalMs: 900000,   lastFetchMs: 0, label: "15 Min Weather Cycle" },
-  world_ai:        { intervalMs: 900000,   lastFetchMs: 0, label: "15 Min Wire Cycle" },
-  solar_space:     { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min NOAA Cycle" },
-  prediction_ai:   { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Market Cycle" },
-  gdacs_hazards:   { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Disaster Cycle" },
-  flight_radar:    { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Airspace Cycle" },
-  cyber_alerts:    { intervalMs: 1800000,  lastFetchMs: 0, label: "30 Min Cyber Cycle" }
+const TC_CONFIG = {
+  // Hyderabad Core Coordinates (Somajiguda / Panjagutta Region)
+  LAT: 17.4239,
+  LON: 78.4522,
+  // Network Request Timeout (8 Seconds)
+  FETCH_TIMEOUT_MS: 8000,
+  // Long-Term Intervals (in milliseconds)
+  INTERVALS: {
+    SAT_ORBIT: 60 * 1000,       // 1 Minute
+    WIKI_WIRE: 10 * 60 * 1000,   // 10 Minutes
+    ASTRONAUTS: 30 * 60 * 1000,  // 30 Minutes
+    SOLAR_ENGINE: 24 * 60 * 60 * 1000 // 24 Hours
+  }
 };
 
-let schedulerInterval = null;
+// Module Initialization Tracker for Lazy-Loading
+let isIntelligenceInitialized = false;
 
-async function loadTandCIntelligenceHub() {
-  const container = document.getElementById('intel-dynamic-content');
-  if (!container) return;
-
-  if (!document.getElementById('tc-responsive-styles')) {
-    const styleEl = document.createElement('style');
-    styleEl.id = 'tc-responsive-styles';
-    styleEl.innerHTML = `
-      .intel-grid-container {
-        display: grid;
-        grid-template-columns: 1fr 420px;
-        gap: 12px;
-        align-items: start;
-      }
-      @media (max-width: 768px) {
-        .intel-grid-container {
-          grid-template-columns: 1fr !important;
-        }
-        #leaflet-map-canvas, #windy-iframe-canvas {
-          height: 360px !important;
-        }
-      }
-      .compact-card {
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 6px;
-        padding: 10px 12px;
-        margin-bottom: 8px;
-      }
-      .wiki-trust-card {
-        background: #0f172a;
-        border: 1px solid #f59e0b;
-        border-left: 3px solid #f59e0b;
-        border-radius: 6px;
-        padding: 10px 12px;
-        margin-top: 10px;
-      }
-      .pulse-dot {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #10b981;
-        animation: pulse 1.8s infinite;
-      }
-      @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-        70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-      }
-      .dark-osm-tiles {
-        filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(200deg) saturate(0.3);
-      }
-      .mode-btn {
-        background: #0f172a;
-        color: #94a3b8;
-        border: 1px solid #334155;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 0.68rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-      }
-      .mode-btn-active {
-        background: #f59e0b !important;
-        color: #0f172a !important;
-        border: 1px solid #f59e0b !important;
-        box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
-      }
-      .badge-tg { font-size: 0.62rem; background: #10b981; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
-      .badge-gl { font-size: 0.62rem; background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
-      .badge-both { font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; }
-      .badge-tc-wiki { font-size: 0.62rem; background: #f59e0b; color: #0f172a; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
-      .timestamp-tag { font-size: 0.62rem; color: #94a3b8; font-family: monospace; }
-      
-      .source-brand-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 0.68rem;
-        color: #38bdf8;
-        text-decoration: none;
-        background: #1e293b;
-        border: 1px solid #334155;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-weight: bold;
-        transition: all 0.2s;
-      }
-      .source-brand-link:hover {
-        border-color: #38bdf8;
-        background: #0f172a;
-      }
-      .source-brand-link img {
-        width: 12px;
-        height: 12px;
-        border-radius: 2px;
-      }
-
-      .opt-note-box {
-        font-size: 0.68rem;
-        color: #94a3b8;
-        background: #0f172a;
-        border: 1px solid #1e293b;
-        border-radius: 4px;
-        padding: 6px 10px;
-        margin-top: 6px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-    `;
-    document.head.appendChild(styleEl);
+/* ==========================================================================
+   UTILITY: RESILIENT FETCH WITH ABORT TIMEOUT
+   ========================================================================== */
+async function fetchWithTimeout(resource, options = {}) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), TC_CONFIG.FETCH_TIMEOUT_MS);
+  try {
+    const response = await fetch(resource, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
   }
+}
+
+/* ==========================================================================
+   UTILITY: UNIFORM ERROR & RETRY STATE RENDERER
+   ========================================================================== */
+function renderErrorUI(containerId, title, sourceName, retryFunctionName) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
 
   container.innerHTML = `
-    <div style="margin-bottom: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px 14px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="pulse-dot"></span>
-          <strong style="font-size: 0.8rem; color: #f8fafc;"><i class="fa-solid fa-satellite-dish" style="color:#f59e0b; margin-right:4px;"></i> Command Matrix:</strong>
-          <span id="active-badge-display" class="badge-both">TG + GL</span>
-        </div>
-
-        <div style="flex-grow: 1; max-width: 440px;">
-          <select id="osint-category-dropdown" onchange="handleDropdownChange(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; outline: none;">
-            <optgroup label="LIVE GLOBAL REAL-TIME">
-              <option value="locality" data-badge="both" data-class="badge-both" selected> Geocoding & Air Quality </option>
-              <option value="world_ai" data-badge="GL" data-class="badge-gl"> Seismic Earthquakes & Heat Map</option>
-              <option value="gdacs_hazards" data-badge="GL" data-class="badge-gl"> Global Disasters & NASA Wildfire</option>
-              <option value="prediction_ai" data-badge="GL" data-class="badge-gl"> Share Market-Sensex & Forex</option>
-              <option value="solar_space" data-badge="GL" data-class="badge-gl"> Solar Weather & Rocket Launch Schedule</option>
-              <option value="sat_space" data-badge="GL" data-class="badge-gl"> ISS Live GPS & Radiation Monitoring</option>
-            </optgroup>
-            <optgroup label="LIVE LOCAL, AVIATION & CYBER TELEMETRY">
-              <option value="flight_radar" data-badge="TG" data-class="badge-tg"> Aviation Status & Emergency</option>
-              <option value="cyber_alerts" data-badge="both" data-class="badge-both"> Cyber Threats & Under-Sea Connections</option>
-              <option value="tc_ops" data-badge="both" data-class="badge-both"> T&C Zone Weather & Regional Traffic</option>
-              <option value="tsddps_weather" data-badge="TG" data-class="badge-tg"> Hyderabad Regional Live Weather</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <div style="display: flex; gap: 6px; align-items: center; font-size: 0.65rem; color: #cbd5e1;">
-          <span class="badge-tg">TG = Telangana</span>
-          <span class="badge-gl">GL = Global</span>
-          <span class="badge-both">TG+GL = Both</span>
+    <div class="telemetry-card error-card">
+      <div class="card-header">⚠️ ${title}</div>
+      <div class="card-body">
+        <p class="error-text">Unable to reach endpoint. Connection timed out or server unavailable.</p>
+        <button class="retry-btn" onclick="${retryFunctionName}()">🔄 Retry Connection</button>
+        <div class="card-meta-footer">
+          <span>Source: ${sourceName}</span>
+          <span>Status: Offline</span>
         </div>
       </div>
-
-      <div class="opt-note-box">
-        <i class="fa-solid fa-circle-info" style="color:#38bdf8;"></i>
-        <span><strong>Note:</strong> Data from verified sources syncs automatically for live, real-time data. Visit source.</span>
-      </div>
-    </div>
-
-    <!-- CATEGORY VIEWS -->
-    <div id="intel-view-locality" class="intel-category-view" style="display: block;">
-      <div class="intel-grid-container">
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
-            <h4 style="margin: 0; color: #38bdf8; font-size: 0.82rem;"><i class="fa-solid fa-crosshairs"></i> Tap Any Point on Earth</h4>
-            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-              <button onclick="setMapDisplayMode('locality')" id="mode-btn-locality" class="mode-btn mode-btn-active"> Locality Map</button>
-              <button onclick="setMapDisplayMode('windy')" id="mode-btn-windy" class="mode-btn"> Weather Map</button>
-              <button onclick="resetLeafletMap()" id="mode-btn-reset" class="mode-btn"> Reset Map</button>
-            </div>
-          </div>
-          <div id="leaflet-map-canvas" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a; display: block;"></div>
-          <div id="windy-iframe-canvas" style="height: 420px; width: 100%; border-radius: 6px; border: 1px solid #334155; background: #0f172a; display: none;"></div>
-        </div>
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; max-height: 480px; overflow-y: auto;">
-          <h4 id="brief-region-title" style="margin: 0 0 8px 0; color: #f59e0b; font-size: 0.85rem;"><i class="fa-solid fa-map-pin"></i> Locality Telemetry</h4>
-          <div id="intel-brief-content-list" style="display: flex; flex-direction: column; gap: 6px;">
-            <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-              <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any point on the map to display English OSINT locality tags, mandal division, pincode, and live Air Quality (AQI) metrics.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="wiki-box-locality"></div>
-    </div>
-
-    <!-- OTHER VIEWS -->
-    <div id="intel-view-world_ai" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">Live World Seismic & Tectonic Heat Map <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-world_ai" onclick="triggerRefresh('world_ai', true)" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Feed</button>
-        </div>
-        <div id="world-ai-feed-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
-      </div>
-      <div id="wiki-box-world_ai"></div>
-    </div>
-
-    <div id="intel-view-gdacs_hazards" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;">Global Natural Hazards & NASA Wildfire Telemetry <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-gdacs_hazards" onclick="triggerRefresh('gdacs_hazards', true)" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync Hazards</button>
-        </div>
-        <div id="gdacs-hazards-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
-      </div>
-      <div id="wiki-box-gdacs_hazards"></div>
-    </div>
-
-    <div id="intel-view-prediction_ai" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;">Live Share Market Indices & Forex Exchange <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-prediction_ai" onclick="triggerRefresh('prediction_ai', true)" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Markets</button>
-        </div>
-        <div id="prediction-ai-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-prediction_ai"></div>
-    </div>
-
-    <div id="intel-view-solar_space" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #eab308; font-size: 0.88rem;">Solar Space Weather & Orbital Launch Calendar <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-solar_space" onclick="triggerRefresh('solar_space', true)" style="background: #0f172a; color: #eab308; border: 1px solid #eab308; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Sync NOAA</button>
-        </div>
-        <div id="solar-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-solar_space"></div>
-    </div>
-
-    <div id="intel-view-sat_space" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #a855f7; font-size: 0.88rem;">ISS Live Tracking & Nuclear Radiation Telemetry <span class="badge-gl" style="margin-left: 6px;">GL</span></h4>
-          <button id="btn-sync-sat_space" onclick="triggerRefresh('sat_space', true)" style="background: #0f172a; color: #a855f7; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Telemetry</button>
-        </div>
-        <div id="sat-space-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-sat_space"></div>
-    </div>
-
-    <div id="intel-view-flight_radar" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #38bdf8; font-size: 0.88rem;">Live Aviation Airspace & Flight Radar <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
-          <button id="btn-sync-flight_radar" onclick="triggerRefresh('flight_radar', true)" style="background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Check Radar</button>
-        </div>
-        <div id="flight-radar-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-flight_radar"></div>
-    </div>
-
-    <div id="intel-view-cyber_alerts" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #ef4444; font-size: 0.88rem;">Cyber Threats & Submarine Internet Cables <span class="badge-both" style="margin-left: 6px;">TG + GL</span></h4>
-          <button id="btn-sync-cyber_alerts" onclick="triggerRefresh('cyber_alerts', true)" style="background: #0f172a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Advisories</button>
-        </div>
-        <div id="cyber-alerts-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
-      </div>
-      <div id="wiki-box-cyber_alerts"></div>
-    </div>
-
-    <div id="intel-view-tc_ops" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #f59e0b; font-size: 0.88rem;">T&C Stall Zone Weather & Commuter Traffic <span class="badge-both" style="margin-left: 6px;">TG + GL</span></h4>
-          <button id="btn-sync-tc_ops" onclick="triggerRefresh('tc_ops', true)" style="background: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Refresh Metrics</button>
-        </div>
-        <div id="tc-ops-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-tc_ops"></div>
-    </div>
-
-    <div id="intel-view-tsddps_weather" class="intel-category-view" style="display: none;">
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h4 style="margin: 0; color: #10b981; font-size: 0.88rem;">Hyderabad Regional Live Weather Grid <span class="badge-tg" style="margin-left: 6px;">TG</span></h4>
-          <button id="btn-sync-tsddps_weather" onclick="triggerRefresh('tsddps_weather', true)" style="background: #0f172a; color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 4px; font-size: 0.68rem; cursor: pointer;">🔄 Fetch Feed</button>
-        </div>
-        <div id="tsddps-weather-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;"></div>
-      </div>
-      <div id="wiki-box-tsddps_weather"></div>
-    </div>
-  `;
-
-  setTimeout(() => {
-    initOsintLeafletMap();
-    startSmartScheduler();
-  }, 200);
-}
-
-function handleDropdownChange(catKey) {
-  const selectEl = document.getElementById('osint-category-dropdown');
-  const selectedOption = selectEl.options[selectEl.selectedIndex];
-  const badgeText = selectedOption.getAttribute('data-badge');
-  const badgeClass = selectedOption.getAttribute('data-class');
-  const badgeDisplay = document.getElementById('active-badge-display');
-
-  if (badgeDisplay) {
-    badgeDisplay.className = badgeClass;
-    badgeDisplay.innerText = badgeText === 'both' ? 'TG + GL' : badgeText;
-  }
-
-  switchCategory(catKey);
-}
-
-function switchCategory(catKey) {
-  document.querySelectorAll('.intel-category-view').forEach(v => v.style.display = 'none');
-  const targetView = document.getElementById(`intel-view-${catKey}`);
-  if (targetView) targetView.style.display = 'block';
-
-  if (catKey === 'locality' && osintMap) {
-    osintMap.invalidateSize();
-  }
-
-  triggerRefresh(catKey, false);
-}
-
-function generateSmartSyncTag(catKey) {
-  const now = new Date();
-  const fetchTimeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-  
-  const config = API_SCHEDULE_REGISTRY[catKey];
-  if (!config || config.intervalMs === 0) {
-    return `<span class="timestamp-tag">Fetched: ${fetchTimeStr}</span>`;
-  }
-
-  const nextSyncDate = new Date(now.getTime() + config.intervalMs);
-  const nextTimeStr = nextSyncDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-  return `<span class="timestamp-tag">Fetched: <strong>${fetchTimeStr}</strong>; Next update queued for <strong>${nextTimeStr}</strong></span>`;
-}
-
-async function triggerRefresh(catKey, manual = false) {
-  const btn = document.getElementById(`btn-sync-${catKey}`);
-  if (btn && manual) {
-    const origText = btn.innerText;
-    btn.innerText = '🔄 Fetching API...';
-    btn.style.color = '#f59e0b';
-    btn.disabled = true;
-    
-    await executeCategoryFetch(catKey);
-
-    btn.innerText = '✅ API Synced';
-    btn.style.color = '#10b981';
-    setTimeout(() => {
-      btn.innerText = origText;
-      btn.style.color = '';
-      btn.disabled = false;
-    }, 1500);
-  } else {
-    await executeCategoryFetch(catKey);
-  }
-}
-
-async function executeCategoryFetch(catKey) {
-  const syncTagHtml = generateSmartSyncTag(catKey);
-  if (API_SCHEDULE_REGISTRY[catKey]) {
-    API_SCHEDULE_REGISTRY[catKey].lastFetchMs = Date.now();
-  }
-
-  if (catKey === 'locality') {
-    // Keep initial instruction state or let click handler manage
-  }
-  if (catKey === 'world_ai') await fetchLiveWorldNews(syncTagHtml);
-  if (catKey === 'gdacs_hazards') await fetchGDACSHazards(syncTagHtml);
-  if (catKey === 'prediction_ai') await fetchLiveMarketData(syncTagHtml);
-  if (catKey === 'solar_space') await fetchLiveSolarData(syncTagHtml);
-  if (catKey === 'sat_space') await fetchLiveSatSpaceData(syncTagHtml);
-  if (catKey === 'flight_radar') await fetchLiveAirspaceRadar(syncTagHtml);
-  if (catKey === 'cyber_alerts') await fetchCyberSecurityAdvisories(syncTagHtml);
-  if (catKey === 'tc_ops') await fetchLiveTCOpsData(syncTagHtml);
-  if (catKey === 'tsddps_weather') await fetchLiveTSDDPSData(syncTagHtml);
-
-  await loadTargetedWikiSummary(catKey, syncTagHtml);
-}
-
-async function loadTargetedWikiSummary(catKey, syncTagHtml) {
-  const box = document.getElementById(`wiki-box-${catKey}`);
-  if (!box) return;
-
-  const wikiSlugs = {
-    locality: "Geographic_coordinate_system",
-    world_ai: "Current_events",
-    gdacs_hazards: "Natural_hazard",
-    prediction_ai: "Stock_market",
-    solar_space: "Space_weather",
-    sat_space: "International_Space_Station",
-    flight_radar: "Airspace",
-    cyber_alerts: "Cybersecurity",
-    tc_ops: "Meteorology",
-    tsddps_weather: "Weather_forecasting"
-  };
-
-  const slug = wikiSlugs[catKey] || "Current_events";
-
-  try {
-    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`).catch(() => null);
-    if (!res || !res.ok) throw new Error("Wiki API error");
-    const data = await res.json();
-
-    const title = data.title || "Live Knowledge Wire";
-    let extract = data.extract || "Real-time synthesized knowledge extract.";
-    if (extract.length > 160) {
-      extract = extract.substring(0, 157) + "...";
-    }
-
-    const pageUrl = data.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${slug}`;
-
-    box.innerHTML = `
-      <div class="wiki-trust-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size: 0.78rem;"> T&C Intel Desk: ${title} Briefing</strong>
-          <span class="badge-tc-wiki">T&C TRUSTED WIKI</span>
-        </div>
-        <p style="margin: 0 0 6px 0; font-size: 0.73rem; color: #cbd5e1; line-height: 1.42;">
-          ${extract}
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 6px; margin-top: 4px;">
-          ${syncTagHtml}
-          <a href="${pageUrl}" target="_blank" class="source-brand-link">
-            <img src="https://www.wikipedia.org/static/favicon/wikipedia.ico" alt="Wiki"> Wikipedia ↗
-          </a>
-        </div>
-      </div>
-    `;
-  } catch (e) {
-    box.innerHTML = '';
-  }
-}
-
-function startSmartScheduler() {
-  if (schedulerInterval) clearInterval(schedulerInterval);
-
-  schedulerInterval = setInterval(() => {
-    if (document.hidden) return;
-
-    const dropdown = document.getElementById('osint-category-dropdown');
-    if (!dropdown) return;
-
-    const activeCat = dropdown.value;
-    const config = API_SCHEDULE_REGISTRY[activeCat];
-
-    if (config && config.intervalMs > 0) {
-      const elapsed = Date.now() - config.lastFetchMs;
-      if (elapsed >= config.intervalMs) {
-        executeCategoryFetch(activeCat);
-      }
-    }
-  }, 10000);
-}
-
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) {
-    const dropdown = document.getElementById('osint-category-dropdown');
-    if (dropdown) executeCategoryFetch(dropdown.value);
-  }
-});
-
-function initOsintLeafletMap() {
-  const mapElement = document.getElementById('leaflet-map-canvas');
-  if (!mapElement) return;
-
-  if (osintMap) {
-    osintMap.remove();
-    osintMap = null;
-  }
-
-  osintMap = L.map('leaflet-map-canvas').setView([20.5937, 78.9629], 4);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; New Modern Mission by T&C',
-    maxZoom: 19,
-    className: 'dark-osm-tiles'
-  }).addTo(osintMap);
-
-  osintMap.on('click', function (e) {
-    const lat = e.latlng.lat.toFixed(5);
-    const lng = e.latlng.lng.toFixed(5);
-
-    if (currentClickMarker) {
-      osintMap.removeLayer(currentClickMarker);
-    }
-
-    currentClickMarker = L.marker(e.latlng).addTo(osintMap);
-    currentClickMarker.bindPopup(`<div style="font-size:0.7rem; color:#38bdf8;"><i class="fa-solid fa-spinner fa-spin"></i> T&C fetching...</div>`).openPopup();
-
-    fetchLocalityDetails(lat, lng);
-  });
-
-  setTimeout(() => { osintMap.invalidateSize(); }, 300);
-}
-
-function setMapDisplayMode(mode, lat = 20.5937, lon = 78.9629) {
-  const leafletCanvas = document.getElementById('leaflet-map-canvas');
-  const windyCanvas = document.getElementById('windy-iframe-canvas');
-
-  document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('mode-btn-active'));
-
-  if (mode === 'locality') {
-    if (leafletCanvas) leafletCanvas.style.display = 'block';
-    if (windyCanvas) windyCanvas.style.display = 'none';
-    document.getElementById('mode-btn-locality')?.classList.add('mode-btn-active');
-    if (!osintMap) {
-      initOsintLeafletMap();
-    } else {
-      setTimeout(() => { osintMap.invalidateSize(); }, 200);
-    }
-  } else if (mode === 'windy') {
-    if (leafletCanvas) leafletCanvas.style.display = 'none';
-    if (windyCanvas) {
-      windyCanvas.style.display = 'block';
-      windyCanvas.innerHTML = `
-        <iframe 
-          width="100%" 
-          height="100%" 
-          src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=420&zoom=7&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" 
-          frameborder="0" 
-          style="border:0; border-radius: 6px; width:100%; height:100%;" 
-          allowfullscreen>
-        </iframe>
-      `;
-    }
-    document.getElementById('mode-btn-windy')?.classList.add('mode-btn-active');
-  }
-}
-
-// FIXED RESET: CLEARS MARKER, RESETS VIEW, RESTORES SIDE PANEL INSTRUCTION
-function resetLeafletMap() {
-  setMapDisplayMode('locality');
-  if (osintMap) {
-    osintMap.setView([20.5937, 78.9629], 4);
-    if (currentClickMarker) {
-      osintMap.removeLayer(currentClickMarker);
-      currentClickMarker = null;
-    }
-    osintMap.invalidateSize();
-  }
-  const titleEl = document.getElementById('brief-region-title');
-  const briefList = document.getElementById('intel-brief-content-list');
-  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-map-pin"></i> Locality Telemetry`;
-  if (briefList) {
-    briefList.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <p style="margin:0; font-size:0.72rem; color:#cbd5e1;">Tap any point on the map to display OSINT locality tags, mandal division, pincode, and live Air Quality (AQI) metrics.</p>
-      </div>
-    `;
-  }
-}
-
-async function fetchLocalityDetails(lat, lng) {
-  const titleEl = document.getElementById('brief-region-title');
-  const briefList = document.getElementById('intel-brief-content-list');
-  const syncTagHtml = generateSmartSyncTag('locality');
-
-  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying Geocoding & AQI Feeds...`;
-
-  try {
-    const [geoRes, weatherRes, aqiRes] = await Promise.all([
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`).catch(() => null),
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto`).catch(() => null),
-      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm10,pm2_5,us_aqi`).catch(() => null)
-    ]);
-
-    const geoData = geoRes && geoRes.ok ? await geoRes.json() : null;
-    const weatherData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
-    const aqiData = aqiRes && aqiRes.ok ? await aqiRes.json() : null;
-
-    const address = geoData?.address || {};
-    const streetLine = address.road || address.house_number || 'Standard Vector';
-    const areaSuburb = address.suburb || address.neighbourhood || 'Local Sector';
-    const villageTown = address.village || address.town || address.city_district || address.city || 'Regional Center';
-    const mandalTaluka = address.county || address.subdistrict || 'Administrative Division';
-    const district = address.state_district || address.district || 'District Vector';
-    const state = address.state || 'State';
-    const country = address.country || 'Sovereign Nation';
-    const pincode = address.postcode || 'Pincode Verified';
-
-    const curr = weatherData?.current || {};
-    const temp = curr.temperature_2m !== undefined ? `${curr.temperature_2m}°C` : 'N/A';
-    const humidity = curr.relative_humidity_2m !== undefined ? `${curr.relative_humidity_2m}%` : 'N/A';
-
-    const aqiCurr = aqiData?.current || {};
-    const usAqi = aqiCurr.us_aqi !== undefined ? aqiCurr.us_aqi : 'Good / Moderate';
-    const pm25 = aqiCurr.pm2_5 !== undefined ? `${aqiCurr.pm2_5} µg/m³` : 'N/A';
-
-    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${villageTown}, ${district}`;
-
-    briefList.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f59e0b; font-size: 0.78rem;"><i class="fa-solid fa-map-pin"></i> English Address Breakdown</strong>
-          <span class="badge-gl">Nominatim (EN)</span>
-        </div>
-        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.42;">
-          • <strong>Street:</strong> ${streetLine}<br>
-          • <strong>Area:</strong> ${areaSuburb}<br>
-          • <strong>Town/City:</strong> ${villageTown}<br>
-          • <strong>County/Mandal:</strong> ${mandalTaluka}<br>
-          • <strong>District & State:</strong> ${district}, ${state}<br>
-          • <strong>Country:</strong> ${country} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-          ${syncTagHtml}
-          <a href="https://nominatim.openstreetmap.org" target="_blank" class="source-brand-link"><img src="https://openstreetmap.org/favicon.ico" alt="OSM"> Nominatim ↗</a>
-        </div>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <strong style="color: #10b981; font-size: 0.78rem;"><i class="fa-solid fa-leaf"></i> Live Air Quality & Pollution Index</strong>
-          <span style="color: #10b981; font-weight: bold; font-size: 0.82rem;">AQI: ${usAqi}</span>
-        </div>
-        <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
-          • <strong>Fine Particulate (PM2.5):</strong> ${pm25}<br>
-          • <strong>Ambient Temp:</strong> ${temp} | <strong>Humidity:</strong> ${humidity}
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-          ${syncTagHtml}
-          <a href="https://open-meteo.com" target="_blank" class="source-brand-link"><img src="https://open-meteo.com/favicon.ico" alt="Meteo"> Open-Meteo ↗</a>
-        </div>
-
-        <button onclick="setMapDisplayMode('windy', ${lat}, ${lng})" style="margin-top: 8px; width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-          <i class="fa-solid fa-wind" style="color:#38bdf8;"></i> View Live Windy Radar for ${villageTown}
-        </button>
-      </div>
-    `;
-  } catch (err) {}
-}
-
-async function fetchLiveWorldNews(syncTagHtml) {
-  const container = document.getElementById('world-ai-feed-container');
-  if (!container) return;
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching Live Seismic Heat Map...</div>`;
-  try {
-    const quakeRes = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson').catch(() => null);
-    let html = `<div style="font-size: 0.68rem; color: #94a3b8; text-align: right; margin-bottom: 4px;">${syncTagHtml}</div>`;
-    
-    const quakeData = quakeRes && quakeRes.ok ? await quakeRes.json() : null;
-    if (quakeData && quakeData.features) {
-      html += `
-        <div class="compact-card" style="border-left: 3px solid #ef4444;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-            <strong style="color:#f8fafc; font-size:0.78rem;"> Tectonic Energy Heat Map Summary (24 Hours)</strong>
-            <span class="badge-gl">USGS SEISMIC DESK</span>
-          </div>
-          <p style="margin:2px 0 4px 0; font-size:0.73rem; color:#cbd5e1;">
-            Active tectonic energy releases recorded: <strong>${quakeData.features.length} major seismic events (Mag 4.5+)</strong> across global boundary lines.
-          </p>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            ${syncTagHtml}
-            <a href="https://earthquake.usgs.gov" target="_blank" class="source-brand-link"><img src="https://earthquake.usgs.gov/favicon.ico" alt="USGS"> USGS ↗</a>
-          </div>
-        </div>
-      `;
-    }
-    container.innerHTML = html;
-  } catch(e) {}
-}
-
-async function fetchGDACSHazards(syncTagHtml) {
-  const container = document.getElementById('gdacs-hazards-container');
-  if (!container) return;
-  try {
-    const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
-    const data = await res.json();
-    const quakes = data.features || [];
-    let html = `<div style="font-size: 0.68rem; color: #94a3b8; text-align: right; margin-bottom: 4px;">${syncTagHtml}</div>`;
-
-    if (quakes.length > 0) {
-      html += `
-        <div class="compact-card" style="border-left: 3px solid #ef4444;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-            <span class="badge-gl">NATURAL HAZARDS</span>
-            <a href="${quakes[0].properties.url}" target="_blank" class="source-brand-link"><img src="https://earthquake.usgs.gov/favicon.ico" alt="USGS"> USGS ↗</a>
-          </div>
-          <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #f8fafc;"> Seismic Event Mag ${quakes[0].properties.mag} - ${quakes[0].properties.place}</p>
-        </div>
-      `;
-    }
-
-    html += `
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;"> Global Wildfire & Thermal Anomaly Telemetry</strong>
-          <span class="badge-gl">NASA FIRMS SATELLITE</span>
-        </div>
-        <p style="margin: 2px 0 0 0; font-size: 0.73rem; color: #cbd5e1;">
-          Satellite thermal anomaly detection active tracking global forest fire perimeters.
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top:4px;">
-          ${syncTagHtml}
-          <a href="https://firms.modaps.eosdis.nasa.gov" target="_blank" class="source-brand-link"><img src="https://nasa.gov/favicon.ico" alt="NASA"> NASA FIRMS ↗</a>
-        </div>
-      </div>
-    `;
-    container.innerHTML = html;
-  } catch(e) {}
-}
-
-async function fetchLiveMarketData(syncTagHtml) {
-  const container = document.getElementById('prediction-ai-container');
-  if (!container) return;
-  try {
-    const fxRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD').catch(() => null);
-    const fxData = fxRes && fxRes.ok ? await fxRes.json() : null;
-    const inrRate = fxData?.rates?.INR ? fxData.rates.INR.toFixed(2) : '84.12';
-    
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color: #f8fafc; font-size:0.78rem;">National Stock Exchange (NSE / BSE Outlook)</strong>
-          <span class="badge-gl">NSE LIVE TELEMETRY</span>
-        </div>
-        <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-          • <strong>Nifty 50 Trend:</strong> Bullish institutional momentum.<br>
-          • <strong>USD/INR Forex:</strong> ₹${inrRate} (Live Exchange Rate)
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          ${syncTagHtml}
-          <a href="https://www.nseindia.com" target="_blank" class="source-brand-link">NSE India ↗</a>
-        </div>
-      </div>
-    `;
-  } catch(e) {}
-}
-
-async function fetchLiveSolarData(syncTagHtml) {
-  const container = document.getElementById('solar-space-container');
-  if (!container) return;
-  try {
-    const [swRes, launchRes] = await Promise.all([
-      fetch('https://services.swpc.noaa.gov/json/planetary_k_index_1m.json').catch(() => null),
-      fetch('https://lldev.thespacedevs.com/2.2.0/launch/upcoming/?limit=1').catch(() => null)
-    ]);
-
-    const swData = swRes && swRes.ok ? await swRes.json() : null;
-    const launchData = launchRes && launchRes.ok ? await launchRes.json() : null;
-    const kp = swData && swData.length > 0 ? parseFloat(swData[swData.length - 1].kp_index) : 2.0;
-    const nextLaunch = launchData?.results?.[0];
-    const launchName = nextLaunch ? `${nextLaunch.name} (${nextLaunch.launch_service_provider?.name || 'Space Agency'})` : 'Orbital Launch Manifest Active';
-
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">NOAA Geomagnetic Activity Status</strong>
-          <span class="badge-gl">Kp Index: ${kp}</span>
-        </div>
-        <p style="margin:4px 0 6px 0; font-size:0.75rem; color:#f8fafc;">
-          <strong>Condition:</strong> 🟢 LOW / NORMAL (Zero Satellite Disruption)
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          ${syncTagHtml}
-          <a href="https://www.swpc.noaa.gov" target="_blank" class="source-brand-link"><img src="https://www.noaa.gov/favicon.ico" alt="NOAA"> NOAA SWPC ↗</a>
-        </div>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;"> Global Orbital Launch Calendar</strong>
-          <span class="badge-gl">SPACE DEVS API</span>
-        </div>
-        <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-          <strong>Next Manifest:</strong> ${launchName}
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          ${syncTagHtml}
-          <a href="https://thespacedevs.com" target="_blank" class="source-brand-link">Space Devs ↗</a>
-        </div>
-      </div>
-    `;
-  } catch(e) {}
-}
-
-// RESTORED ISS OVERPASS LOCATION & RADIATION TELEMETRY
-async function fetchLiveSatSpaceData(syncTagHtml) {
-  const container = document.getElementById('sat-space-container');
-  if (!container) return;
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Polling ISS GPS & Radiation Feeds...</div>`;
-  
-  try {
-    const issRes = await fetch('https://api.wheretheiss.at/v1/satellites/25544').catch(() => null);
-    const issData = issRes && issRes.ok ? await issRes.json() : null;
-
-    if (!issData || !issData.latitude) throw new Error("Invalid ISS telemetry");
-
-    const lat = Number(issData.latitude).toFixed(4);
-    const lon = Number(issData.longitude).toFixed(4);
-    const altitude = `${Number(issData.altitude).toFixed(1)} km`;
-    const velocity = `${Math.round(issData.velocity)} km/h`;
-
-    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=6&accept-language=en`).catch(() => null);
-    const geoData = geoRes && geoRes.ok ? await geoRes.json() : null;
-    const country = geoData?.address?.country || geoData?.address?.continent || '';
-    const stateCity = geoData?.address?.state || geoData?.address?.city || geoData?.address?.region || '';
-    
-    let currentOverpassLocation = "Over Open Oceans / International Waters";
-    if (country || stateCity) {
-      currentOverpassLocation = `Over ${stateCity ? stateCity + ', ' : ''}${country}`;
-    }
-
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #a855f7;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">International Space Station Live Telemetry</strong>
-          <span class="badge-gl">WHERETHEISS.AT API</span>
-        </div>
-        <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1; line-height:1.42;">
-          • <strong>Live Coordinates:</strong> Lat <strong style="color:#38bdf8;">${lat}°</strong> | Lon <strong style="color:#38bdf8;">${lon}°</strong><br>
-          • <strong>Orbital Velocity:</strong> <strong style="color:#10b981;">${velocity}</strong> | Altitude: <strong>${altitude}</strong><br>
-          • <strong>Current Overpass Region:</strong> <span style="color:#f59e0b; font-weight:bold;"> ${currentOverpassLocation}</span>
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          ${syncTagHtml}
-          <a href="https://wheretheiss.at" target="_blank" class="source-brand-link">wheretheiss.at ↗</a>
-        </div>
-      </div>
-
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;"> Global Nuclear & Radiation Telemetry</strong>
-          <span class="badge-gl" style="background:#10b981;">SAFECAST NETWORK</span>
-        </div>
-        <p style="margin:4px 0 0 0; font-size:0.72rem; color:#cbd5e1;">
-          Environmental background radiation levels operating within normal safe atmospheric thresholds.
-        </p>
-      </div>
-    `;
-  } catch(e) { container.innerHTML = `<div style="color: #ef4444; text-align: center;">Telemetry Active.</div>`; }
-}
-
-// POLISHED AIRSPACE RADAR FEED
-async function fetchLiveAirspaceRadar(syncTagHtml) {
-  const container = document.getElementById('flight-radar-container');
-  if (!container) return;
-  container.innerHTML = `<div style="color: #cbd5e1; text-align: center; padding: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Polling Regional Airspace Telemetry...</div>`;
-  try {
-    const res = await fetch('https://opensky-network.org/api/states/all?lamin=16.5&lamax=18.5&lomin=77.5&lomax=79.5');
-    if (res.status === 429) throw new Error("Rate limited");
-    const data = await res.json();
-    const flights = data.states || [];
-
-    if (flights.length > 0) {
-      let cardsHtml = '';
-      flights.slice(0, 4).forEach(f => {
-        cardsHtml += `
-          <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <strong style="color:#f8fafc; font-size:0.78rem;"> Flight Vector: ${f[1] ? f[1].trim() : "COMMERCIAL"}</strong>
-              <span class="badge-tg">ACTIVE TRANSPONDER</span>
-            </div>
-            <p style="margin:2px 0; font-size:0.72rem; color:#cbd5e1;">Country/Operator: <strong>${f[2] || 'International'}</strong> | Altitude: <strong>${f[7] ? Math.round(f[7]) + ' m' : 'N/A'}</strong></p>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-              ${syncTagHtml}
-              <a href="https://opensky-network.org" target="_blank" class="source-brand-link">OpenSky Network ↗</a>
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = cardsHtml;
-    } else {
-      container.innerHTML = `
-        <div class="compact-card" style="border-left: 3px solid #10b981;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <strong style="color:#f8fafc; font-size:0.78rem;"> Regional Airspace Status: Nominal</strong>
-            <span class="badge-tg">OPENSKY FEED ACTIVE</span>
-          </div>
-          <p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Active regional transponders operating within safety baselines over Telangana corridor.</p>
-          <div style="margin-top:4px;">${syncTagHtml}</div>
-        </div>
-      `;
-    }
-  } catch(e) {
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;"> Telangana Airspace Telemetry Grid</strong>
-          <span class="badge-tg">ACTIVE RADAR</span>
-        </div>
-        <p style="margin:4px 0 0; font-size:0.73rem; color:#cbd5e1;">Airspace corridor monitoring active. Commercial transponder tracking synchronized.</p>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-          ${syncTagHtml}
-          <a href="https://opensky-network.org" target="_blank" class="source-brand-link">OpenSky Network ↗</a>
-        </div>
-      </div>
-    `;
-  }
-}
-
-async function fetchCyberSecurityAdvisories(syncTagHtml) {
-  const container = document.getElementById('cyber-alerts-container');
-  if (!container) return;
-  container.innerHTML = `
-    <div class="compact-card" style="border-left: 3px solid #ef4444;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <strong style="color:#f8fafc; font-size:0.78rem;"> TGCSB Security Advisory</strong>
-        <span class="badge-tg">HOTLINE 1930</span>
-      </div>
-      <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-        Active advisory issued against <strong>'Digital Arrest' Extortion Scams</strong> across Hyderabad.
-      </p>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        ${syncTagHtml}
-        <a href="https://cybercrime.gov.in" target="_blank" class="source-brand-link"><img src="https://cybercrime.gov.in/favicon.ico" alt="Gov"> CyberCrime Gov ↗</a>
-      </div>
-    </div>
-
-    <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <strong style="color:#f8fafc; font-size:0.78rem;"> Global Internet Submarine Cable Health</strong>
-        <span class="badge-gl">BACKBONE DESK</span>
-      </div>
-      <p style="margin:4px 0 0 0; font-size:0.72rem; color:#cbd5e1;">
-        Submarine fiber optic landing points across Mumbai & Chennai operating with zero reported physical cuts.
-      </p>
     </div>
   `;
 }
 
-async function fetchLiveTCOpsData(syncTagHtml) {
-  const container = document.getElementById('tc-ops-container');
-  if (!container) return;
+/* ==========================================================================
+   1. SATELLITE ORBITAL TRAJECTORY TRACKER (NORAD CelesTrak)
+   ========================================================================== */
+async function fetchSatelliteData() {
+  const containerId = 'telemetry-satellite';
   try {
-    const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=17.4239&longitude=78.4520&current=temperature_2m,relative_humidity_2m,wind_speed_10m').catch(() => null);
-    const wData = weatherRes && weatherRes.ok ? await weatherRes.json() : null;
-    const curr = wData?.current || {};
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #f59e0b;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">T&C Stall Zone Ambient Weather</strong>
-          <span class="badge-both">SOMAJIGUDA HUB</span>
-        </div>
-        <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-          Temp <strong style="color:#f59e0b;">${curr.temperature_2m}°C</strong> | Humidity <strong>${curr.relative_humidity_2m}%</strong> | Wind <strong>${curr.wind_speed_10m} km/h</strong>
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          ${syncTagHtml}
-          <a href="https://open-meteo.com" target="_blank" class="source-brand-link"><img src="https://open-meteo.com/favicon.ico" alt="Meteo"> Open-Meteo ↗</a>
-        </div>
-      </div>
+    const url = 'https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json';
+    const data = await fetchWithTimeout(url);
 
-      <div class="compact-card" style="border-left: 3px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;"> Somajiguda & Panjagutta Commuter Traffic</strong>
-          <span class="badge-tg">OSM TRAFFIC</span>
-        </div>
-        <p style="margin:4px 0 0 0; font-size:0.72rem; color:#cbd5e1;">
-          Main arterial flow along Metro Corridor operating within normal transit baselines.
-        </p>
-      </div>
-    `;
-  } catch(e) {}
+    // Primary target: International Space Station (NORAD ID 25544) or top active satellite
+    const primaryOrbiter = data.find(sat => sat.OBJECT_NAME.includes('ISS') || sat.NORAD_CAT_ID === 25544) || data[0];
+
+    const satPayload = {
+      name: primaryOrbiter.OBJECT_NAME,
+      noradId: primaryOrbiter.NORAD_CAT_ID,
+      inclination: Number(primaryOrbiter.INCLINATION).toFixed(2),
+      meanMotion: Number(primaryOrbiter.MEAN_MOTION).toFixed(2),
+      lastUpdated: new Date().toLocaleTimeString()
+    };
+
+    renderSatelliteUI(satPayload);
+  } catch (error) {
+    console.warn('[Telemetry] Satellite Feed Fetch Failed:', error.message);
+    renderErrorUI(containerId, 'Orbital Telemetry', 'CelesTrak NORAD', 'fetchSatelliteData');
+  }
 }
 
-async function fetchLiveTSDDPSData(syncTagHtml) {
-  const container = document.getElementById('tsddps-weather-container');
+function renderSatelliteUI(sat) {
+  const container = document.getElementById('telemetry-satellite');
   if (!container) return;
-  try {
-    const hydRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=17.3850&longitude=78.4867&current=temperature_2m,relative_humidity_2m,surface_pressure').catch(() => null);
-    const hData = hydRes && hydRes.ok ? await hydRes.json() : null;
-    const curr = hData?.current || {};
-    container.innerHTML = `
-      <div class="compact-card" style="border-left: 3px solid #10b981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <strong style="color:#f8fafc; font-size:0.78rem;">Hyderabad Urban Telemetry Grid</strong>
-          <span class="badge-tg">AWS METRICS</span>
-        </div>
-        <p style="margin:4px 0 6px 0; font-size:0.73rem; color:#cbd5e1;">
-          Temp <strong style="color:#10b981;">${curr.temperature_2m}°C</strong> | Pressure <strong>${curr.surface_pressure} hPa</strong>
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          ${syncTagHtml}
-          <a href="https://open-meteo.com" target="_blank" class="source-brand-link"><img src="https://open-meteo.com/favicon.ico" alt="Meteo"> Open-Meteo ↗</a>
+
+  container.innerHTML = `
+    <div class="telemetry-card">
+      <div class="card-header">🛰️ ORBITAL TELEMETRY (PASS TRACKER)</div>
+      <div class="card-body">
+        <div class="stat-row"><span>Target Spacecraft:</span> <strong>${sat.name}</strong></div>
+        <div class="stat-row"><span>NORAD ID Catalog:</span> <strong>${sat.noradId}</strong></div>
+        <div class="stat-row"><span>Orbital Inclination:</span> <strong>${sat.inclination}°</strong></div>
+        <div class="stat-row"><span>Orbits Per Day:</span> <strong>${sat.meanMotion}</strong></div>
+        <div class="card-meta-footer">
+          <span>Source: CelesTrak NORAD API</span>
+          <span>Synced: ${sat.lastUpdated}</span>
         </div>
       </div>
-    `;
-  } catch(e) {}
+    </div>
+  `;
 }
+
+/* ==========================================================================
+   2. WIKIPEDIA LIVE NEWS & EVENT WIRE (MediaWiki REST)
+   ========================================================================== */
+async function fetchWikiNews() {
+  const containerId = 'telemetry-wiki-news';
+  try {
+    const today = new Date();
+    const yyyy = today.getUTCFullYear();
+    const mm = String(today.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(today.getUTCDate()).padStart(2, '0');
+
+    const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/featured/${yyyy}/${mm}/${dd}`;
+    const data = await fetchWithTimeout(url);
+
+    const newsEntries = data.onthisday ? data.onthisday.slice(0, 4) : [];
+    const newsPayload = newsEntries.map(entry => ({
+      year: entry.year,
+      text: entry.text,
+      articleUrl: entry.pages && entry.pages[0] ? entry.pages[0].content_urls.desktop.page : 'https://en.wikipedia.org'
+    }));
+
+    renderWikiNewsUI(newsPayload);
+  } catch (error) {
+    console.warn('[Telemetry] Wikipedia News Fetch Failed:', error.message);
+    renderErrorUI(containerId, 'Global Events Wire', 'Wikimedia REST API', 'fetchWikiNews');
+  }
+}
+
+function renderWikiNewsUI(newsList) {
+  const container = document.getElementById('telemetry-wiki-news');
+  if (!container) return;
+
+  const listItems = newsList.map(item => `
+    <li class="news-item">
+      <span class="news-year">[${item.year}]</span>
+      <a href="${item.articleUrl}" target="_blank" rel="noopener">${item.text}</a>
+    </li>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="telemetry-card">
+      <div class="card-header">📖 HISTORICAL & GLOBAL INTELLIGENCE WIRE</div>
+      <div class="card-body">
+        <ul class="news-list">${listItems}</ul>
+        <div class="card-meta-footer">
+          <span>Source: Wikimedia REST API</span>
+          <span>Updated: ${new Date().toLocaleTimeString()}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ==========================================================================
+   3. CURRENT ASTRONAUTS IN SPACE TRACKER (Open Notify API)
+   ========================================================================== */
+async function fetchAstronauts() {
+  const containerId = 'telemetry-astronauts';
+  try {
+    const url = 'http://api.open-notify.org/astros.json';
+    const data = await fetchWithTimeout(url);
+
+    const astroPayload = {
+      totalCount: data.number,
+      people: data.people,
+      lastUpdated: new Date().toLocaleTimeString()
+    };
+
+    renderAstronautsUI(astroPayload);
+  } catch (error) {
+    console.warn('[Telemetry] Astronaut Feed Fetch Failed:', error.message);
+    renderErrorUI(containerId, 'Human Presence in Space', 'Open Notify ISS Feed', 'fetchAstronauts');
+  }
+}
+
+function renderAstronautsUI(astros) {
+  const container = document.getElementById('telemetry-astronauts');
+  if (!container) return;
+
+  const peopleTags = astros.people.map(p => `
+    <div class="astro-tag">
+      <span class="astro-name">${p.name}</span>
+      <span class="astro-craft">${p.craft}</span>
+    </div>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="telemetry-card">
+      <div class="card-header">👨‍🚀 HUMAN PRESENCE IN SPACE (${astros.totalCount} CREW IN ORBIT)</div>
+      <div class="card-body">
+        <div class="astro-grid">${peopleTags}</div>
+        <div class="card-meta-footer">
+          <span>Source: Open Notify API</span>
+          <span>Synced: ${astros.lastUpdated}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ==========================================================================
+   4. SOLAR EPHEMERIS ENGINE (Sunrise-Sunset API - Hyderabad)
+   ========================================================================== */
+async function fetchSolarEphemeris() {
+  const containerId = 'telemetry-solar';
+  try {
+    const url = `https://api.sunrise-sunset.org/json?lat=${TC_CONFIG.LAT}&lng=${TC_CONFIG.LON}&formatted=0`;
+    const data = await fetchWithTimeout(url);
+
+    if (data.status !== 'OK') throw new Error('API returned non-OK status');
+
+    const results = data.results;
+    const sunrise = new Date(results.sunrise);
+    const sunset = new Date(results.sunset);
+    const solarNoon = new Date(results.solar_noon);
+
+    const hours = Math.floor(results.day_length / 3600);
+    const minutes = Math.floor((results.day_length % 3600) / 60);
+
+    const solarPayload = {
+      sunrise: sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      sunset: sunset.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      solarNoon: solarNoon.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      daylightFormatted: `${hours}h ${minutes}m`,
+      lastUpdated: new Date().toLocaleDateString()
+    };
+
+    renderSolarUI(solarPayload);
+  } catch (error) {
+    console.warn('[Telemetry] Solar Ephemeris Fetch Failed:', error.message);
+    renderErrorUI(containerId, 'Solar Ephemeris Engine', 'Sunrise-Sunset API', 'fetchSolarEphemeris');
+  }
+}
+
+function renderSolarUI(solar) {
+  const container = document.getElementById('telemetry-solar');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="telemetry-card">
+      <div class="card-header">🌅 ATMOSPHERIC & SOLAR EPHEMERIS (HYDERABAD)</div>
+      <div class="card-body">
+        <div class="stat-row"><span>Sunrise (IST):</span> <strong>${solar.sunrise}</strong></div>
+        <div class="stat-row"><span>Solar Noon:</span> <strong>${solar.solarNoon}</strong></div>
+        <div class="stat-row"><span>Sunset (IST):</span> <strong>${solar.sunset}</strong></div>
+        <div class="stat-row"><span>Daylight Duration:</span> <strong>${solar.daylightFormatted}</strong></div>
+        <div class="card-meta-footer">
+          <span>Source: Sunrise-Sunset API (${TC_CONFIG.LAT}° N, ${TC_CONFIG.LON}° E)</span>
+          <span>Date: ${solar.lastUpdated}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ==========================================================================
+   5. REAL DYNAMIC SEARCH LINKS (FIX FOR DEAD `#` LINKS)
+   ========================================================================== */
+function setupDynamicJobLinks() {
+  const naukriBtn = document.getElementById('btn-naukri-search');
+  const linkedinBtn = document.getElementById('btn-linkedin-search');
+
+  const defaultRole = "Executive BPS Hyderabad";
+
+  if (naukriBtn) {
+    naukriBtn.href = `https://www.naukri.com/${encodeURIComponent(defaultRole).toLowerCase().replace(/ /g, '-')}`;
+    naukriBtn.target = "_blank";
+    naukriBtn.rel = "noopener";
+  }
+
+  if (linkedinBtn) {
+    linkedinBtn.href = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(defaultRole)}&location=Hyderabad%2C%20Telangana%2C%20India`;
+    linkedinBtn.target = "_blank";
+    linkedinBtn.rel = "noopener";
+  }
+}
+
+/* ==========================================================================
+   6. LAZY-LOADING TELEMETRY HUB & REFRESH TIMERS
+   ========================================================================== */
+function bootIntelligenceHub() {
+  if (isIntelligenceInitialized) return;
+  isIntelligenceInitialized = true;
+
+  // Initial Data Executions
+  fetchSatelliteData();
+  fetchWikiNews();
+  fetchAstronauts();
+  fetchSolarEphemeris();
+
+  // Active Long-Term Background Intervals
+  setInterval(fetchSatelliteData, TC_CONFIG.INTERVALS.SAT_ORBIT);
+  setInterval(fetchWikiNews, TC_CONFIG.INTERVALS.WIKI_WIRE);
+  setInterval(fetchAstronauts, TC_CONFIG.INTERVALS.ASTRONAUTS);
+  setInterval(fetchSolarEphemeris, TC_CONFIG.INTERVALS.SOLAR_ENGINE);
+
+  // Setup Dynamic Link Hrefs
+  setupDynamicJobLinks();
+}
+
+/**
+ * Tab Navigation Handler
+ * Prevents unnecessary initial fetches by executing bootIntelligenceHub() 
+ * only when the user selects the Intelligence tab.
+ */
+function switchDashboardTab(tabId) {
+  // Simple Tab Display Logic
+  const allTabs = document.querySelectorAll('.tab-content');
+  allTabs.forEach(tab => tab.style.display = 'none');
+
+  const targetTab = document.getElementById(tabId);
+  if (targetTab) targetTab.style.display = 'block';
+
+  // Lazy-load trigger for Intelligence Section
+  if (tabId === 'intelligence-section' || tabId === 'intelligence') {
+    bootIntelligenceHub();
+  }
+}
+
+// Global scope access for tab buttons if defined inline
+window.switchDashboardTab = switchDashboardTab;
+window.fetchSatelliteData = fetchSatelliteData;
+window.fetchWikiNews = fetchWikiNews;
+window.fetchAstronauts = fetchAstronauts;
+window.fetchSolarEphemeris = fetchSolarEphemeris;
 
 // ===================================================
 // SECTION VIEW MANAGER ENGINE
