@@ -1174,7 +1174,7 @@ const customAmenities = {
 };
 
 let allModesData = { driving: [], walking: [] };
-let currentMode = 'driving'; // Default mode
+let currentMode = 'driving';
 let routeLayers = [];
 let destMarker = null;
 let currentDestName = "";
@@ -1183,31 +1183,49 @@ let activePinnedLat = null;
 let activePinnedLng = null;
 let pendingLat = null;
 let pendingLng = null;
-let masterTelemetryData = null; // Common destination & telemetry data
+let masterTelemetryData = null;
 
-// --- SCRIPT-ENFORCED ABSOLUTE LAYOUT ISOLATION ---
+// --- ABSOLUTE JAVASCRIPT LAYOUT & ORDER ENFORCEMENT ---
+const mapViewSection = document.getElementById('map-view');
+const mapWrapper = document.querySelector('.map-container-wrapper');
+const searchContainer = document.querySelector('.map-search-container');
+const amenitiesContainer = document.querySelector('.amenities-container');
+const infoBoxEl = document.getElementById('route-info');
 const mapDivEl = document.getElementById('map');
-if (mapDivEl) {
-  mapDivEl.style.width = '100%';
-  mapDivEl.style.height = window.innerWidth < 768 ? '280px' : '380px';
-  mapDivEl.style.minHeight = window.innerWidth < 768 ? '280px' : '380px';
-  mapDivEl.style.position = 'relative';
-  mapDivEl.style.display = 'block';
-  mapDivEl.style.clear = 'both';
-  mapDivEl.style.marginBottom = '12px';
-  mapDivEl.style.zIndex = '1';
+
+if (mapViewSection) {
+  // Force section into a clean vertical column layout
+  mapViewSection.style.display = 'flex';
+  mapViewSection.style.flexDirection = 'column';
+  mapViewSection.style.position = 'relative';
+  mapViewSection.style.height = 'auto';
+  mapViewSection.style.overflow = 'visible';
 }
 
-// Wrap everything below the map into a clean scrollable control panel container
-const infoBoxEl = document.getElementById('route-info');
-if (infoBoxEl) {
-  infoBoxEl.style.position = 'relative';
-  infoBoxEl.style.display = 'block';
-  infoBoxEl.style.clear = 'both';
-  infoBoxEl.style.zIndex = '2';
-  infoBoxEl.style.maxHeight = 'calc(100vh - 340px)';
-  infoBoxEl.style.overflowY = 'auto';
-  infoBoxEl.style.webkitOverflowScrolling = 'touch';
+if (mapDivEl && mapWrapper) {
+  // Fix map height specifically for mobile vs desktop viewports
+  const compactHeight = window.innerWidth < 768 ? '260px' : '360px';
+  mapDivEl.style.width = '100%';
+  mapDivEl.style.height = compactHeight;
+  mapDivEl.style.minHeight = compactHeight;
+  
+  // Force explicit structural stacking order using flexbox 'order' property
+  if (mapWrapper) mapWrapper.style.order = '1';
+  if (searchContainer) {
+    searchContainer.style.order = '2';
+    searchContainer.style.marginTop = '12px';
+    searchContainer.style.marginBottom = '8px';
+  }
+  if (amenitiesContainer) {
+    amenitiesContainer.style.order = '3';
+    amenitiesContainer.style.marginBottom = '8px';
+  }
+  if (infoBoxEl) {
+    infoBoxEl.style.order = '4';
+    infoBoxEl.style.maxHeight = 'calc(100vh - 350px)';
+    infoBoxEl.style.overflowY = 'auto';
+    infoBoxEl.style.webkitOverflowScrolling = 'touch';
+  }
 }
 
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1289,7 +1307,8 @@ function removePinnedLocation() {
   if (infoBox) {
     infoBox.innerHTML = `
       <div class="card-placeholder">
-        <p>↑ Search a destination or tap the map to begin.</p>
+        <span class="pulse-icon">📍</span>
+        <p>Search a destination or tap an amenity tile above.</p>
       </div>
     `;
   }
@@ -1664,7 +1683,7 @@ function renderMasterCard() {
       <div style="max-height: 140px; overflow-y: auto; padding-right: 4px; margin-bottom: 6px; scrollbar-width: thin;">
         <div style="background: #1e293b; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-size: 0.68rem; color: #f8fafc;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-weight: bold; color: #38bdf8;">📖 Locality Intelligence</span>
+            <span style="font-weight: bold; color: #38bdf8;">T&C Locality Intelligence</span>
             <span style="background: #0f172a; color: ${t.intelBadgeColor}; border: 1px solid ${t.intelBadgeColor}; padding: 1px 5px; border-radius: 3px; font-size: 0.55rem; font-weight: bold;">
               Source: ${t.intelSourceName} 🟢
             </span>
@@ -1787,6 +1806,7 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
+
 
 
 
