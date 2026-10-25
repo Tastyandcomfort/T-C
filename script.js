@@ -1174,14 +1174,14 @@ const customAmenities = {
 };
 
 let allModesData = { driving: [], walking: [] };
-let currentMode = 'driving';
+let currentMode = 'driving'; // Default mode
 let routeLayers = [];
 let destMarker = null;
 let currentDestName = "";
 let telemetryMarker = null;
 let activePinnedLat = null;
 let activePinnedLng = null;
-let lastFetchedTelemetryHtml = ""; 
+let lastTelemetryData = null; // Stores weather/address for instant rendering
 
 // Initialize Leaflet Map
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1198,14 +1198,12 @@ L.marker([stallLat, stallLng]).addTo(map)
 // Seismic Event Layer Group (USGS Live Data)
 const seismicLayerGroup = L.layerGroup().addTo(map);
 
-// Load USGS Live Earthquakes
 async function loadLiveUSGSEarthquakes() {
   try {
     const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
     if (!res.ok) return;
     const data = await res.json();
     const quakes = data.features || [];
-
     seismicLayerGroup.clearLayers();
 
     quakes.forEach(q => {
@@ -1240,7 +1238,7 @@ function getAQIShortBadge(aqiVal) {
   return { text: `🔴 AQI ${aqiVal} (Poor)`, color: '#ef4444' };
 }
 
-// REMOVE PINNED LOCATION & CLEAR SELECTION
+// RESET MAP & CLEAR SELECTION
 function removePinnedLocation() {
   if (telemetryMarker) {
     map.removeLayer(telemetryMarker);
@@ -1256,7 +1254,7 @@ function removePinnedLocation() {
   activePinnedLat = null;
   activePinnedLng = null;
   currentDestName = "";
-  lastFetchedTelemetryHtml = "";
+  lastTelemetryData = null;
 
   closeWindyOverlay();
 
@@ -1264,33 +1262,21 @@ function removePinnedLocation() {
   if (infoBox) {
     infoBox.innerHTML = `
       <div class="card-placeholder">
-        <p>↑ Search a destination or tap an amenity tile above.</p>
+        <p>↑ Search a destination or tap the map to begin.</p>
       </div>
     `;
   }
 }
 
-// Trigger OSRM Route Calculation from Pinned Telemetry Marker
-function routeToPinnedLocation() {
-  if (activePinnedLat && activePinnedLng) {
-    const query = `${activePinnedLat}, ${activePinnedLng}`;
-    fetchRouteData(query, currentDestName || "Pinned Location");
-  }
-}
-
-// Re-display saved telemetry card in the route-info box
-function showViewLocality() {
-  currentMode = 'locality';
-  const infoBox = document.getElementById('route-info');
-  if (infoBox && lastFetchedTelemetryHtml) {
-    infoBox.innerHTML = lastFetchedTelemetryHtml;
-  } else if (activePinnedLat && activePinnedLng) {
-    map.fire('click', { latlng: L.latLng(activePinnedLat, activePinnedLng) });
-  }
-}
-
 // Open Same-Container Windy Radar Overlay
-function openSameContainerWindy(lat, lng, locationName) {
+function openSameContainerWindy() {
+  if (!activePinnedLat || !activePinnedLng) {
+    alert("Please search or pin a location on the map first!");
+    return;
+  }
+  currentMode = 'radar';
+  renderMasterCard();
+
   const mapDiv = document.getElementById('map');
   if (!mapDiv) return;
 
@@ -1308,13 +1294,13 @@ function openSameContainerWindy(lat, lng, locationName) {
 
   windyOverlay.innerHTML = `
     <div style="background:#0f172a; border-bottom:1px solid #334155; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; min-height:28px;">
-      <span style="font-size:0.7rem; color:#38bdf8; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📍 Radar: ${locationName}</span>
-      <button onclick="closeWindyOverlay()" style="background:#ef4444; color:#ffffff; border:none; padding:2px 8px; border-radius:3px; font-size:0.62rem; font-weight:bold; cursor:pointer; white-space:nowrap;">
+      <span style="font-size:0.7rem; color:#38bdf8; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📍 Radar: ${currentDestName}</span>
+      <button onclick="switchMode('driving')" style="background:#ef4444; color:#ffffff; border:none; padding:2px 8px; border-radius:3px; font-size:0.62rem; font-weight:bold; cursor:pointer;">
         ✖ Close Radar
       </button>
     </div>
     <div style="flex-grow:1; width:100%; position:relative;">
-      <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%;"></iframe>
+      <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${activePinnedLat}&lon=${activePinnedLng}&detailLat=${activePinnedLat}&detailLon=${activePinnedLng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%;"></iframe>
     </div>
   `;
 }
@@ -1330,20 +1316,79 @@ function closeWindyOverlay() {
   }
 }
 
-// MAP CLICK TELEMETRY ENGINE WITH MICRO ADDRESS-INLINE WEATHER & AQI
-map.on('click', async function(e) {
+// Switch Master Mode (Driving, Walking, Locality, Radar)
+function switchMode(mode) {
+  if (mode === 'radar') {
+    openSameContainerWindy();
+    return;
+  }
+  
   closeWindyOverlay();
-  currentMode = 'locality';
+  currentMode = mode;
+
+  if (mode === 'driving' || mode === 'walking') {
+    if (activePinnedLat && activePinnedLng) {
+      drawRouteOnMap(currentMode, 0);
+    }
+  }
+  renderMasterCard();
+}
+
+// MAP CLICK LISTENER: Fetches telemetry & defaults to driving mode
+map.on('click', async function(e) {
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
   activePinnedLat = lat;
   activePinnedLng = lng;
 
+  await fetchLocationDataAndRoutes(lat, lng);
+});
+
+// Universal fetch function for search, amenities, and map clicks
+async function fetchRouteData(query, customDisplayName = null) {
+  try {
+    let destLat, destLng, destName;
+    const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
+    const match = query.match(latLngRegex);
+
+    if (match) {
+      destLat = parseFloat(match[1]);
+      destLng = parseFloat(match[3]);
+      destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
+    } else {
+      let searchQuery = query.trim();
+      const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=1`;
+      const geoRes = await fetch(geoUrl);
+      if (!geoRes.ok) throw new Error("Search service failed.");
+      const geoData = await geoRes.json();
+
+      if (!geoData || geoData.length === 0) {
+        alert("Location not found.");
+        return;
+      }
+      destLat = parseFloat(geoData[0].lat);
+      destLng = parseFloat(geoData[0].lon);
+      destName = customDisplayName || geoData[0].display_name;
+    }
+
+    activePinnedLat = destLat;
+    activePinnedLng = destLng;
+    currentDestName = destName;
+
+    await fetchLocationDataAndRoutes(destLat, destLng, destName);
+
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
+// Master function to fetch OSRM Routes + Open-Meteo Weather/Locality telemetry
+async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   const infoBox = document.getElementById('route-info');
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Fetching locality breakdown, weather, & AQI...</p>
+      <p>Resolving location, weather, and routes...</p>
     </div>
   `;
 
@@ -1352,24 +1397,26 @@ map.on('click', async function(e) {
     .bindPopup(`<b>Pinned Location</b><br>${lat}, ${lng}`).openPopup();
 
   try {
-    const [geoRes, weatherRes, aqiRes, quakeRes] = await Promise.all([
+    const [geoRes, weatherRes, aqiRes, quakeRes, driveRes, walkRes] = await Promise.all([
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`),
       fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`),
       fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm2_5,us_aqi`),
-      fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson').catch(() => null)
+      fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson').catch(() => null),
+      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${lng},${lat}?overview=full&geometries=geojson&alternatives=true`),
+      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${lng},${lat}?overview=full&geometries=geojson`)
     ]);
 
     const geoData = geoRes.ok ? await geoRes.json() : null;
     const weatherData = weatherRes.ok ? await weatherRes.json() : null;
     const aqiData = aqiRes.ok ? await aqiRes.json() : null;
     const quakeData = quakeRes && quakeRes.ok ? await quakeRes.json() : null;
+    const driveData = await driveRes.json();
+    const walkData = await walkRes.json();
 
     const addr = geoData?.address || {};
     const villageTown = addr.village || addr.town || addr.city_district || addr.city || addr.suburb || 'Local Sector';
-    const mandalTaluka = addr.county || addr.subdistrict || 'Mandal/Taluka';
     const district = addr.state_district || addr.district || 'District';
     const state = addr.state || 'State';
-    const country = addr.country || 'India';
     const landmark = addr.road || addr.neighbourhood || 'Landmark Area';
 
     let pincode = addr.postcode || addr.pincode || addr.postal_code;
@@ -1379,7 +1426,7 @@ map.on('click', async function(e) {
     }
     if (!pincode) pincode = "Verified Zone";
 
-    currentDestName = `${villageTown}, ${district}`;
+    currentDestName = displayName || `${villageTown}, ${district}`;
 
     const currW = weatherData?.current || {};
     const currAQI = aqiData?.current || {};
@@ -1397,217 +1444,115 @@ map.on('click', async function(e) {
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km)`;
     }
 
-    // Micro styled address-integrated telemetry card layout
-    lastFetchedTelemetryHtml = `
-      <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; font-family: system-ui, -apple-system, sans-serif; color: #f8fafc; box-shadow: 0 4px 12px rgba(0,0,0,0.4); max-width: 100%; overflow: hidden;">
-        
-        <!-- TOP ROW: LOCATION TITLE + MODE SWITCHER -->
-        <div style="margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: flex-start; gap: 4px;">
-          <div>
-            <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">
-              📍 ${villageTown}, ${district}
-            </div>
-            <div style="font-size: 0.65rem; color: #cbd5e1; margin-top: 1px;">
-              ${landmark} • ${mandalTaluka} • ${state} (<span style="color:#10b981; font-weight:bold;">${pincode}</span>)
-            </div>
-          </div>
-          
-          <!-- MODE SWITCHER (MATCHING DRIVING & WALKING BUTTONS EXACTLY) -->
-          <div class="mode-switcher" style="display: flex; gap: 3px;">
-            <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="padding: 2px 6px; font-size: 0.65rem;"> Driving</button>
-            <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="padding: 2px 6px; font-size: 0.65rem;"> Walking</button>
-            <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="showViewLocality()" style="padding: 2px 6px; font-size: 0.65rem;"> Locality</button>
-          </div>
-        </div>
-
-        <!-- ACTION BUTTONS -->
-        <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-          <button onclick="openSameContainerWindy(${lat}, ${lng}, '${villageTown}')" style="flex:1; background: #0284c7; color: #fff; border: 1px solid #38bdf8; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
-             Radar
-          </button>
-          <button onclick="routeToPinnedLocation()" style="flex:1; background: #059669; color: #fff; border: 1px solid #10b981; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
-             Route Here
-          </button>
-          <button onclick="removePinnedLocation()" style="background: #1e293b; color: #ef4444; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;" title="Clear Pin">
-             Clear
-          </button>
-        </div>
-
-        <!-- MICRO INLINE WEATHER & AQI PILLS (COMPACT ALONGSIDE ADDRESS) -->
-        <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-bottom: 6px;">
-          <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
-            🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'} (Hum: ${currW.relative_humidity_2m}%)
-          </span>
-          <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
-            💨 ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}
-          </span>
-          <span style="background: #1e293b; border: 1px solid ${aqiBadge.color}; color: ${aqiBadge.color}; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
-            ${aqiBadge.text}
-          </span>
-        </div>
-
-        <!-- BOTTOM HAZARD BRIEF -->
-        <div style="background: #1e293b; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.62rem; color: #cbd5e1;">
-          <span style="color:#ef4444; font-weight:bold;">🌋 Quake:</span> ${nearestQuakeText}
-        </div>
-
-      </div>
-    `;
-
-    infoBox.innerHTML = lastFetchedTelemetryHtml;
-
-  } catch (err) {
-    console.error("Locality telemetry fetch error:", err);
-    infoBox.innerHTML = `<div class="card-placeholder"><p>Could not retrieve telemetry for this location.</p></div>`;
-  }
-});
-
-// FORCE MAP TO RENDER AUTOMATICALLY ON LOAD
-function triggerMapRefresh() {
-  if (typeof map !== 'undefined') {
-    map.invalidateSize(true);
-  }
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(triggerMapRefresh, 100);
-  setTimeout(triggerMapRefresh, 400);
-  setTimeout(triggerMapRefresh, 1000);
-});
-
-window.addEventListener('load', () => {
-  setTimeout(triggerMapRefresh, 100);
-  setTimeout(triggerMapRefresh, 500);
-});
-
-// Tab click function to fix map rendering if switched later
-function openMapView() {
-  const mapView = document.getElementById('map-view');
-  if (mapView) {
-    mapView.style.display = 'block';
-  }
-  
-  if (typeof map !== 'undefined') {
-    setTimeout(function() {
-      map.invalidateSize();
-    }, 100);
-  }
-}
-
-// Triggered when typing in the search bar
-async function searchDestination() {
-  const query = document.getElementById('destination-input').value.trim();
-  if (!query) {
-    alert("Please enter a destination, coordinates, or Plus Code!");
-    return;
-  }
-  await fetchRouteData(query);
-}
-
-// Triggered when clicking amenity chips
-async function searchAmenity(amenityKey) {
-  const facility = customAmenities[amenityKey];
-  if (!facility) return;
-
-  document.getElementById('destination-input').value = facility.name;
-  await fetchRouteData(facility.query, facility.name);
-}
-
-// Universal function that handles Lat/Lng, Plus Codes, Text Addresses, and "Near Me" searches
-async function fetchRouteData(query, customDisplayName = null) {
-  closeWindyOverlay();
-  const infoBox = document.getElementById('route-info');
-  infoBox.innerHTML = `
-    <div class="card-placeholder">
-      <span class="pulse-icon">⏳</span>
-      <p>Resolving location and calculating routes...</p>
-    </div>
-  `;
-
-  try {
-    let destLat, destLng, destName;
-
-    const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
-    const match = query.match(latLngRegex);
-
-    if (match) {
-      destLat = parseFloat(match[1]);
-      destLng = parseFloat(match[3]);
-      destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
-    } else {
-      let searchQuery = query.trim();
-      const lowerQuery = searchQuery.toLowerCase();
-
-      if (lowerQuery.includes('near')) {
-        searchQuery = lowerQuery.replace(/near\s*me/g, '').replace(/near/g, '').trim();
-      }
-
-      const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=1`;
-      const geoRes = await fetch(geoUrl);
-      
-      if (!geoRes.ok) throw new Error("Failed to connect to location search service.");
-      
-      const geoData = await geoRes.json();
-
-      if (!geoData || geoData.length === 0) {
-        infoBox.innerHTML = `<div class="card-placeholder"><p>Location not found. Try a valid address, city, or place name.</p></div>`;
-        return;
-      }
-
-      destLat = parseFloat(geoData[0].lat);
-      destLng = parseFloat(geoData[0].lon);
-      destName = customDisplayName || geoData[0].display_name;
-    }
-
-    currentDestName = destName;
-
-    if (destMarker) map.removeLayer(destMarker);
-    destMarker = L.marker([destLat, destLng]).addTo(map)
-      .bindPopup(`<b>${destName}</b>`).openPopup();
-
-    const [driveRes, walkRes] = await Promise.all([
-      fetch(`https://router.project-osrm.org/route/v1/driving/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson&alternatives=true`),
-      fetch(`https://router.project-osrm.org/route/v1/foot/${stallLng},${stallLat};${destLng},${destLat}?overview=full&geometries=geojson`)
-    ]);
-
-    const driveData = await driveRes.json();
-    const walkData = await walkRes.json();
-
     if (driveData.code === "Ok" && walkData.code === "Ok") {
       allModesData.driving = driveData.routes;
-      
       walkData.routes.forEach(route => {
         if (route.duration <= driveData.routes[0].duration) {
           route.duration = (route.distance / 1.25); 
         }
       });
-
       allModesData.walking = walkData.routes;
-      
-      currentMode = 'driving'; 
-      renderRouteCard();
-      drawRouteOnMap(currentMode, 0);
-    } else {
-      infoBox.innerHTML = `<div class="card-placeholder"><p>Could not calculate route paths for this location.</p></div>`;
     }
 
+    // Save telemetry data for the "Locality" tab view
+    lastTelemetryData = {
+      villageTown, district, state, landmark, pincode, currW, currAQI, aqiBadge, nearestQuakeText
+    };
+
+    // Default to Driving mode upon fetching
+    currentMode = 'driving';
+    renderMasterCard();
+    drawRouteOnMap('driving', 0);
+
   } catch (err) {
-    console.error("Route fetch error:", err);
-    infoBox.innerHTML = `<div class="card-placeholder"><p>Something went wrong. Please check your spelling or connection.</p></div>`;
+    console.error("Master telemetry & route error:", err);
+    infoBox.innerHTML = `<div class="card-placeholder"><p>Could not load route or telemetry data.</p></div>`;
   }
 }
 
-// Fix map sizing bug on window resize
-window.addEventListener('resize', () => { 
-  if (typeof map !== 'undefined') {
-    map.invalidateSize(); 
-  }
-});
+// Master Card Renderer (Handles Driving, Walking, Locality views + Bottom Clear Button)
+function renderMasterCard() {
+  const infoBox = document.getElementById('route-info');
+  if (!infoBox) return;
 
-function switchMode(mode) {
-  currentMode = mode;
-  renderRouteCard();
-  drawRouteOnMap(currentMode, 0); 
+  let contentHtml = '';
+
+  // 1. Driving or Walking Route View
+  if (currentMode === 'driving' || currentMode === 'walking') {
+    const routes = allModesData[currentMode] || [];
+    let optionsHtml = '';
+    routes.forEach((route, index) => {
+      const dist = (route.distance / 1000).toFixed(1);
+      const timeFormatted = formatDuration(route.duration);
+      const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
+      
+      optionsHtml += `
+        <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
+          <div style="font-weight:600; color:#ffd700;">${label}</div>
+          <div>${dist} km (~${timeFormatted})</div>
+        </button>
+      `;
+    });
+
+    contentHtml = `
+      <div class="destination-header" style="margin-bottom:6px;">
+        <span>📍</span>
+        <div><strong>Destination:</strong> ${currentDestName}</div>
+      </div>
+      <div style="font-size:0.75rem; color:#8b949e; margin-bottom:4px;">Route suggestion:</div>
+      <div class="route-options-group">${optionsHtml}</div>
+    `;
+  } 
+  // 2. Locality Telemetry View
+  else if (currentMode === 'locality' && lastTelemetryData) {
+    const t = lastTelemetryData;
+    contentHtml = `
+      <div style="margin-bottom:6px;">
+        <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">📍 ${t.villageTown}, ${t.district}</div>
+        <div style="font-size: 0.65rem; color: #cbd5e1;">${t.landmark} • ${t.state} (<span style="color:#10b981; font-weight:bold;">${t.pincode}</span>)</div>
+      </div>
+
+      <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-bottom: 6px;">
+        <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
+          🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'} (Hum: ${t.currW.relative_humidity_2m}%)
+        </span>
+        <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
+          💨 ${t.currW.wind_speed_10m !== undefined ? t.currW.wind_speed_10m + ' km/h' : 'N/A'}
+        </span>
+        <span style="background: #1e293b; border: 1px solid ${t.aqiBadge.color}; color: ${t.aqiBadge.color}; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
+          ${t.aqiBadge.text}
+        </span>
+      </div>
+
+      <div style="background: #1e293b; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.62rem; color: #cbd5e1;">
+        <span style="color:#ef4444; font-weight:bold;">🌋 Quake:</span> ${t.nearestQuakeText}
+      </div>
+    `;
+  }
+
+  // 4 Permanent Mode Buttons Top Bar + Content + Bottom Clear Button
+  infoBox.innerHTML = `
+    <div class="route-results-grid" style="font-family: system-ui, -apple-system, sans-serif;">
+      
+      <!-- 4 PERMANENT TOP MODE BUTTONS -->
+      <div class="mode-switcher" style="display: flex; gap: 3px; margin-bottom: 8px;">
+        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚗 Driving</button>
+        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚶 Walking</button>
+        <button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')" style="flex:1; padding:4px 4px; font-size:0.65rem;">📍 Locality</button>
+        <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🌪️ Radar</button>
+      </div>
+
+      ${contentHtml}
+
+      <!-- BOTTOM CLEAR BUTTON TO RESET MAP -->
+      ${activePinnedLat ? `
+        <button onclick="removePinnedLocation()" style="width:100%; margin-top:8px; background:#1e293b; color:#ef4444; border:1px solid #ef4444; padding:5px; border-radius:4px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
+          🗑️ Clear Pin & Reset Map
+        </button>
+      ` : ''}
+
+    </div>
+  `;
 }
 
 function formatDuration(seconds) {
@@ -1616,55 +1561,10 @@ function formatDuration(seconds) {
   const minutes = Math.round((seconds % 3600) / 60);
 
   let parts = [];
-  if (days > 0) {
-    parts.push(`${days} day${days > 1 ? 's' : ''}`);
-  }
-  if (hours > 0 || days > 0) {
-    parts.push(`${hours}h`);
-  }
+  if (days > 0) parts.push(`${days}d`);
+  if (hours > 0 || days > 0) parts.push(`${hours}h`);
   parts.push(`${minutes}min`);
-
   return parts.join(' ');
-}
-
-function renderRouteCard() {
-  const infoBox = document.getElementById('route-info');
-  const routes = allModesData[currentMode] || [];
-
-  let optionsHtml = '';
-  routes.forEach((route, index) => {
-    const dist = (route.distance / 1000).toFixed(1);
-    const timeFormatted = formatDuration(route.duration);
-    const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
-    
-    optionsHtml += `
-      <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
-        <div style="font-weight:600; color:#ffd700;">${label}</div>
-        <div>${dist} km (~${timeFormatted})</div>
-      </button>
-    `;
-  });
-
-  infoBox.innerHTML = `
-    <div class="route-results-grid">
-      <div class="destination-header">
-        <span>📍</span>
-        <div><strong>Destination:</strong> ${currentDestName}</div>
-      </div>
-      
-      <!-- MODE SWITCHER WITH UNIFIED BUTTON STYLING -->
-      <div class="mode-switcher" style="display: flex; gap: 4px;">
-        <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1;"> Driving</button>
-        <button class="mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')" style="flex:1;"> Walking</button>
-        ${activePinnedLat ? `<button class="mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="showViewLocality()" style="flex:1;"> Locality</button>` : ''}
-      </div>
-
-      <div style="font-size:0.75rem; color:#8b949e;">Route suggestion:</div>
-      <div class="route-options-group">
-        ${optionsHtml}
-      </div>
-    </div>
-  `;
 }
 
 function switchRouteIndex(index, btnElement) {
@@ -1697,7 +1597,26 @@ function drawRouteOnMap(mode, index) {
   }
 }
 
-// Automatically fix map tiles the exact moment the container finishes rendering
+// Triggered when typing in search bar
+async function searchDestination() {
+  const query = document.getElementById('destination-input').value.trim();
+  if (!query) {
+    alert("Please enter a destination, coordinates, or Plus Code!");
+    return;
+  }
+  await fetchRouteData(query);
+}
+
+// Triggered when clicking amenity chips
+async function searchAmenity(amenityKey) {
+  const facility = customAmenities[amenityKey];
+  if (!facility) return;
+
+  document.getElementById('destination-input').value = facility.name;
+  await fetchRouteData(facility.query, facility.name);
+}
+
+// Map resize observer
 const mapContainerElement = document.getElementById('map');
 if (mapContainerElement) {
   const observer = new ResizeObserver(() => {
@@ -1707,6 +1626,14 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
+
+
+
+
+
+
+
+
 
 
 // 🎧 headphones pop-up
