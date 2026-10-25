@@ -1181,7 +1181,7 @@ let currentDestName = "";
 let telemetryMarker = null;
 let activePinnedLat = null;
 let activePinnedLng = null;
-let lastTelemetryData = null; // Stores weather/address for instant rendering
+let masterTelemetryData = null; // Common destination & weather data for all buttons
 
 // Initialize Leaflet Map
 const map = L.map('map').setView([stallLat, stallLng], 15);
@@ -1254,7 +1254,7 @@ function removePinnedLocation() {
   activePinnedLat = null;
   activePinnedLng = null;
   currentDestName = "";
-  lastTelemetryData = null;
+  masterTelemetryData = null;
 
   closeWindyOverlay();
 
@@ -1268,9 +1268,9 @@ function removePinnedLocation() {
   }
 }
 
-// Open Same-Container Windy Radar Overlay
+// Open Same-Container Windy Radar Overlay (Weather/Wind metrics integrated here)
 function openSameContainerWindy() {
-  if (!activePinnedLat || !activePinnedLng) {
+  if (!activePinnedLat || !activePinnedLng || !masterTelemetryData) {
     alert("Please search or pin a location on the map first!");
     return;
   }
@@ -1292,10 +1292,20 @@ function openSameContainerWindy() {
     mapDiv.appendChild(windyOverlay);
   }
 
+  const t = masterTelemetryData;
+  const currW = t.currW;
+  const aqiBadge = t.aqiBadge;
+
   windyOverlay.innerHTML = `
-    <div style="background:#0f172a; border-bottom:1px solid #334155; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; min-height:28px;">
-      <span style="font-size:0.7rem; color:#38bdf8; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📍 Radar: ${currentDestName}</span>
-      <button onclick="switchMode('driving')" style="background:#ef4444; color:#ffffff; border:none; padding:2px 8px; border-radius:3px; font-size:0.62rem; font-weight:bold; cursor:pointer;">
+    <!-- TOP RADAR CONTROL BAR WITH EMBEDDED WEATHER PILLS -->
+    <div style="background:#0f172a; border-bottom:1px solid #334155; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:0.7rem; color:#38bdf8; font-weight:bold;">🌪️ Radar: ${currentDestName}</span>
+        <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 1px 5px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</span>
+        <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 1px 5px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">💨 ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}</span>
+        <span style="background: #1e293b; border: 1px solid ${aqiBadge.color}; color: ${aqiBadge.color}; padding: 1px 5px; border-radius: 3px; font-size: 0.58rem; font-weight: bold;">${aqiBadge.text}</span>
+      </div>
+      <button onclick="switchMode('driving')" style="background:#ef4444; color:#ffffff; border:none; padding:3px 8px; border-radius:3px; font-size:0.62rem; font-weight:bold; cursor:pointer;">
         ✖ Close Radar
       </button>
     </div>
@@ -1316,7 +1326,7 @@ function closeWindyOverlay() {
   }
 }
 
-// Switch Master Mode (Driving, Walking, Locality, Radar)
+// Switch Master Mode
 function switchMode(mode) {
   if (mode === 'radar') {
     openSameContainerWindy();
@@ -1334,7 +1344,7 @@ function switchMode(mode) {
   renderMasterCard();
 }
 
-// MAP CLICK LISTENER: Fetches telemetry & defaults to driving mode
+// MAP CLICK LISTENER
 map.on('click', async function(e) {
   const lat = e.latlng.lat.toFixed(4);
   const lng = e.latlng.lng.toFixed(4);
@@ -1344,7 +1354,7 @@ map.on('click', async function(e) {
   await fetchLocationDataAndRoutes(lat, lng);
 });
 
-// Universal fetch function for search, amenities, and map clicks
+// Universal fetch function for search and amenities
 async function fetchRouteData(query, customDisplayName = null) {
   try {
     let destLat, destLng, destName;
@@ -1382,13 +1392,13 @@ async function fetchRouteData(query, customDisplayName = null) {
   }
 }
 
-// Master function to fetch OSRM Routes + Open-Meteo Weather/Locality telemetry
+// Master data fetcher
 async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   const infoBox = document.getElementById('route-info');
   infoBox.innerHTML = `
     <div class="card-placeholder">
       <span class="pulse-icon">⏳</span>
-      <p>Resolving location, weather, and routes...</p>
+      <p>Resolving location, address, and routes...</p>
     </div>
   `;
 
@@ -1454,12 +1464,11 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
       allModesData.walking = walkData.routes;
     }
 
-    // Save telemetry data for the "Locality" tab view
-    lastTelemetryData = {
+    // Save master telemetry for all tabs
+    masterTelemetryData = {
       villageTown, district, state, landmark, pincode, currW, currAQI, aqiBadge, nearestQuakeText
     };
 
-    // Default to Driving mode upon fetching
     currentMode = 'driving';
     renderMasterCard();
     drawRouteOnMap('driving', 0);
@@ -1470,12 +1479,13 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
-// Master Card Renderer (Handles Driving, Walking, Locality views + Bottom Clear Button)
+// Master Card Renderer with Common Address Header
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
-  if (!infoBox) return;
+  if (!infoBox || !masterTelemetryData) return;
 
-  let contentHtml = '';
+  const t = masterTelemetryData;
+  let tabSpecificHtml = '';
 
   // 1. Driving or Walking Route View
   if (currentMode === 'driving' || currentMode === 'walking') {
@@ -1494,46 +1504,32 @@ function renderMasterCard() {
       `;
     });
 
-    contentHtml = `
-      <div class="destination-header" style="margin-bottom:6px;">
-        <span>📍</span>
-        <div><strong>Destination:</strong> ${currentDestName}</div>
-      </div>
-      <div style="font-size:0.75rem; color:#8b949e; margin-bottom:4px;">Route suggestion:</div>
+    tabSpecificHtml = `
+      <div style="font-size:0.7rem; color:#8b949e; margin-bottom:3px;">Route suggestion:</div>
       <div class="route-options-group">${optionsHtml}</div>
     `;
   } 
   // 2. Locality Telemetry View
-  else if (currentMode === 'locality' && lastTelemetryData) {
-    const t = lastTelemetryData;
-    contentHtml = `
-      <div style="margin-bottom:6px;">
-        <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">📍 ${t.villageTown}, ${t.district}</div>
-        <div style="font-size: 0.65rem; color: #cbd5e1;">${t.landmark} • ${t.state} (<span style="color:#10b981; font-weight:bold;">${t.pincode}</span>)</div>
-      </div>
-
-      <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-bottom: 6px;">
-        <span style="background: #1e293b; border: 1px solid #f59e0b; color: #f59e0b; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
-          🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'} (Hum: ${t.currW.relative_humidity_2m}%)
-        </span>
-        <span style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
-          💨 ${t.currW.wind_speed_10m !== undefined ? t.currW.wind_speed_10m + ' km/h' : 'N/A'}
-        </span>
-        <span style="background: #1e293b; border: 1px solid ${t.aqiBadge.color}; color: ${t.aqiBadge.color}; padding: 2px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: bold;">
-          ${t.aqiBadge.text}
-        </span>
-      </div>
-
-      <div style="background: #1e293b; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.62rem; color: #cbd5e1;">
-        <span style="color:#ef4444; font-weight:bold;">🌋 Quake:</span> ${t.nearestQuakeText}
+  else if (currentMode === 'locality') {
+    tabSpecificHtml = `
+      <div style="background: #1e293b; border: 1px solid #334155; padding: 6px 8px; border-radius: 6px; font-size: 0.65rem; color: #cbd5e1;">
+        <span style="color:#ef4444; font-weight:bold;">🌋 Nearest Seismic Event:</span> ${t.nearestQuakeText}
       </div>
     `;
   }
 
-  // 4 Permanent Mode Buttons Top Bar + Content + Bottom Clear Button
+  // Master UI Structure (Common Apple-inspired Destination Header + 4 Mode Buttons + Tab Content + Clear Button)
   infoBox.innerHTML = `
     <div class="route-results-grid" style="font-family: system-ui, -apple-system, sans-serif;">
       
+      <!-- COMMON DESTINATION BANNER (APPLE-INSPIRED STYLE) -->
+      <div style="background: #1e293b; border-left: 3px solid #38bdf8; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px;">
+        <div style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;">📍 ${t.villageTown}, ${t.district}</div>
+        <div style="font-size: 0.62rem; color: #cbd5e1; margin-top: 1px;">
+          ${t.landmark} • ${t.state} (<span style="color:#10b981; font-weight:bold;">${t.pincode}</span>)
+        </div>
+      </div>
+
       <!-- 4 PERMANENT TOP MODE BUTTONS -->
       <div class="mode-switcher" style="display: flex; gap: 3px; margin-bottom: 8px;">
         <button class="mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🚗 Driving</button>
@@ -1542,7 +1538,7 @@ function renderMasterCard() {
         <button class="mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')" style="flex:1; padding:4px 4px; font-size:0.65rem;">🌪️ Radar</button>
       </div>
 
-      ${contentHtml}
+      ${tabSpecificHtml}
 
       <!-- BOTTOM CLEAR BUTTON TO RESET MAP -->
       ${activePinnedLat ? `
@@ -1626,7 +1622,6 @@ if (mapContainerElement) {
   });
   observer.observe(mapContainerElement);
 }
-
 
 
 
