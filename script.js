@@ -537,13 +537,26 @@ async function searchDestination() {
   await fetchRouteData(query);
 }
 
-// Triggered when clicking amenity chips
+// Triggered when clicking amenity chips (Protected with active pin confirmation)
 async function searchAmenity(amenityKey) {
   const facility = customAmenities[amenityKey];
   if (!facility) return;
 
   const inputEl = document.getElementById('destination-input');
   if (inputEl) inputEl.value = facility.name;
+
+  // Check if a destination is already pinned on the map
+  if (activePinnedLat !== null && activePinnedLng !== null) {
+    const coords = facility.query.split(',').map(s => parseFloat(s.trim()));
+    pendingLat = coords[0].toFixed(4);
+    pendingLng = coords[1].toFixed(4);
+    
+    // Trigger the confirmation popup modal
+    showConfirmModal(pendingLat, pendingLng);
+    return;
+  }
+
+  // If no pin is active, fetch the route immediately
   await fetchRouteData(facility.query, facility.name);
 }
 
