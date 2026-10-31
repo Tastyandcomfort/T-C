@@ -410,7 +410,7 @@ function renderMasterCard() {
     routes.forEach((route, index) => {
       const dist = (route.distance / 1000).toFixed(1);
       const timeFormatted = formatDuration(route.duration);
-      const label = index === 0 ? "⚡ Shortest" : `🛣️ Alternative ${index + 1}`;
+      const label = index === 0 ? " Shortest" : ` Alternative ${index + 1}`;
       
       optionsHtml += `
         <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
@@ -653,9 +653,9 @@ async function loadTandCIntelligenceHub() {
       <div style="flex-grow: 1; max-width: 440px;">
         <select id="osint-category-dropdown" onchange="switchCategory(this.value)" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.72rem; cursor: pointer; outline: none;">
           <option value="locality" selected>📍 Locality, Weather, AQI & Hazards Map</option>
-          <option value="prediction_ai">📈 Real-Time Nifty Share Market & USD/INR Forex</option>
-          <option value="sat_space">🛰️ ISS Moving Tracker & Space Crew Manifest</option>
-          <option value="tc_ops">☕ T&C Stall Zone Weather & Traffic</option>
+          <option value="prediction_ai"> Real-Time Nifty Share Market & USD/INR Forex</option>
+          <option value="sat_space"> ISS Moving Tracker & Space Crew Manifest</option>
+          <option value="tc_ops"> T&C Stall Zone Weather & Traffic</option>
         </select>
       </div>
     </div>
@@ -1683,104 +1683,104 @@ function setMode(mode, element) {
     if (mode === 'tv9') {
       if (title) title.innerText = "TV9 News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "https://www.youtube.com/embed/II_m28Bm-iM?autoplay=1&mute=1";
+      if (views.tv9) views.video.style.display = 'block';
+      if (players.tv9) players.tv9.src = "https://www.youtube.com/embed/II_m28Bm-iM?autoplay=1&mute=1";
     } 
       else if (mode === 'v6') {
       if (title) title.innerText = "V6 News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/28IZl9iM-EE?autoplay=1&mute=1";
+      if (views.v6) views.v6.style.display = 'block';
+      if (players.v6) players.v6.src = "https://www.youtube.com/embed/28IZl9iM-EE?autoplay=1&mute=1";
     }
       else if (mode === 'abc') {
       if (title) title.innerText = "ABC News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/KQhNZQ_Uag8?autoplay=1&mute=1";
+      if (views.abc) views.abc.style.display = 'block';
+      if (players.abc) players.abc.src = "https://www.youtube.com/embed/KQhNZQ_Uag8?autoplay=1&mute=1";
     }
       else if (mode === 'bloomberg') {
       if (title) title.innerText = "Bloomberg News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/QB5BNdBFujE?autoplay=1&mute=1";
+      if (views.bloomberg) views.bloomberg.style.display = 'block';
+      if (players.bloomberg) players.bloomberg.src = "https://www.youtube.com/embed/QB5BNdBFujE?autoplay=1&mute=1";
     } 
       else if (mode === 'aljazeera') {
       if (title) title.innerText = "Al Jazeera News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1";
+      if (views.aljazeera) views.aljazeera.style.display = 'block';
+      if (players.aljazeera) players.aljazeera.src = "https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1";
     } 
       else if (mode === 'foxnews') {
       if (title) title.innerText = "FOX News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/C96oohpWBGw?autoplay=1&mute=1";
+      if (views.foxnews) views.foxnews.style.display = 'block';
+      if (players.foxnews) players.foxnews.src = "https://www.youtube.com/embed/C96oohpWBGw?autoplay=1&mute=1";
     } 
       else if (mode === 'france24') {
       if (title) title.innerText = "France24 News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/HvZt-nh9sGg?autoplay=1&mute=1";
+      if (views.france24) views.france24.style.display = 'block';
+      if (players.france24) players.france24.src = "https://www.youtube.com/embed/HvZt-nh9sGg?autoplay=1&mute=1";
     } 
       else if (mode === 'cnbc') {
       if (title) title.innerText = "CNBC News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/1_Ih0JYmkjI?autoplay=1&mute=1";
+      if (views.cnbc) views.cnbc.style.display = 'block';
+      if (players.cnbc) players.cnbc.src = "https://www.youtube.com/embed/1_Ih0JYmkjI?autoplay=1&mute=1";
     } 
       else if (mode === 'skynews') {
       if (title) title.innerText = "SKY News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/umLWFz4izTM?autoplay=1&mute=1";
+      if (views.skynews) views.skynews.style.display = 'block';
+      if (players.skynews) players.skynews.src = "https://www.youtube.com/embed/umLWFz4izTM?autoplay=1&mute=1";
     } 
       else if (mode === 'cnn') {
       if (title) title.innerText = "CNN News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/GotlA1KKWoo?autoplay=1&mute=1";
+      if (views.cnn) views.cnn.style.display = 'block';
+      if (players.cnn) players.cnn.src = "https://www.youtube.com/embed/GotlA1KKWoo?autoplay=1&mute=1";
     } 
       else if (mode === 'nasa') {
       if (title) title.innerText = "NASA Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1";
+      if (views.nasa) views.nasa.style.display = 'block';
+      if (players.nasa) players.nasa.src = "https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1";
     } 
       else if (mode === 'starbase') {
       if (title) title.innerText = "Starbase Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/mhJRzQsLZGg?autoplay=1&mute=1";
+      if (views.starbase) views.starbase.style.display = 'block';
+      if (players.starbase) players.starbase.src = "https://www.youtube.com/embed/mhJRzQsLZGg?autoplay=1&mute=1";
     } 
       else if (mode === 'lasvegasairside') {
       if (title) title.innerText = "Lasvegas Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/V7_orOtu-oo?autoplay=1&mute=1";
+      if (views.lasvegasairside) views.lasvegasairside.style.display = 'block';
+      if (players.lasvegasairside) players.lasvegasairside.src = "https://www.youtube.com/embed/V7_orOtu-oo?autoplay=1&mute=1";
     } 
       else if (mode === 'heathrowairside') {
       if (title) title.innerText = "Heathrow Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/uDBYuEV4zjI?autoplay=1&mute=1";
+      if (views.heathrowairside) views.heathrowairside.style.display = 'block';
+      if (players.heathrowairside) players.heathrowairside.src = "https://www.youtube.com/embed/uDBYuEV4zjI?autoplay=1&mute=1";
     } 
       else if (mode === 'laxairside') {
       if (title) title.innerText = "LAX Airside Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
+      if (views.laxairside) views.laxairside.style.display = 'block';
+      if (players.laxairside) players.laxairside.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
     } 
       else if (mode === 'lganewyorkairside') {
       if (title) title.innerText = "LGA-New York Airside Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/T_QsY01tIK0?autoplay=1&mute=1";
+      if (views.lganewyorkairside) views.lganewyorkairside.style.display = 'block';
+      if (players.lganewyorkairside) players.lganewyorkairside.src = "https://www.youtube.com/embed/T_QsY01tIK0?autoplay=1&mute=1";
     } 
       else if (mode === 'tandc') {
       if (title) title.innerText = "T&C Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.live) views.live.style.display = 'block';
-      if (players.live) players.live.src = "https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1";
+      if (views.tandc) views.tandc.style.display = 'block';
+      if (players.tandc) players.tandc.src = "https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1";
     }
     else if (mode === 'wildlife') {
       if (title) title.innerText = "Wild Live";
