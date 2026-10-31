@@ -1618,8 +1618,24 @@ function setMode(mode, element) {
   };
   
   const players = {
-    news: document.getElementById('news-video-player'),
-    live: document.getElementById('tc-live-player'),
+    tv9: document.getElementById('tv9-video-player'),
+    v6: document.getElementById('v6-video-player'),
+    abcnews: document.getElementById('abcnews-video-player'),
+    bloomberg: document.getElementById('bloomberg-video-player'),
+    aljazeera: document.getElementById('aljazeera-video-player'),
+    foxnews: document.getElementById('foxnews-video-player'),
+    france24: document.getElementById('france24-video-player'),
+    cnbc: document.getElementById('cnbc-video-player'),
+    skynews: document.getElementById('skynews-video-player'),
+    cnn: document.getElementById('cnn-video-player'),
+    nasa: document.getElementById('nasa-video-player'),
+    starbase: document.getElementById('starbase-video-player'),
+    lasvegasairside: document.getElementById('lasvegasairside-video-player'),
+    heathrowairside: document.getElementById('heathrowairside-video-player'),
+    laxairside: document.getElementById('laxairside-video-player'),
+    lganewyorkairside: document.getElementById('lganewyorkairside-video-player'),
+    
+    t&c: document.getElementById('t&C'),
     wildlife: document.getElementById('wildlife-player'),
     sports: document.getElementById('sports-player'),
     music: document.getElementById('music-player'),
@@ -1650,13 +1666,103 @@ function setMode(mode, element) {
   else {
     checkAndShowHeadphonesNotice();
 
-    if (mode === 'video') {
+    if (mode === 'tv9') {
       if (title) title.innerText = "Live NEWS";
       if (dot) dot.style.display = "inline-block";
       if (views.video) views.video.style.display = 'block';
       if (players.news) players.news.src = "https://www.youtube.com/embed/II_m28Bm-iM?autoplay=1&mute=1";
     } 
-    else if (mode === 'live') {
+      else if (mode === 'v6') {
+      if (title) title.innerText = "V6 News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/28IZl9iM-EE?autoplay=1&mute=1";
+    }
+      else if (mode === 'abc') {
+      if (title) title.innerText = "ABC News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/KQhNZQ_Uag8?autoplay=1&mute=1";
+    }
+      else if (mode === 'bloomberg') {
+      if (title) title.innerText = "Bloomberg News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/QB5BNdBFujE?autoplay=1&mute=1";
+    } 
+      else if (mode === 'aljazeera') {
+      if (title) title.innerText = "Al Jazeera News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1";
+    } 
+      else if (mode === 'foxnews') {
+      if (title) title.innerText = "FOX News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/C96oohpWBGw?autoplay=1&mute=1";
+    } 
+      else if (mode === 'france24') {
+      if (title) title.innerText = "France24 News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/HvZt-nh9sGg?autoplay=1&mute=1";
+    } 
+      else if (mode === 'cnbc') {
+      if (title) title.innerText = "CNBC News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/1_Ih0JYmkjI?autoplay=1&mute=1";
+    } 
+      else if (mode === 'skynews') {
+      if (title) title.innerText = "SKY News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/umLWFz4izTM?autoplay=1&mute=1";
+    } 
+      else if (mode === 'cnn') {
+      if (title) title.innerText = "CNN News Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/GotlA1KKWoo?autoplay=1&mute=1";
+    } 
+      else if (mode === 'nasa') {
+      if (title) title.innerText = "NASA Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1";
+    } 
+      else if (mode === 'starbase') {
+      if (title) title.innerText = "Starbase Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/mhJRzQsLZGg?autoplay=1&mute=1";
+    } 
+      else if (mode === 'lasvegasairside') {
+      if (title) title.innerText = "Lasvegas Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/V7_orOtu-oo?autoplay=1&mute=1";
+    } 
+      else if (mode === 'heathrowairside') {
+      if (title) title.innerText = "Heathrow Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/uDBYuEV4zjI?autoplay=1&mute=1";
+    } 
+      else if (mode === 'laxairside') {
+      if (title) title.innerText = "LAX Airside Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
+    } 
+      else if (mode === 'lganewyorkairside') {
+      if (title) title.innerText = "LGA-New York Airside Live";
+      if (dot) dot.style.display = "inline-block";
+      if (views.live) views.live.style.display = 'block';
+      if (players.live) players.live.src = "https://www.youtube.com/embed/T_QsY01tIK0?autoplay=1&mute=1";
+    } 
+      else if (mode === 't&c') {
       if (title) title.innerText = "T&C Live";
       if (dot) dot.style.display = "inline-block";
       if (views.live) views.live.style.display = 'block';
