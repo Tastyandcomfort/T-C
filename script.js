@@ -1653,13 +1653,13 @@ function setMode(mode, element) {
     wildlife: document.getElementById('wildlife-player'),
     sports: document.getElementById('sports-player'),
     music: document.getElementById('music-player'),
-    nasa: document.getElementById('nasa-video-player'),
+    nasa: document.getElementById('nasa-player'),
     airport: document.getElementById('airport-player'),
     hindu: document.getElementById('hindu-player'),
     muslim: document.getElementById('muslim-player'),
-    christian: document.getElementById('christian-video-player'),
-    law: document.getElementById('law-video-player'),
-    file: document.getElementById('file-video-player'),
+    christian: document.getElementById('christian-player'),
+    law: document.getElementById('law-player'),
+    file: document.getElementById('file-player'),
   };
 
   const title = document.getElementById('current-channel-title');
@@ -1683,7 +1683,7 @@ function setMode(mode, element) {
     if (mode === 'tv9') {
       if (title) title.innerText = "TV9 News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.tv9) views.video.style.display = 'block';
+      if (views.tv9) views.tv9.style.display = 'block';
       if (players.tv9) players.tv9.src = "https://www.youtube.com/embed/II_m28Bm-iM?autoplay=1&mute=1";
     } 
       else if (mode === 'v6') {
@@ -1692,11 +1692,11 @@ function setMode(mode, element) {
       if (views.v6) views.v6.style.display = 'block';
       if (players.v6) players.v6.src = "https://www.youtube.com/embed/28IZl9iM-EE?autoplay=1&mute=1";
     }
-      else if (mode === 'abc') {
+      else if (mode === 'abcnews') {
       if (title) title.innerText = "ABC News Live";
       if (dot) dot.style.display = "inline-block";
-      if (views.abc) views.abc.style.display = 'block';
-      if (players.abc) players.abc.src = "https://www.youtube.com/embed/KQhNZQ_Uag8?autoplay=1&mute=1";
+      if (views.abcnews) views.abcnews.style.display = 'block';
+      if (players.abcnews) players.abcnews.src = "https://www.youtube.com/embed/KQhNZQ_Uag8?autoplay=1&mute=1";
     }
       else if (mode === 'bloomberg') {
       if (title) title.innerText = "Bloomberg News Live";
@@ -1803,44 +1803,44 @@ function setMode(mode, element) {
     else if (mode === 'nasa') {
       if (title) title.innerText = "NASA";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1";
+      if (views.nasa) views.nasa.style.display = 'block';
+      if (players.nasa) players.nasa.src = "https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1";
     } 
     else if (mode === 'airport') {
       if (title) title.innerText = "Airside";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
+      if (views.airport) views.airport.style.display = 'block';
+      if (players.airport) players.airport.src = "https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1";
     } 
     else if (mode === 'hindu') {
       if (title) title.innerText = " Bhagavat Geetha";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1";
+      if (views.hindu) views.hindu.style.display = 'block';
+      if (players.hindu) players.hindu.src = "https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1";
     } 
     else if (mode === 'muslim') {
-      if (title) title.innerText = "Khuran";
+      if (title) title.innerText = "Quran";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1";
+      if (views.muslim) views.muslim.style.display = 'block';
+      if (players.muslim) players.muslim.src = "https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1";
     } 
     else if (mode === 'christian') {
-      if (title) title.innerText = "Bibul";
+      if (title) title.innerText = "Bible";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1";
+      if (views.christian) views.christian.style.display = 'block';
+      if (players.christian) players.christian.src = "https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1";
     } 
     else if (mode === 'law') {
       if (title) title.innerText = "Constitution";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1";
+      if (views.law) views.law.style.display = 'block';
+      if (players.law) players.law.src = "https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1";
     } 
     else if (mode === 'file') {
       if (title) title.innerText = "Media";
       if (dot) dot.style.display = "inline-block";
-      if (views.video) views.video.style.display = 'block';
-      if (players.news) players.news.src = "Audi RS5.jpg";
+      if (views.file) views.file.style.display = 'block';
+      if (players.file) players.file.src = "Audi RS5.jpg";
     }
   }
 }
