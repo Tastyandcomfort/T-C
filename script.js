@@ -1610,8 +1610,22 @@ function setMode(mode, element) {
 
   const views = {
     text: document.getElementById('text-view'),
-    video: document.getElementById('video-view'),
-    live: document.getElementById('live-view'),
+    tv9: document.getElementById('tv9-view'),
+    v6: document.getElementById('v6-view'),  
+    abcnews: document.getElementById('abcnews-view'),
+    aljazeera: document.getElementById('aljazeera-view'),
+    foxnews: document.getElementById('foxnews-view'),
+    france24: document.getElementById('france24-view'),
+    cnbc: document.getElementById('cnbc-view'),
+    skynews: document.getElementById('skynews-view'),
+    cnn: document.getElementById('cnn-view'),
+    nasa: document.getElementById('nasa-view'),
+    tandc: document.getElementById('tandc-view'),
+    starbase: document.getElementById('starbase-view'),
+    lasvegasairside: document.getElementById('lasvegasairside-view'),
+    heathrowairside: document.getElementById('heathrowairside-view'),
+    laxairside: document.getElementById('laxairside-view'),
+    lganewyorkairside: document.getElementById('lganewyorkairside-view'),
     wildlife: document.getElementById('wildlife-view'),
     sports: document.getElementById('sports-view'),
     music: document.getElementById('music-view')
@@ -1635,7 +1649,7 @@ function setMode(mode, element) {
     laxairside: document.getElementById('laxairside-video-player'),
     lganewyorkairside: document.getElementById('lganewyorkairside-video-player'),
     
-    t&c: document.getElementById('t&C'),
+    tandc: document.getElementById('tandC'),
     wildlife: document.getElementById('wildlife-player'),
     sports: document.getElementById('sports-player'),
     music: document.getElementById('music-player'),
@@ -1667,7 +1681,7 @@ function setMode(mode, element) {
     checkAndShowHeadphonesNotice();
 
     if (mode === 'tv9') {
-      if (title) title.innerText = "Live NEWS";
+      if (title) title.innerText = "TV9 News Live";
       if (dot) dot.style.display = "inline-block";
       if (views.video) views.video.style.display = 'block';
       if (players.news) players.news.src = "https://www.youtube.com/embed/II_m28Bm-iM?autoplay=1&mute=1";
@@ -1762,7 +1776,7 @@ function setMode(mode, element) {
       if (views.live) views.live.style.display = 'block';
       if (players.live) players.live.src = "https://www.youtube.com/embed/T_QsY01tIK0?autoplay=1&mute=1";
     } 
-      else if (mode === 't&c') {
+      else if (mode === 'tandc') {
       if (title) title.innerText = "T&C Live";
       if (dot) dot.style.display = "inline-block";
       if (views.live) views.live.style.display = 'block';
