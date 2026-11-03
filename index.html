@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Tasty & Comfort | New Modern Mission</title>
+  <title>Tasty &amp; Comfort | New Modern Mission</title>
   
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#000000" id="theme-color-meta" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- FontAwesome & Leaflet -->
+  <!-- FontAwesome 6 & Leaflet CSS/JS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -21,11 +21,11 @@
 
   <!-- Apple iOS Native Alert Modal -->
   <div id="apple-alert-overlay" class="apple-popup-overlay hidden">
-    <div class="apple-alert-box">
+    <div class="apple-alert-box apple-glass">
       <div class="apple-alert-content">
         <div class="apple-icon-circle"><i class="fa-solid fa-mug-hot"></i></div>
         <h3 class="apple-alert-title">Welcome to T&amp;C</h3>
-        <p class="apple-alert-message">We respect your privacy. T&amp;C does not collect or store your personal data. This website is for information only—no online ordering or booking. Please explore.</p>
+        <p class="apple-alert-message">We respect your privacy. T&amp;C does not collect or store personal data. This portal is informational only—no online ordering or booking. Please explore.</p>
       </div>
       <div class="apple-alert-actions">
         <button id="apple-alert-close-btn" class="apple-alert-btn">Continue</button>
@@ -36,19 +36,14 @@
   <div class="dashboard-container">
     
     <!-- Desktop / iPad macOS Style Vibrancy Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar apple-glass">
       <div class="brand-header">
-        <div class="traffic-lights">
-          <span class="tl-dot tl-red"></span>
-          <span class="tl-dot tl-yellow"></span>
-          <span class="tl-dot tl-green"></span>
+        <div class="logo-frame">
+          <i class="fa-solid fa-mug-hot"></i>
         </div>
-        <div class="brand-title-wrap">
-          <div class="logo-frame"><i class="fa-solid fa-mug-hot"></i></div>
-          <div>
-            <div class="brand-name">Tasty &amp; Comfort</div>
-            <div class="brand-sub">New Modern Mission</div>
-          </div>
+        <div class="brand-text-block">
+          <div class="brand-name">Tasty &amp; Comfort</div>
+          <div class="brand-sub">From New Modern Mission</div>
         </div>
       </div>
       
@@ -56,24 +51,35 @@
         <div class="side-item active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
         <div class="side-item" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
         <div class="side-item" onclick="switchView('services-view', this)"><i class="fa-solid fa-tower-broadcast"></i><span>Live Broadcast</span></div>
-        <div class="side-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-sparkles"></i><span>AI Chat</span></div>
+        <div class="side-item" onclick="switchView('chat-view', this)"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Chat</span></div>
         <div class="side-item" onclick="switchView('map-view', this)"><i class="fa-solid fa-location-dot"></i><span>You Are Here</span></div>
-        <div class="side-item" onclick="switchView('cert-view', this)"><i class="fa-solid fa-checkmark-seal"></i><span>Certification</span></div>
+        <div class="side-item" onclick="switchView('cert-view', this)"><i class="fa-solid fa-certificate"></i><span>Certification</span></div>
         <div class="side-item" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>About &amp; Owner</span></div>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="lang-selector">
-          <div id="google_translate_element"></div>
-          <div class="apple-segmented-lang">
-            <button onclick="changeLang('en')" class="active-lang">EN</button>
-            <button onclick="changeLang('te')">TE</button>
-            <button onclick="changeLang('hi')">HI</button>
+        <!-- Apple Appearance Pill Toggle (Light / Dark) -->
+        <div class="apple-theme-toggle-row">
+          <span class="toggle-label"><i class="fa-solid fa-circle-half-stroke"></i> Appearance</span>
+          <div class="apple-segmented-theme">
+            <button id="btn-theme-light" onclick="setAppTheme('light')" title="Light Mode"><i class="fa-solid fa-sun"></i></button>
+            <button id="btn-theme-dark" class="active-theme" onclick="setAppTheme('dark')" title="Dark Mode"><i class="fa-solid fa-moon"></i></button>
           </div>
         </div>
 
+        <!-- Language Switcher -->
+        <div class="lang-selector">
+          <div id="google_translate_element" style="display:none;"></div>
+          <div class="apple-segmented-lang">
+            <button id="lang-btn-en" class="active-lang" onclick="changeLang('en')">EN</button>
+            <button id="lang-btn-te" onclick="changeLang('te')">TE</button>
+            <button id="lang-btn-hi" onclick="changeLang('hi')">HI</button>
+          </div>
+        </div>
+
+        <!-- Weather Widget -->
         <div class="sidebar-weather apple-widget-glass">
-          <img id="desktop-icon" src="" alt="Weather" />
+          <img id="desktop-icon" src="" alt="Weather" onerror="this.style.display='none';" />
           <div class="weather-meta">
             <div id="desktop-temp" class="temp-text">--°C</div>
             <div id="desktop-condition" class="condition-text">Locating...</div>
@@ -85,37 +91,40 @@
     <!-- Main Viewport -->
     <main class="main-content">
       
-      <!-- iOS Dynamic Island & Status Bar Header -->
+      <!-- Mobile Top Bar with Dynamic Island Pill -->
       <header class="mobile-top-bar">
         <div class="mobile-brand">
           <div class="logo-frame-sm"><i class="fa-solid fa-mug-hot"></i></div>
           <span class="mobile-title">T&amp;C</span>
         </div>
 
-        <!-- Apple Dynamic Island Pill -->
+        <!-- Dynamic Island Capsule -->
         <div class="dynamic-island" id="dynamic-island-pill">
-          <div class="island-collapsed">
-            <span class="island-dot"></span>
-            <span id="island-text">Hyderabad • 8:00 AM – 10:00 PM</span>
-          </div>
+          <span class="island-dot"></span>
+          <span id="island-text">Hyderabad • 8:00 AM – 10:00 PM</span>
         </div>
 
-        <div class="mobile-weather">
-          <img id="mobile-icon" src="" alt="Weather Icon" />
-          <div id="mobile-temp" class="temp-text-sm">--°C</div>
+        <div class="mobile-actions">
+          <button class="mobile-theme-btn" onclick="toggleThemeQuick()" aria-label="Toggle Theme">
+            <i id="mobile-theme-icon" class="fa-solid fa-moon"></i>
+          </button>
+          <div class="mobile-weather">
+            <img id="mobile-icon" src="" alt="Weather" onerror="this.style.display='none';" />
+            <span id="mobile-temp" class="temp-text-sm">--°C</span>
+          </div>
         </div>
       </header>
 
       <!-- VIEW 1: HOME -->
       <section id="home-view" class="app-section active-view">
-        <div class="hero-showcase horizontal-hero apple-glass">
+        <div class="hero-showcase apple-glass">
           <div class="hero-left">
             <div class="apple-caption">WELCOME TO</div>
             <h2>New Modern Mission <span class="gold-gradient-text">by T&amp;C</span></h2>
             <p class="tagline-muted">More Than Tea</p>
             <div class="live-badge apple-pill">
               <span class="live-pulse"></span>
-              <span>Stall Hours: <b>8:00 AM – 10:00 PM</b></span>
+              <span>Open Daily: <b>8:00 AM – 10:00 PM</b></span>
             </div>
           </div>
           <div class="hero-right-image apple-squircle">
@@ -124,13 +133,13 @@
           </div>
         </div>
 
-        <!-- Featured Deals Carousel (Apple TV Card Style) -->
+        <!-- Deals Carousel -->
         <div class="slider-container apple-glass">
           <div class="section-badge-bar">
-            <span class="apple-tag"><i class="fa-solid fa-sparkles"></i> TODAY'S FEATURED OFFERS</span>
+            <span class="apple-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> TODAY'S FEATURED OFFERS</span>
           </div>
           <div class="slider">
-            <div class="glass-card offer-banner-card">
+            <div class="offer-banner-card apple-squircle">
               <div class="offer-image-slot apple-squircle" onclick="openMenuModal('IMG_20260713_153143.png', 'Mega Combo Deal', '₹65', 'Veg')">
                 <img src="IMG_20260713_153143.png" alt="Mega Combo" onerror="this.style.display='none';" />
                 <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
@@ -138,7 +147,7 @@
               <div class="offer-details-slot">
                 <span class="offer-tag-badge">SPECIAL VALUE</span>
                 <h3>Mega Combo Deal</h3>
-                <p>Large Portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
+                <p>Large portion of Premium Masala French Fries paired with Classic Hot Brewed Milk Tea.</p>
                 <div class="offer-pricing-row">
                   <span class="old-price">₹80</span>
                   <span class="new-glow-price">₹65</span>
@@ -146,15 +155,15 @@
               </div>
             </div>
 
-            <div class="glass-card offer-banner-card">
-              <div class="offer-image-slot apple-squircle" onclick="openMenuModal('IMG_20260713_153103.png', 'Second Combo', '₹99', 'Non-Veg')">
+            <div class="offer-banner-card apple-squircle">
+              <div class="offer-image-slot apple-squircle" onclick="openMenuModal('IMG_20260713_153103.png', 'Second Combo Deal', '₹99', 'Non-Veg')">
                 <img src="IMG_20260713_153103.png" alt="Second Combo" onerror="this.style.display='none';" />
                 <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
               </div>
               <div class="offer-details-slot">
                 <span class="offer-tag-badge">HOT DEAL</span>
                 <h3>Second Combo Deal</h3>
-                <p>Curated hot snack selection fresh from the kitchen grill.</p>
+                <p>Curated hot snack selection served freshly grilled.</p>
                 <div class="offer-pricing-row">
                   <span class="old-price">₹120</span>
                   <span class="new-glow-price">₹99</span>
@@ -167,9 +176,9 @@
         <div class="glass-card apple-glass instruction-card">
           <div class="card-icon-title">
             <div class="apple-mini-icon"><i class="fa-solid fa-compass"></i></div>
-            <h4>Explore the Comfort Hub</h4>
+            <h4>Explore Tasty &amp; Comfort</h4>
           </div>
-          <p>Tap through the navigation bar to inspect our chef-crafted menu, live audio/visual broadcasts, route telemetry, certified hygiene metrics, and our AI store concierge.</p>
+          <p>Navigate through the sections to browse the fresh kitchen menu, live video &amp; audio broadcasts, locality navigation telemetry, official safety certifications, and store intelligence.</p>
         </div>
       </section>
 
@@ -182,8 +191,9 @@
         
         <div class="menu-responsive-grid compact-grid">
           
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1783742714672.png', 'Premium Tea', '₹10', 'Veg')">
+          <!-- Item 1: Tea -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1783742714672.png', 'Premium Tea', '₹10', 'Veg')">
               <img src="1783742714672.png" alt="Premium Tea" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
             </div>
@@ -192,12 +202,13 @@
                 <h4>Premium Tea</h4>
                 <span class="price-gold text-small-price">₹10</span>
               </div>
-              <p class="menu-item-sub text-small-desc">Hot &amp; refreshing premium milk blends brewed freshly on order.</p>
+              <p class="menu-item-sub text-small-desc">Freshly brewed aromatic blend prepared with pure dairy milk.</p>
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1782911158711.png', 'French Fries', '₹50', 'Veg')">
+          <!-- Item 2: French Fries -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1782911158711.png', 'Crispy French Fries', '₹50', 'Veg')">
               <img src="1782911158711.png" alt="French Fries" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
@@ -221,16 +232,17 @@
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1782911905779.png', 'Sandwich', '₹45', 'Veg')">
-              <img src="1782911905779.png" alt="Sandwich" onerror="this.style.display='none';" />
+          <!-- Item 3: Sandwich -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1782911905779.png', 'Soft Sandwich', '₹45', 'Veg')">
+              <img src="1782911905779.png" alt="Soft Sandwich" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Soft Sandwich</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Soft layered sandwich bread built using customized spreads.</p>
+              <p class="menu-item-sub text-small-desc">Soft layered sandwich bread built with fresh vegetable spreads.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Standard</span>
@@ -240,8 +252,9 @@
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1782916715713.png', 'Samosa', '₹15', 'Veg')">
+          <!-- Item 4: Samosa -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1782916715713.png', 'Crispy Punjabi Samosa', '₹15', 'Veg')">
               <img src="1782916715713.png" alt="Punjabi Samosa" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
@@ -249,7 +262,7 @@
               <div class="menu-title-row">
                 <h4>Crispy Punjabi Samosa</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Golden crisp pastry crust stuffed with savory potato filling.</p>
+              <p class="menu-item-sub text-small-desc">Crisp flaky crust filled with spiced potatoes and garden peas.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Pc</span>
@@ -263,16 +276,17 @@
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1783742526658.png', 'Roll', '₹30 & ₹40', 'V & N.Veg')">
-              <img src="1783742526658.png" alt="Roll" onerror="this.style.display='none';" />
+          <!-- Item 5: Roll -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1783742526658.png', 'Soft Roll', '₹30 & ₹40', 'V & N.Veg')">
+              <img src="1783742526658.png" alt="Soft Roll" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Soft Roll</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Tender wraps stuffed with chef-spiced fillings.</p>
+              <p class="menu-item-sub text-small-desc">Warm wrapped rolls filled with spiced savories and crisp herbs.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Veg Roll <small>(1 Pc)</small></span>
@@ -286,16 +300,17 @@
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1783787921362.png', 'Bread Egg Omelet', '₹30', 'Veg')">
-              <img src="1783787921362.png" alt="Bread Omelet" onerror="this.style.display='none';" />
+          <!-- Item 6: Bread Egg Omelet -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1783787921362.png', 'Soft Bread Egg Omelet', '₹30', 'Non-Veg')">
+              <img src="1783787921362.png" alt="Bread Egg Omelet" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
-                <h4>Bread Egg Omelet</h4>
+                <h4>Soft Bread Egg Omelet</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Fluffy pan-seared omelet sandwiched with toasted bread.</p>
+              <p class="menu-item-sub text-small-desc">Fluffy spiced omelet cooked on order and paired with toasted bread.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Egg <small>(1 Pc)</small></span>
@@ -309,38 +324,40 @@
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1783743105336.png', 'Puff', '₹15/₹20/₹25', 'Veg & N.Veg')">
-              <img src="1783743105336.png" alt="Puff" onerror="this.style.display='none';" />
+          <!-- Item 7: Crunchy Puff -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1783743105336.png', 'Crunchy Puff', '₹15/₹20/₹25', 'Veg & N.Veg')">
+              <img src="1783743105336.png" alt="Crunchy Puff" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Crunchy Puff</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Flaky golden puff pastry stuffed with hot fillings.</p>
+              <p class="menu-item-sub text-small-desc">Multi-layered flaky golden pastry baked fresh daily.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
-                  <span class="p-title">Veg Puff: <strong>₹15</strong></span>
-                  <span class="p-title">Egg Puff: <strong>₹20</strong></span>
+                  <span class="p-title">Veg: <strong>₹15</strong></span>
+                  <span class="p-title">Egg: <strong>₹20</strong></span>
                 </div>
                 <div class="portion-column">
-                  <span class="p-title">Chicken Puff: <strong>₹25</strong></span>
+                  <span class="p-title">Chicken: <strong>₹25</strong></span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1783788723316.png', 'Noodles', '₹45', 'Veg')">
-              <img src="1783788723316.png" alt="Noodles" onerror="this.style.display='none';" />
+          <!-- Item 8: Soft Noodles -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1783788723316.png', 'Soft Noodles', '₹45', 'Veg')">
+              <img src="1783788723316.png" alt="Soft Noodles" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Soft Noodles</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Wok-tossed noodles tossed in garden vegetables and seasoning.</p>
+              <p class="menu-item-sub text-small-desc">Wok-tossed noodles flavored with fresh chopped vegetables and spices.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Standard</span>
@@ -350,16 +367,17 @@
             </div>
           </div>
 
-          <div class="glass-card menu-box compact-box apple-squircle-card">
-            <div class="menu-item-image-frame compact-frame" onclick="openMenuModal('1783743408636.png', 'Lollipop', '₹40/₹60', 'Non Veg')">
-              <img src="1783743408636.png" alt="Lollipop" onerror="this.style.display='none';" />
+          <!-- Item 9: Chicken Lollipop -->
+          <div class="glass-card menu-box apple-squircle-card">
+            <div class="menu-item-image-frame" onclick="openMenuModal('1783743408636.png', 'Chicken Lollipop', '₹40/₹60', 'Non-Veg')">
+              <img src="1783743408636.png" alt="Chicken Lollipop" onerror="this.style.display='none';" />
               <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Chicken Lollipop</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Crisp fried chicken drumettes tossed in savory dipping glaze.</p>
+              <p class="menu-item-sub text-small-desc">Seasoned crisp drumettes accompanied by chef's special dipping sauce.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Pair <small>(2 Pcs)</small></span>
@@ -393,7 +411,6 @@
           </div>
         </div>
 
-        <!-- Apple Style Grid Icons -->
         <div class="services-icon-grid">
           <div class="service-item-card apple-squircle s-blue" onclick="showService('Wheelchair Assistance', 'Available free of cost with zero hidden charges for needy guests.')">
             <div class="service-glyph"><i class="fa-solid fa-wheelchair"></i></div>
@@ -407,7 +424,7 @@
             <div class="service-glyph"><i class="fa-solid fa-fire-extinguisher"></i></div>
             <span>Fire Safety</span>
           </div>
-          <div class="service-item-card apple-squircle s-yellow" onclick="showService('Use & Throw Raincoat', 'Sudden rains? Request high-density emergency rain cover from front counter for ₹10.')">
+          <div class="service-item-card apple-squircle s-yellow" onclick="showService('Use & Throw Raincoat', 'Sudden weather change? Ask our customer front counter for an emergency rain cover at ₹10.')">
             <div class="service-glyph"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
             <span>Raincoat</span>
           </div>
@@ -419,13 +436,28 @@
             <div class="service-glyph"><i class="fa-solid fa-tablet-screen-button"></i></div>
             <span>AI Tablets</span>
           </div>
-          <div class="service-item-card apple-squircle s-gold" onclick="showService('You Are Here', 'Precision interactive floor map highlighting immediate zones and walk ways.')">
+          <div class="service-item-card apple-squircle s-gold" onclick="showService('You Are Here', 'Precision interactive floor map highlighting immediate zones and walkways.')">
             <div class="service-glyph"><i class="fa-solid fa-map-location-dot"></i></div>
             <span>Zone Map</span>
           </div>
           <div class="service-item-card apple-squircle s-teal" onclick="showService('AI Assistant', 'In-house conversational assistant answering store questions and knowledge queries.')">
             <div class="service-glyph"><i class="fa-solid fa-robot"></i></div>
             <span>AI Chat</span>
+          </div>
+        </div>
+
+        <!-- Apple Style Live Channels Video Shelf (Sideways Sliding with Thumbnails) -->
+        <div class="apple-video-shelf apple-glass">
+          <div class="shelf-header">
+            <div class="shelf-title-wrap">
+              <span class="live-dot" style="display:inline-block;"></span>
+              <h4>Live Apple Channels &amp; Feeds</h4>
+            </div>
+            <span class="shelf-sub">Swipe cards to preview &amp; play</span>
+          </div>
+
+          <div class="apple-channels-carousel" id="channels-carousel">
+            <!-- Dynamic channel cards generated with thumbnail covers -->
           </div>
         </div>
 
@@ -439,30 +471,40 @@
 
             <!-- Apple Horizontal Segmented Controls -->
             <div class="view-selector apple-segmented-scroll">
-              <button id="btn-text" class="active-mode" onclick="setMode('text', this)">Headlines</button>
-              <button id="btn-video" onclick="setMode('video', this)">News</button>
-              <button id="btn-live" onclick="setMode('live', this)">T&amp;C</button>
-              <button id="btn-wildlife" onclick="setMode('wildlife', this)">Wild</button>
-              <button id="btn-sports" onclick="setMode('sports', this)">Sports</button>
-              <button id="btn-music" onclick="setMode('music', this)">Music</button>
-              <button id="btn-nasa" onclick="setMode('nasa', this)">NASA</button>
-              <button id="btn-airport" onclick="setMode('airport', this)">Airside</button>
-              <button id="btn-hindu" onclick="setMode('hindu', this)">Bhagavad Gita</button>
-              <button id="btn-muslim" onclick="setMode('muslim', this)">Quran</button>
-              <button id="btn-christian" onclick="setMode('christian', this)">Bible</button>
-              <button id="btn-law" onclick="setMode('law', this)">Constitution</button>
-              <button id="btn-file" onclick="setMode('file', this)">Media</button>    
+              <button id="btn-text" class="active-mode" onclick="setMode('text', this)"><i class="fa-solid fa-newspaper"></i> Headlines</button>
+              <button id="btn-video" onclick="setMode('video', this)"><i class="fa-solid fa-tv"></i> News</button>
+              <button id="btn-live" onclick="setMode('live', this)"><i class="fa-solid fa-mug-hot"></i> T&amp;C</button>
+              <button id="btn-wildlife" onclick="setMode('wildlife', this)"><i class="fa-solid fa-paw"></i> Wild</button>
+              <button id="btn-sports" onclick="setMode('sports', this)"><i class="fa-solid fa-futbol"></i> Sports</button>
+              <button id="btn-music" onclick="setMode('music', this)"><i class="fa-solid fa-music"></i> Music</button>
+              <button id="btn-nasa" onclick="setMode('nasa', this)"><i class="fa-solid fa-earth-americas"></i> NASA</button>
+              <button id="btn-airport" onclick="setMode('airport', this)"><i class="fa-solid fa-plane"></i> Airside</button>
+              <button id="btn-hindu" onclick="setMode('hindu', this)"><i class="fa-solid fa-om"></i> Bhagavad Gita</button>
+              <button id="btn-muslim" onclick="setMode('muslim', this)"><i class="fa-solid fa-star-and-crescent"></i> Quran</button>
+              <button id="btn-christian" onclick="setMode('christian', this)"><i class="fa-solid fa-cross"></i> Bible</button>
+              <button id="btn-law" onclick="setMode('law', this)"><i class="fa-solid fa-scale-balanced"></i> Constitution</button>
+              <button id="btn-file" onclick="setMode('file', this)"><i class="fa-solid fa-image"></i> Media</button>    
             </div>
           </div>
 
           <div id="content-area">
-            <!-- Headlines Text Feed -->
+            <!-- Headlines Text Feed with Telangana, India, World Categories & Date Calendar -->
             <div id="text-view" class="view-mode">
-              <div class="refresh-bar">
-                <button id="refresh-btn" onclick="fetchNews()">
-                  <i id="refresh-icon" class="fa-solid fa-arrows-rotate"></i> Refresh Feed
-                </button>
+              <div class="news-category-bar">
+                <div class="news-scope-pills">
+                  <button id="scope-btn-local" class="scope-btn active" onclick="switchNewsScope('local')">📍 Telangana</button>
+                  <button id="scope-btn-india" class="scope-btn" onclick="switchNewsScope('india')">🇮🇳 India</button>
+                  <button id="scope-btn-world" class="scope-btn" onclick="switchNewsScope('world')">🌍 World</button>
+                </div>
+                <div class="news-date-picker-wrap">
+                  <span><i class="fa-regular fa-calendar"></i></span>
+                  <input type="date" id="news-date-input" onchange="handleDateChange(this)" />
+                  <button id="refresh-btn" onclick="fetchNews()" title="Refresh Feed">
+                    <i id="refresh-icon" class="fa-solid fa-arrows-rotate"></i>
+                  </button>
+                </div>
               </div>
+
               <div id="news-container" class="news-list">Pulling live dispatch...</div>
             </div>
 
@@ -532,7 +574,7 @@
             </div>
             <div id="file-view" class="view-mode" style="display: none;">
               <div class="video-wrapper apple-squircle">
-                <img src="Audi RS5.jpg" alt="Audi RS5" style="width: 100%; height: 100%; object-fit: cover;" />
+                <img src="Audi RS5.jpg" alt="Media" style="width: 100%; height: 100%; object-fit: cover;" />
               </div>
             </div>
           </div>
@@ -568,20 +610,20 @@
           <div class="suggested-prompts">
             <button class="prompt-chip apple-pill" onclick="sendChipPrompt('What are your shop operating hours?')">Timings</button>
             <button class="prompt-chip apple-pill" onclick="sendChipPrompt('Where are you located exactly?')">Hub Location</button>
-            <button class="prompt-chip apple-pill" onclick="sendChipPrompt('Show me the menu prices')">Menu Prices</button>
+            <button class="prompt-chip apple-pill" onclick="sendChipPrompt('Show me the menu prices')">Menu</button>
             <button class="prompt-chip apple-pill" onclick="sendChipPrompt('Who is the Owner')">Owner</button>
           </div>
 
           <div class="privacy-notice apple-squircle">
             <span class="shield-icon">🛡️</span>
             <span class="privacy-text">
-              <strong>Data Privacy:</strong> We recommend not sharing personal information.
+              <strong>Data Privacy:</strong> We recommend not sharing personal information in chat.
               <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Policy</a>
             </span>
           </div>
 
           <div class="chat-input-bar">
-            <input type="text" id="user-chat-input" placeholder="Ask T&amp;C Assistant..." onkeypress="handleChatKey(event)" />
+            <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)" />
             <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-arrow-up"></i></button>
           </div>
         </div>
@@ -623,57 +665,57 @@
       <!-- VIEW 6: CERTIFICATIONS -->
       <section id="cert-view" class="app-section">
         <div class="section-heading-bar">
-          <h3><i class="fa-solid fa-shield-halved gold-text"></i> Verified Compliance</h3>
+          <h3><i class="fa-solid fa-shield-halved gold-text"></i> Compliance Certifications</h3>
         </div>
 
         <div class="glass-card cert-container apple-glass">
           <div class="cert-grid">
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon gold-badge">FSSAI</div>
-              <h6>FSSAI Certified</h6>
-              <span class="v-status">VERIFIED</span>
+              <h6>FSSAI</h6>
+              <span class="v-status">VERIFIED by FSSAI</span>
               <a href="Fssai_certificate.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon gold-badge">GHMC</div>
-              <h6>GHMC Cleared</h6>
-              <span class="v-status">VERIFIED</span>
+              <h6>GHMC</h6>
+              <span class="v-status">VERIFIED by GHMC</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon blue-badge"><i class="fa-solid fa-droplet"></i></div>
               <h6>Water Test</h6>
-              <span class="v-status">PASSED</span>
+              <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon white-badge"><i class="fa-solid fa-cow"></i></div>
-              <h6>Milk Purity</h6>
-              <span class="v-status">GRADE A</span>
+              <h6>Milk Test</h6>
+              <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon black-badge"><i class="fa-solid fa-oil-can"></i></div>
               <h6>Cooking Oil</h6>
-              <span class="v-status">UNADULTERATED</span>
+              <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon green-badge"><i class="fa-solid fa-leaf"></i></div>
               <h6>Hygiene Practices</h6>
-              <span class="v-status">STANDARD</span>
+              <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Hygiene_certificate.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon yellow-badge"><i class="fa-solid fa-trash-can"></i></div>
-              <h6>Waste Disposal</h6>
-              <span class="v-status">COMPLIANT</span>
+              <h6>Wastage Report</h6>
+              <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon red-badge"><i class="fa-solid fa-fire-extinguisher"></i></div>
-              <h6>Fire Safety</h6>
-              <span class="v-status">INSPECTED</span>
+              <h6>Fire Equipment</h6>
+              <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Fire_safety_certificate.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
           </div>
@@ -683,17 +725,17 @@
       <!-- VIEW 7: ABOUT & OWNER -->
       <section id="owner-view" class="app-section">
         <div class="section-heading-bar">
-          <h3><i class="fa-solid fa-user-tie gold-text"></i> Founder &amp; Leadership</h3>
+          <h3><i class="fa-solid fa-user-tie gold-text"></i> Owner Bio &amp; About</h3>
         </div>
 
         <div class="glass-card apple-glass">
           <div class="owner-header">
             <div class="owner-avatar apple-squircle">
-              <img src="IMG_20260709_120123.png" alt="Founder" style="width: 100%; height: 100%; object-fit: cover;" />
+              <img src="IMG_20260709_120123.png" alt="Founder" onerror="this.src='hero-fallback.png';" />
             </div>
             <div>
               <div class="owner-title-label">FOUNDER &amp; OWNER</div>
-              <h4 style="color:#fff; margin-top: 2px;">Murali Manohar Nidadavolu</h4>
+              <h4 style="margin-top: 2px;">Murali Manohar Nidadavolu</h4>
             </div>
           </div>
           <p class="owner-bio-p">Dedicated to serving quality and comfort. Bringing tradition and modern safety standards together for every guest at our stall.</p>
@@ -702,34 +744,33 @@
         <!-- Manager & UPI Apple Wallet Style Card -->
         <div class="glass-card owner-box apple-glass">
           <div class="owner-header">
-            <div class="owner-avatar apple-squircle"><i class="fa-solid fa-id-badge"></i></div>
+            <div class="owner-avatar apple-squircle"><i class="fa-solid fa-user-tie"></i></div>
             <div>
-              <h4>Operations Desk</h4>
-              <p class="owner-title-label">Stall Management</p>
+              <h4>Not finalised</h4>
+              <p class="owner-title-label">Manager</p>
             </div>
           </div>
-          <p class="owner-bio-p">Engineered for clean, smart, and deeply helpful customer hospitality.</p>
+          <p class="owner-bio-p">Built with the clear vision of providing a clean, smart, and deeply helpful premium services for everyone.</p>
           
           <div class="owner-buttons">
             <a href="tel:+919553904524" class="btn apple-pill-btn"><i class="fa-solid fa-phone"></i> Contact</a>
-            <button class="btn apple-pill-btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> Scan UPI / QR</button>
+            <button class="btn apple-pill-btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
           </div>
 
-          <!-- Apple Wallet Pass Display -->
           <div id="upi-display" class="glass-card hidden upi-reveal-card apple-squircle">
-            <p style="font-size:0.75rem; color:#86868b; text-transform:uppercase;">Direct UPI Merchant Pass</p>
+            <p style="font-size:0.75rem; color:var(--apple-text-secondary); text-transform:uppercase;">Scan to pay:</p>
             <img src="IMG_20260709_160545.jpg" alt="UPI QR Code" style="width:140px; height:140px; margin: 10px 0; border-radius:12px;" />
-            <p style="font-size:0.75rem; color:#aaa; margin:0;">UPI VPA:</p>
-            <code style="color:#ffd700; font-size:0.8rem; background:rgba(0,0,0,0.5); padding:4px 8px; border-radius:6px; display:inline-block; margin-top:4px;">muralimanohar.in-3@okaxis</code>
+            <p style="font-size:0.75rem; margin:0;">UPI ID:</p>
+            <code style="color:var(--apple-gold); font-size:0.8rem; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; display:inline-block; margin-top:4px;">muralimanohar.in-3@okaxis</code>
           </div>
         </div>
 
-        <!-- Inset Accordion Lists (Apple Settings Style) -->
+        <!-- Inset Apple Accordions -->
         <details class="rd-card-interactive apple-glass apple-squircle">
           <summary class="rd-summary">
             <div class="rd-header-content">
               <h4>Research &amp; Development</h4>
-              <span class="apple-subtext">The Founder &amp; AI Precision</span>
+              <span class="apple-subtext">Members: The Founder &amp; AI</span>
             </div>
             <i class="fa-solid fa-chevron-right apple-accordion-icon"></i>
           </summary>
@@ -743,19 +784,19 @@
         <details class="rd-card-interactive apple-glass apple-squircle">
           <summary class="rd-summary">
             <div class="rd-header-content">
-              <h4>Certified Suppliers</h4>
-              <span class="apple-subtext">Verified supply chain network</span>
+              <h4>Our Suppliers</h4>
+              <span class="apple-subtext">Enclosed minimal details</span>
             </div>
             <i class="fa-solid fa-chevron-right apple-accordion-icon"></i>
           </summary>
           <div class="rd-details-content">
             <div class="scroll-box">
               <ul class="description-list">
-                <li><strong>GreenLeaf Organics:</strong> Fresh, pesticide-free seasonal produce &amp; herbs.</li>
-                <li><strong>DairyBest Farms:</strong> Hormone-free fresh farm milk, cream &amp; artisanal butter.</li>
-                <li><strong>Heritage Grain Co.:</strong> Stone-ground whole wheat &amp; multi-grain blends.</li>
-                <li><strong>EcoPack Solutions:</strong> 100% compostable &amp; biodegradable packaging.</li>
-                <li><strong>Golden Grain Mills:</strong> Premium unadulterated flour &amp; grains.</li>
+                <li><strong>GreenLeaf Organics:</strong> Supplies fresh, pesticide-free seasonal vegetables and herbs.</li>
+                <li><strong>DairyBest Farms:</strong> Provides farm-fresh, hormone-free milk, cream, and artisanal butter.</li>
+                <li><strong>Heritage Grain Co.:</strong> Supplies premium, stone-ground whole wheat and multi-grain flour blends.</li>
+                <li><strong>EcoPack Solutions:</strong> Supplies 100% compostable and biodegradable take-out containers and cutlery.</li>
+                <li><strong>Golden Grain Mills:</strong> Provides premium-quality, unadulterated refined flour and specialized organic grains.</li>
               </ul>
             </div>
           </div>
@@ -764,16 +805,16 @@
         <details class="rd-card-interactive apple-glass apple-squircle">
           <summary class="rd-summary">
             <div class="rd-header-content">
-              <h4>Staff &amp; Credentials</h4>
-              <span class="apple-subtext">Identity, Hygiene &amp; First Aid</span>
+              <h4>Service Staff</h4>
+              <span class="apple-subtext">Members, Identity &amp; Credit</span>
             </div>
             <i class="fa-solid fa-chevron-right apple-accordion-icon"></i>
           </summary>
           <div class="rd-details-content">
             <ul class="description-list">
-              <li><strong>Chief: Mr. Gamma</strong> in white coat (First-aid certified).</li>
-              <li><strong>Helper: Mr. Alpha</strong> in blue top (First-aid certified).</li>
-              <li><strong>Housekeeping: Ms. Beta</strong> in green apron (Sanitation certified).</li>
+              <li><strong>Chief: Mr. Gamma</strong> in chief coat "Certified in first-aid"</li>
+              <li><strong>Helper: Mr. Alpha</strong> in blue top "Certified in first-aid"</li>
+              <li><strong>House Keeping: Ms. Beta</strong> in green top</li>
             </ul>
           </div>
         </details>
@@ -781,14 +822,14 @@
         <details class="rd-card-interactive apple-glass apple-squircle">
           <summary class="rd-summary">
             <div class="rd-header-content">
-              <h4>Platform Information</h4>
-              <span class="apple-subtext">Version 4.6.9 (2026)</span>
+              <h4>About</h4>
+              <span class="apple-subtext">Website &amp; Credit</span>
             </div>
             <i class="fa-solid fa-chevron-right apple-accordion-icon"></i>
           </summary>
           <div class="rd-details-content">
-            <p class="description">Digital storefront designed for <strong>Tasty &amp; Comfort</strong>, uniting traditional hospitality with modern digital engineering.</p>
-            <p class="description" style="margin-top:6px;"><strong>Architecture:</strong> Murali Manohar Nidadavolu</p>
+            <p class="description" style="margin-bottom: 12px;">This platform is the digital interface for <strong>Tasty &amp; Comfort</strong>, designed to bridge the gap between traditional service values and modern technological convenience.</p>
+            <p class="description"><strong>Built &amp; Developed by:</strong> Murali Manohar Nidadavolu<br><strong>Version:</strong> 4.6.9 (2026)</p>
           </div>
         </details>
 
@@ -796,30 +837,45 @@
 
     </main>
 
-    <!-- Native iOS Bottom Floating Dock (Smartphones & Tablets) -->
+    <!-- Native iOS Bottom Floating Dock (Smartphones) -->
     <footer class="bottom-mobile-nav apple-glass-dock">
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
-      <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-tower-broadcast"></i><span>Live</span></div>
-      <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-sparkles"></i><span>AI Chat</span></div>
+      <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-tower-broadcast"></i><span>Broadcast</span></div>
+      <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Chat</span></div>
       <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-location-dot"></i><span>Map</span></div>
-      <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield"></i><span>Cert</span></div>
+      <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-certificate"></i><span>Cert</span></div>
       <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user"></i><span>About</span></div>
     </footer>
 
   </div>
 
+  <!-- iOS Floating Miniplayer Picture-in-Picture Deck -->
+  <div id="apple-miniplayer" class="apple-miniplayer-dock apple-glass hidden">
+    <div class="miniplayer-video-box">
+      <iframe id="miniplayer-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div class="miniplayer-meta">
+      <div class="miniplayer-title" id="miniplayer-channel-title">Playing Stream</div>
+      <div class="miniplayer-badge"><span class="live-dot" style="display:inline-block; width:6px; height:6px;"></span> LIVE</div>
+    </div>
+    <div class="miniplayer-controls">
+      <button onclick="toggleMiniplayerSize()" title="Toggle Size" class="mini-btn"><i id="miniplayer-expand-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+      <button onclick="closeMiniplayer()" title="Close Miniplayer" class="mini-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+
   <!-- iOS System Announcement Sheet -->
   <div id="announcement-modal" class="modal hidden">
-    <div class="glass-card apple-alert-box">
+    <div class="glass-card apple-alert-box apple-glass">
       <audio id="announcement-sound" src="arunangshubanerjee-airbus-cabin-pa-beep-tone-passenger-announcement-chime-358248.mp3"></audio>
       <div class="apple-alert-content">
         <div class="apple-icon-circle-alert"><i class="fa-solid fa-bell"></i></div>
-        <h3 class="apple-alert-title" style="color:#ff3b30;">Stall Announcement</h3>
+        <h3 class="apple-alert-title" style="color:var(--apple-red);">Announcement</h3>
         <p id="announcement-text" class="apple-alert-message" style="white-space: pre-wrap;"></p>
       </div>
       <div class="apple-alert-actions">
-        <button onclick="closeAnnouncement()" class="apple-alert-btn">Acknowledge</button>
+        <button onclick="closeAnnouncement()" class="apple-alert-btn">OK</button>
       </div>
     </div>
   </div>
@@ -838,13 +894,14 @@
     </div>
   </dialog>
 
-  <!-- Google Translate -->
+  <!-- Google Translate Element -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',
         includedLanguages: 'en,hi,te',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
       }, 'google_translate_element');
     }
   </script>
