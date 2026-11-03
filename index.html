@@ -35,11 +35,11 @@
 
   <div class="dashboard-container">
     
-    <!-- Desktop / iPad macOS Style Vibrancy Sidebar -->
+    <!-- macOS Style Translucent Sidebar Dock -->
     <aside class="sidebar apple-glass">
       <div class="brand-header">
         <div class="logo-frame">
-          <i class="fa-solid fa-mug-hot"></i>
+          <span class="logo-badge-text">T&amp;C</span>
         </div>
         <div class="brand-text-block">
           <div class="brand-name">Tasty &amp; Comfort</div>
@@ -58,16 +58,16 @@
       </nav>
 
       <div class="sidebar-footer">
-        <!-- Apple Appearance Pill Toggle (Light / Dark) -->
+        <!-- Appearance Toggle (Light / Dark) -->
         <div class="apple-theme-toggle-row">
-          <span class="toggle-label"><i class="fa-solid fa-circle-half-stroke"></i> Appearance</span>
+          <span class="toggle-label"><i class="fa-solid fa-circle-half-stroke"></i> Theme</span>
           <div class="apple-segmented-theme">
             <button id="btn-theme-light" onclick="setAppTheme('light')" title="Light Mode"><i class="fa-solid fa-sun"></i></button>
             <button id="btn-theme-dark" class="active-theme" onclick="setAppTheme('dark')" title="Dark Mode"><i class="fa-solid fa-moon"></i></button>
           </div>
         </div>
 
-        <!-- Language Switcher -->
+        <!-- Language Selector -->
         <div class="lang-selector">
           <div id="google_translate_element" style="display:none;"></div>
           <div class="apple-segmented-lang">
@@ -79,7 +79,7 @@
 
         <!-- Weather Widget -->
         <div class="sidebar-weather apple-widget-glass">
-          <img id="desktop-icon" src="" alt="Weather" onerror="this.style.display='none';" />
+          <img id="desktop-icon" src="" alt="Weather" style="display:none;" />
           <div class="weather-meta">
             <div id="desktop-temp" class="temp-text">--°C</div>
             <div id="desktop-condition" class="condition-text">Locating...</div>
@@ -94,8 +94,8 @@
       <!-- Mobile Top Bar with Dynamic Island Pill -->
       <header class="mobile-top-bar">
         <div class="mobile-brand">
-          <div class="logo-frame-sm"><i class="fa-solid fa-mug-hot"></i></div>
-          <span class="mobile-title">T&amp;C</span>
+          <div class="logo-frame-sm"><span>T&amp;C</span></div>
+          <span class="mobile-title">Tasty &amp; Comfort</span>
         </div>
 
         <!-- Dynamic Island Capsule -->
@@ -109,7 +109,7 @@
             <i id="mobile-theme-icon" class="fa-solid fa-moon"></i>
           </button>
           <div class="mobile-weather">
-            <img id="mobile-icon" src="" alt="Weather" onerror="this.style.display='none';" />
+            <img id="mobile-icon" src="" alt="Weather" style="display:none;" />
             <span id="mobile-temp" class="temp-text-sm">--°C</span>
           </div>
         </div>
@@ -128,8 +128,7 @@
             </div>
           </div>
           <div class="hero-right-image apple-squircle">
-            <img src="IMG_20260701_181848.png" alt="Tasty &amp; Comfort" onerror="this.style.display='none';" />
-            <div class="hero-image-fallback"><i class="fa-solid fa-store"></i></div>
+            <img src="IMG_20260701_181848.png" alt="Tasty &amp; Comfort Showcase" onerror="handleImgError(this, 'store')" />
           </div>
         </div>
 
@@ -141,35 +140,71 @@
           <div class="slider">
             <div class="offer-banner-card apple-squircle">
               <div class="offer-image-slot apple-squircle" onclick="openMenuModal('IMG_20260713_153143.png', 'Mega Combo Deal', '₹65', 'Veg')">
-                <img src="IMG_20260713_153143.png" alt="Mega Combo" onerror="this.style.display='none';" />
-                <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
+                <img src="IMG_20260713_153143.png" alt="Mega Combo Deal" onerror="handleImgError(this, 'tags')" />
               </div>
               <div class="offer-details-slot">
                 <span class="offer-tag-badge">SPECIAL VALUE</span>
                 <h3>Mega Combo Deal</h3>
-                <p>Large portion of Premium Masala French Fries paired with Classic Hot Brewed Milk Tea.</p>
+                <p>Large portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
                 <div class="offer-pricing-row">
                   <span class="old-price">₹80</span>
-                  <span class="new-glow-price">₹65</span>
+                  <span class="new-glow-price">₹65 Only</span>
                 </div>
               </div>
             </div>
 
             <div class="offer-banner-card apple-squircle">
               <div class="offer-image-slot apple-squircle" onclick="openMenuModal('IMG_20260713_153103.png', 'Second Combo Deal', '₹99', 'Non-Veg')">
-                <img src="IMG_20260713_153103.png" alt="Second Combo" onerror="this.style.display='none';" />
-                <div class="image-fallback-icon"><i class="fa-solid fa-tags"></i></div>
+                <img src="IMG_20260713_153103.png" alt="Second Combo Deal" onerror="handleImgError(this, 'tags')" />
               </div>
               <div class="offer-details-slot">
                 <span class="offer-tag-badge">HOT DEAL</span>
                 <h3>Second Combo Deal</h3>
-                <p>Curated hot snack selection served freshly grilled.</p>
+                <p>Curated hot snack selection served freshly prepared from the kitchen.</p>
                 <div class="offer-pricing-row">
                   <span class="old-price">₹120</span>
-                  <span class="new-glow-price">₹99</span>
+                  <span class="new-glow-price">₹99 Only</span>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Emergency Quick Dial Action Grid -->
+        <div class="glass-card apple-glass emergency-section">
+          <div class="emergency-title-row">
+            <span class="emergency-pulse-dot"></span>
+            <h4>Emergency Assistance (Quick Dial)</h4>
+          </div>
+          <div class="emergency-grid">
+            <a href="tel:108" class="emergency-btn s-red">
+              <i class="fa-solid fa-truck-medical"></i>
+              <div>
+                <strong>Ambulance</strong>
+                <small>Dial: 108</small>
+              </div>
+            </a>
+            <a href="tel:100" class="emergency-btn s-blue">
+              <i class="fa-solid fa-shield-halved"></i>
+              <div>
+                <strong>Police Control</strong>
+                <small>Dial: 100</small>
+              </div>
+            </a>
+            <a href="tel:101" class="emergency-btn s-orange">
+              <i class="fa-solid fa-fire-extinguisher"></i>
+              <div>
+                <strong>Fire Station</strong>
+                <small>Dial: 101</small>
+              </div>
+            </a>
+            <a href="tel:1091" class="emergency-btn s-purple">
+              <i class="fa-solid fa-hand-holding-hand"></i>
+              <div>
+                <strong>Women Helpline</strong>
+                <small>Dial: 1091</small>
+              </div>
+            </a>
           </div>
         </div>
 
@@ -178,7 +213,7 @@
             <div class="apple-mini-icon"><i class="fa-solid fa-compass"></i></div>
             <h4>Explore Tasty &amp; Comfort</h4>
           </div>
-          <p>Navigate through the sections to browse the fresh kitchen menu, live video &amp; audio broadcasts, locality navigation telemetry, official safety certifications, and store intelligence.</p>
+          <p>Tap the navigation items to inspect fresh items on our menu, watch live stream broadcasts, verify real-time locality telemetry, view safety certifications, or chat with our store intelligence.</p>
         </div>
       </section>
 
@@ -194,29 +229,27 @@
           <!-- Item 1: Tea -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1783742714672.png', 'Premium Tea', '₹10', 'Veg')">
-              <img src="1783742714672.png" alt="Premium Tea" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-mug-hot"></i></div>
+              <img src="1783742714672.png" alt="Premium Tea" onerror="handleImgError(this, 'mug-hot')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Premium Tea</h4>
                 <span class="price-gold text-small-price">₹10</span>
               </div>
-              <p class="menu-item-sub text-small-desc">Freshly brewed aromatic blend prepared with pure dairy milk.</p>
+              <p class="menu-item-sub text-small-desc">Hot &amp; refreshing premium milk blends brewed freshly on order.</p>
             </div>
           </div>
 
           <!-- Item 2: French Fries -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1782911158711.png', 'Crispy French Fries', '₹50', 'Veg')">
-              <img src="1782911158711.png" alt="French Fries" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1782911158711.png" alt="French Fries" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Crispy French Fries</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Golden crisp cut potato slices tossed in gourmet spices.</p>
+              <p class="menu-item-sub text-small-desc">Golden, crisp premium cut potato slices tossed in gourmet spices.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Small <small>(200g)</small></span>
@@ -235,14 +268,13 @@
           <!-- Item 3: Sandwich -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1782911905779.png', 'Soft Sandwich', '₹45', 'Veg')">
-              <img src="1782911905779.png" alt="Soft Sandwich" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1782911905779.png" alt="Soft Sandwich" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Soft Sandwich</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Soft layered sandwich bread built with fresh vegetable spreads.</p>
+              <p class="menu-item-sub text-small-desc">Soft layered sandwich bread built using customized spreads and crisp additions.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Standard</span>
@@ -255,14 +287,13 @@
           <!-- Item 4: Samosa -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1782916715713.png', 'Crispy Punjabi Samosa', '₹15', 'Veg')">
-              <img src="1782916715713.png" alt="Punjabi Samosa" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1782916715713.png" alt="Punjabi Samosa" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Crispy Punjabi Samosa</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Crisp flaky crust filled with spiced potatoes and garden peas.</p>
+              <p class="menu-item-sub text-small-desc">Golden, crisp pastry crust stuffed with a spiced savory potato filling.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Pc</span>
@@ -279,14 +310,13 @@
           <!-- Item 5: Roll -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1783742526658.png', 'Soft Roll', '₹30 & ₹40', 'V & N.Veg')">
-              <img src="1783742526658.png" alt="Soft Roll" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1783742526658.png" alt="Soft Roll" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Soft Roll</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Warm wrapped rolls filled with spiced savories and crisp herbs.</p>
+              <p class="menu-item-sub text-small-desc">Golden, crisp pastry crust stuffed with a spiced savory filling.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Veg Roll <small>(1 Pc)</small></span>
@@ -303,14 +333,13 @@
           <!-- Item 6: Bread Egg Omelet -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1783787921362.png', 'Soft Bread Egg Omelet', '₹30', 'Non-Veg')">
-              <img src="1783787921362.png" alt="Bread Egg Omelet" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1783787921362.png" alt="Bread Egg Omelet" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Soft Bread Egg Omelet</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Fluffy spiced omelet cooked on order and paired with toasted bread.</p>
+              <p class="menu-item-sub text-small-desc">Soft bread egg omelet, crisp pastry crust stuffed with a spiced savory filling.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Egg <small>(1 Pc)</small></span>
@@ -327,14 +356,13 @@
           <!-- Item 7: Crunchy Puff -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1783743105336.png', 'Crunchy Puff', '₹15/₹20/₹25', 'Veg & N.Veg')">
-              <img src="1783743105336.png" alt="Crunchy Puff" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1783743105336.png" alt="Crunchy Puff" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Crunchy Puff</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Multi-layered flaky golden pastry baked fresh daily.</p>
+              <p class="menu-item-sub text-small-desc">Soft and crunchy puff, crisp pastry crust stuffed with a spiced savory filling.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Veg: <strong>₹15</strong></span>
@@ -350,14 +378,13 @@
           <!-- Item 8: Soft Noodles -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1783788723316.png', 'Soft Noodles', '₹45', 'Veg')">
-              <img src="1783788723316.png" alt="Soft Noodles" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1783788723316.png" alt="Soft Noodles" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Soft Noodles</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Wok-tossed noodles flavored with fresh chopped vegetables and spices.</p>
+              <p class="menu-item-sub text-small-desc">Wok-tossed noodles prepared with fresh vegetables and aromatic seasoning.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Standard</span>
@@ -370,14 +397,13 @@
           <!-- Item 9: Chicken Lollipop -->
           <div class="glass-card menu-box apple-squircle-card">
             <div class="menu-item-image-frame" onclick="openMenuModal('1783743408636.png', 'Chicken Lollipop', '₹40/₹60', 'Non-Veg')">
-              <img src="1783743408636.png" alt="Chicken Lollipop" onerror="this.style.display='none';" />
-              <div class="item-fallback-icon"><i class="fa-solid fa-bowl-food"></i></div>
+              <img src="1783743408636.png" alt="Chicken Lollipop" onerror="handleImgError(this, 'bowl-food')" />
             </div>
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Chicken Lollipop</h4>
               </div>
-              <p class="menu-item-sub text-small-desc">Seasoned crisp drumettes accompanied by chef's special dipping sauce.</p>
+              <p class="menu-item-sub text-small-desc">Crisp fried chicken drumettes tossed in a spiced savory dipping glaze.</p>
               <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Pair <small>(2 Pcs)</small></span>
@@ -403,7 +429,7 @@
         <div id="live-service-monitor" class="glass-card dynamic-display-panel apple-glass">
           <div id="monitor-placeholder">
             <div class="apple-tap-icon"><i class="fa-solid fa-fingerprint tap-animate"></i></div>
-            <p>Tap any service badge below to inspect real-time system utilities.</p>
+            <p>Tap any service badge below to inspect real-time system utilities here.</p>
           </div>
           <div id="monitor-data" class="hidden">
             <h4 id="monitor-title" class="gold-text"></h4>
@@ -412,52 +438,52 @@
         </div>
 
         <div class="services-icon-grid">
-          <div class="service-item-card apple-squircle s-blue" onclick="showService('Wheelchair Assistance', 'Available free of cost with zero hidden charges for needy guests.')">
+          <div class="service-item-card apple-squircle s-blue" onclick="showService('Wheelchair Assistance', 'With no hidden charges for a needy customer.')">
             <div class="service-glyph"><i class="fa-solid fa-wheelchair"></i></div>
             <span>Wheelchair</span>
           </div>
-          <div class="service-item-card apple-squircle s-red" onclick="showService('First Aid Kit', 'Stocked healthcare provisions with antiseptic lotions, pain relief, and bandages.')">
+          <div class="service-item-card apple-squircle s-red" onclick="showService('First Aid Kit', 'Fully prepared healthcare resources stocked with instant pain relief formulations, clinical updates, and bandages.')">
             <div class="service-glyph"><i class="fa-solid fa-kit-medical"></i></div>
-            <span>First Aid</span>
+            <span>First Aid Kit</span>
           </div>
-          <div class="service-item-card apple-squircle s-orange" onclick="showService('Fire Extinguisher', 'High-grade commercial fire safety cylinders positioned throughout T&amp;C Zone.')">
+          <div class="service-item-card apple-squircle s-orange" onclick="showService('Fire Extinguisher', 'High-grade commercial fire extinguishers are in the designated places within T&amp;C-Zone, tested and approved, ready to use in emergency.')">
             <div class="service-glyph"><i class="fa-solid fa-fire-extinguisher"></i></div>
             <span>Fire Safety</span>
           </div>
-          <div class="service-item-card apple-squircle s-yellow" onclick="showService('Use & Throw Raincoat', 'Sudden weather change? Ask our customer front counter for an emergency rain cover at ₹10.')">
+          <div class="service-item-card apple-squircle s-yellow" onclick="showService('Use & Throw Raincoat', 'Sudden weather alterations? Ask our customer front counter operators for a complimentary high-density emergency rain cover at ₹10.')">
             <div class="service-glyph"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
             <span>Raincoat</span>
           </div>
-          <div class="service-item-card apple-squircle s-green" onclick="showService('Umbrella Service', 'Complimentary structural shield umbrellas to escort guests safely to transit points.')">
+          <div class="service-item-card apple-squircle s-green" onclick="showService('Umbrella Service', 'On-demand structural shield umbrella provisions available to support your transition towards vehicle terminals.')">
             <div class="service-glyph"><i class="fa-solid fa-umbrella"></i></div>
             <span>Umbrella</span>
           </div>
-          <div class="service-item-card apple-squircle s-purple" onclick="showService('Tabs with AI Chat', 'Dedicated tablet hardware at table spots for real-time recommendations.')">
+          <div class="service-item-card apple-squircle s-purple" onclick="showService('Tabs with AI Chat', 'Dedicated hardware interfaces deployed at table zones providing interactive local maps and conversational models.')">
             <div class="service-glyph"><i class="fa-solid fa-tablet-screen-button"></i></div>
             <span>AI Tablets</span>
           </div>
-          <div class="service-item-card apple-squircle s-gold" onclick="showService('You Are Here', 'Precision interactive floor map highlighting immediate zones and walkways.')">
+          <div class="service-item-card apple-squircle s-gold" onclick="showService('You Are Here', 'Interactive geographic floorplan detailing immediate emergency evacuation infrastructure and walkways.')">
             <div class="service-glyph"><i class="fa-solid fa-map-location-dot"></i></div>
             <span>Zone Map</span>
           </div>
-          <div class="service-item-card apple-squircle s-teal" onclick="showService('AI Assistant', 'In-house conversational assistant answering store questions and knowledge queries.')">
+          <div class="service-item-card apple-squircle s-teal" onclick="showService('AI Assistant', 'Advanced custom LLM integration routing, allergy validations, and customized serving feedback.')">
             <div class="service-glyph"><i class="fa-solid fa-robot"></i></div>
             <span>AI Chat</span>
           </div>
         </div>
 
-        <!-- Apple Style Live Channels Video Shelf (Sideways Sliding with Thumbnails) -->
+        <!-- Apple Style Sliding Video Shelf (Single Unified Model) -->
         <div class="apple-video-shelf apple-glass">
           <div class="shelf-header">
             <div class="shelf-title-wrap">
               <span class="live-dot" style="display:inline-block;"></span>
-              <h4>Live Apple Channels &amp; Feeds</h4>
+              <h4>Live Broadcast Channels</h4>
             </div>
-            <span class="shelf-sub">Swipe cards to preview &amp; play</span>
+            <span class="shelf-sub">Swipe cards horizontally &bull; Tap to launch in PiP</span>
           </div>
 
           <div class="apple-channels-carousel" id="channels-carousel">
-            <!-- Dynamic channel cards generated with thumbnail covers -->
+            <!-- Dynamic channel cards with artwork & live tags -->
           </div>
         </div>
 
@@ -469,26 +495,26 @@
               <h4 id="current-channel-title">Headlines</h4>
             </div>
 
-            <!-- Apple Horizontal Segmented Controls -->
+            <!-- Apple Segmented Controls for Channels -->
             <div class="view-selector apple-segmented-scroll">
-              <button id="btn-text" class="active-mode" onclick="setMode('text', this)"><i class="fa-solid fa-newspaper"></i> Headlines</button>
-              <button id="btn-video" onclick="setMode('video', this)"><i class="fa-solid fa-tv"></i> News</button>
-              <button id="btn-live" onclick="setMode('live', this)"><i class="fa-solid fa-mug-hot"></i> T&amp;C</button>
-              <button id="btn-wildlife" onclick="setMode('wildlife', this)"><i class="fa-solid fa-paw"></i> Wild</button>
-              <button id="btn-sports" onclick="setMode('sports', this)"><i class="fa-solid fa-futbol"></i> Sports</button>
-              <button id="btn-music" onclick="setMode('music', this)"><i class="fa-solid fa-music"></i> Music</button>
-              <button id="btn-nasa" onclick="setMode('nasa', this)"><i class="fa-solid fa-earth-americas"></i> NASA</button>
-              <button id="btn-airport" onclick="setMode('airport', this)"><i class="fa-solid fa-plane"></i> Airside</button>
-              <button id="btn-hindu" onclick="setMode('hindu', this)"><i class="fa-solid fa-om"></i> Bhagavad Gita</button>
-              <button id="btn-muslim" onclick="setMode('muslim', this)"><i class="fa-solid fa-star-and-crescent"></i> Quran</button>
-              <button id="btn-christian" onclick="setMode('christian', this)"><i class="fa-solid fa-cross"></i> Bible</button>
-              <button id="btn-law" onclick="setMode('law', this)"><i class="fa-solid fa-scale-balanced"></i> Constitution</button>
-              <button id="btn-file" onclick="setMode('file', this)"><i class="fa-solid fa-image"></i> Media</button>    
+              <button id="btn-text" class="active-mode" onclick="setMode('text', this)">Headlines</button>
+              <button id="btn-video" onclick="setMode('video', this)">News</button>
+              <button id="btn-live" onclick="setMode('live', this)">T&amp;C</button>
+              <button id="btn-wildlife" onclick="setMode('wildlife', this)">Wild</button>
+              <button id="btn-sports" onclick="setMode('sports', this)">Sports</button>
+              <button id="btn-music" onclick="setMode('music', this)">Music</button>
+              <button id="btn-nasa" onclick="setMode('nasa', this)">NASA</button>
+              <button id="btn-airport" onclick="setMode('airport', this)">Airside</button>
+              <button id="btn-hindu" onclick="setMode('hindu', this)">Bhagavat_Geetha</button>
+              <button id="btn-muslim" onclick="setMode('muslim', this)">Khuran</button>
+              <button id="btn-christian" onclick="setMode('christian', this)">Bibul</button>
+              <button id="btn-law" onclick="setMode('law', this)">Constitution</button>
+              <button id="btn-file" onclick="setMode('file', this)">Media</button>    
             </div>
           </div>
 
           <div id="content-area">
-            <!-- Headlines Text Feed with Telangana, India, World Categories & Date Calendar -->
+            <!-- Headlines Text Feed with Strictly Filtered Calendar -->
             <div id="text-view" class="view-mode">
               <div class="news-category-bar">
                 <div class="news-scope-pills">
@@ -497,7 +523,8 @@
                   <button id="scope-btn-world" class="scope-btn" onclick="switchNewsScope('world')">🌍 World</button>
                 </div>
                 <div class="news-date-picker-wrap">
-                  <span><i class="fa-regular fa-calendar"></i></span>
+                  <i class="fa-regular fa-calendar"></i>
+                  <span>Date:</span>
                   <input type="date" id="news-date-input" onchange="handleDateChange(this)" />
                   <button id="refresh-btn" onclick="fetchNews()" title="Refresh Feed">
                     <i id="refresh-icon" class="fa-solid fa-arrows-rotate"></i>
@@ -505,76 +532,22 @@
                 </div>
               </div>
 
-              <div id="news-container" class="news-list">Pulling live dispatch...</div>
+              <!-- Headphones Audio Caution Ticker -->
+              <div id="headphones-ticker" class="audio-ticker-bar apple-pill" style="display: none;">
+                <span class="ticker-icon">🎧</span>
+                <div class="ticker-text-wrap">
+                  <p class="ticker-text">Audio muted🔇 please plug-in your headphones for best experience and less noise pollution. Thank you for your cooperation by T&amp;C. &bull; Tap to close &bull;</p>
+                </div>
+              </div>
+
+              <div id="news-container" class="news-list">Please refresh...</div>
             </div>
 
-            <!-- Audio Notice Pill Ticker -->
-            <div id="headphones-ticker" class="audio-ticker-bar apple-pill" style="display: none;">
-              <span class="ticker-icon">🎧</span>
-              <div class="ticker-text-wrap">
-                <p class="ticker-text">Audio muted 🔇 Plug in your headphones for private listening &amp; peaceful environment. Tap to dismiss.</p>
-              </div>
-            </div>
-
-            <!-- Video Players -->
-            <div id="video-view" class="view-mode" style="display: none;">
+            <!-- Single Main Embedded Player Viewport -->
+            <div id="broadcast-player-view" class="view-mode" style="display: none;">
               <div class="video-wrapper apple-squircle">
-                <iframe id="news-video-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="live-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="tc-live-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="wildlife-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="wildlife-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="sports-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="sports-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="music-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="music-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="nasa-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="nasa-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="airport-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="airport-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="hindu-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="hindu-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="muslim-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="muslim-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="christian-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="christian-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="law-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <iframe id="law-player" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div id="file-view" class="view-mode" style="display: none;">
-              <div class="video-wrapper apple-squircle">
-                <img src="Audi RS5.jpg" alt="Media" style="width: 100%; height: 100%; object-fit: cover;" />
+                <iframe id="main-broadcast-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <img id="main-broadcast-img" src="Audi RS5.jpg" alt="Media" style="display:none; width:100%; height:100%; object-fit:cover;" />
               </div>
             </div>
           </div>
@@ -584,11 +557,11 @@
         <div class="game-card apple-glass">
           <div class="section-header">
             <span class="live-dot" style="background-color: #34c759; display:inline-block;"></span>
-            <h4>Quick Break</h4>
+            <h4>Fun</h4>
           </div>
           <div class="game-banner apple-squircle">
-            <p>Play free casual titles on your device while waiting:</p>
-            <a href="https://yandex.com/games/" target="_blank" rel="noopener" class="play-now-btn apple-pill-btn">Play Arcade 🎲</a>
+            <p>Tap below to launch the game:</p>
+            <a href="https://yandex.com/games/" target="_blank" rel="noopener" class="play-now-btn apple-pill-btn">Play Game 🎲</a>
           </div>
         </div>
       </section>
@@ -598,12 +571,12 @@
         <div class="glass-card ai-terminal-box apple-glass">
           <div class="ai-status">
             <span class="pulse-dot"></span>
-            <span>T&amp;C Intelligence Assistant</span>
+            <span>AI (Coming Soon)</span>
           </div>
 
           <div class="chatbot-history" id="chat-log-box">
             <div class="msg-bubble bot-msg">
-              Hello! How was your day? Ask me anything about our menu items, operating times, safety options, or share any knowledge or feedback!
+              Hello! How was your day? Ask me anything about our menu items, operating times, safety options or something more than this if your comfortable to share knowledge or jokes even your office frustrating matters!
             </div>
           </div>
 
@@ -617,14 +590,14 @@
           <div class="privacy-notice apple-squircle">
             <span class="shield-icon">🛡️</span>
             <span class="privacy-text">
-              <strong>Data Privacy:</strong> We recommend not sharing personal information in chat.
-              <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Policy</a>
+              <strong>Data Privacy:</strong> We recommend not to share personal info in chat/website. T&amp;C Customer Data Privacy Policy.
+              <a href="Tasty_Comfort_Privacy_Policy_July_2026 (1).pdf" target="_blank" class="read-more">Read me</a>
             </span>
           </div>
 
           <div class="chat-input-bar">
             <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)" />
-            <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
           </div>
         </div>
       </section>
@@ -632,7 +605,7 @@
       <!-- VIEW 5: YOU ARE HERE MAP -->
       <section id="map-view" class="app-section">
         <div class="section-heading-bar">
-          <h3><i class="fa-solid fa-map-location-dot gold-text"></i> You Are Here Telemetry</h3>
+          <h3><i class="fa-solid fa-map-location-dot gold-text"></i> YOU ARE HERE MAP</h3>
         </div>
 
         <div class="map-container-wrapper apple-squircle" style="position: relative; overflow: hidden;">
@@ -640,24 +613,24 @@
         </div>
 
         <div class="map-search-container">
-          <input type="text" id="destination-input" placeholder="Search destination (e.g. LB Nagar, Charminar)..." />
+          <input type="text" id="destination-input" placeholder="Search destination (e.g., Lb nagar)..." />
           <button onclick="searchDestination()" class="apple-pill-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
         </div>
 
         <div class="amenities-container apple-segmented-scroll">
-          <button class="amenity-chip apple-pill" onclick="searchAmenity('hospital')">🏥 Hospital (108)</button>
-          <button class="amenity-chip apple-pill" onclick="searchAmenity('police station')">👮 Police (100)</button>
-          <button class="amenity-chip apple-pill" onclick="searchAmenity('fire station')">🔥 Fire Station (101)</button>
+          <button class="amenity-chip apple-pill" onclick="searchAmenity('hospital')">🏥 Hospital (Dial: 108)</button>
+          <button class="amenity-chip apple-pill" onclick="searchAmenity('police station')">👮 Police (Dial: 100)</button>
+          <button class="amenity-chip apple-pill" onclick="searchAmenity('fire station')">🔥 Fire Station (Dial: 101)</button>
           <button class="amenity-chip apple-pill" onclick="searchAmenity('metro station')">🚇 Metro</button>
           <button class="amenity-chip apple-pill" onclick="searchAmenity('bus station')">🚌 Bus Stop</button>
-          <button class="amenity-chip apple-pill" onclick="searchAmenity('atm')">🏧 ATMs 24*7</button>
-          <button class="amenity-chip apple-pill" onclick="searchAmenity('gas station')">⛽ Fuel Bunk</button>
+          <button class="amenity-chip apple-pill" onclick="searchAmenity('atm')">ATM's 24*7</button>
+          <button class="amenity-chip apple-pill" onclick="searchAmenity('gas station')">⛽ Fule Bunk</button>
         </div>
 
         <div id="route-info" class="modern-route-card apple-glass">
           <div class="card-placeholder">
             <span class="pulse-icon">📍</span>
-            <p>Search a destination or tap an amenity chip to trigger routing &amp; live weather telemetry.</p>
+            <p>Search a destination or tap an amenity tile above.</p>
           </div>
         </div>
       </section>
@@ -665,13 +638,13 @@
       <!-- VIEW 6: CERTIFICATIONS -->
       <section id="cert-view" class="app-section">
         <div class="section-heading-bar">
-          <h3><i class="fa-solid fa-shield-halved gold-text"></i> Compliance Certifications</h3>
+          <h3><i class="fa-solid fa-shield-halved gold-text"></i> CERTIFICATIONS</h3>
         </div>
 
         <div class="glass-card cert-container apple-glass">
           <div class="cert-grid">
             <div class="cert-badge apple-squircle-card">
-              <div class="badge-icon gold-badge">FSSAI</div>
+              <div class="badge-icon gold-badge">fssai</div>
               <h6>FSSAI</h6>
               <span class="v-status">VERIFIED by FSSAI</span>
               <a href="Fssai_certificate.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
@@ -684,25 +657,25 @@
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon blue-badge"><i class="fa-solid fa-droplet"></i></div>
-              <h6>Water Test</h6>
+              <h6>Water Test Report</h6>
               <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon white-badge"><i class="fa-solid fa-cow"></i></div>
-              <h6>Milk Test</h6>
+              <h6>Milk Test Report</h6>
               <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon black-badge"><i class="fa-solid fa-oil-can"></i></div>
-              <h6>Cooking Oil</h6>
+              <h6>Cocking Oil Test Report</h6>
               <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon green-badge"><i class="fa-solid fa-leaf"></i></div>
-              <h6>Hygiene Practices</h6>
+              <h6>Hygienic Practices</h6>
               <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Hygiene_certificate.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
@@ -714,7 +687,7 @@
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon red-badge"><i class="fa-solid fa-fire-extinguisher"></i></div>
-              <h6>Fire Equipment</h6>
+              <h6>Fire Safety Equipment</h6>
               <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Fire_safety_certificate.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
@@ -725,13 +698,13 @@
       <!-- VIEW 7: ABOUT & OWNER -->
       <section id="owner-view" class="app-section">
         <div class="section-heading-bar">
-          <h3><i class="fa-solid fa-user-tie gold-text"></i> Owner Bio &amp; About</h3>
+          <h3><i class="fa-solid fa-user-tie gold-text"></i> OWNER BIO</h3>
         </div>
 
         <div class="glass-card apple-glass">
           <div class="owner-header">
             <div class="owner-avatar apple-squircle">
-              <img src="IMG_20260709_120123.png" alt="Founder" onerror="this.src='hero-fallback.png';" />
+              <img src="IMG_20260709_120123.png" alt="Founder" onerror="handleImgError(this, 'user-tie')" />
             </div>
             <div>
               <div class="owner-title-label">FOUNDER &amp; OWNER</div>
@@ -759,9 +732,9 @@
 
           <div id="upi-display" class="glass-card hidden upi-reveal-card apple-squircle">
             <p style="font-size:0.75rem; color:var(--apple-text-secondary); text-transform:uppercase;">Scan to pay:</p>
-            <img src="IMG_20260709_160545.jpg" alt="UPI QR Code" style="width:140px; height:140px; margin: 10px 0; border-radius:12px;" />
+            <img src="IMG_20260709_160545.jpg" alt="UPI QR Code" onerror="handleImgError(this, 'qrcode')" style="width:140px; height:140px; margin: 10px 0; border-radius:12px; object-fit:contain;" />
             <p style="font-size:0.75rem; margin:0;">UPI ID:</p>
-            <code style="color:var(--apple-gold); font-size:0.8rem; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; display:inline-block; margin-top:4px;">muralimanohar.in-3@okaxis</code>
+            <code style="color:var(--apple-gold); font-size:0.8rem; background:var(--apple-input-bg); padding:4px 8px; border-radius:6px; display:inline-block; margin-top:4px;">muralimanohar.in-3@okaxis</code>
           </div>
         </div>
 
@@ -776,7 +749,7 @@
           </summary>
           <div class="rd-details-content">
             <div class="scroll-box">
-              <p class="description">Our R&amp;D is dedicated to pioneering a clean, smart, and deeply helpful premium service experience. By integrating advanced real-time monitoring and automation, we manage traffic flow, uphold zero-smoking policies, and provide proactive assistance for forgotten items. This human vision and AI precision ensure every guest interaction is seamless.</p>
+              <p class="description">Our R&amp;D is dedicated to pioneering a clean, smart, and deeply helpful premium service experience. By integrating advanced real-time monitoring and automation, we have successfully implemented systems that manage traffic flow by resolving parking obstructions, ensure a comfortable atmosphere through automated policy reminders like no-smoking prompts, and provide proactive guest assistance such as notifying customers about forgotten personal belongings. This collaborative effort between human vision and AI precision ensures that every guest interaction at T&amp;C is seamless, secure, and technologically enhanced.</p>
             </div>
           </div>
         </details>
@@ -828,7 +801,7 @@
             <i class="fa-solid fa-chevron-right apple-accordion-icon"></i>
           </summary>
           <div class="rd-details-content">
-            <p class="description" style="margin-bottom: 12px;">This platform is the digital interface for <strong>Tasty &amp; Comfort</strong>, designed to bridge the gap between traditional service values and modern technological convenience.</p>
+            <p class="description" style="margin-bottom: 15px;">This platform is the digital interface for <strong>Tasty &amp; Comfort</strong>, designed to bridge the gap between traditional service values and modern technological convenience.</p>
             <p class="description"><strong>Built &amp; Developed by:</strong> Murali Manohar Nidadavolu<br><strong>Version:</strong> 4.6.9 (2026)</p>
           </div>
         </details>
@@ -842,26 +815,36 @@
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
       <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-tower-broadcast"></i><span>Broadcast</span></div>
-      <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Chat</span></div>
-      <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-location-dot"></i><span>Map</span></div>
-      <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-certificate"></i><span>Cert</span></div>
-      <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user"></i><span>About</span></div>
+      <div class="nav-btn" onclick="switchView('chat-view', this)"><i class="fa-solid fa-robot"></i><span>AI Chat</span></div>
+      <div class="nav-btn" onclick="switchView('map-view', this)"><i class="fa-solid fa-map-location-dot"></i><span>Map</span></div>
+      <div class="nav-btn" onclick="switchView('cert-view', this)"><i class="fa-solid fa-shield-halved"></i><span>Cert</span></div>
+      <div class="nav-btn" onclick="switchView('owner-view', this)"><i class="fa-solid fa-user-tie"></i><span>About</span></div>
     </footer>
 
   </div>
 
-  <!-- iOS Floating Miniplayer Picture-in-Picture Deck -->
+  <!-- iOS Floating Draggable & Resizable Miniplayer Picture-in-Picture Deck -->
   <div id="apple-miniplayer" class="apple-miniplayer-dock apple-glass hidden">
+    <!-- Header drag handle -->
+    <div class="miniplayer-drag-handle" id="miniplayer-header">
+      <div class="pip-grip-bar"></div>
+      <div class="miniplayer-meta">
+        <div class="miniplayer-title" id="miniplayer-channel-title">Live PiP</div>
+        <div class="miniplayer-badge"><span class="live-dot" style="display:inline-block; width:6px; height:6px;"></span> LIVE</div>
+      </div>
+      <div class="miniplayer-controls">
+        <button onclick="toggleMiniplayerSize()" title="Toggle Size" class="mini-btn"><i id="miniplayer-expand-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+        <button onclick="closeMiniplayer()" title="Close Miniplayer" class="mini-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    
     <div class="miniplayer-video-box">
       <iframe id="miniplayer-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
-    <div class="miniplayer-meta">
-      <div class="miniplayer-title" id="miniplayer-channel-title">Playing Stream</div>
-      <div class="miniplayer-badge"><span class="live-dot" style="display:inline-block; width:6px; height:6px;"></span> LIVE</div>
-    </div>
-    <div class="miniplayer-controls">
-      <button onclick="toggleMiniplayerSize()" title="Toggle Size" class="mini-btn"><i id="miniplayer-expand-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
-      <button onclick="closeMiniplayer()" title="Close Miniplayer" class="mini-btn"><i class="fa-solid fa-xmark"></i></button>
+
+    <!-- Apple-style corner resize handle -->
+    <div class="miniplayer-resize-corner" id="miniplayer-resizer" title="Drag to Resize">
+      <i class="fa-solid fa-ellipsis-vertical"></i>
     </div>
   </div>
 
@@ -885,7 +868,7 @@
     <div class="modal-content apple-glass">
       <div class="sheet-grabber"></div>
       <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
-      <img src="" alt="Menu Item" class="apple-squircle modal-item-img" />
+      <img src="" alt="Menu Item" class="apple-squircle modal-item-img" onerror="handleImgError(this, 'bowl-food')" />
       <h3 class="modal-item-title"></h3>
       <div class="modal-tiles">
         <div class="tile price-tile apple-squircle"></div>
