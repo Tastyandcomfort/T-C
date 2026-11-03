@@ -1,5 +1,5 @@
 // ===================================================
-// T&C APPLE SYSTEM: THEME, MEDIA PIP & CORE LOGIC
+// T&C APPLE SYSTEM: DRAGGABLE PiP, NEWS & CONTROLS
 // ===================================================
 
 const stallLat = 17.367761; 
@@ -15,7 +15,7 @@ const customAmenities = {
   'gas station': { name: 'Bharat Petroleum Bunk', query: '17.367467, 78.539245' }
 };
 
-// Complete Channel Streams for Apple Carousel & Miniplayer
+// Unified Broadcast Channels Catalog
 const channelStreams = [
   { id: 'II_m28Bm-iM', mode: 'video', name: 'TV9 Live News', category: 'Telugu News', isLive: true },
   { id: '28IZl9iM-EE', mode: 'video', name: 'V6 News Live', category: 'Regional News', isLive: true },
@@ -27,16 +27,17 @@ const channelStreams = [
   { id: '1_Ih0JYmkjI', mode: 'video', name: 'CNBC Live', category: 'Markets', isLive: true },
   { id: 'umLWFz4izTM', mode: 'video', name: 'Sky News Live', category: 'Live Desk', isLive: true },
   { id: 'GotlA1KKWoo', mode: 'video', name: 'CNN Live', category: 'Breaking News', isLive: true },
-  { id: 'OKQEMp2555A', mode: 'nasa', name: 'NASA Earth View', category: 'Space HD', isLive: true },
-  { id: 'mhJRzQsLZGg', mode: 'video', name: 'Starbase Live', category: 'Rocket Stream', isLive: true },
+  { id: 'IzOOvR-XzAg', mode: 'live', name: 'T&C Zone Live', category: 'Stall Cam', isLive: true },
   { id: 'MiQe9ob9aDc', mode: 'wildlife', name: 'Wild Safari Cam', category: 'Nature Safari', isLive: true },
   { id: 'fE_xxKiCHO0', mode: 'sports', name: 'Sports Highlights', category: 'Sports', isLive: true },
   { id: 'VdG_RC1POC8', mode: 'music', name: 'T&C Chill Lounge', category: 'Music Audio', isLive: false },
-  { id: 'n4I0d44oBEs', mode: 'airport', name: 'LAX Airside Live', category: 'Aviation', isLive: true },
-  { id: 'FFtPSPByBmk', mode: 'hindu', name: 'Bhagavad Gita Pravachanam', category: 'Spiritual', isLive: false },
-  { id: '_1FpcN1U_KY', mode: 'muslim', name: 'Holy Quran Recitation', category: 'Spiritual', isLive: false },
-  { id: 'dmgsOBr2lAA', mode: 'christian', name: 'Holy Bible Audio', category: 'Spiritual', isLive: false },
-  { id: 'U71NrLiWWjI', mode: 'law', name: 'Constitution of India', category: 'Civics & Law', isLive: false }
+  { id: 'OKQEMp2555A', mode: 'nasa', name: 'NASA Earth View', category: 'Space HD', isLive: true },
+  { id: 'n4I0d44oBEs', mode: 'airport', name: 'Airside Live', category: 'Aviation', isLive: true },
+  { id: 'FFtPSPByBmk', mode: 'hindu', name: 'Bhagavat Geetha', category: 'Spiritual', isLive: false },
+  { id: '_1FpcN1U_KY', mode: 'muslim', name: 'Holy Khuran', category: 'Spiritual', isLive: false },
+  { id: 'dmgsOBr2lAA', mode: 'christian', name: 'Holy Bibul', category: 'Spiritual', isLive: false },
+  { id: 'U71NrLiWWjI', mode: 'law', name: 'Constitution of India', category: 'Civics & Law', isLive: false },
+  { id: null, mode: 'file', name: 'Media Showcase', category: 'T&C Media', isLive: false }
 ];
 
 let allModesData = { driving: [], walking: [] };
@@ -55,7 +56,26 @@ let map = null;
 let seismicLayerGroup = null;
 
 // ===================================================
-// 1. APPLE LIGHT / DARK THEME SYSTEM
+// 1. IMAGE FAILOVER HANDLER
+// ===================================================
+function handleImgError(img, iconName) {
+  const parent = img.parentElement;
+  if (!parent) return;
+  img.style.display = 'none';
+
+  let fallback = parent.querySelector('.auto-generated-fallback');
+  if (!fallback) {
+    fallback = document.createElement('div');
+    fallback.className = 'auto-generated-fallback';
+    fallback.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--apple-gold); font-size:2rem; background:var(--apple-input-bg); border-radius:inherit;';
+    fallback.innerHTML = `<i class="fa-solid fa-${iconName || 'bowl-food'}"></i>`;
+    parent.style.position = 'relative';
+    parent.appendChild(fallback);
+  }
+}
+
+// ===================================================
+// 2. APPLE THEME ENGINE (DARK / LIGHT)
 // ===================================================
 function setAppTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -96,7 +116,7 @@ function initTheme() {
 }
 
 // ===================================================
-// 2. GOOGLE TRANSLATE RELIABLE SWITCHER
+// 3. LANGUAGE SWITCHER (EN, TE, HI)
 // ===================================================
 function changeLang(langCode) {
   ['en', 'te', 'hi'].forEach(l => {
@@ -104,7 +124,6 @@ function changeLang(langCode) {
     if (b) b.classList.toggle('active-lang', l === langCode);
   });
 
-  // Set Google Translate Cookie directly
   document.cookie = `googtrans=/en/${langCode}; path=/;`;
   document.cookie = `googtrans=/en/${langCode}; domain=${window.location.hostname}; path=/;`;
 
@@ -118,7 +137,7 @@ function changeLang(langCode) {
 }
 
 // ===================================================
-// 3. APPLE VIDEO CAROUSEL & MINIPLAYER PICTURE-IN-PICTURE
+// 4. APPLE VIDEO SHELF & DRAGGABLE/RESIZABLE PiP
 // ===================================================
 function renderAppleVideoShelf() {
   const carousel = document.getElementById('channels-carousel');
@@ -127,7 +146,7 @@ function renderAppleVideoShelf() {
   carousel.innerHTML = channelStreams.map(c => `
     <div class="video-shelf-card apple-squircle" onclick="launchVideo('${c.id}', '${c.name}', '${c.mode}')">
       <div class="card-thumb-wrap">
-        <img src="https://img.youtube.com/vi/${c.id}/hqdefault.jpg" alt="${c.name}" onerror="this.src='hero-fallback.png';" />
+        ${c.id ? `<img src="https://img.youtube.com/vi/${c.id}/hqdefault.jpg" alt="${c.name}" onerror="handleImgError(this, 'tv')" />` : `<img src="Audi RS5.jpg" alt="${c.name}" onerror="handleImgError(this, 'image')" />`}
         ${c.isLive ? '<div class="card-live-chip"><span class="live-pulse" style="width:5px; height:5px;"></span> LIVE</div>' : ''}
         <div class="card-play-overlay"><i class="fa-solid fa-play"></i></div>
       </div>
@@ -140,13 +159,18 @@ function renderAppleVideoShelf() {
 }
 
 function launchVideo(videoId, title, modeKey) {
-  // 1. Play in active player
   setMode(modeKey || 'video', null);
-  const mainPlayer = document.getElementById('news-video-player');
-  if (mainPlayer) mainPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
-
-  // 2. Launch iOS floating Picture-in-Picture Miniplayer
-  launchMiniplayer(videoId, title);
+  
+  if (videoId) {
+    const mainIframe = document.getElementById('main-broadcast-iframe');
+    const mainImg = document.getElementById('main-broadcast-img');
+    if (mainIframe) {
+      mainIframe.style.display = 'block';
+      mainIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+    }
+    if (mainImg) mainImg.style.display = 'none';
+    launchMiniplayer(videoId, title);
+  }
 }
 
 function launchMiniplayer(videoId, title) {
@@ -176,8 +200,94 @@ function closeMiniplayer() {
   if (mini) mini.classList.add('hidden');
 }
 
+// Touch & Mouse Drag / Resize for Miniplayer
+function initPiPInteractivity() {
+  const mini = document.getElementById('apple-miniplayer');
+  const header = document.getElementById('miniplayer-header');
+  const resizer = document.getElementById('miniplayer-resizer');
+  if (!mini || !header) return;
+
+  let isDragging = false;
+  let isResizing = false;
+  let startX, startY, startLeft, startTop, startWidth, startHeight;
+
+  // Dragging logic
+  const onDragStart = (e) => {
+    if (e.target.closest('.mini-btn')) return;
+    isDragging = true;
+    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    
+    startX = clientX;
+    startY = clientY;
+    const rect = mini.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    mini.style.right = 'auto';
+    mini.style.bottom = 'auto';
+    mini.style.left = `${startLeft}px`;
+    mini.style.top = `${startTop}px`;
+  };
+
+  const onDragMove = (e) => {
+    if (!isDragging) return;
+    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+
+    const newX = Math.max(10, Math.min(window.innerWidth - mini.offsetWidth - 10, startLeft + dx));
+    const newY = Math.max(10, Math.min(window.innerHeight - mini.offsetHeight - 10, startTop + dy));
+
+    mini.style.left = `${newX}px`;
+    mini.style.top = `${newY}px`;
+  };
+
+  const onDragEnd = () => { isDragging = false; };
+
+  header.addEventListener('mousedown', onDragStart);
+  header.addEventListener('touchstart', onDragStart, { passive: true });
+  window.addEventListener('mousemove', onDragMove);
+  window.addEventListener('touchmove', onDragMove, { passive: true });
+  window.addEventListener('mouseup', onDragEnd);
+  window.addEventListener('touchend', onDragEnd);
+
+  // Resizing logic
+  if (resizer) {
+    const onResizeStart = (e) => {
+      e.stopPropagation();
+      isResizing = true;
+      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+      startX = clientX;
+      startY = clientY;
+      startWidth = mini.offsetWidth;
+      startHeight = mini.offsetHeight;
+    };
+
+    const onResizeMove = (e) => {
+      if (!isResizing) return;
+      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+      const newWidth = Math.max(220, Math.min(window.innerWidth - 20, startWidth + (clientX - startX)));
+      mini.style.width = `${newWidth}px`;
+    };
+
+    const onResizeEnd = () => { isResizing = false; };
+
+    resizer.addEventListener('mousedown', onResizeStart);
+    resizer.addEventListener('touchstart', onResizeStart, { passive: true });
+    window.addEventListener('mousemove', onResizeMove);
+    window.addEventListener('touchmove', onResizeMove, { passive: true });
+    window.addEventListener('mouseup', onResizeEnd);
+    window.addEventListener('touchend', onResizeEnd);
+  }
+}
+
 // ===================================================
-// 4. HEADLINES, TELANGANA/INDIA/WORLD & CALENDAR ENGINE
+// 5. HEADLINES ENGINE: STRICT DATE FILTERING
 // ===================================================
 let currentScope = 'local';
 let selectedNewsDate = new Date().toISOString().split('T')[0];
@@ -196,7 +306,7 @@ function handleDateChange(inputElem) {
   const today = new Date().toISOString().split('T')[0];
 
   if (chosen > today) {
-    alert("Please select today or a past date!");
+    alert("Sorry, future articles do not exist yet! Returning to current date.");
     inputElem.value = selectedNewsDate;
     return;
   }
@@ -209,8 +319,8 @@ async function fetchNews() {
   if (!container) return;
 
   container.innerHTML = `
-    <div style="color:var(--apple-gold); padding:8px; font-size:0.8rem;">
-      <i class="fa-solid fa-spinner fa-spin"></i> Checking ${currentScope.toUpperCase()} headlines for ${selectedNewsDate}...
+    <div style="color:var(--apple-gold); padding:10px; font-size:0.8rem;">
+      <i class="fa-solid fa-spinner fa-spin"></i> Checking ${currentScope.toUpperCase()} news for ${selectedNewsDate}...
     </div>
   `;
 
@@ -220,23 +330,42 @@ async function fetchNews() {
     const xml = new DOMParser().parseFromString(xmlText, "text/xml");
     const items = xml.querySelectorAll("item");
 
-    if (!items || items.length === 0) throw new Error("No feed");
+    if (!items || items.length === 0) throw new Error("No feed items found");
 
-    const matched = Array.from(items).filter(item => {
+    // Strictly match user-selected date
+    const exactMatches = Array.from(items).filter(item => {
       const pubDate = item.querySelector("pubDate")?.textContent || "";
       if (!pubDate) return false;
       const d = new Date(pubDate);
       return !isNaN(d) && d.toISOString().split('T')[0] === selectedNewsDate;
     });
 
-    if (matched.length > 0) {
-      container.innerHTML = matched.map(item => {
-        const title = item.querySelector("title")?.textContent || "Breaking News";
+    if (exactMatches.length > 0) {
+      container.innerHTML = exactMatches.map(item => {
+        let rawTitle = item.querySelector("title")?.textContent || "";
         const link = item.querySelector("link")?.textContent || "#";
+        const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
+        
+        let sourceName = "Google News";
+        if (rawTitle.includes(" - ")) {
+          const parts = rawTitle.split(" - ");
+          sourceName = parts.pop().trim();
+          rawTitle = parts.join(" - ").trim();
+        }
+
+        let timeFormatted = "Live";
+        if (pubDateRaw) {
+          const d = new Date(pubDateRaw);
+          timeFormatted = d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+        }
+
         return `
           <div class="news-item">
+            <div style="font-size:0.7rem; color:var(--apple-text-secondary); margin-bottom:3px;">
+              Published by <strong style="color:var(--apple-gold);">${sourceName}</strong> at <span style="color:var(--apple-blue);">${timeFormatted}</span>.
+            </div>
             <a href="${link}" target="_blank" rel="noopener" style="color:var(--apple-text-primary); text-decoration:none; font-size:0.84rem; font-weight:500;">
-              ${title}
+              ${rawTitle}
             </a>
           </div>
         `;
@@ -244,25 +373,28 @@ async function fetchNews() {
     } else {
       const scopeLabel = currentScope === 'local' ? 'Telangana' : currentScope === 'india' ? 'India' : 'World';
       const searchArchiveUrl = `https://www.google.com/search?q=${encodeURIComponent(scopeLabel + ' news ' + selectedNewsDate)}&tbm=nws`;
-      
+
       container.innerHTML = `
-        <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); border-radius:12px; padding:14px; text-align:center;">
-          <p style="font-size:0.82rem; margin-bottom:8px; color:var(--apple-text-secondary);">
-            No direct feed records matching <strong>${selectedNewsDate}</strong>.
+        <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); border-radius:12px; padding:16px; text-align:center;">
+          <div style="font-size:0.85rem; font-weight:bold; color:var(--apple-gold); margin-bottom:6px;">
+            No live articles found for ${selectedNewsDate}
+          </div>
+          <p style="font-size:0.75rem; color:var(--apple-text-secondary); margin-bottom:12px; line-height:1.4;">
+            Live API streams retain recent 24–48hr wire feeds. For historical archives for <strong>${selectedNewsDate}</strong>:
           </p>
           <a href="${searchArchiveUrl}" target="_blank" rel="noopener" class="apple-pill-btn" style="font-size:0.75rem; padding:6px 14px;">
-            Search ${scopeLabel} News Archive ↗
+            Open ${scopeLabel} News for ${selectedNewsDate} →
           </a>
         </div>
       `;
     }
   } catch (err) {
-    container.innerHTML = `<div style="font-size:0.78rem; color:var(--apple-red); padding:6px;">Headlines temporarily unavailable. Click refresh.</div>`;
+    container.innerHTML = `<div style="font-size:0.78rem; color:var(--apple-red); padding:8px;">Unable to load feed. Tap refresh.</div>`;
   }
 }
 
 // ===================================================
-// 5. MAP TELEMETRY & ROUTING ENGINE
+// 6. MAP TELEMETRY & ROUTING ENGINE
 // ===================================================
 function getAQIShortBadge(aqiVal) {
   if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) return { text: 'AQI N/A', color: '#94a3b8' };
@@ -291,7 +423,7 @@ function removePinnedLocation() {
     infoBox.innerHTML = `
       <div class="card-placeholder">
         <span class="pulse-icon">📍</span>
-        <p>Search a destination or tap an amenity chip to trigger routing &amp; live weather telemetry.</p>
+        <p>Search a destination or tap an amenity tile above.</p>
       </div>
     `;
   }
@@ -653,7 +785,7 @@ async function loadLiveUSGSEarthquakes() {
 }
 
 // ===================================================
-// 6. ROUTER, CHANNELS, MODALS & GEMINI CHAT
+// 7. ROUTING, BROADCAST CHANNEL SELECTOR & AI CHAT
 // ===================================================
 function switchView(viewId, element) {
   document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active-view'));
@@ -691,7 +823,7 @@ function openMenuModal(imgSrc, title, price, type) {
   modal.querySelector('img').src = imgSrc;
   modal.querySelector('h3').innerText = title;
   modal.querySelector('.price-tile').innerText = 'Price: ' + price;
-  modal.querySelector('.type-tile').innerHTML = `Type: ${type} <span style="color:${type === 'Veg' ? 'var(--apple-green)' : 'var(--apple-red)'};">●</span>`;
+  modal.querySelector('.type-tile').innerHTML = `Type: ${type} <span style="color:${type.toLowerCase().includes('veg') && !type.toLowerCase().includes('non') ? 'var(--apple-green)' : 'var(--apple-red)'};">●</span>`;
   modal.showModal();
 }
 
@@ -699,51 +831,58 @@ function setMode(mode, element) {
   document.querySelectorAll('.view-selector button').forEach(b => b.classList.remove('active-mode'));
   if (element) element.classList.add('active-mode');
 
-  const views = ['text', 'video', 'live', 'wildlife', 'sports', 'music', 'nasa', 'airport', 'hindu', 'muslim', 'christian', 'law', 'file'];
-  views.forEach(v => {
-    const el = document.getElementById(`${v}-view`);
-    if (el) el.style.display = 'none';
-  });
-
-  const streamMap = {
-    video: { id: 'news-video-player', src: 'https://www.youtube.com/embed/II_m28Bm-iM?autoplay=1&mute=1', title: 'News Live' },
-    live: { id: 'tc-live-player', src: 'https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1', title: 'T&C Zone Live' },
-    wildlife: { id: 'wildlife-player', src: 'https://www.youtube.com/embed/MiQe9ob9aDc?autoplay=1&mute=1', title: 'Wild Safari Live' },
-    sports: { id: 'sports-player', src: 'https://www.youtube.com/embed/fE_xxKiCHO0?autoplay=1&mute=1', title: 'Sports Broadcast' },
-    music: { id: 'music-player', src: 'https://www.youtube.com/embed/VdG_RC1POC8?autoplay=1&mute=1', title: 'Music & Vibes' },
-    nasa: { id: 'nasa-player', src: 'https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1', title: 'NASA Stream' },
-    airport: { id: 'airport-player', src: 'https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1', title: 'Airside Live' },
-    hindu: { id: 'hindu-player', src: 'https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1', title: 'Bhagavad Gita' },
-    muslim: { id: 'muslim-player', src: 'https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1', title: 'Holy Quran' },
-    christian: { id: 'christian-player', src: 'https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1', title: 'Holy Bible' },
-    law: { id: 'law-player', src: 'https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1', title: 'Constitution' },
-    file: { id: null, src: null, title: 'Media Showcase' }
-  };
-
-  const currentView = document.getElementById(`${mode}-view`);
-  if (currentView) currentView.style.display = 'block';
-
+  const textMode = document.getElementById('text-view');
+  const broadcastMode = document.getElementById('broadcast-player-view');
+  const mainIframe = document.getElementById('main-broadcast-iframe');
+  const mainImg = document.getElementById('main-broadcast-img');
   const titleEl = document.getElementById('current-channel-title');
   const dotEl = document.getElementById('live-indicator');
   const ticker = document.getElementById('headphones-ticker');
 
+  const channelMap = {
+    text: { name: 'Headlines', isLive: false },
+    video: { id: 'II_m28Bm-iM', name: 'TV9 Live News', isLive: true },
+    live: { id: 'IzOOvR-XzAg', name: 'T&C Live', isLive: true },
+    wildlife: { id: 'MiQe9ob9aDc', name: 'Wild Safari Cam', isLive: true },
+    sports: { id: 'fE_xxKiCHO0', name: 'Sports Live', isLive: true },
+    music: { id: 'VdG_RC1POC8', name: 'Music Lounge', isLive: false },
+    nasa: { id: 'OKQEMp2555A', name: 'NASA Live', isLive: true },
+    airport: { id: 'n4I0d44oBEs', name: 'Airside Live', isLive: true },
+    hindu: { id: 'FFtPSPByBmk', name: 'Bhagavat_Geetha', isLive: false },
+    muslim: { id: '_1FpcN1U_KY', name: 'Khuran', isLive: false },
+    christian: { id: 'dmgsOBr2lAA', name: 'Bibul', isLive: false },
+    law: { id: 'U71NrLiWWjI', name: 'Constitution', isLive: false },
+    file: { id: null, name: 'Media Showcase', isLive: false }
+  };
+
+  const current = channelMap[mode] || channelMap.text;
+  if (titleEl) titleEl.innerText = current.name;
+  if (dotEl) dotEl.style.display = current.isLive ? "inline-block" : "none";
+
   if (mode === 'text') {
-    if (titleEl) titleEl.innerText = "Headlines";
-    if (dotEl) dotEl.style.display = "none";
+    if (textMode) textMode.style.display = 'block';
+    if (broadcastMode) broadcastMode.style.display = 'none';
+    if (mainIframe) mainIframe.src = "";
+    if (ticker) ticker.style.display = "none";
+  } else if (mode === 'file') {
+    if (textMode) textMode.style.display = 'none';
+    if (broadcastMode) broadcastMode.style.display = 'block';
+    if (mainIframe) { mainIframe.style.display = 'none'; mainIframe.src = ""; }
+    if (mainImg) mainImg.style.display = 'block';
     if (ticker) ticker.style.display = "none";
   } else {
-    const conf = streamMap[mode];
-    if (titleEl && conf) titleEl.innerText = conf.title;
-    if (dotEl) dotEl.style.display = "inline-block";
-    if (conf && conf.id) {
-      const p = document.getElementById(conf.id);
-      if (p) p.src = conf.src;
+    if (textMode) textMode.style.display = 'none';
+    if (broadcastMode) broadcastMode.style.display = 'block';
+    if (mainImg) mainImg.style.display = 'none';
+    if (mainIframe) {
+      mainIframe.style.display = 'block';
+      mainIframe.src = `https://www.youtube.com/embed/${current.id}?autoplay=1&mute=1`;
     }
     if (ticker) ticker.style.display = "flex";
   }
 }
 
-// Chat
+// AI Chat Engine
 function handleChatKey(e) { if (e.key === 'Enter') submitUserMessage(); }
 function sendChipPrompt(t) {
   const i = document.getElementById('user-chat-input');
@@ -772,7 +911,7 @@ async function submitUserMessage() {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [{ text: `You are the T&C Assistant. Store hours: 8AM-10PM. Founder: Murali Manohar Nidadavolu. Menu: Tea (₹10), Fries (₹50-70), Samosas (₹15/25), Rolls, Puffs. Short and helpful reply.\nUser: ${msg}` }] }] })
+      body: JSON.stringify({ contents: [{ parts: [{ text: `You are the T&C Assistant. Store hours: 8AM-10PM daily. Founder: Murali Manohar Nidadavolu. Menu: Tea (₹10), Fries (₹50-70), Samosas (₹15/25), Rolls, Puffs. Short and helpful reply.\nUser: ${msg}` }] }] })
     });
     const d = await res.json();
     bubble.innerText = d.candidates[0].content.parts[0].text;
@@ -826,16 +965,15 @@ async function fetchWeather() {
   } catch (err) {}
 }
 
-// Master Load
+// Master Initialization
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   renderAppleVideoShelf();
+  initPiPInteractivity();
 
-  // Date input initialization
   const dateInput = document.getElementById('news-date-input');
   if (dateInput) dateInput.value = selectedNewsDate;
 
-  // Map initialization
   const mapDiv = document.getElementById('map');
   if (mapDiv && typeof L !== 'undefined') {
     map = L.map('map').setView([stallLat, stallLng], 15);
@@ -856,7 +994,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Welcome popup
   const alertClose = document.getElementById('apple-alert-close-btn');
   const alertOverlay = document.getElementById('apple-alert-overlay');
   if (!sessionStorage.getItem('menuPopupShown') && alertOverlay) {
