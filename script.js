@@ -1,5 +1,5 @@
 // ===================================================
-// T&C "YOU ARE HERE MAP" & TELEMETRY MODULE
+// T&C APPLE SYSTEM: THEME, MEDIA PIP & CORE LOGIC
 // ===================================================
 
 const stallLat = 17.367761; 
@@ -15,6 +15,30 @@ const customAmenities = {
   'gas station': { name: 'Bharat Petroleum Bunk', query: '17.367467, 78.539245' }
 };
 
+// Complete Channel Streams for Apple Carousel & Miniplayer
+const channelStreams = [
+  { id: 'II_m28Bm-iM', mode: 'video', name: 'TV9 Live News', category: 'Telugu News', isLive: true },
+  { id: '28IZl9iM-EE', mode: 'video', name: 'V6 News Live', category: 'Regional News', isLive: true },
+  { id: 'KQhNZQ_Uag8', mode: 'video', name: 'ABC News Live', category: 'World News', isLive: true },
+  { id: 'QB5BNdBFujE', mode: 'video', name: 'Bloomberg Market', category: 'Finance', isLive: true },
+  { id: 'gCNeDWCI0vo', mode: 'video', name: 'Al Jazeera Live', category: 'International', isLive: true },
+  { id: 'C96oohpWBGw', mode: 'video', name: 'Fox News Live', category: 'US News', isLive: true },
+  { id: 'HvZt-nh9sGg', mode: 'video', name: 'France 24 Live', category: 'Global', isLive: true },
+  { id: '1_Ih0JYmkjI', mode: 'video', name: 'CNBC Live', category: 'Markets', isLive: true },
+  { id: 'umLWFz4izTM', mode: 'video', name: 'Sky News Live', category: 'Live Desk', isLive: true },
+  { id: 'GotlA1KKWoo', mode: 'video', name: 'CNN Live', category: 'Breaking News', isLive: true },
+  { id: 'OKQEMp2555A', mode: 'nasa', name: 'NASA Earth View', category: 'Space HD', isLive: true },
+  { id: 'mhJRzQsLZGg', mode: 'video', name: 'Starbase Live', category: 'Rocket Stream', isLive: true },
+  { id: 'MiQe9ob9aDc', mode: 'wildlife', name: 'Wild Safari Cam', category: 'Nature Safari', isLive: true },
+  { id: 'fE_xxKiCHO0', mode: 'sports', name: 'Sports Highlights', category: 'Sports', isLive: true },
+  { id: 'VdG_RC1POC8', mode: 'music', name: 'T&C Chill Lounge', category: 'Music Audio', isLive: false },
+  { id: 'n4I0d44oBEs', mode: 'airport', name: 'LAX Airside Live', category: 'Aviation', isLive: true },
+  { id: 'FFtPSPByBmk', mode: 'hindu', name: 'Bhagavad Gita Pravachanam', category: 'Spiritual', isLive: false },
+  { id: '_1FpcN1U_KY', mode: 'muslim', name: 'Holy Quran Recitation', category: 'Spiritual', isLive: false },
+  { id: 'dmgsOBr2lAA', mode: 'christian', name: 'Holy Bible Audio', category: 'Spiritual', isLive: false },
+  { id: 'U71NrLiWWjI', mode: 'law', name: 'Constitution of India', category: 'Civics & Law', isLive: false }
+];
+
 let allModesData = { driving: [], walking: [] };
 let currentMode = 'driving';
 let routeLayers = [];
@@ -27,32 +51,231 @@ let pendingLat = null;
 let pendingLng = null;
 let masterTelemetryData = null;
 
-// Global map reference
 let map = null;
 let seismicLayerGroup = null;
 
-// AQI Badge Helper
-function getAQIShortBadge(aqiVal) {
-  if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) return { text: 'AQI N/A', color: '#94a3b8' };
-  if (aqiVal <= 50) return { text: `🟢 AQI ${aqiVal} (Good)`, color: '#34c759' };
-  if (aqiVal <= 100) return { text: `🟡 AQI ${aqiVal} (Mod)`, color: '#ffcc00' };
-  if (aqiVal <= 150) return { text: `🟠 AQI ${aqiVal} (Sens)`, color: '#ff9500' };
-  return { text: `🔴 AQI ${aqiVal} (Poor)`, color: '#ff3b30' };
+// ===================================================
+// 1. APPLE LIGHT / DARK THEME SYSTEM
+// ===================================================
+function setAppTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('tc-theme', theme);
+
+  const btnLight = document.getElementById('btn-theme-light');
+  const btnDark = document.getElementById('btn-theme-dark');
+  const mobileIcon = document.getElementById('mobile-theme-icon');
+  const metaTheme = document.getElementById('theme-color-meta');
+
+  if (theme === 'light') {
+    if (btnLight) btnLight.classList.add('active-theme');
+    if (btnDark) btnDark.classList.remove('active-theme');
+    if (mobileIcon) mobileIcon.className = "fa-solid fa-sun";
+    if (metaTheme) metaTheme.setAttribute('content', '#f2f2f7');
+  } else {
+    if (btnDark) btnDark.classList.add('active-theme');
+    if (btnLight) btnLight.classList.remove('active-theme');
+    if (mobileIcon) mobileIcon.className = "fa-solid fa-moon";
+    if (metaTheme) metaTheme.setAttribute('content', '#000000');
+  }
 }
 
-// RESET MAP & CLEAR SELECTION
+function toggleThemeQuick() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  setAppTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('tc-theme');
+  if (saved) {
+    setAppTheme(saved);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    setAppTheme('light');
+  } else {
+    setAppTheme('dark');
+  }
+}
+
+// ===================================================
+// 2. GOOGLE TRANSLATE RELIABLE SWITCHER
+// ===================================================
+function changeLang(langCode) {
+  ['en', 'te', 'hi'].forEach(l => {
+    const b = document.getElementById(`lang-btn-${l}`);
+    if (b) b.classList.toggle('active-lang', l === langCode);
+  });
+
+  // Set Google Translate Cookie directly
+  document.cookie = `googtrans=/en/${langCode}; path=/;`;
+  document.cookie = `googtrans=/en/${langCode}; domain=${window.location.hostname}; path=/;`;
+
+  const combo = document.querySelector('.goog-te-combo');
+  if (combo) {
+    combo.value = langCode;
+    combo.dispatchEvent(new Event('change'));
+  } else {
+    window.location.reload();
+  }
+}
+
+// ===================================================
+// 3. APPLE VIDEO CAROUSEL & MINIPLAYER PICTURE-IN-PICTURE
+// ===================================================
+function renderAppleVideoShelf() {
+  const carousel = document.getElementById('channels-carousel');
+  if (!carousel) return;
+
+  carousel.innerHTML = channelStreams.map(c => `
+    <div class="video-shelf-card apple-squircle" onclick="launchVideo('${c.id}', '${c.name}', '${c.mode}')">
+      <div class="card-thumb-wrap">
+        <img src="https://img.youtube.com/vi/${c.id}/hqdefault.jpg" alt="${c.name}" onerror="this.src='hero-fallback.png';" />
+        ${c.isLive ? '<div class="card-live-chip"><span class="live-pulse" style="width:5px; height:5px;"></span> LIVE</div>' : ''}
+        <div class="card-play-overlay"><i class="fa-solid fa-play"></i></div>
+      </div>
+      <div class="card-meta-wrap">
+        <div class="card-title">${c.name}</div>
+        <div class="card-category">${c.category}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function launchVideo(videoId, title, modeKey) {
+  // 1. Play in active player
+  setMode(modeKey || 'video', null);
+  const mainPlayer = document.getElementById('news-video-player');
+  if (mainPlayer) mainPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+
+  // 2. Launch iOS floating Picture-in-Picture Miniplayer
+  launchMiniplayer(videoId, title);
+}
+
+function launchMiniplayer(videoId, title) {
+  const mini = document.getElementById('apple-miniplayer');
+  const iframe = document.getElementById('miniplayer-iframe');
+  const titleEl = document.getElementById('miniplayer-channel-title');
+
+  if (iframe) iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+  if (titleEl) titleEl.innerText = title;
+  if (mini) mini.classList.remove('hidden');
+}
+
+function toggleMiniplayerSize() {
+  const mini = document.getElementById('apple-miniplayer');
+  const icon = document.getElementById('miniplayer-expand-icon');
+  if (mini) {
+    mini.classList.toggle('expanded-player');
+    const isExp = mini.classList.contains('expanded-player');
+    if (icon) icon.className = isExp ? "fa-solid fa-down-left-and-up-right-to-center" : "fa-solid fa-up-right-and-down-left-from-center";
+  }
+}
+
+function closeMiniplayer() {
+  const mini = document.getElementById('apple-miniplayer');
+  const iframe = document.getElementById('miniplayer-iframe');
+  if (iframe) iframe.src = "";
+  if (mini) mini.classList.add('hidden');
+}
+
+// ===================================================
+// 4. HEADLINES, TELANGANA/INDIA/WORLD & CALENDAR ENGINE
+// ===================================================
+let currentScope = 'local';
+let selectedNewsDate = new Date().toISOString().split('T')[0];
+
+function switchNewsScope(scope) {
+  currentScope = scope;
+  ['local', 'india', 'world'].forEach(s => {
+    const btn = document.getElementById(`scope-btn-${s}`);
+    if (btn) btn.classList.toggle('active', s === scope);
+  });
+  fetchNews();
+}
+
+function handleDateChange(inputElem) {
+  const chosen = inputElem.value;
+  const today = new Date().toISOString().split('T')[0];
+
+  if (chosen > today) {
+    alert("Please select today or a past date!");
+    inputElem.value = selectedNewsDate;
+    return;
+  }
+  selectedNewsDate = chosen;
+  fetchNews();
+}
+
+async function fetchNews() {
+  const container = document.getElementById('news-container');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div style="color:var(--apple-gold); padding:8px; font-size:0.8rem;">
+      <i class="fa-solid fa-spinner fa-spin"></i> Checking ${currentScope.toUpperCase()} headlines for ${selectedNewsDate}...
+    </div>
+  `;
+
+  try {
+    const res = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=${currentScope}`);
+    const xmlText = await res.text();
+    const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+    const items = xml.querySelectorAll("item");
+
+    if (!items || items.length === 0) throw new Error("No feed");
+
+    const matched = Array.from(items).filter(item => {
+      const pubDate = item.querySelector("pubDate")?.textContent || "";
+      if (!pubDate) return false;
+      const d = new Date(pubDate);
+      return !isNaN(d) && d.toISOString().split('T')[0] === selectedNewsDate;
+    });
+
+    if (matched.length > 0) {
+      container.innerHTML = matched.map(item => {
+        const title = item.querySelector("title")?.textContent || "Breaking News";
+        const link = item.querySelector("link")?.textContent || "#";
+        return `
+          <div class="news-item">
+            <a href="${link}" target="_blank" rel="noopener" style="color:var(--apple-text-primary); text-decoration:none; font-size:0.84rem; font-weight:500;">
+              ${title}
+            </a>
+          </div>
+        `;
+      }).join('');
+    } else {
+      const scopeLabel = currentScope === 'local' ? 'Telangana' : currentScope === 'india' ? 'India' : 'World';
+      const searchArchiveUrl = `https://www.google.com/search?q=${encodeURIComponent(scopeLabel + ' news ' + selectedNewsDate)}&tbm=nws`;
+      
+      container.innerHTML = `
+        <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); border-radius:12px; padding:14px; text-align:center;">
+          <p style="font-size:0.82rem; margin-bottom:8px; color:var(--apple-text-secondary);">
+            No direct feed records matching <strong>${selectedNewsDate}</strong>.
+          </p>
+          <a href="${searchArchiveUrl}" target="_blank" rel="noopener" class="apple-pill-btn" style="font-size:0.75rem; padding:6px 14px;">
+            Search ${scopeLabel} News Archive ↗
+          </a>
+        </div>
+      `;
+    }
+  } catch (err) {
+    container.innerHTML = `<div style="font-size:0.78rem; color:var(--apple-red); padding:6px;">Headlines temporarily unavailable. Click refresh.</div>`;
+  }
+}
+
+// ===================================================
+// 5. MAP TELEMETRY & ROUTING ENGINE
+// ===================================================
+function getAQIShortBadge(aqiVal) {
+  if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) return { text: 'AQI N/A', color: '#94a3b8' };
+  if (aqiVal <= 50) return { text: `🟢 AQI ${aqiVal} (Good)`, color: '#30d158' };
+  if (aqiVal <= 100) return { text: `🟡 AQI ${aqiVal} (Moderate)`, color: '#ffd60a' };
+  if (aqiVal <= 150) return { text: `🟠 AQI ${aqiVal} (Sensitive)`, color: '#ff9f0a' };
+  return { text: `🔴 AQI ${aqiVal} (Poor)`, color: '#ff453a' };
+}
+
 function removePinnedLocation() {
-  if (telemetryMarker && map) {
-    map.removeLayer(telemetryMarker);
-    telemetryMarker = null;
-  }
-  if (destMarker && map) {
-    map.removeLayer(destMarker);
-    destMarker = null;
-  }
-  if (map) {
-    routeLayers.forEach(layer => map.removeLayer(layer));
-  }
+  if (telemetryMarker && map) { map.removeLayer(telemetryMarker); telemetryMarker = null; }
+  if (destMarker && map) { map.removeLayer(destMarker); destMarker = null; }
+  if (map) routeLayers.forEach(l => map.removeLayer(l));
   routeLayers = [];
   
   activePinnedLat = null;
@@ -68,14 +291,13 @@ function removePinnedLocation() {
     infoBox.innerHTML = `
       <div class="card-placeholder">
         <span class="pulse-icon">📍</span>
-        <p>Search a destination or tap an amenity tile above.</p>
+        <p>Search a destination or tap an amenity chip to trigger routing &amp; live weather telemetry.</p>
       </div>
     `;
   }
   setTimeout(() => { if (map) map.invalidateSize(); }, 50);
 }
 
-// Open Same-Container Windy Radar Overlay
 function openSameContainerWindy() {
   if (!activePinnedLat || !activePinnedLng || !masterTelemetryData) {
     alert("Please search or pin a location on the map first!");
@@ -87,72 +309,57 @@ function openSameContainerWindy() {
   const mapDiv = document.getElementById('map');
   if (!mapDiv) return;
 
-  const leafletControls = mapDiv.querySelectorAll('.leaflet-control-container');
-  leafletControls.forEach(el => el.style.display = 'none');
+  const controls = mapDiv.querySelectorAll('.leaflet-control-container');
+  controls.forEach(c => c.style.display = 'none');
 
-  let windyOverlay = document.getElementById('windy-overlay-frame');
-  if (!windyOverlay) {
-    windyOverlay = document.createElement('div');
-    windyOverlay.id = 'windy-overlay-frame';
-    mapDiv.appendChild(windyOverlay);
+  let overlay = document.getElementById('windy-overlay-frame');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'windy-overlay-frame';
+    mapDiv.appendChild(overlay);
   }
 
   const t = masterTelemetryData;
-  const currW = t.currW;
-  const aqiBadge = t.aqiBadge;
+  overlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:16px; display:flex; flex-direction:column; overflow:hidden;';
 
-  windyOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:16px; display:flex; flex-direction:column; overflow:hidden;';
-
-  windyOverlay.innerHTML = `
-    <div onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" style="background:#1c1c24; border-bottom:0.5px solid rgba(255,255,255,0.12); padding:8px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; flex-shrink:0; z-index:1000;">
-      <div style="display:flex; align-items:center; gap:6px;">
-        <span style="font-size:0.75rem; color:#ffd700; font-weight:bold;">🌪️ Live Radar</span>
-        <span style="background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:4px; font-size:0.65rem;">🌡️ ${currW.temperature_2m !== undefined ? currW.temperature_2m + '°C' : 'N/A'}</span>
-        <span style="background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:4px; font-size:0.65rem;">💨 ${currW.wind_speed_10m !== undefined ? currW.wind_speed_10m + ' km/h' : 'N/A'}</span>
+  overlay.innerHTML = `
+    <div style="background:var(--apple-card-elevated); border-bottom:0.5px solid var(--apple-border); padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem;">
+        <span style="color:var(--apple-gold); font-weight:bold;">🌪️ Live Radar</span>
+        <span>🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'}</span>
       </div>
-      <button onclick="switchMode('driving')" style="background:#ff3b30; color:#fff; border:none; padding:4px 10px; border-radius:9999px; font-size:0.7rem; font-weight:700; cursor:pointer;">
+      <button onclick="switchMode('driving')" style="background:var(--apple-red); color:#fff; border:none; padding:4px 10px; border-radius:9999px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
         ✕ Close
       </button>
     </div>
-    <div style="flex-grow:1; width:100%; height:100%; position:relative;">
-      <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${activePinnedLat}&lon=${activePinnedLng}&detailLat=${activePinnedLat}&detailLon=${activePinnedLng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%; display:block;"></iframe>
+    <div style="flex-grow:1; width:100%; height:100%;">
+      <iframe width="100%" height="100%" src="https://embed.windy.com/embed2.html?lat=${activePinnedLat}&lon=${activePinnedLng}&detailLat=${activePinnedLat}&detailLon=${activePinnedLng}&marker=true&zoom=9&level=surface&overlay=wind" frameborder="0" style="border:0; width:100%; height:100%;"></iframe>
     </div>
   `;
 }
 
 function closeWindyOverlay() {
-  const windyOverlay = document.getElementById('windy-overlay-frame');
-  if (windyOverlay) windyOverlay.remove();
-
+  const o = document.getElementById('windy-overlay-frame');
+  if (o) o.remove();
   const mapDiv = document.getElementById('map');
   if (mapDiv) {
-    const leafletControls = mapDiv.querySelectorAll('.leaflet-control-container');
-    leafletControls.forEach(el => el.style.display = 'block');
+    mapDiv.querySelectorAll('.leaflet-control-container').forEach(c => c.style.display = 'block');
     setTimeout(() => { if (map) map.invalidateSize(); }, 50);
   }
 }
 
 function switchMode(mode) {
-  if (mode === 'radar') {
-    openSameContainerWindy();
-    return;
-  }
-  
+  if (mode === 'radar') { openSameContainerWindy(); return; }
   closeWindyOverlay();
   closeConfirmModal();
   currentMode = mode;
-
-  if (mode === 'driving' || mode === 'walking') {
-    if (activePinnedLat && activePinnedLng) {
-      drawRouteOnMap(currentMode, 0);
-    }
+  if ((mode === 'driving' || mode === 'walking') && activePinnedLat && activePinnedLng) {
+    drawRouteOnMap(currentMode, 0);
   }
   renderMasterCard();
-
   setTimeout(() => { if (map) map.invalidateSize(); }, 50);
 }
 
-// Apple Styled Confirmation Modal
 function showConfirmModal(lat, lng) {
   const mapDiv = document.getElementById('map');
   if (!mapDiv) return;
@@ -164,26 +371,19 @@ function showConfirmModal(lat, lng) {
     mapDiv.appendChild(modal);
   }
 
-  modal.style.cssText = 'position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:rgba(30,30,36,0.92); backdrop-filter:blur(20px); border:0.5px solid rgba(255,255,255,0.18); border-radius:18px; padding:14px; box-shadow:0 12px 32px rgba(0,0,0,0.8); text-align:center; color:#fff; font-family:-apple-system, sans-serif;';
+  modal.style.cssText = 'position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:var(--apple-card-elevated); backdrop-filter:blur(20px); border:0.5px solid var(--apple-border); border-radius:18px; padding:14px; text-align:center; color:var(--apple-text-primary); font-family:-apple-system, sans-serif;';
 
   modal.innerHTML = `
-    <div style="font-size:0.85rem; font-weight:700; color:#ffd700; margin-bottom:4px;">Update Target Location?</div>
-    <div style="font-size:0.72rem; color:#86868b; margin-bottom:12px;">Coordinates: <b>${lat}, ${lng}</b></div>
+    <div style="font-size:0.85rem; font-weight:700; color:var(--apple-gold); margin-bottom:4px;">Change Destination?</div>
+    <div style="font-size:0.72rem; color:var(--apple-text-secondary); margin-bottom:12px;">Coordinates: <b>${lat}, ${lng}</b></div>
     <div style="display:flex; gap:8px;">
-      <button id="btn-confirm-yes" style="flex:1; background:#34c759; color:#000; border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">Update</button>
-      <button id="btn-confirm-no" style="flex:1; background:rgba(255,255,255,0.1); color:#fff; border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:600; cursor:pointer;">Cancel</button>
+      <button id="btn-confirm-yes" style="flex:1; background:var(--apple-green); color:#000; border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">Update</button>
+      <button id="btn-confirm-no" style="flex:1; background:var(--apple-input-bg); color:var(--apple-text-primary); border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:600; cursor:pointer;">Cancel</button>
     </div>
   `;
 
-  document.getElementById('btn-confirm-yes').onclick = function(e) {
-    e.stopPropagation();
-    confirmDestinationChange();
-  };
-
-  document.getElementById('btn-confirm-no').onclick = function(e) {
-    e.stopPropagation();
-    closeConfirmModal();
-  };
+  document.getElementById('btn-confirm-yes').onclick = e => { e.stopPropagation(); confirmDestinationChange(); };
+  document.getElementById('btn-confirm-no').onclick = e => { e.stopPropagation(); closeConfirmModal(); };
 }
 
 function closeConfirmModal() {
@@ -197,12 +397,9 @@ async function confirmDestinationChange() {
   if (pendingLat !== null && pendingLng !== null) {
     activePinnedLat = pendingLat;
     activePinnedLng = pendingLng;
-    const targetLat = pendingLat;
-    const targetLng = pendingLng;
-    
     closeConfirmModal();
     closeWindyOverlay();
-    await fetchLocationDataAndRoutes(targetLat, targetLng);
+    await fetchLocationDataAndRoutes(pendingLat, pendingLng);
   } else {
     closeConfirmModal();
   }
@@ -211,20 +408,16 @@ async function confirmDestinationChange() {
 async function fetchRouteData(query, customDisplayName = null) {
   try {
     let destLat, destLng, destName;
-    const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
-    const match = query.match(latLngRegex);
+    const latLngMatch = query.match(/^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/);
 
-    if (match) {
-      destLat = parseFloat(match[1]);
-      destLng = parseFloat(match[3]);
-      destName = customDisplayName || `Coordinates (${destLat}, ${destLng})`;
+    if (latLngMatch) {
+      destLat = parseFloat(latLngMatch[1]);
+      destLng = parseFloat(latLngMatch[3]);
+      destName = customDisplayName || `Coords (${destLat}, ${destLng})`;
     } else {
-      let searchQuery = query.trim();
-      const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=1`;
-      const geoRes = await fetch(geoUrl);
-      if (!geoRes.ok) throw new Error("Search service unavailable.");
+      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query.trim())}&addressdetails=1&limit=1`);
+      if (!geoRes.ok) throw new Error("Geo service failed");
       const geoData = await geoRes.json();
-
       if (!geoData || geoData.length === 0) {
         alert("Location not found.");
         return;
@@ -237,48 +430,10 @@ async function fetchRouteData(query, customDisplayName = null) {
     activePinnedLat = destLat;
     activePinnedLng = destLng;
     currentDestName = destName;
-
     await fetchLocationDataAndRoutes(destLat, destLng, destName);
   } catch (err) {
-    console.error("Fetch error:", err);
+    console.error(err);
   }
-}
-
-async function fetchIntelligenceSummary(villageTown, district, landmark, state, pincode, lat, lng) {
-  const searchQueries = [villageTown, district, "Hyderabad"].filter(q => q && q !== 'Local Sector');
-
-  for (let term of searchQueries) {
-    try {
-      const searchRes = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(term)}&limit=1&namespace=0&format=json&origin=*`);
-      if (searchRes.ok) {
-        const searchData = await searchRes.json();
-        const matchedTitle = searchData[1] && searchData[1][0];
-
-        if (matchedTitle) {
-          const summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(matchedTitle)}`);
-          if (summaryRes.ok) {
-            const summaryData = await summaryRes.json();
-            if (summaryData && summaryData.extract) {
-              return {
-                summary: summaryData.extract,
-                sourceName: "Wikipedia Org",
-                badgeColor: "#34c759",
-                sourceUrl: summaryData.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(matchedTitle)}`
-              };
-            }
-          }
-        }
-      }
-    } catch (err) {}
-  }
-
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-  return {
-    summary: `Verified sector overview for <b>${villageTown}</b> (${district}). Located near ${landmark}, pin code <b>${pincode}</b>, ${state}.`,
-    sourceName: "Google Maps",
-    badgeColor: "#007aff",
-    sourceUrl: googleMapsUrl
-  };
 }
 
 async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
@@ -287,15 +442,14 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
     infoBox.innerHTML = `
       <div class="card-placeholder">
         <span class="pulse-icon">⏳</span>
-        <p>Calculating routes &amp; local telemetry...</p>
+        <p>Connecting telemetry &amp; live routes...</p>
       </div>
     `;
   }
 
   if (telemetryMarker && map) map.removeLayer(telemetryMarker);
   if (map) {
-    telemetryMarker = L.marker([lat, lng]).addTo(map)
-      .bindPopup(`<b>Destination</b><br>${lat}, ${lng}`).openPopup();
+    telemetryMarker = L.marker([lat, lng]).addTo(map).bindPopup(`<b>Destination</b><br>${lat}, ${lng}`).openPopup();
   }
 
   try {
@@ -321,21 +475,13 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
     const state = addr.state || 'State';
     const landmark = addr.road || addr.neighbourhood || 'Landmark Area';
     const county = addr.county || addr.subdistrict || 'Mandal/Taluka';
-
-    let pincode = addr.postcode || addr.pincode || addr.postal_code;
-    if (!pincode && geoData?.display_name) {
-      const match = geoData.display_name.match(/\b\d{6}\b/);
-      if (match) pincode = match[0];
-    }
-    if (!pincode) pincode = "Verified Zone";
-
-    currentDestName = displayName || `${villageTown}, ${district}`;
+    let pincode = addr.postcode || addr.pincode || "Verified Zone";
 
     const currW = weatherData?.current || {};
     const currAQI = aqiData?.current || {};
     const aqiBadge = getAQIShortBadge(currAQI.us_aqi);
 
-    let nearestQuakeText = "No active quakes recorded nearby";
+    let nearestQuakeText = "No active seismic events recorded nearby";
     const quakes = quakeData?.features || [];
     if (quakes.length > 0) {
       let closest = quakes[0];
@@ -347,24 +493,16 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
       nearestQuakeText = `Mag ${closest.properties.mag} near ${closest.properties.place} (~${Math.round(minDist * 111)} km)`;
     }
 
-    const intelResult = await fetchIntelligenceSummary(villageTown, district, landmark, state, pincode, lat, lng);
-
     if (driveData.code === "Ok" && walkData.code === "Ok") {
       allModesData.driving = driveData.routes;
-      walkData.routes.forEach(route => {
-        if (route.duration <= driveData.routes[0].duration) {
-          route.duration = (route.distance / 1.25); 
-        }
+      walkData.routes.forEach(r => {
+        if (r.duration <= driveData.routes[0].duration) r.duration = (r.distance / 1.25);
       });
       allModesData.walking = walkData.routes;
     }
 
     masterTelemetryData = {
-      villageTown, district, state, landmark, county, pincode, currW, currAQI, aqiBadge, nearestQuakeText,
-      intelSummary: intelResult.summary,
-      intelSourceName: intelResult.sourceName,
-      intelBadgeColor: intelResult.badgeColor,
-      intelSourceUrl: intelResult.sourceUrl
+      villageTown, district, state, landmark, county, pincode, currW, currAQI, aqiBadge, nearestQuakeText
     };
 
     currentMode = 'driving';
@@ -373,7 +511,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
     setTimeout(() => { if (map) map.invalidateSize(); }, 50);
 
   } catch (err) {
-    if (infoBox) infoBox.innerHTML = `<div><p>Unable to retrieve route data.</p></div>`;
+    if (infoBox) infoBox.innerHTML = `<div><p>Unable to calculate route data.</p></div>`;
   }
 }
 
@@ -390,49 +528,38 @@ function renderMasterCard() {
     routes.forEach((route, index) => {
       const dist = (route.distance / 1000).toFixed(1);
       const timeFormatted = formatDuration(route.duration);
-      const label = index === 0 ? "Shortest Route" : `Alternative ${index + 1}`;
+      const label = index === 0 ? "Fastest Route" : `Alternative ${index + 1}`;
       
       optionsHtml += `
-        <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
-          <div style="font-weight:700; color:#ffd700;">${label}</div>
-          <div style="font-size:0.75rem; color:#ccc;">${dist} km • ~${timeFormatted}</div>
+        <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)" style="flex:1; background:var(--apple-input-bg); border:0.5px solid var(--apple-border); padding:8px; border-radius:10px; cursor:pointer; color:var(--apple-text-primary);">
+          <div style="font-weight:700; color:var(--apple-gold);">${label}</div>
+          <div style="font-size:0.75rem; color:var(--apple-text-secondary);">${dist} km • ~${timeFormatted}</div>
         </button>
       `;
     });
 
+    tabSpecificHtml = `<div style="display:flex; gap:8px; margin-top:8px;">${optionsHtml}</div>`;
+  } else if (currentMode === 'locality') {
     tabSpecificHtml = `
-      <div style="display:flex; gap:8px; margin-top:8px;">${optionsHtml}</div>
-    `;
-  } 
-  else if (currentMode === 'locality') {
-    tabSpecificHtml = `
-      <div style="background: rgba(255,255,255,0.03); border: 0.5px solid var(--apple-border); padding: 10px; border-radius: 12px; font-size: 0.72rem; color: #fff; margin-top:6px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-          <span style="font-weight: bold; color: #ffd700;">Sector Intelligence</span>
-          <span style="color: ${t.intelBadgeColor}; font-weight: bold;">${t.intelSourceName}</span>
+      <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); padding:10px; border-radius:12px; font-size:0.72rem; margin-top:6px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="font-weight:bold; color:var(--apple-gold);">Sector Intelligence</span>
+          <span style="color:${t.aqiBadge.color}; font-weight:bold;">${t.aqiBadge.text}</span>
         </div>
-        <p style="margin: 0 0 6px 0; color: #bbb; line-height: 1.4;">${t.intelSummary}</p>
-        <div style="font-size: 0.68rem; color: #888; display: flex; justify-content: space-between;">
-          <span>Mandal: <b>${t.county}</b></span>
-          <a href="${t.intelSourceUrl}" target="_blank" style="color: #007aff; text-decoration: underline;">Open Source ↗</a>
-        </div>
-      </div>
-      <div style="background: rgba(255,255,255,0.03); border: 0.5px solid var(--apple-border); padding: 8px 10px; border-radius: 10px; font-size: 0.7rem; color: #ccc; margin-top: 6px;">
-        <span style="color:#ff3b30; font-weight:bold;">🌋 Nearest Seismic:</span> ${t.nearestQuakeText}
+        <p style="margin:0 0 6px 0; color:var(--apple-text-secondary); line-height:1.4;">Mandal: <b>${t.county}</b> • Temp: <b>${t.currW.temperature_2m || '--'}°C</b></p>
+        <p style="margin:0; color:var(--apple-red); font-size:0.68rem;">🌋 ${t.nearestQuakeText}</p>
       </div>
     `;
   }
 
   infoBox.innerHTML = `
     <div>
-      <div style="background: rgba(255, 255, 255, 0.04); border-left: 3px solid #ffd700; border-radius: 10px; padding: 8px 12px; margin-bottom: 8px;">
-        <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">📍 ${t.villageTown}, ${t.district}</div>
-        <div style="font-size: 0.7rem; color: #86868b;">
-          ${t.landmark} • ${t.state} (<span style="color:#34c759; font-weight:bold;">${t.pincode}</span>)
-        </div>
+      <div style="background:var(--apple-input-bg); border-left:3px solid var(--apple-gold); border-radius:10px; padding:8px 12px; margin-bottom:8px;">
+        <div style="font-size:0.88rem; font-weight:800;">📍 ${t.villageTown}, ${t.district}</div>
+        <div style="font-size:0.7rem; color:var(--apple-text-secondary);">${t.landmark} • ${t.state} (${t.pincode})</div>
       </div>
 
-      <div class="apple-segmented-scroll" style="margin-bottom: 8px;">
+      <div class="apple-segmented-scroll" style="margin-bottom:8px;">
         <button class="${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')">🚗 Driving</button>
         <button class="${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')">🚶 Walking</button>
         <button class="${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')">📍 Locality</button>
@@ -442,7 +569,7 @@ function renderMasterCard() {
       ${tabSpecificHtml}
 
       ${activePinnedLat ? `
-        <button onclick="removePinnedLocation()" style="width:100%; margin-top:10px; background:rgba(255,59,48,0.1); color:#ff3b30; border:0.5px solid #ff3b30; padding:6px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+        <button onclick="removePinnedLocation()" style="width:100%; margin-top:10px; background:rgba(255,59,48,0.1); color:var(--apple-red); border:0.5px solid var(--apple-red); padding:6px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">
           Clear Pin &amp; Reset Map
         </button>
       ` : ''}
@@ -451,15 +578,9 @@ function renderMasterCard() {
 }
 
 function formatDuration(seconds) {
-  const days = Math.floor(seconds / (3600 * 24));
-  const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+  const hours = Math.floor(seconds / 3600);
   const minutes = Math.round((seconds % 3600) / 60);
-
-  let parts = [];
-  if (days > 0) parts.push(`${days}d`);
-  if (hours > 0 || days > 0) parts.push(`${hours}h`);
-  parts.push(`${minutes}min`);
-  return parts.join(' ');
+  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
 }
 
 function switchRouteIndex(index, btnElement) {
@@ -470,38 +591,27 @@ function switchRouteIndex(index, btnElement) {
 
 function drawRouteOnMap(mode, index) {
   if (!map) return;
-  routeLayers.forEach(layer => map.removeLayer(layer));
+  routeLayers.forEach(l => map.removeLayer(l));
   routeLayers = [];
 
   const routes = allModesData[mode];
   if (!routes || routes.length === 0) return;
   
   routes.forEach((r, i) => {
-    const color = i === index ? (mode === 'driving' ? '#ffd700' : '#34c759') : '#666';
-    const weight = i === index ? 5 : 3;
-    const opacity = i === index ? 0.9 : 0.4;
-
-    const layer = L.geoJSON(r.geometry, {
-      style: { color: color, weight: weight, opacity: opacity }
-    }).addTo(map);
-
+    const color = i === index ? (mode === 'driving' ? '#ffd700' : '#34c759') : '#888';
+    const layer = L.geoJSON(r.geometry, { style: { color, weight: i === index ? 5 : 3, opacity: 0.8 } }).addTo(map);
     routeLayers.push(layer);
   });
 
-  if (routeLayers[index]) {
-    map.fitBounds(routeLayers[index].getBounds(), { padding: [40, 40] });
-  }
+  if (routeLayers[index]) map.fitBounds(routeLayers[index].getBounds(), { padding: [40, 40] });
 }
 
 async function searchDestination() {
   const inputEl = document.getElementById('destination-input');
   if (!inputEl) return;
-  const query = inputEl.value.trim();
-  if (!query) {
-    alert("Please enter a destination or landmark!");
-    return;
-  }
-  await fetchRouteData(query);
+  const q = inputEl.value.trim();
+  if (!q) { alert("Please enter a destination!"); return; }
+  await fetchRouteData(q);
 }
 
 async function searchAmenity(amenityKey) {
@@ -518,7 +628,6 @@ async function searchAmenity(amenityKey) {
     showConfirmModal(pendingLat, pendingLng);
     return;
   }
-
   await fetchRouteData(facility.query, facility.name);
 }
 
@@ -528,218 +637,64 @@ async function loadLiveUSGSEarthquakes() {
     const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
     if (!res.ok) return;
     const data = await res.json();
-    const quakes = data.features || [];
     seismicLayerGroup.clearLayers();
 
-    quakes.forEach(q => {
+    (data.features || []).forEach(q => {
       const coords = q.geometry.coordinates;
       const mag = q.properties.mag;
-      const place = q.properties.place;
-
       L.circleMarker([coords[1], coords[0]], {
         radius: Math.max(4, mag * 2),
-        color: mag > 6 ? '#ff3b30' : '#ff9500',
-        fillColor: mag > 6 ? '#ff3b30' : '#ff9500',
+        color: mag > 6 ? '#ff453a' : '#ffd60a',
+        fillColor: mag > 6 ? '#ff453a' : '#ffd60a',
         fillOpacity: 0.75
-      }).bindPopup(`
-        <div style="font-size:0.75rem; color:#000;">
-          <b>🌋 Mag ${mag} Earthquake</b><br>${place}
-        </div>
-      `).addTo(seismicLayerGroup);
+      }).bindPopup(`<b>🌋 Mag ${mag} Earthquake</b><br>${q.properties.place}`).addTo(seismicLayerGroup);
     });
   } catch (err) {}
 }
 
 // ===================================================
-// VIEW ROUTER ENGINE
+// 6. ROUTER, CHANNELS, MODALS & GEMINI CHAT
 // ===================================================
 function switchView(viewId, element) {
-  const sections = document.querySelectorAll('.app-section');
-  sections.forEach(sec => sec.classList.remove('active-view'));
-  
-  const targetView = document.getElementById(viewId);
-  if (targetView) targetView.classList.add('active-view');
+  document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active-view'));
+  const target = document.getElementById(viewId);
+  if (target) target.classList.add('active-view');
 
-  document.querySelectorAll('.side-item').forEach(item => item.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-
+  document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   if (element) element.classList.add('active');
 
-  if (viewId === 'map-view' && map) {
-    setTimeout(() => map.invalidateSize(), 150);
-  }
+  if (viewId === 'map-view' && map) setTimeout(() => map.invalidateSize(), 150);
 }
 
 function showService(title, description) {
-  const placeholder = document.getElementById('monitor-placeholder');
-  if (placeholder) placeholder.classList.add('hidden');
-  
-  const dataBlock = document.getElementById('monitor-data');
-  if (dataBlock) dataBlock.classList.remove('hidden');
-  
-  const titleEl = document.getElementById('monitor-title');
-  if (titleEl) titleEl.innerText = title;
+  const p = document.getElementById('monitor-placeholder');
+  const d = document.getElementById('monitor-data');
+  const t = document.getElementById('monitor-title');
+  const desc = document.getElementById('monitor-desc');
 
-  const descEl = document.getElementById('monitor-desc');
-  if (descEl) descEl.innerText = description;
+  if (p) p.classList.add('hidden');
+  if (d) d.classList.remove('hidden');
+  if (t) t.innerText = title;
+  if (desc) desc.innerText = description;
 }
 
 function toggleUpi() {
-  const upiFrame = document.getElementById('upi-display');
-  if (upiFrame) upiFrame.classList.toggle('hidden');
-}
-
-// Gemini AI Chat
-function handleChatKey(event) {
-  if (event.key === 'Enter') submitUserMessage();
-}
-
-function sendChipPrompt(text) {
-  const inputEl = document.getElementById('user-chat-input');
-  if (inputEl) inputEl.value = text;
-  submitUserMessage();
-}
-
-async function submitUserMessage() {
-  const txtBox = document.getElementById('user-chat-input');
-  if (!txtBox) return;
-  const rawMsg = txtBox.value.trim();
-  if (!rawMsg) return;
-
-  const logBox = document.getElementById('chat-log-box');
-  if (!logBox) return;
-  
-  logBox.innerHTML += `<div class="msg-bubble user-msg">${rawMsg}</div>`;
-  txtBox.value = "";
-  logBox.scrollTop = logBox.scrollHeight;
-
-  const typingId = "ai-typing-" + Date.now();
-  logBox.innerHTML += `<div class="msg-bubble bot-msg" id="${typingId}"><i>Thinking...</i></div>`;
-  logBox.scrollTop = logBox.scrollHeight;
-
-  const typingBubble = document.getElementById(typingId);
-
-  try {
-    const API_KEY = "AQ.Ab8RN6JbLJ8a8xNiL1Vq_msT-p8pg-nJHR6KpgfyU5vYol4Ihw"; 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-
-    const systemContext = `You are the friendly AI Concierge for "Tasty & Comfort" (T&C) at New Modern Mission.
-    Details: Hours 8:00 AM - 10:00 PM. Premium Tea (₹10), French Fries (₹50/₹60/₹70), Sandwiches (₹45), Samosas (₹15/₹25), Rolls, Puffs, Noodles.
-    Owner is Murali Manohar Nidadavolu. Keep replies short, helpful, and polite.`;
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [{ text: `${systemContext}\n\nUser: ${rawMsg}` }] }] })
-    });
-
-    const data = await response.json();
-    const reply = data.candidates[0].content.parts[0].text;
-    if (typingBubble) typingBubble.innerText = reply;
-  } catch (err) {
-    let fallback = "Welcome to T&C! How may I assist you with our tea, fresh fries, or location?";
-    const lower = rawMsg.toLowerCase();
-    if (lower.includes('hour') || lower.includes('time')) fallback = "We are open daily from 8:00 AM to 10:00 PM!";
-    else if (lower.includes('price') || lower.includes('menu')) fallback = "Tea is ₹10, French Fries start at ₹50, and Samosas are ₹15. Check our Menu tab for all items!";
-    else if (lower.includes('owner') || lower.includes('founder')) fallback = "The founder and owner of Tasty & Comfort is Murali Manohar Nidadavolu.";
-    
-    if (typingBubble) typingBubble.innerText = fallback;
-  }
-  logBox.scrollTop = logBox.scrollHeight;
-}
-
-// Announcements & Modals
-let announcementActive = false;
-let messageContent = "";
-
-function checkAnnouncement() {
-  fetch('announcement.json?t=' + Date.now())
-    .then(r => r.json())
-    .then(data => {
-      const modal = document.getElementById('announcement-modal');
-      const sound = document.getElementById('announcement-sound');
-      
-      if (data.status === 'active') {
-        announcementActive = true;
-        messageContent = data.message;
-        if (modal && modal.classList.contains('hidden')) {
-          const textEl = document.getElementById('announcement-text');
-          if (textEl) textEl.innerText = messageContent;
-          modal.classList.remove('hidden');
-          if (sound) sound.play().catch(() => {});
-        }
-      } else if (modal) {
-        announcementActive = false;
-        modal.classList.add('hidden');
-      }
-    })
-    .catch(() => {});
-}
-
-function closeAnnouncement() {
-  const modal = document.getElementById('announcement-modal');
-  if (modal) modal.classList.add('hidden');
+  const u = document.getElementById('upi-display');
+  if (u) u.classList.toggle('hidden');
 }
 
 function openMenuModal(imgSrc, title, price, type) {
   const modal = document.getElementById('menuModal');
   if (!modal) return;
   
-  const imgEl = modal.querySelector('img');
-  const h3El = modal.querySelector('h3');
-  const priceEl = modal.querySelector('.price-tile');
-  const typeEl = modal.querySelector('.type-tile');
-
-  if (imgEl) imgEl.src = imgSrc;
-  if (h3El) h3El.innerText = title;
-  if (priceEl) priceEl.innerText = 'Price: ' + price;
-  if (typeEl) typeEl.innerText = 'Category: ' + type;
-  
+  modal.querySelector('img').src = imgSrc;
+  modal.querySelector('h3').innerText = title;
+  modal.querySelector('.price-tile').innerText = 'Price: ' + price;
+  modal.querySelector('.type-tile').innerHTML = `Type: ${type} <span style="color:${type === 'Veg' ? 'var(--apple-green)' : 'var(--apple-red)'};">●</span>`;
   modal.showModal();
 }
 
-// News Feed
-let currentScope = 'local';
-let selectedNewsDate = new Date().toISOString().split('T')[0];
-
-function switchNewsScope(scope) {
-  currentScope = scope;
-  fetchNews();
-}
-
-async function fetchNews() {
-  const container = document.getElementById('news-container');
-  if (!container) return;
-
-  container.innerHTML = `<div style="color:#ffd700; font-size:0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Loading live dispatch...</div>`;
-
-  try {
-    const res = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=${currentScope}`);
-    const xmlText = await res.text();
-    const xml = new DOMParser().parseFromString(xmlText, "text/xml");
-    const items = xml.querySelectorAll("item");
-
-    if (!items || items.length === 0) throw new Error("No feed");
-
-    let html = '';
-    Array.from(items).slice(0, 8).forEach(item => {
-      const title = item.querySelector("title")?.textContent || "Headline";
-      const link = item.querySelector("link")?.textContent || "#";
-      html += `
-        <div class="news-item">
-          <a href="${link}" target="_blank" rel="noopener" style="color:#fff; text-decoration:none; font-size:0.82rem; font-weight:500;">
-            ${title}
-          </a>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
-  } catch (err) {
-    container.innerHTML = `<div style="font-size:0.75rem; color:#86868b;">News temporarily unavailable. Please tap Refresh.</div>`;
-  }
-}
-
-// Media Channel Selector
 function setMode(mode, element) {
   document.querySelectorAll('.view-selector button').forEach(b => b.classList.remove('active-mode'));
   if (element) element.classList.add('active-mode');
@@ -750,133 +705,170 @@ function setMode(mode, element) {
     if (el) el.style.display = 'none';
   });
 
-  const players = {
+  const streamMap = {
     video: { id: 'news-video-player', src: 'https://www.youtube.com/embed/II_m28Bm-iM?autoplay=1&mute=1', title: 'News Live' },
     live: { id: 'tc-live-player', src: 'https://www.youtube.com/embed/IzOOvR-XzAg?autoplay=1&mute=1', title: 'T&C Zone Live' },
     wildlife: { id: 'wildlife-player', src: 'https://www.youtube.com/embed/MiQe9ob9aDc?autoplay=1&mute=1', title: 'Wild Safari Live' },
     sports: { id: 'sports-player', src: 'https://www.youtube.com/embed/fE_xxKiCHO0?autoplay=1&mute=1', title: 'Sports Broadcast' },
     music: { id: 'music-player', src: 'https://www.youtube.com/embed/VdG_RC1POC8?autoplay=1&mute=1', title: 'Music & Vibes' },
-    nasa: { id: 'nasa-player', src: 'https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1', title: 'NASA Earth Stream' },
-    airport: { id: 'airport-player', src: 'https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1', title: 'Airport Airside Live' },
+    nasa: { id: 'nasa-player', src: 'https://www.youtube.com/embed/OKQEMp2555A?autoplay=1&mute=1', title: 'NASA Stream' },
+    airport: { id: 'airport-player', src: 'https://www.youtube.com/embed/n4I0d44oBEs?autoplay=1&mute=1', title: 'Airside Live' },
     hindu: { id: 'hindu-player', src: 'https://www.youtube.com/embed/FFtPSPByBmk?autoplay=1&mute=1', title: 'Bhagavad Gita' },
     muslim: { id: 'muslim-player', src: 'https://www.youtube.com/embed/_1FpcN1U_KY?autoplay=1&mute=1', title: 'Holy Quran' },
     christian: { id: 'christian-player', src: 'https://www.youtube.com/embed/dmgsOBr2lAA?autoplay=1&mute=1', title: 'Holy Bible' },
-    law: { id: 'law-player', src: 'https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1', title: 'Constitution & Law' },
+    law: { id: 'law-player', src: 'https://www.youtube.com/embed/U71NrLiWWjI?autoplay=1&mute=1', title: 'Constitution' },
     file: { id: null, src: null, title: 'Media Showcase' }
   };
+
+  const currentView = document.getElementById(`${mode}-view`);
+  if (currentView) currentView.style.display = 'block';
 
   const titleEl = document.getElementById('current-channel-title');
   const dotEl = document.getElementById('live-indicator');
   const ticker = document.getElementById('headphones-ticker');
-
-  const selected = document.getElementById(`${mode}-view`);
-  if (selected) selected.style.display = 'block';
 
   if (mode === 'text') {
     if (titleEl) titleEl.innerText = "Headlines";
     if (dotEl) dotEl.style.display = "none";
     if (ticker) ticker.style.display = "none";
   } else {
-    const config = players[mode];
-    if (titleEl && config) titleEl.innerText = config.title;
+    const conf = streamMap[mode];
+    if (titleEl && conf) titleEl.innerText = conf.title;
     if (dotEl) dotEl.style.display = "inline-block";
-    if (config && config.id) {
-      const p = document.getElementById(config.id);
-      if (p) p.src = config.src;
+    if (conf && conf.id) {
+      const p = document.getElementById(conf.id);
+      if (p) p.src = conf.src;
     }
     if (ticker) ticker.style.display = "flex";
   }
 }
 
-function changeLang(lang) {
-  const combo = document.querySelector('.goog-te-combo');
-  if (combo) {
-    combo.value = lang;
-    combo.dispatchEvent(new Event('change'));
+// Chat
+function handleChatKey(e) { if (e.key === 'Enter') submitUserMessage(); }
+function sendChipPrompt(t) {
+  const i = document.getElementById('user-chat-input');
+  if (i) i.value = t;
+  submitUserMessage();
+}
+
+async function submitUserMessage() {
+  const box = document.getElementById('user-chat-input');
+  if (!box) return;
+  const msg = box.value.trim();
+  if (!msg) return;
+
+  const log = document.getElementById('chat-log-box');
+  log.innerHTML += `<div class="msg-bubble user-msg">${msg}</div>`;
+  box.value = "";
+  log.scrollTop = log.scrollHeight;
+
+  const tId = "ai-" + Date.now();
+  log.innerHTML += `<div class="msg-bubble bot-msg" id="${tId}"><i>Thinking...</i></div>`;
+  log.scrollTop = log.scrollHeight;
+  const bubble = document.getElementById(tId);
+
+  try {
+    const API_KEY = "AQ.Ab8RN6JbLJ8a8xNiL1Vq_msT-p8pg-nJHR6KpgfyU5vYol4Ihw"; 
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: `You are the T&C Assistant. Store hours: 8AM-10PM. Founder: Murali Manohar Nidadavolu. Menu: Tea (₹10), Fries (₹50-70), Samosas (₹15/25), Rolls, Puffs. Short and helpful reply.\nUser: ${msg}` }] }] })
+    });
+    const d = await res.json();
+    bubble.innerText = d.candidates[0].content.parts[0].text;
+  } catch (e) {
+    let fallback = "Welcome to Tasty & Comfort! We're open 8:00 AM to 10:00 PM daily. Explore our Menu & Map sections!";
+    const low = msg.toLowerCase();
+    if (low.includes('hour') || low.includes('time')) fallback = "We are open 8:00 AM to 10:00 PM every day!";
+    else if (low.includes('owner') || low.includes('founder')) fallback = "The founder and owner of Tasty & Comfort is Murali Manohar Nidadavolu.";
+    bubble.innerText = fallback;
   }
+  log.scrollTop = log.scrollHeight;
+}
+
+// Announcements
+function checkAnnouncement() {
+  fetch('announcement.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      const modal = document.getElementById('announcement-modal');
+      const sound = document.getElementById('announcement-sound');
+      if (data.status === 'active') {
+        const textEl = document.getElementById('announcement-text');
+        if (textEl) textEl.innerText = data.message;
+        if (modal) modal.classList.remove('hidden');
+        if (sound) sound.play().catch(() => {});
+      } else if (modal) {
+        modal.classList.add('hidden');
+      }
+    }).catch(() => {});
+}
+
+function closeAnnouncement() {
+  const modal = document.getElementById('announcement-modal');
+  if (modal) modal.classList.add('hidden');
 }
 
 async function fetchWeather() {
   const apiKey = '238416beb1e4e9ee3e1c4c8f16fc2a2c';
-  const city = 'Hyderabad';
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=${apiKey}&units=metric`;
 
   try {
-    const response = await fetch(url);
-    const data = await response.json();
+    const res = await fetch(url);
+    const data = await res.json();
     const temp = `${Math.round(data.main.temp)}°C`;
     const cond = data.weather[0].description;
     const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
 
-    ['desktop-temp', 'mobile-temp'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerText = temp;
-    });
-
-    ['desktop-condition'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerText = cond;
-    });
-
-    ['desktop-icon', 'mobile-icon'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.src = iconUrl;
-    });
+    ['desktop-temp', 'mobile-temp'].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = temp; });
+    const cEl = document.getElementById('desktop-condition'); if (cEl) cEl.innerText = cond;
+    ['desktop-icon', 'mobile-icon'].forEach(id => { const el = document.getElementById(id); if (el) { el.src = iconUrl; el.style.display = 'block'; } });
   } catch (err) {}
 }
 
-// Master Initialization
+// Master Load
 document.addEventListener("DOMContentLoaded", () => {
-  const mapDivEl = document.getElementById('map');
-  if (mapDivEl && typeof L !== 'undefined') {
+  initTheme();
+  renderAppleVideoShelf();
+
+  // Date input initialization
+  const dateInput = document.getElementById('news-date-input');
+  if (dateInput) dateInput.value = selectedNewsDate;
+
+  // Map initialization
+  const mapDiv = document.getElementById('map');
+  if (mapDiv && typeof L !== 'undefined') {
     map = L.map('map').setView([stallLat, stallLng], 15);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: 'Tasty & Comfort'
-    }).addTo(map);
-
-    L.marker([stallLat, stallLng]).addTo(map)
-      .bindPopup('<b>Tasty &amp; Comfort Stall</b><br>New Modern Mission').openPopup();
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: 'Tasty & Comfort' }).addTo(map);
+    L.marker([stallLat, stallLng]).addTo(map).bindPopup('<b>Tasty &amp; Comfort Stall</b><br>New Modern Mission').openPopup();
 
     seismicLayerGroup = L.layerGroup().addTo(map);
     loadLiveUSGSEarthquakes();
 
-    map.on('click', async function(e) {
+    map.on('click', e => {
       const lat = e.latlng.lat.toFixed(4);
       const lng = e.latlng.lng.toFixed(4);
-
       if (activePinnedLat !== null && activePinnedLng !== null) {
-        pendingLat = lat;
-        pendingLng = lng;
-        showConfirmModal(lat, lng);
-        return;
+        pendingLat = lat; pendingLng = lng; showConfirmModal(lat, lng); return;
       }
-      activePinnedLat = lat;
-      activePinnedLng = lng;
-      await fetchLocationDataAndRoutes(lat, lng);
+      activePinnedLat = lat; activePinnedLng = lng;
+      fetchLocationDataAndRoutes(lat, lng);
     });
   }
 
-  // Welcome Alert
-  const closeButton = document.getElementById('apple-alert-close-btn');
-  const popupOverlay = document.getElementById('apple-alert-overlay');
-  const hasShown = sessionStorage.getItem('menuPopupShown');
-  
-  if (!hasShown && popupOverlay) {
-    popupOverlay.classList.remove('hidden');
+  // Welcome popup
+  const alertClose = document.getElementById('apple-alert-close-btn');
+  const alertOverlay = document.getElementById('apple-alert-overlay');
+  if (!sessionStorage.getItem('menuPopupShown') && alertOverlay) {
+    alertOverlay.classList.remove('hidden');
     sessionStorage.setItem('menuPopupShown', 'true');
   }
-  
-  if (closeButton && popupOverlay) {
-    closeButton.addEventListener('click', () => popupOverlay.classList.add('hidden'));
+  if (alertClose && alertOverlay) {
+    alertClose.addEventListener('click', () => alertOverlay.classList.add('hidden'));
   }
 
-  // Headphone notice ticker dismissal
   const ticker = document.getElementById('headphones-ticker');
-  if (ticker) {
-    ticker.addEventListener('click', () => ticker.style.display = 'none');
-  }
+  if (ticker) ticker.addEventListener('click', () => ticker.style.display = 'none');
 
   fetchWeather();
   setInterval(fetchWeather, 600000);
