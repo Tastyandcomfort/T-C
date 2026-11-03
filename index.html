@@ -170,7 +170,7 @@
           </div>
         </div>
 
-        <!-- Emergency Quick Dial Action Grid -->
+        <!-- Emergency Quick Dial Grid -->
         <div class="glass-card apple-glass emergency-section">
           <div class="emergency-title-row">
             <span class="emergency-pulse-dot"></span>
@@ -541,22 +541,50 @@
         <!-- Fun & Arcade Widget -->
         <div class="game-card apple-glass">
           <div class="section-header">
-            <span class="live-dot" style="background-color: #34c759; display:inline-block;"></span>
-            <h4>Fun</h4>
+            <span class="live-dot" style="background-color: #30d158; display:inline-block;"></span>
+            <h4>Quick Gaming Arcade</h4>
           </div>
           <div class="game-banner apple-squircle">
-            <p>Tap below to launch the game:</p>
-            <a href="https://yandex.com/games/" target="_blank" rel="noopener" class="play-now-btn apple-pill-btn">Play Game 🎲</a>
+            <div class="arcade-intro">
+              <div class="arcade-icon-wrap"><i class="fa-solid fa-gamepad"></i></div>
+              <div>
+                <h5>Instant Browser Games</h5>
+                <p>Play free casual titles without installation while enjoying your tea.</p>
+              </div>
+            </div>
+            <div class="arcade-tiles-row">
+              <a href="https://yandex.com/games/category/arcade" target="_blank" rel="noopener" class="arcade-tile apple-squircle">
+                <i class="fa-solid fa-rocket"></i>
+                <span>Arcade</span>
+              </a>
+              <a href="https://yandex.com/games/category/puzzle" target="_blank" rel="noopener" class="arcade-tile apple-squircle">
+                <i class="fa-solid fa-puzzle-piece"></i>
+                <span>Puzzles</span>
+              </a>
+              <a href="https://yandex.com/games/category/racing" target="_blank" rel="noopener" class="arcade-tile apple-squircle">
+                <i class="fa-solid fa-flag-checkered"></i>
+                <span>Racing</span>
+              </a>
+              <a href="https://yandex.com/games/" target="_blank" rel="noopener" class="arcade-tile highlight-tile apple-squircle">
+                <i class="fa-solid fa-play"></i>
+                <span>All Games ↗</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- VIEW 4: AI CONCIERGE -->
+      <!-- VIEW 4: AI CONCIERGE (FULLSCREEN AUTO-FIT APPLE SHELL) -->
       <section id="chat-view" class="app-section">
         <div class="glass-card ai-terminal-box apple-glass">
-          <div class="ai-status">
-            <span class="pulse-dot"></span>
-            <span>AI (Coming Soon)</span>
+          <div class="ai-header-bar">
+            <div class="ai-status">
+              <span class="pulse-dot"></span>
+              <span>T&amp;C Intelligence Assistant</span>
+            </div>
+            <button class="ai-expand-toggle-btn" onclick="toggleChatFullScreen()" title="Toggle Fullscreen">
+              <i id="ai-expand-icon" class="fa-solid fa-expand"></i>
+            </button>
           </div>
 
           <div class="chatbot-history" id="chat-log-box">
@@ -598,7 +626,7 @@
         </div>
 
         <div class="map-search-container">
-          <input type="text" id="destination-input" placeholder="Search destination (e.g., Lb nagar)..." />
+          <input type="text" id="destination-input" placeholder="Search destination (e.g., Lb nagar, Charminar)..." />
           <button onclick="searchDestination()" class="apple-pill-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
         </div>
 
@@ -609,7 +637,7 @@
           <button class="amenity-chip apple-pill" onclick="searchAmenity('metro station')">🚇 Metro</button>
           <button class="amenity-chip apple-pill" onclick="searchAmenity('bus station')">🚌 Bus Stop</button>
           <button class="amenity-chip apple-pill" onclick="searchAmenity('atm')">ATM's 24*7</button>
-          <button class="amenity-chip apple-pill" onclick="searchAmenity('gas station')">⛽ Fule Bunk</button>
+          <button class="amenity-chip apple-pill" onclick="searchAmenity('gas station')">⛽ Fuel Bunk</button>
         </div>
 
         <div id="route-info" class="modern-route-card apple-glass">
@@ -654,7 +682,7 @@
             </div>
             <div class="cert-badge apple-squircle-card">
               <div class="badge-icon black-badge"><i class="fa-solid fa-oil-can"></i></div>
-              <h6>Cocking Oil Test Report</h6>
+              <h6>Cooking Oil Test Report</h6>
               <span class="v-status">VERIFIED by T&amp;C</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
@@ -808,19 +836,19 @@
 
   </div>
 
-  <!-- TRUE 4-SIDE / CORNER RESIZABLE & DRAGGABLE PiP MINIPLAYER (From News Engine) -->
+  <!-- EXACT 8-HANDLE MULTI-DIRECTIONAL PiP MINIPLAYER (From News Engine) -->
   <div id="apple-miniplayer" class="apple-miniplayer-dock apple-glass hidden">
-    <!-- 8 Multi-directional Resize Edge/Corner Handles -->
-    <div class="pip-resize-handle pip-edge-t" data-dir="t"></div>
-    <div class="pip-resize-handle pip-edge-b" data-dir="b"></div>
-    <div class="pip-resize-handle pip-edge-l" data-dir="l"></div>
-    <div class="pip-resize-handle pip-edge-r" data-dir="r"></div>
-    <div class="pip-resize-handle pip-corner-tl" data-dir="tl"></div>
-    <div class="pip-resize-handle pip-corner-tr" data-dir="tr"></div>
-    <div class="pip-resize-handle pip-corner-bl" data-dir="bl"></div>
-    <div class="pip-resize-handle pip-corner-br" data-dir="br"></div>
+    <!-- 8 Multi-directional Resize Handles -->
+    <div class="pip-resize-handle pip-edge-t" data-resize="n"></div>
+    <div class="pip-resize-handle pip-edge-b" data-resize="s"></div>
+    <div class="pip-resize-handle pip-edge-l" data-resize="w"></div>
+    <div class="pip-resize-handle pip-edge-r" data-resize="e"></div>
+    <div class="pip-resize-handle pip-corner-tl" data-resize="nw"></div>
+    <div class="pip-resize-handle pip-corner-tr" data-resize="ne"></div>
+    <div class="pip-resize-handle pip-corner-bl" data-resize="sw"></div>
+    <div class="pip-resize-handle pip-corner-br" data-resize="se"></div>
 
-    <!-- Drag Header -->
+    <!-- Drag Header & Controls -->
     <div class="miniplayer-drag-handle" id="miniplayer-header">
       <div class="pip-grip-bar"></div>
       <div class="miniplayer-meta">
@@ -828,12 +856,14 @@
         <div class="miniplayer-badge"><span class="live-dot" style="display:inline-block; width:6px; height:6px;"></span> LIVE</div>
       </div>
       <div class="miniplayer-controls">
-        <button onclick="toggleMiniplayerSize()" title="Toggle Size" class="mini-btn"><i id="miniplayer-expand-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+        <button onclick="togglePiPLockMode()" id="pip-lock-btn" class="mini-btn" title="Toggle Lock/Touch Barrier"><i id="pip-lock-icon" class="fa-solid fa-lock text-xs"></i></button>
         <button onclick="closeMiniplayer()" title="Close Miniplayer" class="mini-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
     
-    <div class="miniplayer-video-box">
+    <div class="miniplayer-video-box" style="position: relative;">
+      <!-- Touch/Drag shield barrier for smooth dragging -->
+      <div id="pip-touch-barrier" style="position: absolute; inset: 0; z-index: 10; pointer-events: auto; cursor: grab;"></div>
       <iframe id="miniplayer-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
   </div>
