@@ -410,7 +410,7 @@ function handleDateChange(inputElem) {
   const today = new Date().toISOString().split('T')[0];
 
   if (chosen > today) {
-    alert("Sorry, future articles do not exist yet! Returning to current date.");
+    alert("🗓️ Future Date Warning: Cannot select future dates.");
     inputElem.value = selectedNewsDate;
     return;
   }
@@ -432,25 +432,31 @@ async function fetchNews() {
     const res = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=${currentScope}&date=${selectedNewsDate}`);
     const xmlText = await res.text();
     const xml = new DOMParser().parseFromString(xmlText, "text/xml");
-    const items = xml.querySelectorAll("item");
+    let items = Array.from(xml.querySelectorAll("item"));
 
     if (!items || items.length === 0) throw new Error("No feed items found");
 
     // Strictly match user-selected date
-    const exactMatches = Array.from(items).filter(item => {
+    let filteredItems = items.filter(item => {
       const pubDate = item.querySelector("pubDate")?.textContent || "";
       if (!pubDate) return false;
       const d = new Date(pubDate);
       return !isNaN(d) && d.toISOString().split('T')[0] === selectedNewsDate;
     });
 
-    if (exactMatches.length > 0) {
-      container.innerHTML = exactMatches.map(item => {
-        let rawTitle = item.querySelector("title")?.textContent || "";
+    // Fallback if today's feed format uses recent entries
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (filteredItems.length === 0 && selectedNewsDate === todayStr && items.length > 0) {
+      filteredItems = items.slice(0, 15);
+    }
+
+    if (filteredItems.length > 0) {
+      container.innerHTML = filteredItems.map(item => {
+        let rawTitle = item.querySelector("title")?.textContent || "News Story";
         const link = item.querySelector("link")?.textContent || "#";
         const pubDateRaw = item.querySelector("pubDate")?.textContent || "";
         
-        let sourceName = "Google News";
+        let sourceName = "T&C Verified";
         if (rawTitle.includes(" - ")) {
           const parts = rawTitle.split(" - ");
           sourceName = parts.pop().trim();
@@ -465,29 +471,30 @@ async function fetchNews() {
 
         return `
           <div class="news-item">
-            <div style="font-size:0.7rem; color:var(--apple-text-secondary); margin-bottom:3px;">
-              Published by <strong style="color:var(--apple-gold);">${sourceName}</strong> at <span style="color:var(--apple-blue);">${timeFormatted}</span>.
-            </div>
-            <a href="${link}" target="_blank" rel="noopener" style="color:var(--apple-text-primary); text-decoration:none; font-size:0.84rem; font-weight:500;">
+            <a href="${link}" target="_blank" rel="noopener">
               ${rawTitle}
             </a>
+            <div class="news-meta-row">
+              <span class="news-source-tag">${sourceName}</span>
+              <span><i class="fa-regular fa-clock mr-1"></i> ${timeFormatted} • ${selectedNewsDate}</span>
+            </div>
           </div>
         `;
       }).join('');
     } else {
-      const scopeLabel = currentScope === 'local' ? 'Telangana' : currentScope === 'india' ? 'India' : 'World';
+      const scopeLabel = currentScope === 'local' ? 'Telangana State' : (currentScope === 'india' ? 'India' : 'World');
       const searchArchiveUrl = `https://www.google.com/search?q=${encodeURIComponent(scopeLabel + ' news ' + selectedNewsDate)}&tbm=nws`;
 
       container.innerHTML = `
-        <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); border-radius:12px; padding:16px; text-align:center;">
-          <div style="font-size:0.85rem; font-weight:bold; color:var(--apple-gold); margin-bottom:6px;">
-            No live articles found for ${selectedNewsDate}
+        <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); border-radius:12px; padding:18px; text-align:center;">
+          <div style="font-size:0.9rem; font-weight:bold; color:var(--apple-gold); margin-bottom:6px;">
+            <i class="fa-solid fa-calendar-xmark" style="margin-right:6px;"></i> No Stories Found for ${selectedNewsDate}
           </div>
           <p style="font-size:0.75rem; color:var(--apple-text-secondary); margin-bottom:12px; line-height:1.4;">
-            Live API streams retain recent 24–48hr wire feeds. For historical archives for <strong>${selectedNewsDate}</strong>:
+            No direct RSS records matched this exact date. Check the official news archive source below:
           </p>
           <a href="${searchArchiveUrl}" target="_blank" rel="noopener" class="apple-pill-btn" style="font-size:0.75rem; padding:6px 14px;">
-            Open ${scopeLabel} News for ${selectedNewsDate} →
+            Open ${scopeLabel} News Archive (${selectedNewsDate}) →
           </a>
         </div>
       `;
@@ -562,7 +569,7 @@ function openSameContainerWindy() {
     <div style="background:var(--apple-card-elevated); border-bottom:0.5px solid var(--apple-border); padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
       <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem;">
         <span style="color:var(--apple-gold); font-weight:bold;">🌪️ Live Radar</span>
-        <span>🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'}</span>
+        <span style="color:#ffffff;">🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'}</span>
       </div>
       <button onclick="switchMode('driving')" style="background:var(--apple-red); color:#fff; border:none; padding:4px 10px; border-radius:9999px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
         ✕ Close
@@ -760,6 +767,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
+// Restyled High-Contrast Master Card with Working Driving, Walking, Locality & Radar Tabs
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -776,45 +784,48 @@ function renderMasterCard() {
       const label = index === 0 ? "Fastest Route" : `Alternative ${index + 1}`;
       
       optionsHtml += `
-        <button class="route-option-btn ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)" style="flex:1; background:var(--apple-input-bg); border:0.5px solid var(--apple-border); padding:8px; border-radius:10px; cursor:pointer; color:var(--apple-text-primary);">
-          <div style="font-weight:700; color:var(--apple-gold);">${label}</div>
-          <div style="font-size:0.75rem; color:var(--apple-text-secondary);">${dist} km • ~${timeFormatted}</div>
-        </button>
+        <div class="route-option-card ${index === 0 ? 'active-route' : ''}" onclick="switchRouteIndex(${index}, this)">
+          <div class="r-title">${label}</div>
+          <div class="r-stats">${dist} km &bull; ~${timeFormatted}</div>
+        </div>
       `;
     });
 
-    tabSpecificHtml = `<div style="display:flex; gap:8px; margin-top:8px;">${optionsHtml}</div>`;
+    tabSpecificHtml = `<div class="route-options-flex">${optionsHtml}</div>`;
   } else if (currentMode === 'locality') {
     tabSpecificHtml = `
-      <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); padding:10px; border-radius:12px; font-size:0.72rem; margin-top:6px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+      <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); padding:12px; border-radius:12px; font-size:0.75rem; margin-top:8px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
           <span style="font-weight:bold; color:var(--apple-gold);">Sector Intelligence</span>
           <span style="color:${t.aqiBadge.color}; font-weight:bold;">${t.aqiBadge.text}</span>
         </div>
-        <p style="margin:0 0 6px 0; color:var(--apple-text-secondary); line-height:1.4;">Mandal: <b>${t.county}</b> • Temp: <b>${t.currW.temperature_2m || '--'}°C</b></p>
-        <p style="margin:0; color:var(--apple-red); font-size:0.68rem;">🌋 ${t.nearestQuakeText}</p>
+        <p style="margin:0 0 6px 0; color:#ffffff; line-height:1.4;">
+          Mandal: <b>${t.county}</b> &bull; Local Temp: <b>${t.currW.temperature_2m || '--'}°C</b> (${t.currW.relative_humidity_2m || '--'}% Humidity)
+        </p>
+        <p style="margin:0; color:var(--apple-red); font-size:0.72rem;">🌋 ${t.nearestQuakeText}</p>
       </div>
     `;
   }
 
   infoBox.innerHTML = `
     <div>
-      <div style="background:var(--apple-input-bg); border-left:3px solid var(--apple-gold); border-radius:10px; padding:8px 12px; margin-bottom:8px;">
-        <div style="font-size:0.88rem; font-weight:800;">📍 ${t.villageTown}, ${t.district}</div>
-        <div style="font-size:0.7rem; color:var(--apple-text-secondary);">${t.landmark} • ${t.state} (${t.pincode})</div>
+      <div style="background:var(--apple-input-bg); border-left:3px solid var(--apple-gold); border-radius:10px; padding:10px 14px; margin-bottom:10px;">
+        <div style="font-size:0.92rem; font-weight:800; color:#ffffff;">📍 ${t.villageTown}, ${t.district}</div>
+        <div style="font-size:0.75rem; color:#cbd5e1; margin-top:2px;">${t.landmark} &bull; ${t.state} (${t.pincode})</div>
       </div>
 
-      <div class="apple-segmented-scroll" style="margin-bottom:8px;">
-        <button class="${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')">🚗 Driving</button>
-        <button class="${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')">🚶 Walking</button>
-        <button class="${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')">📍 Locality</button>
-        <button class="${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')">🌪️ Radar</button>
+      <!-- High-Contrast Apple Segmented Control for Driving / Walking / Locality / Radar -->
+      <div class="map-mode-nav-bar">
+        <button class="map-mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')">🚗 Driving</button>
+        <button class="map-mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')">🚶 Walking</button>
+        <button class="map-mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')">📍 Locality</button>
+        <button class="map-mode-btn ${currentMode === 'radar' ? 'active-mode' : ''}" onclick="switchMode('radar')">🌪️ Radar</button>
       </div>
 
       ${tabSpecificHtml}
 
       ${activePinnedLat ? `
-        <button onclick="removePinnedLocation()" style="width:100%; margin-top:10px; background:rgba(255,59,48,0.1); color:var(--apple-red); border:0.5px solid var(--apple-red); padding:6px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+        <button onclick="removePinnedLocation()" style="width:100%; margin-top:12px; background:rgba(255,59,48,0.15); color:var(--apple-red); border:0.5px solid var(--apple-red); padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">
           Clear Pin &amp; Reset Map
         </button>
       ` : ''}
@@ -829,7 +840,7 @@ function formatDuration(seconds) {
 }
 
 function switchRouteIndex(index, btnElement) {
-  document.querySelectorAll('.route-option-btn').forEach(b => b.classList.remove('active-route'));
+  document.querySelectorAll('.route-option-card').forEach(b => b.classList.remove('active-route'));
   btnElement.classList.add('active-route');
   drawRouteOnMap(currentMode, index);
 }
@@ -844,7 +855,7 @@ function drawRouteOnMap(mode, index) {
   
   routes.forEach((r, i) => {
     const color = i === index ? (mode === 'driving' ? '#ffd700' : '#34c759') : '#888';
-    const layer = L.geoJSON(r.geometry, { style: { color, weight: i === index ? 5 : 3, opacity: 0.8 } }).addTo(map);
+    const layer = L.geoJSON(r.geometry, { style: { color, weight: i === index ? 5 : 3, opacity: 0.85 } }).addTo(map);
     routeLayers.push(layer);
   });
 
@@ -929,14 +940,24 @@ function toggleUpi() {
   if (u) u.classList.toggle('hidden');
 }
 
+// Fixed High-Contrast Menu Item Popup
 function openMenuModal(imgSrc, title, price, type) {
   const modal = document.getElementById('menuModal');
   if (!modal) return;
   
   modal.querySelector('img').src = imgSrc;
   modal.querySelector('h3').innerText = title;
-  modal.querySelector('.price-tile').innerText = 'Price: ' + price;
-  modal.querySelector('.type-tile').innerHTML = `Type: ${type} <span style="color:${type.toLowerCase().includes('veg') && !type.toLowerCase().includes('non') ? 'var(--apple-green)' : 'var(--apple-red)'};">●</span>`;
+  
+  const priceTile = modal.querySelector('.price-tile');
+  const typeTile = modal.querySelector('.type-tile');
+
+  if (priceTile) {
+    priceTile.innerHTML = `<span style="color:#ffffff;">Price: <b>${price}</b></span>`;
+  }
+  if (typeTile) {
+    const isVeg = type.toLowerCase().includes('veg') && !type.toLowerCase().includes('non');
+    typeTile.innerHTML = `<span style="color:#ffffff;">Type: ${type} <span style="color:${isVeg ? 'var(--apple-green)' : 'var(--apple-red)'}; font-size:1.1rem;">●</span></span>`;
+  }
   modal.showModal();
 }
 
@@ -1040,7 +1061,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initPiPInteractivity();
 
   const dateInput = document.getElementById('news-date-input');
-  if (dateInput) dateInput.value = selectedNewsDate;
+  if (dateInput) {
+    dateInput.value = selectedNewsDate;
+    dateInput.max = selectedNewsDate;
+  }
 
   const mapDiv = document.getElementById('map');
   if (mapDiv && typeof L !== 'undefined') {
