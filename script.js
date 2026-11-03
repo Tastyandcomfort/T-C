@@ -1,5 +1,5 @@
 // ===================================================
-// T&C APPLE SYSTEM: DRAGGABLE PiP, NEWS & CONTROLS
+// T&C APPLE SYSTEM: DRAGGABLE & 4-SIDE RESIZABLE PiP, NEWS & CONTROLS
 // ===================================================
 
 const stallLat = 17.367761; 
@@ -137,7 +137,32 @@ function changeLang(langCode) {
 }
 
 // ===================================================
-// 4. APPLE VIDEO SHELF & DRAGGABLE/RESIZABLE PiP
+// 4. MODEL 1: COMBINED MASTER DECK (HEADLINES VS CHANNELS)
+// ===================================================
+function switchMasterDeck(deckKey, element) {
+  document.querySelectorAll('.master-pill-deck button').forEach(b => b.classList.remove('active-mode'));
+  if (element) element.classList.add('active-mode');
+
+  const headlinesPanel = document.getElementById('deck-headlines-subview');
+  const channelsPanel = document.getElementById('deck-channels-subview');
+  const sectionTitle = document.getElementById('deck-section-title');
+  const liveIndicator = document.getElementById('deck-live-indicator');
+
+  if (deckKey === 'headlines') {
+    if (headlinesPanel) headlinesPanel.style.display = 'block';
+    if (channelsPanel) channelsPanel.style.display = 'none';
+    if (sectionTitle) sectionTitle.innerText = "Headlines & Information";
+    if (liveIndicator) liveIndicator.style.display = 'none';
+  } else {
+    if (headlinesPanel) headlinesPanel.style.display = 'none';
+    if (channelsPanel) channelsPanel.style.display = 'block';
+    if (sectionTitle) sectionTitle.innerText = "Live Broadcast Channels";
+    if (liveIndicator) liveIndicator.style.display = 'inline-block';
+  }
+}
+
+// ===================================================
+// 5. APPLE VIDEO SHELF & 4-SIDE RESIZABLE PiP (From News Website Architecture)
 // ===================================================
 function renderAppleVideoShelf() {
   const carousel = document.getElementById('channels-carousel');
@@ -159,17 +184,16 @@ function renderAppleVideoShelf() {
 }
 
 function launchVideo(videoId, title, modeKey) {
-  setMode(modeKey || 'video', null);
-  
   if (videoId) {
-    const mainIframe = document.getElementById('main-broadcast-iframe');
-    const mainImg = document.getElementById('main-broadcast-img');
-    if (mainIframe) {
-      mainIframe.style.display = 'block';
-      mainIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
-    }
-    if (mainImg) mainImg.style.display = 'none';
+    const fileMedia = document.getElementById('file-media-preview');
+    if (fileMedia) fileMedia.style.display = 'none';
     launchMiniplayer(videoId, title);
+    const ticker = document.getElementById('headphones-ticker');
+    if (ticker) ticker.style.display = 'flex';
+  } else {
+    // Mode file
+    const fileMedia = document.getElementById('file-media-preview');
+    if (fileMedia) fileMedia.style.display = 'block';
   }
 }
 
@@ -189,7 +213,15 @@ function toggleMiniplayerSize() {
   if (mini) {
     mini.classList.toggle('expanded-player');
     const isExp = mini.classList.contains('expanded-player');
-    if (icon) icon.className = isExp ? "fa-solid fa-down-left-and-up-right-to-center" : "fa-solid fa-up-right-and-down-left-from-center";
+    if (isExp) {
+      mini.style.width = '480px';
+      mini.style.height = '320px';
+      if (icon) icon.className = "fa-solid fa-down-left-and-up-right-to-center";
+    } else {
+      mini.style.width = '330px';
+      mini.style.height = 'auto';
+      if (icon) icon.className = "fa-solid fa-up-right-and-down-left-from-center";
+    }
   }
 }
 
@@ -200,20 +232,20 @@ function closeMiniplayer() {
   if (mini) mini.classList.add('hidden');
 }
 
-// Touch & Mouse Drag / Resize for Miniplayer
+// 4-Way Multi-Directional Edge/Corner Resizing & Dragging (Identical to News Engine)
 function initPiPInteractivity() {
   const mini = document.getElementById('apple-miniplayer');
   const header = document.getElementById('miniplayer-header');
-  const resizer = document.getElementById('miniplayer-resizer');
   if (!mini || !header) return;
 
   let isDragging = false;
   let isResizing = false;
+  let currentResizeDir = '';
   let startX, startY, startLeft, startTop, startWidth, startHeight;
 
   // Dragging logic
   const onDragStart = (e) => {
-    if (e.target.closest('.mini-btn')) return;
+    if (e.target.closest('.mini-btn') || e.target.closest('.pip-resize-handle')) return;
     isDragging = true;
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
@@ -254,40 +286,89 @@ function initPiPInteractivity() {
   window.addEventListener('mouseup', onDragEnd);
   window.addEventListener('touchend', onDragEnd);
 
-  // Resizing logic
-  if (resizer) {
+  // 8-Directional Resizing logic
+  document.querySelectorAll('.pip-resize-handle').forEach(handle => {
     const onResizeStart = (e) => {
       e.stopPropagation();
+      e.preventDefault();
       isResizing = true;
+      currentResizeDir = handle.getAttribute('data-dir');
+
       const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
       const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
       startX = clientX;
       startY = clientY;
-      startWidth = mini.offsetWidth;
-      startHeight = mini.offsetHeight;
+      const rect = mini.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop = rect.top;
+      startWidth = rect.width;
+      startHeight = rect.height;
+
+      mini.style.right = 'auto';
+      mini.style.bottom = 'auto';
+      mini.style.left = `${startLeft}px`;
+      mini.style.top = `${startTop}px`;
     };
 
-    const onResizeMove = (e) => {
-      if (!isResizing) return;
-      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-      const newWidth = Math.max(220, Math.min(window.innerWidth - 20, startWidth + (clientX - startX)));
-      mini.style.width = `${newWidth}px`;
-    };
+    handle.addEventListener('mousedown', onResizeStart);
+    handle.addEventListener('touchstart', onResizeStart, { passive: false });
+  });
 
-    const onResizeEnd = () => { isResizing = false; };
+  const onResizeMove = (e) => {
+    if (!isResizing) return;
+    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
 
-    resizer.addEventListener('mousedown', onResizeStart);
-    resizer.addEventListener('touchstart', onResizeStart, { passive: true });
-    window.addEventListener('mousemove', onResizeMove);
-    window.addEventListener('touchmove', onResizeMove, { passive: true });
-    window.addEventListener('mouseup', onResizeEnd);
-    window.addEventListener('touchend', onResizeEnd);
-  }
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+
+    let newWidth = startWidth;
+    let newHeight = startHeight;
+    let newLeft = startLeft;
+    let newTop = startTop;
+
+    const minW = 240, maxW = window.innerWidth - 20;
+    const minH = 160, maxH = window.innerHeight - 20;
+
+    // Horizontal Calculations
+    if (currentResizeDir.includes('r')) {
+      newWidth = Math.max(minW, Math.min(maxW, startWidth + dx));
+    } else if (currentResizeDir.includes('l')) {
+      const calcW = startWidth - dx;
+      if (calcW >= minW && calcW <= maxW) {
+        newWidth = calcW;
+        newLeft = startLeft + dx;
+      }
+    }
+
+    // Vertical Calculations
+    if (currentResizeDir.includes('b')) {
+      newHeight = Math.max(minH, Math.min(maxH, startHeight + dy));
+    } else if (currentResizeDir.includes('t')) {
+      const calcH = startHeight - dy;
+      if (calcH >= minH && calcH <= maxH) {
+        newHeight = calcH;
+        newTop = startTop + dy;
+      }
+    }
+
+    mini.style.width = `${newWidth}px`;
+    mini.style.height = `${newHeight}px`;
+    mini.style.left = `${newLeft}px`;
+    mini.style.top = `${newTop}px`;
+  };
+
+  const onResizeEnd = () => { isResizing = false; };
+
+  window.addEventListener('mousemove', onResizeMove);
+  window.addEventListener('touchmove', onResizeMove, { passive: false });
+  window.addEventListener('mouseup', onResizeEnd);
+  window.addEventListener('touchend', onResizeEnd);
 }
 
 // ===================================================
-// 5. HEADLINES ENGINE: STRICT DATE FILTERING
+// 6. HEADLINES ENGINE: STRICT DATE FILTERING
 // ===================================================
 let currentScope = 'local';
 let selectedNewsDate = new Date().toISOString().split('T')[0];
@@ -394,7 +475,7 @@ async function fetchNews() {
 }
 
 // ===================================================
-// 6. MAP TELEMETRY & ROUTING ENGINE
+// 7. MAP TELEMETRY & ROUTING ENGINE
 // ===================================================
 function getAQIShortBadge(aqiVal) {
   if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) return { text: 'AQI N/A', color: '#94a3b8' };
@@ -785,7 +866,7 @@ async function loadLiveUSGSEarthquakes() {
 }
 
 // ===================================================
-// 7. ROUTING, BROADCAST CHANNEL SELECTOR & AI CHAT
+// 8. ROUTING & AI CHAT
 // ===================================================
 function switchView(viewId, element) {
   document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active-view'));
@@ -825,61 +906,6 @@ function openMenuModal(imgSrc, title, price, type) {
   modal.querySelector('.price-tile').innerText = 'Price: ' + price;
   modal.querySelector('.type-tile').innerHTML = `Type: ${type} <span style="color:${type.toLowerCase().includes('veg') && !type.toLowerCase().includes('non') ? 'var(--apple-green)' : 'var(--apple-red)'};">●</span>`;
   modal.showModal();
-}
-
-function setMode(mode, element) {
-  document.querySelectorAll('.view-selector button').forEach(b => b.classList.remove('active-mode'));
-  if (element) element.classList.add('active-mode');
-
-  const textMode = document.getElementById('text-view');
-  const broadcastMode = document.getElementById('broadcast-player-view');
-  const mainIframe = document.getElementById('main-broadcast-iframe');
-  const mainImg = document.getElementById('main-broadcast-img');
-  const titleEl = document.getElementById('current-channel-title');
-  const dotEl = document.getElementById('live-indicator');
-  const ticker = document.getElementById('headphones-ticker');
-
-  const channelMap = {
-    text: { name: 'Headlines', isLive: false },
-    video: { id: 'II_m28Bm-iM', name: 'TV9 Live News', isLive: true },
-    live: { id: 'IzOOvR-XzAg', name: 'T&C Live', isLive: true },
-    wildlife: { id: 'MiQe9ob9aDc', name: 'Wild Safari Cam', isLive: true },
-    sports: { id: 'fE_xxKiCHO0', name: 'Sports Live', isLive: true },
-    music: { id: 'VdG_RC1POC8', name: 'Music Lounge', isLive: false },
-    nasa: { id: 'OKQEMp2555A', name: 'NASA Live', isLive: true },
-    airport: { id: 'n4I0d44oBEs', name: 'Airside Live', isLive: true },
-    hindu: { id: 'FFtPSPByBmk', name: 'Bhagavat_Geetha', isLive: false },
-    muslim: { id: '_1FpcN1U_KY', name: 'Khuran', isLive: false },
-    christian: { id: 'dmgsOBr2lAA', name: 'Bibul', isLive: false },
-    law: { id: 'U71NrLiWWjI', name: 'Constitution', isLive: false },
-    file: { id: null, name: 'Media Showcase', isLive: false }
-  };
-
-  const current = channelMap[mode] || channelMap.text;
-  if (titleEl) titleEl.innerText = current.name;
-  if (dotEl) dotEl.style.display = current.isLive ? "inline-block" : "none";
-
-  if (mode === 'text') {
-    if (textMode) textMode.style.display = 'block';
-    if (broadcastMode) broadcastMode.style.display = 'none';
-    if (mainIframe) mainIframe.src = "";
-    if (ticker) ticker.style.display = "none";
-  } else if (mode === 'file') {
-    if (textMode) textMode.style.display = 'none';
-    if (broadcastMode) broadcastMode.style.display = 'block';
-    if (mainIframe) { mainIframe.style.display = 'none'; mainIframe.src = ""; }
-    if (mainImg) mainImg.style.display = 'block';
-    if (ticker) ticker.style.display = "none";
-  } else {
-    if (textMode) textMode.style.display = 'none';
-    if (broadcastMode) broadcastMode.style.display = 'block';
-    if (mainImg) mainImg.style.display = 'none';
-    if (mainIframe) {
-      mainIframe.style.display = 'block';
-      mainIframe.src = `https://www.youtube.com/embed/${current.id}?autoplay=1&mute=1`;
-    }
-    if (ticker) ticker.style.display = "flex";
-  }
 }
 
 // AI Chat Engine
