@@ -1,5 +1,5 @@
 // ===================================================
-// T&C APPLE SYSTEM: DRAGGABLE & 4-SIDE RESIZABLE PiP, NEWS & CONTROLS
+// T&C APPLE SYSTEM: DRAGGABLE & 8-WAY RESIZABLE PiP, NEWS & CONTROLS
 // ===================================================
 
 const stallLat = 17.367761; 
@@ -162,7 +162,7 @@ function switchMasterDeck(deckKey, element) {
 }
 
 // ===================================================
-// 5. APPLE VIDEO SHELF & 4-SIDE RESIZABLE PiP (From News Website Architecture)
+// 5. APPLE VIDEO SHELF & 8-HANDLE MULTI-DIRECTIONAL PiP
 // ===================================================
 function renderAppleVideoShelf() {
   const carousel = document.getElementById('channels-carousel');
@@ -202,26 +202,15 @@ function launchMiniplayer(videoId, title) {
   const iframe = document.getElementById('miniplayer-iframe');
   const titleEl = document.getElementById('miniplayer-channel-title');
 
-  if (iframe) iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+  if (iframe) iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&playsinline=1&enablejsapi=1`;
   if (titleEl) titleEl.innerText = title;
   if (mini) mini.classList.remove('hidden');
-}
 
-function toggleMiniplayerSize() {
-  const mini = document.getElementById('apple-miniplayer');
-  const icon = document.getElementById('miniplayer-expand-icon');
-  if (mini) {
-    mini.classList.toggle('expanded-player');
-    const isExp = mini.classList.contains('expanded-player');
-    if (isExp) {
-      mini.style.width = '480px';
-      mini.style.height = '320px';
-      if (icon) icon.className = "fa-solid fa-down-left-and-up-right-to-center";
-    } else {
-      mini.style.width = '330px';
-      mini.style.height = 'auto';
-      if (icon) icon.className = "fa-solid fa-up-right-and-down-left-from-center";
-    }
+  // Load saved dimensions or default
+  const saved = JSON.parse(localStorage.getItem('tc_pip_dims') || 'null');
+  if (saved && saved.width && saved.height) {
+    mini.style.width = `${Math.min(saved.width, window.innerWidth - 20)}px`;
+    mini.style.height = `${Math.min(saved.height, window.innerHeight - 50)}px`;
   }
 }
 
@@ -232,24 +221,55 @@ function closeMiniplayer() {
   if (mini) mini.classList.add('hidden');
 }
 
-// 4-Way Multi-Directional Edge/Corner Resizing & Dragging (Identical to News Engine)
+let isPiPMoveMode = true;
+let autoLockTimer = null;
+
+function togglePiPLockMode() {
+  isPiPMoveMode = !isPiPMoveMode;
+  const barrier = document.getElementById('pip-touch-barrier');
+  const icon = document.getElementById('pip-lock-icon');
+  const btn = document.getElementById('pip-lock-btn');
+
+  if (barrier) barrier.style.pointerEvents = isPiPMoveMode ? 'auto' : 'none';
+  if (icon) icon.className = isPiPMoveMode ? 'fa-solid fa-lock text-xs' : 'fa-solid fa-lock-open text-xs';
+  if (btn) btn.style.background = isPiPMoveMode ? 'var(--apple-input-bg)' : 'rgba(48, 209, 88, 0.4)';
+
+  if (!isPiPMoveMode) {
+    clearTimeout(autoLockTimer);
+    autoLockTimer = setTimeout(() => {
+      if (!isPiPMoveMode) togglePiPLockMode();
+    }, 15000);
+  }
+}
+
+// 8-Directional Boundary Resizing & Multi-Touch Dragging (Matched to News Engine)
 function initPiPInteractivity() {
   const mini = document.getElementById('apple-miniplayer');
+  const barrier = document.getElementById('pip-touch-barrier');
   const header = document.getElementById('miniplayer-header');
-  if (!mini || !header) return;
+  if (!mini) return;
 
   let isDragging = false;
   let isResizing = false;
-  let currentResizeDir = '';
-  let startX, startY, startLeft, startTop, startWidth, startHeight;
+  let resizeDir = '';
+  let startX, startY, startLeft, startTop, startW, startH;
 
-  // Dragging logic
+  const savePipDimensions = () => {
+    localStorage.setItem('tc_pip_dims', JSON.stringify({
+      width: mini.offsetWidth,
+      height: mini.offsetHeight
+    }));
+  };
+
+  // Dragging via Touch Barrier or Header
   const onDragStart = (e) => {
-    if (e.target.closest('.mini-btn') || e.target.closest('.pip-resize-handle')) return;
+    if (!isPiPMoveMode && e.target === barrier) return;
+    if (e.target.closest('.mini-btn')) return;
+    
     isDragging = true;
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    
+
     startX = clientX;
     startY = clientY;
     const rect = mini.getBoundingClientRect();
@@ -270,29 +290,33 @@ function initPiPInteractivity() {
     const dx = clientX - startX;
     const dy = clientY - startY;
 
-    const newX = Math.max(10, Math.min(window.innerWidth - mini.offsetWidth - 10, startLeft + dx));
-    const newY = Math.max(10, Math.min(window.innerHeight - mini.offsetHeight - 10, startTop + dy));
+    const newLeft = Math.max(10, Math.min(window.innerWidth - mini.offsetWidth - 10, startLeft + dx));
+    const newTop = Math.max(50, Math.min(window.innerHeight - mini.offsetHeight - 10, startTop + dy));
 
-    mini.style.left = `${newX}px`;
-    mini.style.top = `${newY}px`;
+    mini.style.left = `${newLeft}px`;
+    mini.style.top = `${newTop}px`;
   };
 
   const onDragEnd = () => { isDragging = false; };
 
-  header.addEventListener('mousedown', onDragStart);
-  header.addEventListener('touchstart', onDragStart, { passive: true });
+  [barrier, header].forEach(el => {
+    if (!el) return;
+    el.addEventListener('mousedown', onDragStart);
+    el.addEventListener('touchstart', onDragStart, { passive: true });
+  });
+
   window.addEventListener('mousemove', onDragMove);
   window.addEventListener('touchmove', onDragMove, { passive: true });
   window.addEventListener('mouseup', onDragEnd);
   window.addEventListener('touchend', onDragEnd);
 
-  // 8-Directional Resizing logic
-  document.querySelectorAll('.pip-resize-handle').forEach(handle => {
+  // 8-Directional Edge/Corner Resizing
+  document.querySelectorAll('.pip-resize-handle').forEach(h => {
     const onResizeStart = (e) => {
       e.stopPropagation();
       e.preventDefault();
       isResizing = true;
-      currentResizeDir = handle.getAttribute('data-dir');
+      resizeDir = h.dataset.resize;
 
       const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
       const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
@@ -302,8 +326,8 @@ function initPiPInteractivity() {
       const rect = mini.getBoundingClientRect();
       startLeft = rect.left;
       startTop = rect.top;
-      startWidth = rect.width;
-      startHeight = rect.height;
+      startW = rect.width;
+      startH = rect.height;
 
       mini.style.right = 'auto';
       mini.style.bottom = 'auto';
@@ -311,8 +335,8 @@ function initPiPInteractivity() {
       mini.style.top = `${startTop}px`;
     };
 
-    handle.addEventListener('mousedown', onResizeStart);
-    handle.addEventListener('touchstart', onResizeStart, { passive: false });
+    h.addEventListener('mousedown', onResizeStart);
+    h.addEventListener('touchstart', onResizeStart, { passive: false });
   });
 
   const onResizeMove = (e) => {
@@ -323,43 +347,42 @@ function initPiPInteractivity() {
     const dx = clientX - startX;
     const dy = clientY - startY;
 
-    let newWidth = startWidth;
-    let newHeight = startHeight;
-    let newLeft = startLeft;
-    let newTop = startTop;
+    let newW = startW;
+    let newH = startH;
+    let newL = startLeft;
+    let newT = startTop;
 
-    const minW = 240, maxW = window.innerWidth - 20;
-    const minH = 160, maxH = window.innerHeight - 20;
+    const minW = 200, maxW = window.innerWidth * 0.95;
+    const minH = 140, maxH = window.innerHeight * 0.90;
 
-    // Horizontal Calculations
-    if (currentResizeDir.includes('r')) {
-      newWidth = Math.max(minW, Math.min(maxW, startWidth + dx));
-    } else if (currentResizeDir.includes('l')) {
-      const calcW = startWidth - dx;
+    if (resizeDir.includes('e')) newW = Math.max(minW, Math.min(maxW, startW + dx));
+    if (resizeDir.includes('w')) {
+      const calcW = startW - dx;
       if (calcW >= minW && calcW <= maxW) {
-        newWidth = calcW;
-        newLeft = startLeft + dx;
+        newW = calcW;
+        newL = startLeft + dx;
       }
     }
 
-    // Vertical Calculations
-    if (currentResizeDir.includes('b')) {
-      newHeight = Math.max(minH, Math.min(maxH, startHeight + dy));
-    } else if (currentResizeDir.includes('t')) {
-      const calcH = startHeight - dy;
+    if (resizeDir.includes('s')) newH = Math.max(minH, Math.min(maxH, startH + dy));
+    if (resizeDir.includes('n')) {
+      const calcH = startH - dy;
       if (calcH >= minH && calcH <= maxH) {
-        newHeight = calcH;
-        newTop = startTop + dy;
+        newH = calcH;
+        newT = startTop + dy;
       }
     }
 
-    mini.style.width = `${newWidth}px`;
-    mini.style.height = `${newHeight}px`;
-    mini.style.left = `${newLeft}px`;
-    mini.style.top = `${newTop}px`;
+    mini.style.width = `${newW}px`;
+    mini.style.height = `${newH}px`;
+    mini.style.left = `${newL}px`;
+    mini.style.top = `${newT}px`;
   };
 
-  const onResizeEnd = () => { isResizing = false; };
+  const onResizeEnd = () => {
+    if (isResizing) savePipDimensions();
+    isResizing = false;
+  };
 
   window.addEventListener('mousemove', onResizeMove);
   window.addEventListener('touchmove', onResizeMove, { passive: false });
@@ -368,7 +391,7 @@ function initPiPInteractivity() {
 }
 
 // ===================================================
-// 6. HEADLINES ENGINE: STRICT DATE FILTERING
+// 6. HEADLINES ENGINE: STRICT USER DATE FILTERING
 // ===================================================
 let currentScope = 'local';
 let selectedNewsDate = new Date().toISOString().split('T')[0];
@@ -406,7 +429,7 @@ async function fetchNews() {
   `;
 
   try {
-    const res = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=${currentScope}`);
+    const res = await fetch(`https://news-lemon-two.vercel.app/api/news?scope=${currentScope}&date=${selectedNewsDate}`);
     const xmlText = await res.text();
     const xml = new DOMParser().parseFromString(xmlText, "text/xml");
     const items = xml.querySelectorAll("item");
@@ -475,7 +498,7 @@ async function fetchNews() {
 }
 
 // ===================================================
-// 7. MAP TELEMETRY & ROUTING ENGINE
+// 7. MAP TELEMETRY, 2ND DESTINATION CALCULATION & TABS
 // ===================================================
 function getAQIShortBadge(aqiVal) {
   if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) return { text: 'AQI N/A', color: '#94a3b8' };
@@ -587,7 +610,7 @@ function showConfirmModal(lat, lng) {
   modal.style.cssText = 'position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:var(--apple-card-elevated); backdrop-filter:blur(20px); border:0.5px solid var(--apple-border); border-radius:18px; padding:14px; text-align:center; color:var(--apple-text-primary); font-family:-apple-system, sans-serif;';
 
   modal.innerHTML = `
-    <div style="font-size:0.85rem; font-weight:700; color:var(--apple-gold); margin-bottom:4px;">Change Destination?</div>
+    <div style="font-size:0.85rem; font-weight:700; color:var(--apple-gold); margin-bottom:4px;">Recalculate New Destination?</div>
     <div style="font-size:0.72rem; color:var(--apple-text-secondary); margin-bottom:12px;">Coordinates: <b>${lat}, ${lng}</b></div>
     <div style="display:flex; gap:8px;">
       <button id="btn-confirm-yes" style="flex:1; background:var(--apple-green); color:#000; border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">Update</button>
@@ -606,13 +629,22 @@ function closeConfirmModal() {
   pendingLng = null;
 }
 
+// Fixed 2nd Destination Confirmation & Telemetry Recalculation
 async function confirmDestinationChange() {
   if (pendingLat !== null && pendingLng !== null) {
-    activePinnedLat = pendingLat;
-    activePinnedLng = pendingLng;
+    const targetLat = parseFloat(pendingLat);
+    const targetLng = parseFloat(pendingLng);
+    activePinnedLat = targetLat;
+    activePinnedLng = targetLng;
+
     closeConfirmModal();
     closeWindyOverlay();
-    await fetchLocationDataAndRoutes(pendingLat, pendingLng);
+
+    // Clear old route layers immediately to prevent UI lockup
+    if (map) routeLayers.forEach(l => map.removeLayer(l));
+    routeLayers = [];
+
+    await fetchLocationDataAndRoutes(targetLat, targetLng);
   } else {
     closeConfirmModal();
   }
@@ -866,7 +898,7 @@ async function loadLiveUSGSEarthquakes() {
 }
 
 // ===================================================
-// 8. ROUTING & AI CHAT
+// 8. ROUTING, FULLSCREEN CHAT & UTILITIES
 // ===================================================
 function switchView(viewId, element) {
   document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active-view'));
@@ -906,6 +938,16 @@ function openMenuModal(imgSrc, title, price, type) {
   modal.querySelector('.price-tile').innerText = 'Price: ' + price;
   modal.querySelector('.type-tile').innerHTML = `Type: ${type} <span style="color:${type.toLowerCase().includes('veg') && !type.toLowerCase().includes('non') ? 'var(--apple-green)' : 'var(--apple-red)'};">●</span>`;
   modal.showModal();
+}
+
+function toggleChatFullScreen() {
+  const box = document.querySelector('.ai-terminal-box');
+  const icon = document.getElementById('ai-expand-icon');
+  if (!box) return;
+
+  box.classList.toggle('ai-fullscreen-active');
+  const isFull = box.classList.contains('ai-fullscreen-active');
+  if (icon) icon.className = isFull ? "fa-solid fa-compress" : "fa-solid fa-expand";
 }
 
 // AI Chat Engine
