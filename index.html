@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -38,7 +37,7 @@
     
     <!-- macOS Style Translucent Sidebar Dock (Desktop / Tablet) -->
     <aside class="sidebar apple-glass">
-      <div class="brand-header notranslate">
+      <div class="brand-header">
         <div class="logo-frame">
           <span class="logo-badge-text">T&amp;C</span>
         </div>
@@ -60,7 +59,7 @@
 
       <div class="sidebar-footer">
         <!-- Appearance Toggle (Light / Dark) -->
-        <div class="apple-theme-toggle-row notranslate">
+        <div class="apple-theme-toggle-row">
           <span class="toggle-label"><i class="fa-solid fa-circle-half-stroke"></i> Theme</span>
           <div class="apple-segmented-theme">
             <button id="btn-theme-light" onclick="setAppTheme('light')" title="Light Mode"><i class="fa-solid fa-sun"></i></button>
@@ -71,7 +70,7 @@
         <!-- Language Selector -->
         <div class="lang-selector">
           <div id="google_translate_element" style="display:none;"></div>
-          <div class="apple-segmented-lang notranslate">
+          <div class="apple-segmented-lang">
             <button id="lang-btn-en" class="active-lang" onclick="changeLang('en')">EN</button>
             <button id="lang-btn-te" onclick="changeLang('te')">TE</button>
             <button id="lang-btn-hi" onclick="changeLang('hi')">HI</button>
@@ -79,7 +78,7 @@
         </div>
 
         <!-- Weather Widget -->
-        <div class="sidebar-weather apple-widget-glass notranslate">
+        <div class="sidebar-weather apple-widget-glass">
           <img id="desktop-icon" src="" alt="Weather" style="display:none;" />
           <div class="weather-meta">
             <div id="desktop-temp" class="temp-text">--°C</div>
@@ -94,22 +93,22 @@
       
       <!-- Mobile Top Bar with Dynamic Island Pill -->
       <header class="mobile-top-bar">
-        <div class="mobile-brand notranslate">
+        <div class="mobile-brand">
           <div class="logo-frame-sm"><span>T&amp;C</span></div>
           <span class="mobile-title">Tasty &amp; Comfort</span>
         </div>
 
         <!-- Dynamic Island Capsule -->
-        <div class="dynamic-island notranslate" id="dynamic-island-pill">
+        <div class="dynamic-island" id="dynamic-island-pill">
           <span class="island-dot"></span>
           <span id="island-text">Hyderabad • 8:00 AM – 10:00 PM</span>
         </div>
 
         <div class="mobile-actions">
-          <button class="mobile-theme-btn notranslate" onclick="toggleThemeQuick()" aria-label="Toggle Theme">
+          <button class="mobile-theme-btn" onclick="toggleThemeQuick()" aria-label="Toggle Theme">
             <i id="mobile-theme-icon" class="fa-solid fa-moon"></i>
           </button>
-          <div class="mobile-weather notranslate">
+          <div class="mobile-weather">
             <img id="mobile-icon" src="" alt="Weather" style="display:none;" />
             <span id="mobile-temp" class="temp-text-sm">--°C</span>
           </div>
@@ -121,7 +120,7 @@
         <div class="hero-showcase apple-glass">
           <div class="hero-left">
             <div class="apple-caption">WELCOME TO</div>
-            <h2>New Modern Mission <span class="gold-gradient-text notranslate">by T&amp;C</span></h2>
+            <h2>New Modern Mission <span class="gold-gradient-text">by T&amp;C</span></h2>
             <p class="tagline-muted">More Than Tea</p>
             <div class="live-badge apple-pill">
               <span class="live-pulse"></span>
@@ -147,7 +146,7 @@
                 <span class="offer-tag-badge">SPECIAL VALUE</span>
                 <h3>Mega Combo Deal</h3>
                 <p>Large portion of Premium Masala French Fries paired alongside our Classic Hot Brewed Milk Tea.</p>
-                <div class="offer-pricing-row notranslate">
+                <div class="offer-pricing-row">
                   <span class="old-price">₹80</span>
                   <span class="new-glow-price">₹65 Only</span>
                 </div>
@@ -162,7 +161,7 @@
                 <span class="offer-tag-badge">HOT DEAL</span>
                 <h3>Second Combo Deal</h3>
                 <p>Curated hot snack selection served freshly prepared from the kitchen.</p>
-                <div class="offer-pricing-row notranslate">
+                <div class="offer-pricing-row">
                   <span class="old-price">₹120</span>
                   <span class="new-glow-price">₹99 Only</span>
                 </div>
@@ -171,7 +170,7 @@
           </div>
         </div>
 
-        <!-- Emergency Quick Dial Grid -->
+        <!-- Emergency Quick Dial Action Grid -->
         <div class="glass-card apple-glass emergency-section">
           <div class="emergency-title-row">
             <span class="emergency-pulse-dot"></span>
@@ -182,28 +181,28 @@
               <i class="fa-solid fa-truck-medical"></i>
               <div>
                 <strong>Ambulance</strong>
-                <small class="notranslate">Dial: 108</small>
+                <small>Dial: 108</small>
               </div>
             </a>
             <a href="tel:100" class="emergency-btn s-blue">
               <i class="fa-solid fa-shield-halved"></i>
               <div>
                 <strong>Police Control</strong>
-                <small class="notranslate">Dial: 100</small>
+                <small>Dial: 100</small>
               </div>
             </a>
             <a href="tel:101" class="emergency-btn s-orange">
               <i class="fa-solid fa-fire-extinguisher"></i>
               <div>
                 <strong>Fire Station</strong>
-                <small class="notranslate">Dial: 101</small>
+                <small>Dial: 101</small>
               </div>
             </a>
             <a href="tel:1091" class="emergency-btn s-purple">
               <i class="fa-solid fa-hand-holding-hand"></i>
               <div>
                 <strong>Women Helpline</strong>
-                <small class="notranslate">Dial: 1091</small>
+                <small>Dial: 1091</small>
               </div>
             </a>
           </div>
@@ -222,7 +221,7 @@
       <section id="menu-view" class="app-section">
         <div class="section-heading-bar">
           <h3><i class="fa-solid fa-utensils gold-text"></i> Crafted Menu</h3>
-          <span class="apple-count-chip notranslate">9 Items</span>
+          <span class="apple-count-chip">9 Items</span>
         </div>
         
         <div class="menu-responsive-grid compact-grid">
@@ -235,7 +234,7 @@
             <div class="menu-item-info-frame compact-info">
               <div class="menu-title-row">
                 <h4>Premium Tea</h4>
-                <span class="price-gold text-small-price notranslate">₹10</span>
+                <span class="price-gold text-small-price">₹10</span>
               </div>
               <p class="menu-item-sub text-small-desc">Hot &amp; refreshing premium milk blends brewed freshly on order.</p>
             </div>
@@ -251,7 +250,7 @@
                 <h4>Crispy French Fries</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Golden, crisp premium cut potato slices tossed in gourmet spices.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Small <small>(200g)</small></span>
                   <div class="p-price"><span>Salted:</span> <strong>₹50</strong></div>
@@ -276,7 +275,7 @@
                 <h4>Soft Sandwich</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Soft layered sandwich bread built using customized spreads and crisp additions.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Standard</span>
                   <div class="p-price"><span>Classic Veg:</span> <strong>₹45</strong></div>
@@ -295,7 +294,7 @@
                 <h4>Crispy Punjabi Samosa</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Golden, crisp pastry crust stuffed with a spiced savory potato filling.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Pc</span>
                   <div class="p-price"><span>Classic:</span> <strong>₹15</strong></div>
@@ -318,7 +317,7 @@
                 <h4>Soft Roll</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Golden, crisp pastry crust stuffed with a spiced savory filling.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Veg Roll <small>(1 Pc)</small></span>
                   <div class="p-price"><span>Classic:</span> <strong>₹30</strong></div>
@@ -341,7 +340,7 @@
                 <h4>Soft Bread Egg Omelet</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Soft bread egg omelet, crisp pastry crust stuffed with a spiced savory filling.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Egg <small>(1 Pc)</small></span>
                   <div class="p-price"><span>Classic:</span> <strong>₹30</strong></div>
@@ -364,7 +363,7 @@
                 <h4>Crunchy Puff</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Soft and crunchy puff, crisp pastry crust stuffed with a spiced savory filling.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Veg: <strong>₹15</strong></span>
                   <span class="p-title">Egg: <strong>₹20</strong></span>
@@ -386,7 +385,7 @@
                 <h4>Soft Noodles</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Wok-tossed noodles prepared with fresh vegetables and aromatic seasoning.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">Standard</span>
                   <div class="p-price"><span>Plate:</span> <strong>₹45</strong></div>
@@ -405,7 +404,7 @@
                 <h4>Chicken Lollipop</h4>
               </div>
               <p class="menu-item-sub text-small-desc">Crisp fried chicken drumettes tossed in a spiced savory dipping glaze.</p>
-              <div class="portions-flex compact-portions notranslate">
+              <div class="portions-flex compact-portions">
                 <div class="portion-column">
                   <span class="p-title">1 Pair <small>(2 Pcs)</small></span>
                   <div class="p-price"><span>Classic:</span> <strong>₹40</strong></div>
@@ -421,7 +420,7 @@
         </div>
       </section>
 
-      <!-- VIEW 3: SERVICES & BROADCAST -->
+      <!-- VIEW 3: SERVICES & BROADCAST (MODEL 1: COMBINED DECK) -->
       <section id="services-view" class="app-section">
         <div class="section-heading-bar">
           <h3><i class="fa-solid fa-tower-broadcast gold-text"></i> Services, Broadcast &amp; Fun</h3>
@@ -482,7 +481,7 @@
             </div>
 
             <!-- Apple Master Segmented Switcher -->
-            <div class="apple-segmented-scroll master-pill-deck notranslate">
+            <div class="apple-segmented-scroll master-pill-deck">
               <button id="tab-btn-headlines" class="active-mode" onclick="switchMasterDeck('headlines', this)">
                 <i class="fa-solid fa-newspaper"></i> Live Headlines
               </button>
@@ -495,7 +494,7 @@
           <!-- SUB-DECK 1: HEADLINES FEED (Full Width, Date Filtered) -->
           <div id="deck-headlines-subview" class="sub-deck-panel">
             <div class="news-category-bar">
-              <div class="news-scope-pills notranslate">
+              <div class="news-scope-pills">
                 <button id="scope-btn-local" class="scope-btn active" onclick="switchNewsScope('local')">📍 Telangana</button>
                 <button id="scope-btn-india" class="scope-btn" onclick="switchNewsScope('india')">🇮🇳 India</button>
                 <button id="scope-btn-world" class="scope-btn" onclick="switchNewsScope('world')">🌍 World</button>
@@ -553,7 +552,7 @@
                 <p>Play free casual titles without installation while enjoying your tea.</p>
               </div>
             </div>
-            <div class="arcade-tiles-row notranslate">
+            <div class="arcade-tiles-row">
               <a href="https://yandex.com/games/category/arcade" target="_blank" rel="noopener" class="arcade-tile apple-squircle">
                 <i class="fa-solid fa-rocket"></i>
                 <span>Arcade</span>
@@ -583,18 +582,18 @@
               <span class="pulse-dot"></span>
               <span>T&amp;C Intelligence Assistant</span>
             </div>
-            <button class="ai-expand-toggle-btn notranslate" onclick="toggleChatFullScreen()" title="Toggle Fullscreen">
+            <button class="ai-expand-toggle-btn" onclick="toggleChatFullScreen()" title="Toggle Fullscreen">
               <i id="ai-expand-icon" class="fa-solid fa-expand"></i>
             </button>
           </div>
 
           <div class="chatbot-history" id="chat-log-box">
             <div class="msg-bubble bot-msg">
-              Hello! How was your day? Ask me anything about our menu items, operating times, safety options or something more than this if you're comfortable to share knowledge or jokes even your office frustrating matters!
+              Hello! How was your day? Ask me anything about our menu items, operating times, safety options or something more than this if your comfortable to share knowledge or jokes even your office frustrating matters!
             </div>
           </div>
 
-          <div class="suggested-prompts notranslate">
+          <div class="suggested-prompts">
             <button class="prompt-chip apple-pill" onclick="sendChipPrompt('What are your shop operating hours?')">Timings</button>
             <button class="prompt-chip apple-pill" onclick="sendChipPrompt('Where are you located exactly?')">Hub Location</button>
             <button class="prompt-chip apple-pill" onclick="sendChipPrompt('Show me the menu prices')">Menu</button>
@@ -611,7 +610,7 @@
 
           <div class="chat-input-bar">
             <input type="text" id="user-chat-input" placeholder="Type your store query here..." onkeypress="handleChatKey(event)" />
-            <button class="chat-send-btn notranslate" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            <button class="chat-send-btn" onclick="submitUserMessage()"><i class="fa-solid fa-paper-plane"></i></button>
           </div>
         </div>
       </section>
@@ -631,7 +630,7 @@
           <button onclick="searchDestination()" class="apple-pill-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
         </div>
 
-        <div class="amenities-container apple-segmented-scroll notranslate">
+        <div class="amenities-container apple-segmented-scroll">
           <button class="amenity-chip apple-pill" onclick="searchAmenity('hospital')">🏥 Hospital (Dial: 108)</button>
           <button class="amenity-chip apple-pill" onclick="searchAmenity('police station')">👮 Police (Dial: 100)</button>
           <button class="amenity-chip apple-pill" onclick="searchAmenity('fire station')">🔥 Fire Station (Dial: 101)</button>
@@ -658,13 +657,13 @@
         <div class="glass-card cert-container apple-glass">
           <div class="cert-grid">
             <div class="cert-badge apple-squircle-card">
-              <div class="badge-icon gold-badge notranslate">fssai</div>
+              <div class="badge-icon gold-badge">fssai</div>
               <h6>FSSAI</h6>
               <span class="v-status">VERIFIED by FSSAI</span>
               <a href="Fssai_certificate.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
             </div>
             <div class="cert-badge apple-squircle-card">
-              <div class="badge-icon gold-badge notranslate">GHMC</div>
+              <div class="badge-icon gold-badge">GHMC</div>
               <h6>GHMC</h6>
               <span class="v-status">VERIFIED by GHMC</span>
               <a href="Water_test_report.pdf" target="_blank" class="view-pdf-btn apple-pill"><i class="fa-regular fa-file-pdf"></i> View PDF</a>
@@ -739,12 +738,12 @@
           </div>
           <p class="owner-bio-p">Built with the clear vision of providing a clean, smart, and deeply helpful premium services for everyone.</p>
           
-          <div class="owner-buttons notranslate">
+          <div class="owner-buttons">
             <a href="tel:+919553904524" class="btn apple-pill-btn"><i class="fa-solid fa-phone"></i> Contact</a>
             <button class="btn apple-pill-btn" onclick="toggleUpi()"><i class="fa-solid fa-qrcode"></i> UPI / QR</button>
           </div>
 
-          <div id="upi-display" class="glass-card hidden upi-reveal-card apple-squircle notranslate">
+          <div id="upi-display" class="glass-card hidden upi-reveal-card apple-squircle">
             <p style="font-size:0.75rem; color:var(--apple-text-secondary); text-transform:uppercase;">Scan to pay:</p>
             <img src="IMG_20260709_160545.jpg" alt="UPI QR Code" onerror="handleImgError(this, 'qrcode')" style="width:140px; height:140px; margin: 10px 0; border-radius:12px; object-fit:contain;" />
             <p style="font-size:0.75rem; margin:0;">UPI ID:</p>
@@ -824,8 +823,8 @@
 
     </main>
 
-    <!-- FIXED NATIVE iOS MOBILE BOTTOM TAB BAR -->
-    <footer class="bottom-mobile-nav apple-glass-dock notranslate" id="mobile-bottom-dock">
+    <!-- MODEL 1: NATIVE APPLE GROUNDED TAB BAR (ZERO SCROLL BLEED) -->
+    <footer class="bottom-mobile-nav apple-glass-dock" id="mobile-bottom-dock">
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
       <div class="nav-btn" onclick="switchView('services-view', this)"><i class="fa-solid fa-tower-broadcast"></i><span>Broadcast</span></div>
@@ -837,8 +836,9 @@
 
   </div>
 
-  <!-- EXACT 8-HANDLE MULTI-DIRECTIONAL PiP MINIPLAYER -->
+  <!-- EXACT 8-HANDLE MULTI-DIRECTIONAL PiP MINIPLAYER (From News Engine) -->
   <div id="apple-miniplayer" class="apple-miniplayer-dock apple-glass hidden">
+    <!-- 8 Multi-directional Resize Handles -->
     <div class="pip-resize-handle pip-edge-t" data-resize="n"></div>
     <div class="pip-resize-handle pip-edge-b" data-resize="s"></div>
     <div class="pip-resize-handle pip-edge-l" data-resize="w"></div>
@@ -848,19 +848,21 @@
     <div class="pip-resize-handle pip-corner-bl" data-resize="sw"></div>
     <div class="pip-resize-handle pip-corner-br" data-resize="se"></div>
 
+    <!-- Drag Header & Controls -->
     <div class="miniplayer-drag-handle" id="miniplayer-header">
       <div class="pip-grip-bar"></div>
       <div class="miniplayer-meta">
         <div class="miniplayer-title" id="miniplayer-channel-title">Live PiP</div>
         <div class="miniplayer-badge"><span class="live-dot" style="display:inline-block; width:6px; height:6px;"></span> LIVE</div>
       </div>
-      <div class="miniplayer-controls notranslate">
+      <div class="miniplayer-controls">
         <button onclick="togglePiPLockMode()" id="pip-lock-btn" class="mini-btn" title="Toggle Lock/Touch Barrier"><i id="pip-lock-icon" class="fa-solid fa-lock text-xs"></i></button>
         <button onclick="closeMiniplayer()" title="Close Miniplayer" class="mini-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
     
     <div class="miniplayer-video-box" style="position: relative;">
+      <!-- Touch/Drag shield barrier for smooth dragging -->
       <div id="pip-touch-barrier" style="position: absolute; inset: 0; z-index: 10; pointer-events: auto; cursor: grab;"></div>
       <iframe id="miniplayer-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
@@ -881,21 +883,21 @@
     </div>
   </div>
 
-  <!-- Interactive Menu Item Action Sheet (iOS Native Style - Dynamic Contrast) -->
+  <!-- Interactive Menu Item Action Sheet (iOS Native Style) -->
   <dialog id="menuModal" class="combo-modal" onclick="if(event.target == this) this.close()">
     <div class="modal-content apple-glass">
       <div class="sheet-grabber"></div>
       <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
       <img src="" alt="Menu Item" class="apple-squircle modal-item-img" onerror="handleImgError(this, 'bowl-food')" />
       <h3 class="modal-item-title"></h3>
-      <div class="modal-tiles notranslate">
+      <div class="modal-tiles">
         <div class="tile price-tile apple-squircle"></div>
         <div class="tile type-tile apple-squircle"></div>
       </div>
     </div>
   </dialog>
 
-  <!-- Google Translate Initialization Script -->
+  <!-- Google Translate Script -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
