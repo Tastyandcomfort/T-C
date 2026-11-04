@@ -1,5 +1,3 @@
-
-
 // ===================================================
 // T&C APPLE SYSTEM: DRAGGABLE & 8-WAY RESIZABLE PiP, NEWS & CONTROLS
 // ===================================================
@@ -118,26 +116,8 @@ function initTheme() {
 }
 
 // ===================================================
-// 3. LANGUAGE SWITCHER WITH ACTIVE SYNC (EN, TE, HI)
+// 3. LANGUAGE SWITCHER (EN, TE, HI)
 // ===================================================
-function getCookie(name) {
-  const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-  return v ? v[2] : null;
-}
-
-function syncLanguageButtonState() {
-  let lang = 'en';
-  const cookieVal = getCookie('googtrans');
-  if (cookieVal) {
-    const parts = cookieVal.split('/');
-    if (parts.length > 2) lang = parts[2].toLowerCase();
-  }
-  ['en', 'te', 'hi'].forEach(l => {
-    const b = document.getElementById(`lang-btn-${l}`);
-    if (b) b.classList.toggle('active-lang', l === lang);
-  });
-}
-
 function changeLang(langCode) {
   ['en', 'te', 'hi'].forEach(l => {
     const b = document.getElementById(`lang-btn-${l}`);
@@ -211,6 +191,7 @@ function launchVideo(videoId, title, modeKey) {
     const ticker = document.getElementById('headphones-ticker');
     if (ticker) ticker.style.display = 'flex';
   } else {
+    // Mode file
     const fileMedia = document.getElementById('file-media-preview');
     if (fileMedia) fileMedia.style.display = 'block';
   }
@@ -225,6 +206,7 @@ function launchMiniplayer(videoId, title) {
   if (titleEl) titleEl.innerText = title;
   if (mini) mini.classList.remove('hidden');
 
+  // Load saved dimensions or default
   const saved = JSON.parse(localStorage.getItem('tc_pip_dims') || 'null');
   if (saved && saved.width && saved.height) {
     mini.style.width = `${Math.min(saved.width, window.innerWidth - 20)}px`;
@@ -260,6 +242,7 @@ function togglePiPLockMode() {
   }
 }
 
+// 8-Directional Boundary Resizing & Multi-Touch Dragging (Matched to News Engine)
 function initPiPInteractivity() {
   const mini = document.getElementById('apple-miniplayer');
   const barrier = document.getElementById('pip-touch-barrier');
@@ -278,6 +261,7 @@ function initPiPInteractivity() {
     }));
   };
 
+  // Dragging via Touch Barrier or Header
   const onDragStart = (e) => {
     if (!isPiPMoveMode && e.target === barrier) return;
     if (e.target.closest('.mini-btn')) return;
@@ -326,6 +310,7 @@ function initPiPInteractivity() {
   window.addEventListener('mouseup', onDragEnd);
   window.addEventListener('touchend', onDragEnd);
 
+  // 8-Directional Edge/Corner Resizing
   document.querySelectorAll('.pip-resize-handle').forEach(h => {
     const onResizeStart = (e) => {
       e.stopPropagation();
@@ -451,6 +436,7 @@ async function fetchNews() {
 
     if (!items || items.length === 0) throw new Error("No feed items found");
 
+    // Strictly match user-selected date
     let filteredItems = items.filter(item => {
       const pubDate = item.querySelector("pubDate")?.textContent || "";
       if (!pubDate) return false;
@@ -458,6 +444,7 @@ async function fetchNews() {
       return !isNaN(d) && d.toISOString().split('T')[0] === selectedNewsDate;
     });
 
+    // Fallback if today's feed format uses recent entries
     const todayStr = new Date().toISOString().split('T')[0];
     if (filteredItems.length === 0 && selectedNewsDate === todayStr && items.length > 0) {
       filteredItems = items.slice(0, 15);
@@ -489,7 +476,7 @@ async function fetchNews() {
             </a>
             <div class="news-meta-row">
               <span class="news-source-tag">${sourceName}</span>
-              <span><i class="fa-regular fa-clock mr-1"></i> ${timeFormatted} • ${selectedNewsDate}</span>
+              <span><i class="fa-regular fa-clock" style="margin-right:3px;"></i> ${timeFormatted} &bull; ${selectedNewsDate}</span>
             </div>
           </div>
         `;
@@ -649,6 +636,7 @@ function closeConfirmModal() {
   pendingLng = null;
 }
 
+// Fixed 2nd Destination Confirmation & Telemetry Recalculation
 async function confirmDestinationChange() {
   if (pendingLat !== null && pendingLng !== null) {
     const targetLat = parseFloat(pendingLat);
@@ -778,6 +766,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
+// Restyled High-Contrast Master Card with Working Driving, Walking, Locality & Radar Tabs
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -824,7 +813,8 @@ function renderMasterCard() {
         <div style="font-size:0.75rem; color:#cbd5e1; margin-top:2px;">${t.landmark} &bull; ${t.state} (${t.pincode})</div>
       </div>
 
-      <div class="map-mode-nav-bar notranslate">
+      <!-- High-Contrast Apple Segmented Control for Driving / Walking / Locality / Radar -->
+      <div class="map-mode-nav-bar">
         <button class="map-mode-btn ${currentMode === 'driving' ? 'active-mode' : ''}" onclick="switchMode('driving')">🚗 Driving</button>
         <button class="map-mode-btn ${currentMode === 'walking' ? 'active-mode' : ''}" onclick="switchMode('walking')">🚶 Walking</button>
         <button class="map-mode-btn ${currentMode === 'locality' ? 'active-mode' : ''}" onclick="switchMode('locality')">📍 Locality</button>
@@ -918,7 +908,7 @@ async function loadLiveUSGSEarthquakes() {
 }
 
 // ===================================================
-// 8. ROUTING, FULLSCREEN CHAT & ROBUST AI FALLBACK
+// 8. ROUTING, FULLSCREEN CHAT & UTILITIES
 // ===================================================
 function switchView(viewId, element) {
   document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active-view'));
@@ -949,7 +939,7 @@ function toggleUpi() {
   if (u) u.classList.toggle('hidden');
 }
 
-// High-Contrast Menu Item Popup
+// Fixed High-Contrast Menu Item Popup
 function openMenuModal(imgSrc, title, price, type) {
   const modal = document.getElementById('menuModal');
   if (!modal) return;
@@ -961,11 +951,11 @@ function openMenuModal(imgSrc, title, price, type) {
   const typeTile = modal.querySelector('.type-tile');
 
   if (priceTile) {
-    priceTile.innerHTML = `<span>Price: <b style="color:var(--apple-gold);">${price}</b></span>`;
+    priceTile.innerHTML = `<span style="color:#ffffff;">Price: <b>${price}</b></span>`;
   }
   if (typeTile) {
     const isVeg = type.toLowerCase().includes('veg') && !type.toLowerCase().includes('non');
-    typeTile.innerHTML = `<span>Type: <b>${type}</b> <span style="color:${isVeg ? 'var(--apple-green)' : 'var(--apple-red)'}; font-size:1.1rem;">●</span></span>`;
+    typeTile.innerHTML = `<span style="color:#ffffff;">Type: ${type} <span style="color:${isVeg ? 'var(--apple-green)' : 'var(--apple-red)'}; font-size:1.1rem;">●</span></span>`;
   }
   modal.showModal();
 }
@@ -980,35 +970,12 @@ function toggleChatFullScreen() {
   if (icon) icon.className = isFull ? "fa-solid fa-compress" : "fa-solid fa-expand";
 }
 
-// Instant AI Chat Engine
+// AI Chat Engine
 function handleChatKey(e) { if (e.key === 'Enter') submitUserMessage(); }
 function sendChipPrompt(t) {
   const i = document.getElementById('user-chat-input');
   if (i) i.value = t;
   submitUserMessage();
-}
-
-function generateSmartStoreResponse(userMsg) {
-  const msg = userMsg.toLowerCase();
-  if (msg.includes('hour') || msg.includes('time') || msg.includes('open') || msg.includes('close')) {
-    return "Tasty & Comfort (T&C) at New Modern Mission is open daily from 8:00 AM to 10:00 PM.";
-  }
-  if (msg.includes('price') || msg.includes('cost') || msg.includes('rate') || msg.includes('menu')) {
-    return "Our Signature Items:\n• Premium Tea: ₹10\n• French Fries: ₹50 / ₹60 (Small) | ₹60 / ₹70 (Big)\n• Crispy Samosa: ₹15 (1 Pc) | ₹25 (2 Pcs)\n• Soft Sandwich: ₹45\n• Rolls: Veg ₹30 | Chicken ₹40\n• Puffs: Veg ₹15 | Egg ₹20 | Chicken ₹25\n• Noodles: ₹45\n• Chicken Lollipop: ₹40 (2 Pcs) | ₹60 (4 Pcs)";
-  }
-  if (msg.includes('where') || msg.includes('location') || msg.includes('address') || msg.includes('hub')) {
-    return "We are located at New Modern Mission, Chaitanyapuri, Hyderabad. Tap the 'You Are Here' tab to inspect directions and live radar.";
-  }
-  if (msg.includes('who') || msg.includes('owner') || msg.includes('founder') || msg.includes('murali')) {
-    return "The Founder & Owner of Tasty & Comfort is Murali Manohar Nidadavolu. Dedicated to combining authentic traditional taste with modern digital and safety standards.";
-  }
-  if (msg.includes('safety') || msg.includes('emergency') || msg.includes('aid') || msg.includes('wheelchair')) {
-    return "We provide complimentary Wheelchair assistance, stocked First Aid kits, verified Fire Safety equipment, and emergency Raincoats.";
-  }
-  if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
-    return "Hello! Welcome to Tasty & Comfort. How may I assist you with our menu, store timings, or live updates today?";
-  }
-  return "Thank you for asking! For queries regarding fresh preparations, store navigation, or special combo deals, please explore our interactive Menu or Map tabs.";
 }
 
 async function submitUserMessage() {
@@ -1027,12 +994,23 @@ async function submitUserMessage() {
   log.scrollTop = log.scrollHeight;
   const bubble = document.getElementById(tId);
 
-  setTimeout(() => {
-    if (bubble) {
-      bubble.innerText = generateSmartStoreResponse(msg);
-      log.scrollTop = log.scrollHeight;
-    }
-  }, 450);
+  try {
+    const API_KEY = "AQ.Ab8RN6JbLJ8a8xNiL1Vq_msT-p8pg-nJHR6KpgfyU5vYol4Ihw"; 
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: `You are the T&C Assistant. Store hours: 8AM-10PM daily. Founder: Murali Manohar Nidadavolu. Menu: Tea (₹10), Fries (₹50-70), Samosas (₹15/25), Rolls, Puffs. Short and helpful reply.\nUser: ${msg}` }] }] })
+    });
+    const d = await res.json();
+    bubble.innerText = d.candidates[0].content.parts[0].text;
+  } catch (e) {
+    let fallback = "Welcome to Tasty & Comfort! We're open 8:00 AM to 10:00 PM daily. Explore our Menu & Map sections!";
+    const low = msg.toLowerCase();
+    if (low.includes('hour') || low.includes('time')) fallback = "We are open 8:00 AM to 10:00 PM every day!";
+    else if (low.includes('owner') || low.includes('founder')) fallback = "The founder and owner of Tasty & Comfort is Murali Manohar Nidadavolu.";
+    bubble.innerText = fallback;
+  }
+  log.scrollTop = log.scrollHeight;
 }
 
 // Announcements
@@ -1080,7 +1058,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   renderAppleVideoShelf();
   initPiPInteractivity();
-  syncLanguageButtonState();
 
   const dateInput = document.getElementById('news-date-input');
   if (dateInput) {
@@ -1126,5 +1103,4 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchNews();
   checkAnnouncement();
   setInterval(checkAnnouncement, 60000);
-  setInterval(syncLanguageButtonState, 1000);
 });
