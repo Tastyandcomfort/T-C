@@ -84,6 +84,15 @@ p, span, small, li, label {
   color: var(--label-secondary);
 }
 
+/* Off-Screen Translate Mount - Fixes Google Element Execution */
+.hidden-translate-mount {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* Apple Materials */
 .apple-glass {
   background: var(--surface-card);
