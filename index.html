@@ -170,7 +170,7 @@
           </div>
         </div>
 
-        <!-- Emergency Quick Dial Action Grid -->
+        <!-- Emergency Quick Dial Grid -->
         <div class="glass-card apple-glass emergency-section">
           <div class="emergency-title-row">
             <span class="emergency-pulse-dot"></span>
@@ -420,7 +420,7 @@
         </div>
       </section>
 
-      <!-- VIEW 3: SERVICES & BROADCAST (MODEL 1: COMBINED DECK) -->
+      <!-- VIEW 3: SERVICES & BROADCAST -->
       <section id="services-view" class="app-section">
         <div class="section-heading-bar">
           <h3><i class="fa-solid fa-tower-broadcast gold-text"></i> Services, Broadcast &amp; Fun</h3>
@@ -574,7 +574,7 @@
         </div>
       </section>
 
-      <!-- VIEW 4: AI CONCIERGE (FULLSCREEN AUTO-FIT APPLE SHELL) -->
+      <!-- VIEW 4: AI CONCIERGE -->
       <section id="chat-view" class="app-section">
         <div class="glass-card ai-terminal-box apple-glass">
           <div class="ai-header-bar">
@@ -744,10 +744,10 @@
           </div>
 
           <div id="upi-display" class="glass-card hidden upi-reveal-card apple-squircle">
-            <p style="font-size:0.75rem; color:var(--apple-text-secondary); text-transform:uppercase;">Scan to pay:</p>
+            <p style="font-size:0.75rem; color:var(--label-secondary); text-transform:uppercase;">Scan to pay:</p>
             <img src="IMG_20260709_160545.jpg" alt="UPI QR Code" onerror="handleImgError(this, 'qrcode')" style="width:140px; height:140px; margin: 10px 0; border-radius:12px; object-fit:contain;" />
             <p style="font-size:0.75rem; margin:0;">UPI ID:</p>
-            <code style="color:var(--apple-gold); font-size:0.8rem; background:var(--apple-input-bg); padding:4px 8px; border-radius:6px; display:inline-block; margin-top:4px;">muralimanohar.in-3@okaxis</code>
+            <code style="color:var(--apple-gold); font-size:0.8rem; background:var(--surface-input); padding:4px 8px; border-radius:6px; display:inline-block; margin-top:4px;">muralimanohar.in-3@okaxis</code>
           </div>
         </div>
 
@@ -823,7 +823,7 @@
 
     </main>
 
-    <!-- MODEL 1: NATIVE APPLE GROUNDED TAB BAR (ZERO SCROLL BLEED) -->
+    <!-- FIXED NATIVE iOS MOBILE BOTTOM TAB BAR -->
     <footer class="bottom-mobile-nav apple-glass-dock" id="mobile-bottom-dock">
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
@@ -889,7 +889,7 @@
       <div class="sheet-grabber"></div>
       <button class="close-btn" onclick="document.getElementById('menuModal').close()">✕</button>
       <img src="" alt="Menu Item" class="apple-squircle modal-item-img" onerror="handleImgError(this, 'bowl-food')" />
-      <h3 class="modal-item-title"></h3>
+      <h3 class="modal-item-title apple-dynamic-title"></h3>
       <div class="modal-tiles">
         <div class="tile price-tile apple-squircle"></div>
         <div class="tile type-tile apple-squircle"></div>
