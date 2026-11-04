@@ -1,13 +1,15 @@
+
+
 /* ===================================================
    APPLE HIG ECOSYSTEM: LIGHT & DARK CONTRAST ENGINE
    =================================================== */
 
 :root {
-  /* DARK THEME: TRUE CONTRAST HIG COLORS */
+  /* DARK THEME: HIGH CONTRAST */
   --apple-bg: #000000;
   --apple-canvas: #090a0f;
-  --apple-card-bg: rgba(24, 25, 32, 0.85);
-  --apple-card-elevated: rgba(34, 35, 45, 0.95);
+  --apple-card-bg: rgba(24, 25, 32, 0.88);
+  --apple-card-elevated: rgba(34, 35, 45, 0.96);
   --apple-border: rgba(255, 255, 255, 0.14);
   --apple-border-subtle: rgba(255, 255, 255, 0.08);
   --apple-gold: #ffb703;
@@ -16,6 +18,8 @@
   --apple-text-secondary: #cbd5e1 !important;
   --apple-input-bg: rgba(255, 255, 255, 0.08);
   --apple-pill-bg: rgba(255, 255, 255, 0.12);
+  --apple-modal-bg: #1c1c23;
+  --apple-tile-bg: rgba(255, 255, 255, 0.08);
   --apple-blur: blur(30px);
   --apple-shadow: 0 14px 40px rgba(0, 0, 0, 0.65);
 
@@ -31,10 +35,10 @@
 }
 
 [data-theme="light"] {
-  /* LIGHT THEME */
+  /* LIGHT THEME: PURE APPLE LIGHT PALETTE */
   --apple-bg: #f2f2f7;
   --apple-canvas: #e5e5ea;
-  --apple-card-bg: rgba(255, 255, 255, 0.88);
+  --apple-card-bg: rgba(255, 255, 255, 0.90);
   --apple-card-elevated: rgba(255, 255, 255, 0.98);
   --apple-border: rgba(0, 0, 0, 0.1);
   --apple-border-subtle: rgba(0, 0, 0, 0.05);
@@ -44,6 +48,8 @@
   --apple-text-secondary: #4b5563 !important;
   --apple-input-bg: rgba(0, 0, 0, 0.06);
   --apple-pill-bg: rgba(0, 0, 0, 0.08);
+  --apple-modal-bg: #ffffff;
+  --apple-tile-bg: rgba(0, 0, 0, 0.06);
   --apple-blur: blur(30px);
   --apple-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 
@@ -51,6 +57,25 @@
   --apple-green: #34c759;
   --apple-red: #ff3b30;
   --apple-yellow: #ffcc00;
+}
+
+/* Eliminate Google Translate Iframe Layout Shifts & Top Displacements */
+.goog-te-banner-frame.skiptranslate, 
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.goog-te-banner {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body {
+  top: 0px !important;
+  position: static !important;
+  margin-top: 0px !important;
+}
+
+.skiptranslate {
+  display: none !important;
 }
 
 * {
@@ -145,13 +170,14 @@ p, span, small, li {
   justify-content: center;
   color: #000;
   box-shadow: 0 4px 14px rgba(255, 183, 3, 0.4);
+  flex-shrink: 0;
 }
 
 .logo-badge-text {
   font-weight: 900;
   font-size: 1rem;
   letter-spacing: -0.5px;
-  color: #000;
+  color: #000 !important;
 }
 
 .brand-name {
@@ -242,7 +268,7 @@ p, span, small, li {
 
 .apple-segmented-theme button.active-theme {
   background: var(--apple-card-elevated);
-  color: var(--apple-gold);
+  color: var(--apple-gold) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
@@ -269,8 +295,9 @@ p, span, small, li {
 
 .apple-segmented-lang button.active-lang {
   background: var(--apple-card-elevated);
-  color: var(--apple-text-primary);
+  color: var(--apple-gold) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  font-weight: 800;
 }
 
 .sidebar-weather {
@@ -461,7 +488,7 @@ p, span, small, li {
   display: inline-block;
 }
 
-.offer-details-slot h3 { font-size: 1.1rem; margin: 4px 0; }
+.offer-details-slot h3 { font-size: 1.1rem; margin: 4px 0; color: var(--apple-text-primary); }
 .offer-details-slot p { font-size: 0.78rem; color: var(--apple-text-secondary); line-height: 1.4; }
 
 .offer-pricing-row { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; }
@@ -619,7 +646,7 @@ p, span, small, li {
   align-items: baseline;
 }
 
-.menu-title-row h4 { font-size: 0.95rem; font-weight: 600; }
+.menu-title-row h4 { font-size: 0.95rem; font-weight: 600; color: var(--apple-text-primary); }
 .price-gold { color: var(--apple-gold); font-weight: 800; font-size: 1rem; }
 .menu-item-sub { color: var(--apple-text-secondary); font-size: 0.75rem; line-height: 1.35; margin: 4px 0 10px 0; }
 
@@ -1412,7 +1439,7 @@ p, span, small, li {
   padding: 16px;
 }
 
-/* Restyled 4 Navigation Mode Buttons (Driving, Walking, Locality, Radar) */
+/* 4 Navigation Mode Buttons (Driving, Walking, Locality, Radar) */
 .map-mode-nav-bar {
   display: flex;
   background: rgba(0, 0, 0, 0.45);
@@ -1520,7 +1547,7 @@ p, span, small, li {
 .yellow-badge { color: #fbbf24; }
 .red-badge { color: #f87171; }
 
-.cert-badge h6 { font-size: 0.78rem; font-weight: 600; margin-bottom: 2px; }
+.cert-badge h6 { font-size: 0.78rem; font-weight: 600; margin-bottom: 2px; color: var(--apple-text-primary); }
 .v-status { font-size: 0.62rem; color: var(--apple-green); font-weight: 700; margin-bottom: 8px; }
 
 .view-pdf-btn {
@@ -1618,7 +1645,7 @@ details[open] .apple-accordion-icon { transform: rotate(90deg); }
 .description-list li { margin-bottom: 6px; }
 
 /* ===================================================
-   APPLE DIALOGS & ACTION SHEETS (FIXED CONTRAST)
+   APPLE DIALOGS & ACTION SHEETS (DYNAMIC LIGHT/DARK)
    =================================================== */
 .apple-popup-overlay {
   position: fixed;
@@ -1669,7 +1696,7 @@ details[open] .apple-accordion-icon { transform: rotate(90deg); }
   color: var(--apple-gold); cursor: pointer; outline: none;
 }
 
-/* Fixed High-Contrast Menu Item Dialog */
+/* FIXED HIGH-CONTRAST LIGHT & DARK MENU ITEM POPUP */
 .combo-modal {
   margin: auto;
   border: none;
@@ -1684,7 +1711,9 @@ details[open] .apple-accordion-icon { transform: rotate(90deg); }
   padding: 20px;
   position: relative;
   text-align: center;
-  background: var(--apple-card-elevated);
+  background: var(--apple-modal-bg) !important;
+  border: 0.5px solid var(--apple-border);
+  box-shadow: var(--apple-shadow);
 }
 
 .sheet-grabber {
@@ -1701,15 +1730,20 @@ details[open] .apple-accordion-icon { transform: rotate(90deg); }
 }
 
 .modal-item-img { width: 100%; height: 220px; object-fit: cover; }
-.modal-item-title { font-size: 1.2rem; margin: 12px 0; color: #ffffff !important; }
+.modal-item-title { 
+  font-size: 1.2rem; 
+  margin: 12px 0; 
+  color: var(--apple-text-primary) !important; 
+  font-weight: 700;
+}
 
-/* Modal Bottom Tiles Contrast Fix */
+/* Modal Bottom Tiles Dynamic Contrast */
 .modal-tiles { display: flex; gap: 8px; }
 .modal-tiles .tile {
   flex: 1; padding: 12px; font-size: 0.88rem; font-weight: 600;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--apple-tile-bg) !important;
   border: 0.5px solid var(--apple-border);
-  color: #ffffff !important;
+  color: var(--apple-text-primary) !important;
 }
 
 .hidden { display: none !important; }
@@ -1725,7 +1759,7 @@ details[open] .apple-accordion-icon { transform: rotate(90deg); }
 
   .main-content {
     margin-left: 0;
-    padding: 12px 14px 110px 14px; /* Essential bottom space so content is never hidden behind dock */
+    padding: 12px 14px 110px 14px;
     width: 100%;
   }
 
