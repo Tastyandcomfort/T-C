@@ -54,6 +54,12 @@ let masterTelemetryData = null;
 
 let map = null;
 let seismicLayerGroup = null;
+let isMapClickBlocked = false;
+
+function blockMapClickTemporarily(ms = 400) {
+  isMapClickBlocked = true;
+  setTimeout(() => { isMapClickBlocked = false; }, ms);
+}
 
 // ===================================================
 // 1. IMAGE FAILOVER HANDLER
@@ -116,16 +122,40 @@ function initTheme() {
 }
 
 // ===================================================
-// 3. LANGUAGE SWITCHER (EN, TE, HI)
+// 3. FIXED LANGUAGE SWITCHER (EN, TE, HI)
 // ===================================================
-function changeLang(langCode) {
+function updateLangButtons(langCode) {
   ['en', 'te', 'hi'].forEach(l => {
     const b = document.getElementById(`lang-btn-${l}`);
     if (b) b.classList.toggle('active-lang', l === langCode);
   });
+}
 
-  document.cookie = `googtrans=/en/${langCode}; path=/;`;
-  document.cookie = `googtrans=/en/${langCode}; domain=${window.location.hostname}; path=/;`;
+function setGoogleTransCookie(langCode) {
+  const host = window.location.hostname;
+  const hostParts = host.split('.');
+  const domains = ['', host, `.${host}`];
+  if (hostParts.length > 2) {
+    domains.push(`.${hostParts.slice(-2).join('.')}`);
+  }
+
+  domains.forEach(d => {
+    const domainStr = d ? `; domain=${d}` : '';
+    if (langCode === 'en') {
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/${domainStr}`;
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${domainStr}`;
+      document.cookie = `googtrans=/en/en; path=/${domainStr}`;
+    } else {
+      document.cookie = `googtrans=/en/${langCode}; path=/${domainStr}`;
+      document.cookie = `googtrans=/en/${langCode}; path=${domainStr}`;
+    }
+  });
+}
+
+function changeLang(langCode) {
+  localStorage.setItem('tc_lang', langCode);
+  updateLangButtons(langCode);
+  setGoogleTransCookie(langCode);
 
   const combo = document.querySelector('.goog-te-combo');
   if (combo) {
@@ -134,6 +164,31 @@ function changeLang(langCode) {
   } else {
     window.location.reload();
   }
+}
+
+function initLanguage() {
+  let currentLang = 'en';
+  const cookieMatch = document.cookie.match(/googtrans=\/en\/([a-z]{2})/i);
+  if (cookieMatch && cookieMatch[1]) {
+    currentLang = cookieMatch[1].toLowerCase();
+  } else if (localStorage.getItem('tc_lang')) {
+    currentLang = localStorage.getItem('tc_lang');
+  }
+  updateLangButtons(currentLang);
+
+  let checkCount = 0;
+  const timer = setInterval(() => {
+    checkCount++;
+    const combo = document.querySelector('.goog-te-combo');
+    if (combo) {
+      if (currentLang !== 'en' && combo.value !== currentLang) {
+        combo.value = currentLang;
+        combo.dispatchEvent(new Event('change'));
+      }
+      clearInterval(timer);
+    }
+    if (checkCount > 20) clearInterval(timer);
+  }, 250);
 }
 
 // ===================================================
@@ -240,7 +295,6 @@ function togglePiPLockMode() {
   }
 }
 
-// 8-Directional Boundary Resizing & Multi-Touch Dragging (Matched to News Engine)
 function initPiPInteractivity() {
   const mini = document.getElementById('apple-miniplayer');
   const barrier = document.getElementById('pip-touch-barrier');
@@ -433,7 +487,6 @@ async function fetchNews() {
 
     if (!items || items.length === 0) throw new Error("No feed items found");
 
-    // Strictly match user-selected date
     let filteredItems = items.filter(item => {
       const pubDate = item.querySelector("pubDate")?.textContent || "";
       if (!pubDate) return false;
@@ -441,7 +494,6 @@ async function fetchNews() {
       return !isNaN(d) && d.toISOString().split('T')[0] === selectedNewsDate;
     });
 
-    // Fallback if today's feed format uses recent entries
     const todayStr = new Date().toISOString().split('T')[0];
     if (filteredItems.length === 0 && selectedNewsDate === todayStr && items.length > 0) {
       filteredItems = items.slice(0, 15);
@@ -502,7 +554,7 @@ async function fetchNews() {
 }
 
 // ===================================================
-// 7. MAP TELEMETRY, 2ND DESTINATION CALCULATION & TABS
+// 7. FIXED MAP TELEMETRY & BLEED-FREE EVENT HANDLING
 // ===================================================
 function getAQIShortBadge(aqiVal) {
   if (aqiVal === undefined || aqiVal === null || isNaN(aqiVal)) return { text: 'AQI N/A', color: '#94a3b8' };
@@ -513,6 +565,7 @@ function getAQIShortBadge(aqiVal) {
 }
 
 function removePinnedLocation() {
+  blockMapClickTemporarily(400);
   if (telemetryMarker && map) { map.removeLayer(telemetryMarker); telemetryMarker = null; }
   if (destMarker && map) { map.removeLayer(destMarker); destMarker = null; }
   if (map) routeLayers.forEach(l => map.removeLayer(l));
@@ -559,6 +612,15 @@ function openSameContainerWindy() {
     mapDiv.appendChild(overlay);
   }
 
+  // Prevent clicks from bleeding onto the Leaflet canvas
+  if (typeof L !== 'undefined' && L.DomEvent) {
+    L.DomEvent.disableClickPropagation(overlay);
+    L.DomEvent.disableScrollPropagation(overlay);
+  }
+  ['mousedown', 'click', 'touchstart', 'pointerdown'].forEach(evt => {
+    overlay.addEventListener(evt, e => e.stopPropagation());
+  });
+
   const t = masterTelemetryData;
   overlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:16px; display:flex; flex-direction:column; overflow:hidden;';
 
@@ -568,7 +630,7 @@ function openSameContainerWindy() {
         <span style="color:var(--apple-gold); font-weight:bold;">🌪️ Live Radar</span>
         <span style="color:var(--label-primary);">🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'}</span>
       </div>
-      <button onclick="switchMode('driving')" style="background:var(--apple-red); color:#fff; border:none; padding:4px 10px; border-radius:9999px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
+      <button onclick="event.stopPropagation(); closeWindyOverlay(); switchMode('driving');" style="background:var(--apple-red); color:#fff; border:none; padding:4px 10px; border-radius:9999px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
         ✕ Close
       </button>
     </div>
@@ -579,6 +641,7 @@ function openSameContainerWindy() {
 }
 
 function closeWindyOverlay() {
+  blockMapClickTemporarily(400);
   const o = document.getElementById('windy-overlay-frame');
   if (o) o.remove();
   const mapDiv = document.getElementById('map');
@@ -611,6 +674,15 @@ function showConfirmModal(lat, lng) {
     mapDiv.appendChild(modal);
   }
 
+  // Prevent clicks from bleeding onto the Leaflet canvas
+  if (typeof L !== 'undefined' && L.DomEvent) {
+    L.DomEvent.disableClickPropagation(modal);
+    L.DomEvent.disableScrollPropagation(modal);
+  }
+  ['mousedown', 'click', 'touchstart', 'pointerdown'].forEach(evt => {
+    modal.addEventListener(evt, e => e.stopPropagation());
+  });
+
   modal.style.cssText = 'position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:var(--surface-card-elevated); backdrop-filter:blur(20px); border:0.5px solid var(--surface-border); border-radius:18px; padding:14px; text-align:center; color:var(--label-primary); font-family:-apple-system, sans-serif;';
 
   modal.innerHTML = `
@@ -622,18 +694,27 @@ function showConfirmModal(lat, lng) {
     </div>
   `;
 
-  document.getElementById('btn-confirm-yes').onclick = e => { e.stopPropagation(); confirmDestinationChange(); };
-  document.getElementById('btn-confirm-no').onclick = e => { e.stopPropagation(); closeConfirmModal(); };
+  document.getElementById('btn-confirm-yes').onclick = e => {
+    e.stopPropagation();
+    blockMapClickTemporarily(400);
+    confirmDestinationChange();
+  };
+  document.getElementById('btn-confirm-no').onclick = e => {
+    e.stopPropagation();
+    blockMapClickTemporarily(400);
+    closeConfirmModal();
+  };
 }
 
 function closeConfirmModal() {
+  blockMapClickTemporarily(400);
   const modal = document.getElementById('confirm-pin-modal');
   if (modal) modal.remove();
   pendingLat = null;
   pendingLng = null;
 }
 
-// Fixed 2nd Destination Confirmation & Telemetry Recalculation
+// Fixed 2nd Destination Confirmation & Route Recalculation
 async function confirmDestinationChange() {
   if (pendingLat !== null && pendingLng !== null) {
     const targetLat = parseFloat(pendingLat);
@@ -1053,6 +1134,7 @@ async function fetchWeather() {
 // Master Initialization
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
+  initLanguage();
   renderAppleVideoShelf();
   initPiPInteractivity();
 
@@ -1072,6 +1154,11 @@ document.addEventListener("DOMContentLoaded", () => {
     loadLiveUSGSEarthquakes();
 
     map.on('click', e => {
+      // Guard: Ignore map canvas clicks if blocked or if modal/radar is currently open
+      if (isMapClickBlocked) return;
+      if (document.getElementById('confirm-pin-modal')) return;
+      if (document.getElementById('windy-overlay-frame')) return;
+
       const lat = e.latlng.lat.toFixed(4);
       const lng = e.latlng.lng.toFixed(4);
       if (activePinnedLat !== null && activePinnedLng !== null) {
