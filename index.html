@@ -69,7 +69,7 @@
 
         <!-- Language Selector -->
         <div class="lang-selector">
-          <div id="google_translate_element" style="display:none;"></div>
+          <div id="google_translate_element" class="hidden-translate-mount"></div>
           <div class="apple-segmented-lang">
             <button id="lang-btn-en" class="active-lang" onclick="changeLang('en')">EN</button>
             <button id="lang-btn-te" onclick="changeLang('te')">TE</button>
@@ -823,7 +823,7 @@
 
     </main>
 
-    <!-- FIXED NATIVE iOS MOBILE BOTTOM TAB BAR -->
+    <!-- MODEL 1: NATIVE APPLE GROUNDED TAB BAR (ZERO SCROLL BLEED) -->
     <footer class="bottom-mobile-nav apple-glass-dock" id="mobile-bottom-dock">
       <div class="nav-btn active" onclick="switchView('home-view', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
       <div class="nav-btn" onclick="switchView('menu-view', this)"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
