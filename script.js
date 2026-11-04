@@ -1,5 +1,5 @@
 // ===================================================
-// T&C APPLE SYSTEM: DRAGGABLE & 8-WAY RESIZABLE PiP, NEWS & CONTROLS
+// T&C APPLE SYSTEM: MODEL A SEMANTIC TOKENS & LOGIC
 // ===================================================
 
 const stallLat = 17.367761; 
@@ -67,7 +67,7 @@ function handleImgError(img, iconName) {
   if (!fallback) {
     fallback = document.createElement('div');
     fallback.className = 'auto-generated-fallback';
-    fallback.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--apple-gold); font-size:2rem; background:var(--apple-input-bg); border-radius:inherit;';
+    fallback.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--apple-gold); font-size:2rem; background:var(--surface-input); border-radius:inherit;';
     fallback.innerHTML = `<i class="fa-solid fa-${iconName || 'bowl-food'}"></i>`;
     parent.style.position = 'relative';
     parent.appendChild(fallback);
@@ -191,7 +191,6 @@ function launchVideo(videoId, title, modeKey) {
     const ticker = document.getElementById('headphones-ticker');
     if (ticker) ticker.style.display = 'flex';
   } else {
-    // Mode file
     const fileMedia = document.getElementById('file-media-preview');
     if (fileMedia) fileMedia.style.display = 'block';
   }
@@ -206,7 +205,6 @@ function launchMiniplayer(videoId, title) {
   if (titleEl) titleEl.innerText = title;
   if (mini) mini.classList.remove('hidden');
 
-  // Load saved dimensions or default
   const saved = JSON.parse(localStorage.getItem('tc_pip_dims') || 'null');
   if (saved && saved.width && saved.height) {
     mini.style.width = `${Math.min(saved.width, window.innerWidth - 20)}px`;
@@ -232,7 +230,7 @@ function togglePiPLockMode() {
 
   if (barrier) barrier.style.pointerEvents = isPiPMoveMode ? 'auto' : 'none';
   if (icon) icon.className = isPiPMoveMode ? 'fa-solid fa-lock text-xs' : 'fa-solid fa-lock-open text-xs';
-  if (btn) btn.style.background = isPiPMoveMode ? 'var(--apple-input-bg)' : 'rgba(48, 209, 88, 0.4)';
+  if (btn) btn.style.background = isPiPMoveMode ? 'var(--surface-input)' : 'rgba(48, 209, 88, 0.4)';
 
   if (!isPiPMoveMode) {
     clearTimeout(autoLockTimer);
@@ -261,7 +259,6 @@ function initPiPInteractivity() {
     }));
   };
 
-  // Dragging via Touch Barrier or Header
   const onDragStart = (e) => {
     if (!isPiPMoveMode && e.target === barrier) return;
     if (e.target.closest('.mini-btn')) return;
@@ -486,11 +483,11 @@ async function fetchNews() {
       const searchArchiveUrl = `https://www.google.com/search?q=${encodeURIComponent(scopeLabel + ' news ' + selectedNewsDate)}&tbm=nws`;
 
       container.innerHTML = `
-        <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); border-radius:12px; padding:18px; text-align:center;">
+        <div style="background:var(--surface-input); border:0.5px solid var(--surface-border); border-radius:12px; padding:18px; text-align:center;">
           <div style="font-size:0.9rem; font-weight:bold; color:var(--apple-gold); margin-bottom:6px;">
             <i class="fa-solid fa-calendar-xmark" style="margin-right:6px;"></i> No Stories Found for ${selectedNewsDate}
           </div>
-          <p style="font-size:0.75rem; color:var(--apple-text-secondary); margin-bottom:12px; line-height:1.4;">
+          <p style="font-size:0.75rem; color:var(--label-secondary); margin-bottom:12px; line-height:1.4;">
             No direct RSS records matched this exact date. Check the official news archive source below:
           </p>
           <a href="${searchArchiveUrl}" target="_blank" rel="noopener" class="apple-pill-btn" style="font-size:0.75rem; padding:6px 14px;">
@@ -566,10 +563,10 @@ function openSameContainerWindy() {
   overlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; z-index:999; background:#0f172a; border-radius:16px; display:flex; flex-direction:column; overflow:hidden;';
 
   overlay.innerHTML = `
-    <div style="background:var(--apple-card-elevated); border-bottom:0.5px solid var(--apple-border); padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
+    <div style="background:var(--surface-card-elevated); border-bottom:0.5px solid var(--surface-border); padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
       <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem;">
         <span style="color:var(--apple-gold); font-weight:bold;">🌪️ Live Radar</span>
-        <span style="color:#ffffff;">🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'}</span>
+        <span style="color:var(--label-primary);">🌡️ ${t.currW.temperature_2m !== undefined ? t.currW.temperature_2m + '°C' : 'N/A'}</span>
       </div>
       <button onclick="switchMode('driving')" style="background:var(--apple-red); color:#fff; border:none; padding:4px 10px; border-radius:9999px; font-size:0.7rem; font-weight:bold; cursor:pointer;">
         ✕ Close
@@ -614,14 +611,14 @@ function showConfirmModal(lat, lng) {
     mapDiv.appendChild(modal);
   }
 
-  modal.style.cssText = 'position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:var(--apple-card-elevated); backdrop-filter:blur(20px); border:0.5px solid var(--apple-border); border-radius:18px; padding:14px; text-align:center; color:var(--apple-text-primary); font-family:-apple-system, sans-serif;';
+  modal.style.cssText = 'position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:90%; max-width:320px; z-index:2000; background:var(--surface-card-elevated); backdrop-filter:blur(20px); border:0.5px solid var(--surface-border); border-radius:18px; padding:14px; text-align:center; color:var(--label-primary); font-family:-apple-system, sans-serif;';
 
   modal.innerHTML = `
     <div style="font-size:0.85rem; font-weight:700; color:var(--apple-gold); margin-bottom:4px;">Recalculate New Destination?</div>
-    <div style="font-size:0.72rem; color:var(--apple-text-secondary); margin-bottom:12px;">Coordinates: <b>${lat}, ${lng}</b></div>
+    <div style="font-size:0.72rem; color:var(--label-secondary); margin-bottom:12px;">Coordinates: <b>${lat}, ${lng}</b></div>
     <div style="display:flex; gap:8px;">
       <button id="btn-confirm-yes" style="flex:1; background:var(--apple-green); color:#000; border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:700; cursor:pointer;">Update</button>
-      <button id="btn-confirm-no" style="flex:1; background:var(--apple-input-bg); color:var(--apple-text-primary); border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:600; cursor:pointer;">Cancel</button>
+      <button id="btn-confirm-no" style="flex:1; background:var(--surface-input); color:var(--label-primary); border:none; padding:8px; border-radius:9999px; font-size:0.75rem; font-weight:600; cursor:pointer;">Cancel</button>
     </div>
   `;
 
@@ -766,7 +763,7 @@ async function fetchLocationDataAndRoutes(lat, lng, displayName = null) {
   }
 }
 
-// Restyled High-Contrast Master Card with Working Driving, Walking, Locality & Radar Tabs
+// Model A Semantic Dynamic Tokens Master Card (Driving, Walking, Locality, Radar)
 function renderMasterCard() {
   const infoBox = document.getElementById('route-info');
   if (!infoBox || !masterTelemetryData) return;
@@ -793,12 +790,12 @@ function renderMasterCard() {
     tabSpecificHtml = `<div class="route-options-flex">${optionsHtml}</div>`;
   } else if (currentMode === 'locality') {
     tabSpecificHtml = `
-      <div style="background:var(--apple-input-bg); border:0.5px solid var(--apple-border); padding:12px; border-radius:12px; font-size:0.75rem; margin-top:8px;">
+      <div style="background:var(--surface-input); border:0.5px solid var(--surface-border); padding:12px; border-radius:12px; font-size:0.75rem; margin-top:8px;">
         <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
           <span style="font-weight:bold; color:var(--apple-gold);">Sector Intelligence</span>
           <span style="color:${t.aqiBadge.color}; font-weight:bold;">${t.aqiBadge.text}</span>
         </div>
-        <p style="margin:0 0 6px 0; color:#ffffff; line-height:1.4;">
+        <p style="margin:0 0 6px 0; color:var(--label-primary); line-height:1.4;">
           Mandal: <b>${t.county}</b> &bull; Local Temp: <b>${t.currW.temperature_2m || '--'}°C</b> (${t.currW.relative_humidity_2m || '--'}% Humidity)
         </p>
         <p style="margin:0; color:var(--apple-red); font-size:0.72rem;">🌋 ${t.nearestQuakeText}</p>
@@ -808,9 +805,9 @@ function renderMasterCard() {
 
   infoBox.innerHTML = `
     <div>
-      <div style="background:var(--apple-input-bg); border-left:3px solid var(--apple-gold); border-radius:10px; padding:10px 14px; margin-bottom:10px;">
-        <div style="font-size:0.92rem; font-weight:800; color:#ffffff;">📍 ${t.villageTown}, ${t.district}</div>
-        <div style="font-size:0.75rem; color:#cbd5e1; margin-top:2px;">${t.landmark} &bull; ${t.state} (${t.pincode})</div>
+      <div style="background:var(--surface-input); border-left:3px solid var(--apple-gold); border-radius:10px; padding:10px 14px; margin-bottom:10px;">
+        <div style="font-size:0.92rem; font-weight:800; color:var(--label-primary);">📍 ${t.villageTown}, ${t.district}</div>
+        <div style="font-size:0.75rem; color:var(--label-secondary); margin-top:2px;">${t.landmark} &bull; ${t.state} (${t.pincode})</div>
       </div>
 
       <!-- High-Contrast Apple Segmented Control for Driving / Walking / Locality / Radar -->
@@ -939,7 +936,7 @@ function toggleUpi() {
   if (u) u.classList.toggle('hidden');
 }
 
-// Fixed High-Contrast Menu Item Popup
+// Model A Semantic Menu Item Popup (Zero Hardcoded White)
 function openMenuModal(imgSrc, title, price, type) {
   const modal = document.getElementById('menuModal');
   if (!modal) return;
@@ -951,11 +948,11 @@ function openMenuModal(imgSrc, title, price, type) {
   const typeTile = modal.querySelector('.type-tile');
 
   if (priceTile) {
-    priceTile.innerHTML = `<span style="color:#ffffff;">Price: <b>${price}</b></span>`;
+    priceTile.innerHTML = `<span>Price: <b>${price}</b></span>`;
   }
   if (typeTile) {
     const isVeg = type.toLowerCase().includes('veg') && !type.toLowerCase().includes('non');
-    typeTile.innerHTML = `<span style="color:#ffffff;">Type: ${type} <span style="color:${isVeg ? 'var(--apple-green)' : 'var(--apple-red)'}; font-size:1.1rem;">●</span></span>`;
+    typeTile.innerHTML = `<span>Type: <b>${type}</b> <span style="color:${isVeg ? 'var(--apple-green)' : 'var(--apple-red)'}; font-size:1.1rem;">●</span></span>`;
   }
   modal.showModal();
 }
